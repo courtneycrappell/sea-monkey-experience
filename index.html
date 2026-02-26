@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Sea Monkey Experience</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+
+  <body>
+    <!-- Soft cursor -->
+    <div id="softCursor" aria-hidden="true"></div>
+
+    <main class="stage">
+      <!-- Title -->
+      <header class="top">
+        <h1 id="pageTitle" class="title">The Sea Monkey Experience</h1>
+      </header>
+
+      <section class="center">
+  <div class="tankWrap">
+    <div class="wordRing" id="wordRing"></div>
+
+    <!-- centered reroll row -->
+    <div class="rerollRow">
+      <button id="needMoreBtn" class="needMoreBtn" type="button">
+        reroll emotions
+      </button>
+    </div>
+
+    <!-- tank (canvas only) -->
+    <div class="tank">
+      <canvas id="tankCanvas"></canvas>
+    </div>
+
+    <!-- footer row BELOW tank: audio only -->
+    <div class="wordFooter" aria-label="Audio controls">
+      <div></div> <!-- spacer keeps audio right aligned -->
+      <div class="audioControls" aria-label="Audio controls">
+        <button id="muteBtn" class="muteBtn" type="button">mute</button>
+        <input
+          id="volumeSlider"
+          class="volumeSlider"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value="0.35"
+          aria-label="Volume"
+        />
+      </div>
+    </div>
+  </div>
+
+        <!-- About panel -->
+        <section id="about" class="about" aria-label="About the experience">
+          <h2 class="aboutTitle">About the Experience</h2>
+
+          <p class="aboutText">
+            It began with a simple gesture: placing a small tank of Sea Monkeys on my office desk.
+            In a space typically associated with institutional seriousness, the Sea Monkeys introduced whimsy,
+            vulnerability, and smallness. Visitors were invited to respond with a single anonymous word describing
+            how the Sea Monkeys made them feel.
+          </p>
+
+          <p class="aboutText">
+            Then, emotion is translated into movement as language becomes choreography.
+          </p>
+        </section>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
