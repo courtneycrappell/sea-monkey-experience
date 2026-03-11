@@ -40,7 +40,7 @@ body{
   flex-direction: column;
   padding: 24px 22px 16px;
   position: relative;
-  z-index: 1;
+  z-index: 50;
 }
 
 .top{
@@ -150,6 +150,160 @@ body{
   z-index: 45;
   pointer-events: auto;
 }
+
+
+.footerCenter{
+  width: 220px;
+  flex: 0 0 220px;
+}
+
+.flightEasterEgg{
+  position: absolute;
+  left: 50%;
+  bottom: -18px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+  z-index: 80;
+}
+.planeTrigger{
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 4px 10px 2px;
+  cursor: none;
+  opacity: 0.68;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.45));
+  transition: transform 500ms ease, opacity 500ms ease, filter 500ms ease;
+}
+
+.planeTrigger:hover,
+.flightEasterEgg.open .planeTrigger{
+  opacity: 0.96;
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 8px rgba(205,235,245,0.12));
+}
+
+.planeSvg{
+  width: 70px;
+  height: auto;
+  display: block;
+}
+
+.planeSvg path{
+  fill: rgba(220,245,255,0.02);
+  stroke: rgba(220,245,255,0.18);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter:
+    drop-shadow(0 1px 0 rgba(255,255,255,0.08))
+    drop-shadow(0 -1px 0 rgba(0,0,0,0.6));
+}
+
+.planeTrigger:hover .planeSvg path,
+.flightEasterEgg.open .planeSvg path{
+  fill: rgba(220,245,255,0.05);
+  stroke: rgba(220,245,255,0.36);
+}
+
+.flightPanel{
+  width: min(420px, calc(92vw - 40px));
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(18px) scaleY(0.96);
+  transform-origin: bottom center;
+  transition: max-height 700ms ease, opacity 500ms ease, transform 700ms ease, margin-bottom 700ms ease;
+  pointer-events: none;
+  margin-bottom: -8px;
+}
+
+.flightEasterEgg.open .flightPanel{
+  max-height: 220px;
+  opacity: 1;
+  transform: translateY(0) scaleY(1);
+  pointer-events: auto;
+  margin-bottom: 4px;
+}
+
+.flightPanelInner{
+  border-radius: 18px;
+  padding: 14px 16px 14px;
+  background: linear-gradient(to bottom, rgba(10,18,24,0.86), rgba(4,9,13,0.94));
+  box-shadow: inset 0 0 0 1px rgba(200,235,245,0.08), 0 18px 60px rgba(0,0,0,0.34);
+  backdrop-filter: blur(9px);
+}
+
+.flightLabel{
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.48);
+  margin-bottom: 12px;
+}
+
+.flightTransport,
+.flightMetaRow{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.flightMetaRow{
+  margin-top: 10px;
+}
+
+.flightCtl,
+.flightStepper{
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: rgba(220,245,255,0.42);
+  font-size: 12px;
+  letter-spacing: 0.09em;
+  padding: 6px 8px;
+  cursor: none;
+  transition: color 350ms ease, opacity 350ms ease, transform 350ms ease;
+}
+
+.flightCtl:hover,
+.flightStepper:hover{
+  color: rgba(220,245,255,0.82);
+  transform: translateY(-1px);
+}
+
+.flightPlayBtn{
+  min-width: 46px;
+}
+
+.flightCloseBtn{
+  color: rgba(220,245,255,0.30);
+}
+
+.flightTrackIndicator{
+  min-width: 132px;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.58);
+}
+
+.flightProgress{
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  accent-color: rgba(220,245,255,0.26);
+  opacity: 0.82;
+}
+
+
 
 /* Reroll button style (kept exactly) */
 .needMoreBtn{
@@ -292,4 +446,45 @@ canvas{
   .volumeSlider{ width: 120px; }
   .tank{ height: 52vh; max-height: 52vh; }
   .about.open{ max-height: 380px; }
+}
+
+@media (max-width: 720px){
+  .footerCenter{ flex-basis: 140px; width: 140px; }
+  .planeSvg{ width: 108px; }
+  .flightPanel{ width: min(360px, calc(100vw - 34px)); }
+  .flightTrackIndicator{ min-width: 110px; letter-spacing: 0.12em; }
+}
+body.flight-mode {
+  background: #000;
+}
+
+body.flight-mode .top,
+body.flight-mode .rerollRow,
+body.flight-mode .tank,
+body.flight-mode .about,
+body.flight-mode .audioControls {
+  opacity: 0.04 !important;
+  transition: opacity 500ms ease, filter 500ms ease;
+}
+
+body.flight-mode .wordBtn,
+body.flight-mode .needMoreBtn,
+body.flight-mode .muteBtn,
+body.flight-mode .volumeSlider {
+  opacity: 0.04 !important;
+  color: rgba(220,245,255,0.04) !important;
+  pointer-events: none;
+  transition: opacity 500ms ease, color 500ms ease;
+}
+
+body.flight-mode .tank {
+  filter: brightness(0.05);
+}
+
+body.flight-mode .planeTrigger,
+body.flight-mode .flightPanel,
+body.flight-mode .flightPanelInner,
+body.flight-mode .flightEasterEgg {
+  opacity: 1 !important;
+  filter: none !important;
 }

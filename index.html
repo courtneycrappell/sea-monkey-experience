@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Sea Monkey Experience</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <script data-goatcounter="https://courtneycrappell.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
     <link rel="stylesheet" href="./styles.css" />
   </head>
 
@@ -36,9 +34,52 @@
       <canvas id="tankCanvas"></canvas>
     </div>
 
-    <!-- footer row BELOW tank: audio only -->
-    <div class="wordFooter" aria-label="Audio controls">
-      <div></div> <!-- spacer keeps audio right aligned -->
+    <!-- footer row BELOW tank: easter egg + audio -->
+    <div class="wordFooter" aria-label="Audio controls and hidden playlist">
+      <div class="footerCenter" aria-hidden="true"></div>
+
+      <div id="flightEasterEgg" class="flightEasterEgg" aria-label="Hidden playlist">
+        <section id="flightPanel" class="flightPanel" aria-hidden="true">
+          <div class="flightPanelInner">
+            <div class="flightLabel">Southwest Airlines Sample Series</div>
+            <div class="flightTransport" aria-label="Flight series controls">
+              <button id="flightPrevBtn" class="flightCtl" type="button" aria-label="Previous track">◀</button>
+              <button id="flightPlayBtn" class="flightCtl flightPlayBtn" type="button" aria-label="Play or pause playlist">play</button>
+              <button id="flightNextBtn" class="flightCtl" type="button" aria-label="Next track">▶</button>
+              <button id="flightCloseBtn" class="flightCtl flightCloseBtn" type="button" aria-label="Close playlist">close</button>
+            </div>
+            <div class="flightMetaRow">
+  <div id="flightTrackIndicator" class="flightTrackIndicator" aria-live="polite">track 01 / 08</div>
+</div>
+            <input id="flightProgress" class="flightProgress" type="range" min="0" max="1" step="0.001" value="0" aria-label="Track progress" />
+          </div>
+        </section>
+
+        <button id="planeTrigger" class="planeTrigger" type="button" aria-label="Open flight playlist">
+          <svg class="planeSvg" viewBox="0 0 220 220" role="img" aria-hidden="true">
+  <path d="M70 34
+           L112 34
+           L144 80
+           L177 80
+           Q195 80 195 98
+           Q195 116 177 116
+           L144 116
+           L112 162
+           L70 162
+           L88 120
+           L54 120
+           L42 132
+           L28 132
+           L36 104
+           L28 76
+           L42 76
+           L54 88
+           L88 88
+           Z" />
+</svg>
+        </button>
+      </div>
+
       <div class="audioControls" aria-label="Audio controls">
         <button id="muteBtn" class="muteBtn" type="button">mute</button>
         <input

@@ -78,6 +78,19 @@ const volumeSlider = document.getElementById("volumeSlider");
 /* (Optional) old overlay tuner DOM exists in HTML; we ignore it. */
 const tunerEl = document.getElementById("tuner");
 
+/* Flight easter egg DOM */
+const flightEasterEgg = document.getElementById("flightEasterEgg");
+const flightPanel = document.getElementById("flightPanel");
+const planeTrigger = document.getElementById("planeTrigger");
+const flightPrevBtn = document.getElementById("flightPrevBtn");
+const flightPlayBtn = document.getElementById("flightPlayBtn");
+const flightNextBtn = document.getElementById("flightNextBtn");
+const flightCloseBtn = document.getElementById("flightCloseBtn");
+const flightStepBackBtn = document.getElementById("flightStepBackBtn");
+const flightStepForwardBtn = document.getElementById("flightStepForwardBtn");
+const flightTrackIndicator = document.getElementById("flightTrackIndicator");
+const flightProgress = document.getElementById("flightProgress");
+
 /* ---------------------------
    Globals
 ----------------------------*/
@@ -95,6 +108,27 @@ let hasInitialized = false;
 let orbitDir = 1;       // +1 or -1
 let orbitDirTarget = 1;
 let orbitDirTimer = 0;
+
+/* Flight series */
+const FLIGHT_PLAYLIST = [
+  "FULP1.m4a",
+  "FULP2.m4a",
+  "FULP3.m4a",
+  "FULP4.m4a",
+  "FULP5.m4a",
+  "FULP6.m4a",
+  "FULP7.m4a",
+  "FULP8.m4a",
+];
+const FLIGHT_AUDIO_BASE = "./assets/";
+let flightAudio = null;
+let flightModeOpen = false;
+let flightIsPlaying = false;
+let flightCurrentIndex = 0;
+let flightScrubActive = false;
+const flightTrackMemory = new Map();
+let suspendedBgState = null;
+let suspendedAnimationFrameAt = 0;
 
 /* ---------------------------
    Background Audio System
@@ -134,6 +168,193 @@ function startAudioFromGesture() {
   a.play().catch(() => {});
   window.removeEventListener("pointerdown", startAudioFromGesture, true);
   window.removeEventListener("keydown", startAudioFromGesture, true);
+}
+
+function pauseMainExperienceForFlight() {
+  document.body.classList.add("flight-mode");
+
+  suspendedAnimationFrameAt = performance.now();
+
+  const a = ensureAudio();
+  suspendedBgState = {
+    paused: a.paused,
+    currentTime: a.currentTime,
+    muted: a.muted,
+    volume: a.volume,
+  };
+  a.pause();
+}
+
+function resumeMainExperienceFromFlight() {
+  document.body.classList.remove("flight-mode");
+  lastFrameTime = performance.now();
+
+  if (!suspendedBgState) return;
+
+  const a = ensureAudio();
+  a.currentTime = suspendedBgState.currentTime || 0;
+  a.muted = !!suspendedBgState.muted;
+  if (typeof suspendedBgState.volume === "number") a.volume = suspendedBgState.volume;
+
+  if (!suspendedBgState.paused) {
+    a.play().catch(() => {});
+  }
+
+  suspendedBgState = null;
+}
+
+function ensureFlightAudio() {
+  if (flightAudio) return flightAudio;
+
+  flightAudio = new Audio();
+  flightAudio.preload = "metadata";
+
+  flightAudio.addEventListener("ended", () => {
+    const endedIndex = flightCurrentIndex;
+    flightTrackMemory.set(endedIndex, 0);
+    playFlightTrack((flightCurrentIndex + 1) % FLIGHT_PLAYLIST.length, true);
+  });
+
+  flightAudio.addEventListener("timeupdate", syncFlightProgressUI);
+  flightAudio.addEventListener("loadedmetadata", syncFlightProgressUI);
+  flightAudio.addEventListener("play", () => {
+    flightIsPlaying = true;
+    updateFlightUI();
+  });
+  flightAudio.addEventListener("pause", () => {
+    flightIsPlaying = false;
+    storeCurrentFlightTime();
+    updateFlightUI();
+  });
+
+  return flightAudio;
+}
+
+function getFlightTrackSrc(index) {
+  const file = FLIGHT_PLAYLIST[index] || FLIGHT_PLAYLIST[0];
+  return `${FLIGHT_AUDIO_BASE}${file}`;
+}
+
+function storeCurrentFlightTime() {
+  if (!flightAudio) return;
+  flightTrackMemory.set(flightCurrentIndex, flightAudio.currentTime || 0);
+}
+
+function syncFlightProgressUI() {
+  if (!flightProgress || !flightAudio || flightScrubActive) return;
+  const duration = Number.isFinite(flightAudio.duration) && flightAudio.duration > 0 ? flightAudio.duration : 0;
+  flightProgress.max = duration || 1;
+  flightProgress.value = Math.min(flightAudio.currentTime || 0, duration || 1);
+}
+
+function updateFlightUI() {
+  if (flightTrackIndicator) {
+    flightTrackIndicator.textContent = `track ${String(flightCurrentIndex + 1).padStart(2, "0")} / ${String(FLIGHT_PLAYLIST.length).padStart(2, "0")}`;
+  }
+  if (flightPlayBtn) {
+    flightPlayBtn.textContent = flightIsPlaying ? "pause" : "play";
+  }
+  syncFlightProgressUI();
+}
+
+function playFlightTrack(index, autoplay = true) {
+  const a = ensureFlightAudio();
+  storeCurrentFlightTime();
+
+  flightCurrentIndex = (index + FLIGHT_PLAYLIST.length) % FLIGHT_PLAYLIST.length;
+  const src = getFlightTrackSrc(flightCurrentIndex);
+  const resumeAt = flightTrackMemory.get(flightCurrentIndex) || 0;
+
+  if (!a.src || !a.src.endsWith(FLIGHT_PLAYLIST[flightCurrentIndex])) {
+    a.src = src;
+  }
+
+  a.currentTime = resumeAt;
+  updateFlightUI();
+
+  if (autoplay) {
+    a.play().catch(() => {});
+  } else {
+    a.pause();
+  }
+}
+
+function toggleFlightPlayback() {
+  const a = ensureFlightAudio();
+  if (!a.src) {
+    playFlightTrack(flightCurrentIndex, true);
+    return;
+  }
+
+  if (a.paused) {
+    a.play().catch(() => {});
+  } else {
+    a.pause();
+  }
+}
+
+function stepFlightTrack(delta, autoplay = true) {
+  playFlightTrack(flightCurrentIndex + delta, autoplay);
+}
+
+function openFlightPanel() {
+  if (flightModeOpen) return;
+  flightModeOpen = true;
+  pauseMainExperienceForFlight();
+  flightEasterEgg?.classList.add("open");
+  flightPanel?.setAttribute("aria-hidden", "false");
+  updateFlightUI();
+  playFlightTrack(flightCurrentIndex, true);
+}
+
+function closeFlightPanel() {
+  if (!flightModeOpen) return;
+  flightModeOpen = false;
+  storeCurrentFlightTime();
+  ensureFlightAudio().pause();
+  flightEasterEgg?.classList.remove("open");
+  flightPanel?.setAttribute("aria-hidden", "true");
+  resumeMainExperienceFromFlight();
+}
+
+function setupFlightEasterEgg() {
+  if (!planeTrigger) return;
+
+  updateFlightUI();
+
+  planeTrigger.addEventListener("click", () => {
+    if (flightModeOpen) {
+      closeFlightPanel();
+    } else {
+      openFlightPanel();
+    }
+  });
+document.addEventListener("click", (e) => {
+  if (!flightModeOpen) return;
+
+  const clickedInsidePanel = flightPanel.contains(e.target);
+  const clickedPlane = planeTrigger.contains(e.target);
+
+  if (!clickedInsidePanel && !clickedPlane) {
+    closeFlightPanel();
+  }
+});
+  flightCloseBtn?.addEventListener("click", closeFlightPanel);
+  flightPlayBtn?.addEventListener("click", toggleFlightPlayback);
+  flightPrevBtn?.addEventListener("click", () => stepFlightTrack(-1, true));
+  flightNextBtn?.addEventListener("click", () => stepFlightTrack(1, true));
+
+
+  flightProgress?.addEventListener("input", () => {
+    flightScrubActive = true;
+    if (!flightAudio) return;
+    flightAudio.currentTime = Number(flightProgress.value || 0);
+  });
+
+  flightProgress?.addEventListener("change", () => {
+    flightScrubActive = false;
+    syncFlightProgressUI();
+  });
 }
 
 function setupAudio() {
@@ -1072,6 +1293,11 @@ function drawBackgroundVignette(bounds) {
 let lastFrameTime = performance.now();
 
 function animate() {
+  if (flightModeOpen) {
+    lastFrameTime = performance.now();
+    requestAnimationFrame(animate);
+    return;
+  }
   const now = performance.now();
   const dt = clamp((now - lastFrameTime) / 1000, 0, 0.05);
   lastFrameTime = now;
@@ -1895,6 +2121,7 @@ async function init() {
   }
 
   setupAudio();
+  setupFlightEasterEgg();
 
   if (needMoreBtn) {
     needMoreBtn.addEventListener("click", () => {
@@ -1939,6 +2166,13 @@ window.addEventListener("keydown", (e) => {
 
     e.preventDefault();
     openTunerWindow();
+  }
+});
+
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && flightModeOpen) {
+    e.preventDefault();
+    closeFlightPanel();
   }
 });
 
