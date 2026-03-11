@@ -145,7 +145,7 @@ body{
   justify-content: space-between;
 
   padding: 0 10px 4px;
-  margin-top: -2px;
+  margin-top: 20px;
   position: relative;
   z-index: 45;
   pointer-events: auto;
@@ -159,12 +159,11 @@ body{
 
 .flightEasterEgg{
   position: absolute;
-  left: 50%;
-  bottom: -18px;
-  transform: translateX(-50%);
+  left: 18px;        /* distance from left edge */
+  bottom: -27px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   pointer-events: auto;
   z-index: 80;
