@@ -19,7 +19,6 @@ body{
   overflow: hidden;
 }
 
-/* Soft circle cursor */
 #softCursor{
   position: fixed;
   left: 0; top: 0;
@@ -60,7 +59,6 @@ body{
   cursor: none;
   user-select: none;
   pointer-events: auto;
-
   text-decoration: none;
   border-bottom: 1px solid rgba(220,245,255,0.45);
   padding-bottom: 3px;
@@ -82,14 +80,12 @@ body{
 .tankWrap{
   width: min(980px, 92vw);
   display: grid;
-  /* wordRing, rerollRow, tank, wordFooter */
   grid-template-rows: auto auto auto auto;
   gap: 4px;
   place-items: center;
   position: relative;
 }
 
-/* Words (4 columns x 1 row) */
 .wordRing{
   width: 100%;
   display: grid;
@@ -98,10 +94,8 @@ body{
   align-items: center;
   justify-items: center;
   padding: 6px 10px 2px;
-
   opacity: 0.0;
   transition: opacity 1800ms ease;
-
   position: relative;
   z-index: 40;
   pointer-events: auto;
@@ -125,41 +119,33 @@ body{
 .wordBtn.dim{ opacity: 0.45; }
 .wordBtn.selected{ color: var(--text); opacity: 1; }
 
-/* Centered reroll row under words */
 .rerollRow{
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 4px 0 18px; /* space above + below */
+  padding: 4px 0 18px;
   position: relative;
   z-index: 45;
   pointer-events: auto;
 }
 
-/* Footer row (audio only now) */
 .wordFooter{
   width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-
+  align-items: flex-end;
+  justify-content: flex-start;
   padding: 0 10px 4px;
   margin-top: 20px;
   position: relative;
   z-index: 45;
   pointer-events: auto;
-}
-
-
-.footerCenter{
-  width: 220px;
-  flex: 0 0 220px;
+  min-height: 92px;
 }
 
 .flightEasterEgg{
   position: absolute;
-  left: 18px;        /* distance from left edge */
+  left: 18px;
   bottom: -27px;
   display: flex;
   flex-direction: column;
@@ -168,6 +154,7 @@ body{
   pointer-events: auto;
   z-index: 80;
 }
+
 .planeTrigger{
   appearance: none;
   border: 0;
@@ -222,7 +209,7 @@ body{
 }
 
 .flightEasterEgg.open .flightPanel{
-  max-height: 220px;
+  max-height: 420px;
   opacity: 1;
   transform: translateY(0) scaleY(1);
   pointer-events: auto;
@@ -258,8 +245,7 @@ body{
   margin-top: 10px;
 }
 
-.flightCtl,
-.flightStepper{
+.flightCtl{
   appearance: none;
   border: 0;
   background: transparent;
@@ -271,19 +257,13 @@ body{
   transition: color 350ms ease, opacity 350ms ease, transform 350ms ease;
 }
 
-.flightCtl:hover,
-.flightStepper:hover{
+.flightCtl:hover{
   color: rgba(220,245,255,0.82);
   transform: translateY(-1px);
 }
 
-.flightPlayBtn{
-  min-width: 46px;
-}
-
-.flightCloseBtn{
-  color: rgba(220,245,255,0.30);
-}
+.flightPlayBtn{ min-width: 46px; }
+.flightCloseBtn{ color: rgba(220,245,255,0.30); }
 
 .flightTrackIndicator{
   min-width: 132px;
@@ -302,18 +282,36 @@ body{
   opacity: 0.82;
 }
 
+.flightAbout{
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(220,245,255,0.10);
+}
 
+.flightAboutTitle{
+  margin: 0 0 8px 0;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.46);
+}
 
-/* Reroll button style (kept exactly) */
+.flightAboutText{
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(220,245,255,0.62);
+}
+
+.flightAboutText:last-child{ margin-bottom: 0; }
+
 .needMoreBtn{
   appearance: none;
   border: 0;
   background: transparent;
-
   color: rgba(220,245,255,0.38);
   font-size: 12px;
   letter-spacing: 0.05em;
-
   cursor: none;
   transition: opacity 650ms ease, color 650ms ease, filter 650ms ease;
   opacity: 0.80;
@@ -327,40 +325,6 @@ body{
   filter: blur(0px);
 }
 
-/* Audio controls (right-aligned, very subtle) */
-.audioControls{
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  opacity: 0.55;
-  transition: opacity 450ms ease;
-}
-
-.audioControls:hover{ opacity: 0.85; }
-
-.muteBtn{
-  appearance: none;
-  border: 0;
-  background: transparent;
-  color: rgba(220,245,255,0.30);
-  font-size: 12px;
-  letter-spacing: 0.05em;
-  padding: 6px 6px 2px;
-  cursor: none;
-  transition: color 450ms ease, opacity 450ms ease;
-}
-
-.muteBtn:hover{
-  color: rgba(220,245,255,0.70);
-}
-
-.volumeSlider{
-  width: 160px;
-  accent-color: rgba(220,245,255,0.35);
-  opacity: 0.75;
-}
-
-/* Tank */
 .tank{
   width: 100%;
   aspect-ratio: 1.35 / 1;
@@ -374,7 +338,6 @@ body{
     0 0 0 1px rgba(160, 235, 255, 0.04) inset,
     0 20px 80px rgba(0,0,0,0.55);
   overflow: hidden;
-
   position: relative;
   z-index: 5;
   pointer-events: none;
@@ -386,7 +349,6 @@ canvas{
   display: block;
 }
 
-/* ABOUT OVERLAY (does not affect tank/layout) */
 .aboutOverlay{
   position: fixed;
   left: 0;
@@ -403,17 +365,14 @@ canvas{
   width: min(980px, 92vw);
   padding: 14px 16px 10px;
   border-radius: 18px;
-
   background: rgba(0, 0, 0, 0.55);
   box-shadow: 0 20px 90px rgba(0,0,0,0.55);
   backdrop-filter: blur(8px);
-
   max-height: 0;
   overflow: hidden;
   opacity: 0;
   transform: translateY(10px);
   transition: max-height 900ms ease, opacity 650ms ease, transform 900ms ease;
-
   pointer-events: auto;
 }
 
@@ -439,20 +398,18 @@ canvas{
   opacity: 0.72;
 }
 
-/* Mobile */
 @media (max-width: 680px){
   .wordRing{ grid-template-columns: repeat(2, 1fr); }
-  .volumeSlider{ width: 120px; }
   .tank{ height: 52vh; max-height: 52vh; }
   .about.open{ max-height: 380px; }
 }
 
 @media (max-width: 720px){
-  .footerCenter{ flex-basis: 140px; width: 140px; }
-  .planeSvg{ width: 108px; }
+  .planeSvg{ width: 64px; }
   .flightPanel{ width: min(360px, calc(100vw - 34px)); }
   .flightTrackIndicator{ min-width: 110px; letter-spacing: 0.12em; }
 }
+
 body.flight-mode {
   background: #000;
 }
@@ -460,16 +417,13 @@ body.flight-mode {
 body.flight-mode .top,
 body.flight-mode .rerollRow,
 body.flight-mode .tank,
-body.flight-mode .about,
-body.flight-mode .audioControls {
+body.flight-mode .about {
   opacity: 0.04 !important;
   transition: opacity 500ms ease, filter 500ms ease;
 }
 
 body.flight-mode .wordBtn,
-body.flight-mode .needMoreBtn,
-body.flight-mode .muteBtn,
-body.flight-mode .volumeSlider {
+body.flight-mode .needMoreBtn {
   opacity: 0.04 !important;
   color: rgba(220,245,255,0.04) !important;
   pointer-events: none;
