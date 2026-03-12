@@ -71,7 +71,6 @@ const softCursor = document.getElementById("softCursor");
 const canvas = document.getElementById("tankCanvas");
 const ctx = canvas.getContext("2d");
 
-
 /* (Optional) old overlay tuner DOM exists in HTML; we ignore it. */
 const tunerEl = document.getElementById("tuner");
 
@@ -83,8 +82,6 @@ const flightPrevBtn = document.getElementById("flightPrevBtn");
 const flightPlayBtn = document.getElementById("flightPlayBtn");
 const flightNextBtn = document.getElementById("flightNextBtn");
 const flightCloseBtn = document.getElementById("flightCloseBtn");
-const flightStepBackBtn = document.getElementById("flightStepBackBtn");
-const flightStepForwardBtn = document.getElementById("flightStepForwardBtn");
 const flightTrackIndicator = document.getElementById("flightTrackIndicator");
 const flightProgress = document.getElementById("flightProgress");
 
@@ -124,80 +121,15 @@ let flightIsPlaying = false;
 let flightCurrentIndex = 0;
 let flightScrubActive = false;
 const flightTrackMemory = new Map();
-let suspendedBgState = null;
-let suspendedAnimationFrameAt = 0;
-
-/* ---------------------------
-   Background Audio System
-----------------------------*/
-
-const AUDIO_SRC = "assets/background.m4a";
-let bgAudio = null;
-
-function loadAudioPrefs() {
-  return null; // always treat as first visit
-}
-
-function saveAudioPrefs() {
-  // do nothing (no persistence)
-}
-
-function ensureAudio() {
-  if (bgAudio) return bgAudio;
-
-  bgAudio = new Audio(AUDIO_SRC);
-  bgAudio.loop = true;
-  bgAudio.preload = "auto";
-
-  const prefs = loadAudioPrefs();
-  bgAudio.volume = prefs && typeof prefs.volume === "number" ? prefs.volume : 0.35;
-  bgAudio.muted = !!(prefs && prefs.muted);
-
-  if (volumeSlider) volumeSlider.value = String(bgAudio.volume);
-  if (muteBtn) muteBtn.textContent = bgAudio.muted ? "unmute" : "mute";
-
-  bgAudio.addEventListener("volumechange", saveAudioPrefs);
-  return bgAudio;
-}
-
-function startAudioFromGesture() {
-  const a = ensureAudio();
-  a.play().catch(() => {});
-  window.removeEventListener("pointerdown", startAudioFromGesture, true);
-  window.removeEventListener("keydown", startAudioFromGesture, true);
-}
 
 function pauseMainExperienceForFlight() {
   document.body.classList.add("flight-mode");
-
-  suspendedAnimationFrameAt = performance.now();
-
-  const a = ensureAudio();
-  suspendedBgState = {
-    paused: a.paused,
-    currentTime: a.currentTime,
-    muted: a.muted,
-    volume: a.volume,
-  };
-  a.pause();
+  lastFrameTime = performance.now();
 }
 
 function resumeMainExperienceFromFlight() {
   document.body.classList.remove("flight-mode");
   lastFrameTime = performance.now();
-
-  if (!suspendedBgState) return;
-
-  const a = ensureAudio();
-  a.currentTime = suspendedBgState.currentTime || 0;
-  a.muted = !!suspendedBgState.muted;
-  if (typeof suspendedBgState.volume === "number") a.volume = suspendedBgState.volume;
-
-  if (!suspendedBgState.paused) {
-    a.play().catch(() => {});
-  }
-
-  suspendedBgState = null;
 }
 
 function ensureFlightAudio() {
@@ -308,7 +240,7 @@ function closeFlightPanel() {
   if (!flightModeOpen) return;
   flightModeOpen = false;
   storeCurrentFlightTime();
-  ensureFlightAudio().pause();
+  if (flightAudio) flightAudio.pause();
   flightEasterEgg?.classList.remove("open");
   flightPanel?.setAttribute("aria-hidden", "true");
   resumeMainExperienceFromFlight();
@@ -319,29 +251,18 @@ function setupFlightEasterEgg() {
 
   updateFlightUI();
 
-  planeTrigger.addEventListener("click", () => {
-    if (flightModeOpen) {
-      closeFlightPanel();
-    } else {
-      openFlightPanel();
-    }
+  planeTrigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (flightModeOpen) closeFlightPanel();
+    else openFlightPanel();
   });
-document.addEventListener("click", (e) => {
-  if (!flightModeOpen) return;
 
-  const clickedInsidePanel = flightPanel.contains(e.target);
-  const clickedPlane = planeTrigger.contains(e.target);
+  flightCloseBtn?.addEventListener("click", (e) => { e.stopPropagation(); closeFlightPanel(); });
+  flightPlayBtn?.addEventListener("click", (e) => { e.stopPropagation(); toggleFlightPlayback(); });
+  flightPrevBtn?.addEventListener("click", (e) => { e.stopPropagation(); stepFlightTrack(-1, true); });
+  flightNextBtn?.addEventListener("click", (e) => { e.stopPropagation(); stepFlightTrack(1, true); });
 
-  if (!clickedInsidePanel && !clickedPlane) {
-    closeFlightPanel();
-  }
-});
-  flightCloseBtn?.addEventListener("click", closeFlightPanel);
-  flightPlayBtn?.addEventListener("click", toggleFlightPlayback);
-  flightPrevBtn?.addEventListener("click", () => stepFlightTrack(-1, true));
-  flightNextBtn?.addEventListener("click", () => stepFlightTrack(1, true));
-
-
+  flightProgress?.addEventListener("pointerdown", (e) => e.stopPropagation());
   flightProgress?.addEventListener("input", () => {
     flightScrubActive = true;
     if (!flightAudio) return;
@@ -352,34 +273,15 @@ document.addEventListener("click", (e) => {
     flightScrubActive = false;
     syncFlightProgressUI();
   });
-}
 
-function setupAudio() {
-  window.addEventListener("pointerdown", startAudioFromGesture, true);
-  window.addEventListener("keydown", startAudioFromGesture, true);
+  flightPanel?.addEventListener("click", (e) => e.stopPropagation());
 
-  if (volumeSlider) {
-    volumeSlider.addEventListener("input", (e) => {
-      const a = ensureAudio();
-      const v = parseFloat(e.target.value);
-      a.volume = Number.isFinite(v) ? v : 0.35;
-
-      if (a.volume > 0 && a.muted) {
-        a.muted = false;
-        if (muteBtn) muteBtn.textContent = "mute";
-      }
-      saveAudioPrefs();
-    });
-  }
-
-  if (muteBtn) {
-    muteBtn.addEventListener("click", () => {
-      const a = ensureAudio();
-      a.muted = !a.muted;
-      muteBtn.textContent = a.muted ? "unmute" : "mute";
-      saveAudioPrefs();
-    });
-  }
+  document.addEventListener("click", (e) => {
+    if (!flightModeOpen) return;
+    const target = e.target;
+    if (flightPanel?.contains(target) || planeTrigger?.contains(target)) return;
+    closeFlightPanel();
+  });
 }
 
 async function loadMoodLibrary() {
@@ -1295,6 +1197,7 @@ function animate() {
     requestAnimationFrame(animate);
     return;
   }
+
   const now = performance.now();
   const dt = clamp((now - lastFrameTime) / 1000, 0, 0.05);
   lastFrameTime = now;
@@ -2117,7 +2020,6 @@ async function init() {
     overlay.appendChild(aboutEl);
   }
 
-  setupAudio();
   setupFlightEasterEgg();
 
   if (needMoreBtn) {
