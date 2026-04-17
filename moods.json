@@ -115,7 +115,8 @@
   "zones": ["full"],
   "orbit": true,
   "centerBias": "none"
-},{
+},
+{
   "label": "Hungry",
   "maxSpeed": 2.82,
   "wiggle": 1.05,
@@ -127,7 +128,8 @@
   "zones": ["topLeft", "topRight"],
   "orbit": false,
   "centerBias": "none"
-},{
+},
+{
   "label": "Small",
   "maxSpeed": 0.05,
   "wiggle": 0.25,
@@ -139,7 +141,8 @@
   "zones": ["full"],
   "orbit": false,
   "centerBias": "none"
-},{
+},
+{
   "label": "Supercalifragilisticexpialidocious",
   "maxSpeed": 0.36,
   "wiggle": 2.65,
@@ -152,7 +155,7 @@
   "orbit": false,
   "centerBias": "none"
 },
-  {
+{
   "label": "Amused",
   "maxSpeed": 3.44,
   "wiggle": 1.4,
@@ -163,6 +166,19 @@
   "sepDistance": 0,
   "zones": ["full"],
   "orbit": true,
+  "centerBias": "none"
+},
+{
+  "label": "Whimsical",
+  "maxSpeed": 2.4,
+  "wiggle": 0.75,
+  "wiggleSpeed": 0.85,
+  "shake": 0.95,
+  "shakeSpeed": 77,
+  "organismCount": 7,
+  "sepDistance": 14,
+  "zones": ["full"],
+  "orbit": false,
   "centerBias": "none"
 }
 ]
