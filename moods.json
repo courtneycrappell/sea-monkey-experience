@@ -180,5 +180,31 @@
   "zones": ["full"],
   "orbit": false,
   "centerBias": "none"
+},
+{
+  "label": "Active!",
+  "maxSpeed": 2.02,
+  "wiggle": 2.95,
+  "wiggleSpeed": 2.8,
+  "shake": 0,
+  "shakeSpeed": 40,
+  "organismCount": 40,
+  "sepDistance": 50,
+  "zones": ["full"],
+  "orbit": false,
+  "centerBias": "none"
+},
+{
+  "label": "Summer",
+  "maxSpeed": 2.23,
+  "wiggle": 0.75,
+  "wiggleSpeed": 0.85,
+  "shake": 0.6,
+  "shakeSpeed": 40,
+  "organismCount": 4,
+  "sepDistance": 0,
+  "zones": ["full"],
+  "orbit": false,
+  "centerBias": "none"
 }
 ]
