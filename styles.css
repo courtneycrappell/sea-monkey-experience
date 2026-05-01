@@ -436,3 +436,213 @@ body.flight-mode .flightEasterEgg {
   opacity: 1 !important;
   filter: none !important;
 }
+
+body.flight-mode .bulbEasterEgg {
+  opacity: 0.04 !important;
+  pointer-events: none;
+}
+
+/* ── Bulb Easter Egg ─────────────────────────────────── */
+
+.bulbEasterEgg{
+  position: absolute;
+  left: 90px;
+  bottom: 0;
+  transform: translateY(-40px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  pointer-events: auto;
+  z-index: 80;
+}
+
+.bulbTrigger{
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 4px 10px 12px;
+  cursor: none;
+  opacity: 0.68;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.45));
+  transition: transform 500ms ease, opacity 500ms ease, filter 500ms ease;
+}
+
+.bulbTrigger:hover,
+.bulbEasterEgg.open .bulbTrigger{
+  opacity: 0.96;
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 8px rgba(205,235,245,0.12));
+}
+
+.bulbSvg{
+  width: 40px;
+  height: auto;
+  display: block;
+}
+
+.bulbSvg path,
+.bulbSvg line{
+  fill: none;
+  stroke: rgba(220,245,255,0.18);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.08)) drop-shadow(0 -1px 0 rgba(0,0,0,0.6));
+}
+
+.bulbSvg path{
+  fill: rgba(220,245,255,0.02);
+}
+
+.bulbTrigger:hover .bulbSvg path,
+.bulbTrigger:hover .bulbSvg line,
+.bulbEasterEgg.open .bulbSvg path,
+.bulbEasterEgg.open .bulbSvg line{
+  fill: rgba(220,245,255,0.05);
+  stroke: rgba(220,245,255,0.36);
+}
+
+.bulbPanel{
+  width: min(500px, calc(92vw - 40px));
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(18px) scaleY(0.96);
+  transform-origin: bottom left;
+  transition: max-height 700ms ease, opacity 500ms ease, transform 700ms ease, margin-bottom 700ms ease;
+  pointer-events: none;
+  margin-bottom: -8px;
+}
+
+.bulbEasterEgg.open .bulbPanel{
+  max-height: 680px;
+  opacity: 1;
+  transform: translateY(0) scaleY(1);
+  pointer-events: auto;
+  margin-bottom: 4px;
+}
+
+.bulbPanelInner{
+  border-radius: 18px;
+  padding: 14px 16px 14px;
+  background: linear-gradient(to bottom, rgba(10,18,24,0.86), rgba(4,9,13,0.94));
+  box-shadow: inset 0 0 0 1px rgba(200,235,245,0.08), 0 18px 60px rgba(0,0,0,0.34);
+  backdrop-filter: blur(9px);
+  max-height: 620px;
+  overflow-y: auto;
+}
+
+.bulbLabel{
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.48);
+  margin-bottom: 8px;
+}
+
+.bulbTransport{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.bulbVideoWrap{
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+}
+
+.bulbIframe{
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+}
+
+.bulbPanelAbout{
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(220,245,255,0.08);
+}
+
+.bulbAboutTitle{
+  margin: 0 0 6px 0;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.54);
+}
+
+.bulbAboutMeta{
+  margin: 0 0 12px 0;
+  font-size: 11px;
+  line-height: 1.55;
+  color: rgba(220,245,255,0.48);
+  font-style: italic;
+}
+
+.bulbAboutSubtitle{
+  margin: 0 0 8px 0;
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.44);
+}
+
+.bulbAboutText{
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(220,245,255,0.68);
+}
+
+.bulbAboutText em{ color: rgba(220,245,255,0.86); }
+
+@media (max-width: 720px){
+  .bulbSvg{ width: 56px; }
+  .bulbPanel{ width: min(380px, calc(100vw - 34px)); }
+}
+
+body.bulb-mode {
+  background: #000;
+}
+
+body.bulb-mode .top,
+body.bulb-mode .rerollRow,
+body.bulb-mode .tank,
+body.bulb-mode .about {
+  opacity: 0.04 !important;
+  transition: opacity 500ms ease, filter 500ms ease;
+}
+
+body.bulb-mode .wordBtn,
+body.bulb-mode .needMoreBtn {
+  opacity: 0.04 !important;
+  color: rgba(220,245,255,0.04) !important;
+  pointer-events: none;
+  transition: opacity 500ms ease, color 500ms ease;
+}
+
+body.bulb-mode .tank {
+  filter: brightness(0.05);
+}
+
+body.bulb-mode .flightEasterEgg {
+  opacity: 0.04 !important;
+  pointer-events: none;
+}
+
+body.bulb-mode .bulbTrigger,
+body.bulb-mode .bulbPanel,
+body.bulb-mode .bulbPanelInner,
+body.bulb-mode .bulbEasterEgg {
+  opacity: 1 !important;
+  filter: none !important;
+}
