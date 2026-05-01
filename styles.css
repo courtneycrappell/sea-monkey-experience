@@ -612,9 +612,22 @@ body.flight-mode .heartEasterEgg {
 }
 
 @media (max-width: 540px){
+  .bulbEasterEgg{
+    transform: none;
+    bottom: 40px;
+  }
   .bulbPanel{
-    width: calc(100vw - 20px);
-    margin-left: -80px;
+    margin-left: 0;
+    transition: opacity 400ms ease;
+  }
+  .bulbEasterEgg.open .bulbPanel{
+    position: fixed;
+    bottom: 80px;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-height: 75vh;
+    transform: none;
   }
 }
 
@@ -816,9 +829,22 @@ body.bulb-mode .bulbEasterEgg {
 }
 
 @media (max-width: 540px){
+  .heartEasterEgg{
+    transform: none;
+    bottom: 40px;
+  }
   .heartPanel{
-    width: calc(100vw - 20px);
-    margin-left: -142px;
+    margin-left: 0;
+    transition: opacity 400ms ease;
+  }
+  .heartEasterEgg.open .heartPanel{
+    position: fixed;
+    bottom: 80px;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-height: 75vh;
+    transform: none;
   }
 }
 
