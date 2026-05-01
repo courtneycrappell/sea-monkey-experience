@@ -92,6 +92,13 @@ const bulbTrigger = document.getElementById("bulbTrigger");
 const bulbCloseBtn = document.getElementById("bulbCloseBtn");
 const bulbIframe = document.getElementById("bulbIframe");
 
+/* Heart easter egg DOM */
+const heartEasterEgg = document.getElementById("heartEasterEgg");
+const heartPanel = document.getElementById("heartPanel");
+const heartTrigger = document.getElementById("heartTrigger");
+const heartCloseBtn = document.getElementById("heartCloseBtn");
+const heartIframe = document.getElementById("heartIframe");
+
 /* ---------------------------
    Globals
 ----------------------------*/
@@ -134,6 +141,10 @@ const flightTrackMemory = new Map();
 /* Bulb panel */
 const BULB_VIDEO_SRC = "https://www.youtube.com/embed/mHDPnzqlM1w";
 let bulbModeOpen = false;
+
+/* Heart panel */
+const HEART_VIDEO_SRC = "https://www.youtube.com/embed/iopTVWkxnzA";
+let heartModeOpen = false;
 
 function pauseMainExperienceForFlight() {
   document.body.classList.add("flight-mode");
@@ -242,6 +253,7 @@ function stepFlightTrack(delta, autoplay = true) {
 function openFlightPanel() {
   if (flightModeOpen) return;
   if (bulbModeOpen) closeBulbPanel();
+  if (heartModeOpen) closeHeartPanel();
   flightModeOpen = true;
   pauseMainExperienceForFlight();
   flightEasterEgg?.classList.add("open");
@@ -301,6 +313,7 @@ function setupFlightEasterEgg() {
 function openBulbPanel() {
   if (bulbModeOpen) return;
   if (flightModeOpen) closeFlightPanel();
+  if (heartModeOpen) closeHeartPanel();
   bulbModeOpen = true;
   document.body.classList.add("bulb-mode");
   lastFrameTime = performance.now();
@@ -338,6 +351,50 @@ function setupBulbEasterEgg() {
     const target = e.target;
     if (bulbPanel?.contains(target) || bulbTrigger?.contains(target)) return;
     closeBulbPanel();
+  });
+}
+
+function openHeartPanel() {
+  if (heartModeOpen) return;
+  if (flightModeOpen) closeFlightPanel();
+  if (bulbModeOpen) closeBulbPanel();
+  heartModeOpen = true;
+  document.body.classList.add("heart-mode");
+  lastFrameTime = performance.now();
+  heartEasterEgg?.classList.add("open");
+  heartPanel?.setAttribute("aria-hidden", "false");
+  if (heartIframe) heartIframe.src = HEART_VIDEO_SRC;
+  const inner = document.querySelector(".heartPanelInner");
+  if (inner) inner.scrollTop = 0;
+}
+
+function closeHeartPanel() {
+  if (!heartModeOpen) return;
+  heartModeOpen = false;
+  document.body.classList.remove("heart-mode");
+  lastFrameTime = performance.now();
+  heartEasterEgg?.classList.remove("open");
+  heartPanel?.setAttribute("aria-hidden", "true");
+  if (heartIframe) heartIframe.src = "";
+}
+
+function setupHeartEasterEgg() {
+  if (!heartTrigger) return;
+
+  heartTrigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (heartModeOpen) closeHeartPanel();
+    else openHeartPanel();
+  });
+
+  heartCloseBtn?.addEventListener("click", (e) => { e.stopPropagation(); closeHeartPanel(); });
+  heartPanel?.addEventListener("click", (e) => e.stopPropagation());
+
+  document.addEventListener("click", (e) => {
+    if (!heartModeOpen) return;
+    const target = e.target;
+    if (heartPanel?.contains(target) || heartTrigger?.contains(target)) return;
+    closeHeartPanel();
   });
 }
 
@@ -1249,7 +1306,7 @@ function drawBackgroundVignette(bounds) {
 let lastFrameTime = performance.now();
 
 function animate() {
-  if (flightModeOpen || bulbModeOpen) {
+  if (flightModeOpen || bulbModeOpen || heartModeOpen) {
     lastFrameTime = performance.now();
     requestAnimationFrame(animate);
     return;
@@ -2079,6 +2136,7 @@ async function init() {
 
   setupFlightEasterEgg();
   setupBulbEasterEgg();
+  setupHeartEasterEgg();
 
   if (needMoreBtn) {
     needMoreBtn.addEventListener("click", () => {
@@ -2134,6 +2192,10 @@ window.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && bulbModeOpen) {
     e.preventDefault();
     closeBulbPanel();
+  }
+  if (e.key === "Escape" && heartModeOpen) {
+    e.preventDefault();
+    closeHeartPanel();
   }
 });
 

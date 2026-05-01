@@ -437,7 +437,8 @@ body.flight-mode .flightEasterEgg {
   filter: none !important;
 }
 
-body.flight-mode .bulbEasterEgg {
+body.flight-mode .bulbEasterEgg,
+body.flight-mode .heartEasterEgg {
   opacity: 0.04 !important;
   pointer-events: none;
 }
@@ -610,6 +611,13 @@ body.flight-mode .bulbEasterEgg {
   .bulbPanel{ width: min(380px, calc(100vw - 34px)); }
 }
 
+@media (max-width: 540px){
+  .bulbPanel{
+    width: calc(100vw - 20px);
+    margin-left: -80px;
+  }
+}
+
 body.bulb-mode {
   background: #000;
 }
@@ -634,7 +642,8 @@ body.bulb-mode .tank {
   filter: brightness(0.05);
 }
 
-body.bulb-mode .flightEasterEgg {
+body.bulb-mode .flightEasterEgg,
+body.bulb-mode .heartEasterEgg {
   opacity: 0.04 !important;
   pointer-events: none;
 }
@@ -643,6 +652,210 @@ body.bulb-mode .bulbTrigger,
 body.bulb-mode .bulbPanel,
 body.bulb-mode .bulbPanelInner,
 body.bulb-mode .bulbEasterEgg {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* ── Heart Easter Egg ────────────────────────────────── */
+
+.heartEasterEgg{
+  position: absolute;
+  left: 152px;
+  bottom: 0;
+  transform: translateY(-40px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  pointer-events: auto;
+  z-index: 80;
+}
+
+.heartTrigger{
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 4px 10px 12px;
+  cursor: none;
+  opacity: 0.68;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.45));
+  transition: transform 500ms ease, opacity 500ms ease, filter 500ms ease;
+}
+
+.heartTrigger:hover,
+.heartEasterEgg.open .heartTrigger{
+  opacity: 0.96;
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 8px rgba(205,235,245,0.12));
+}
+
+.heartSvg{
+  width: 40px;
+  height: auto;
+  display: block;
+}
+
+.heartSvg path{
+  fill: rgba(220,245,255,0.02);
+  stroke: rgba(220,245,255,0.18);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.08)) drop-shadow(0 -1px 0 rgba(0,0,0,0.6));
+}
+
+.heartTrigger:hover .heartSvg path,
+.heartEasterEgg.open .heartSvg path{
+  fill: rgba(220,245,255,0.05);
+  stroke: rgba(220,245,255,0.36);
+}
+
+.heartPanel{
+  width: min(500px, calc(92vw - 40px));
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(18px) scaleY(0.96);
+  transform-origin: bottom left;
+  transition: max-height 700ms ease, opacity 500ms ease, transform 700ms ease, margin-bottom 700ms ease;
+  pointer-events: none;
+  margin-bottom: -8px;
+}
+
+.heartEasterEgg.open .heartPanel{
+  max-height: 680px;
+  opacity: 1;
+  transform: translateY(0) scaleY(1);
+  pointer-events: auto;
+  margin-bottom: 4px;
+}
+
+.heartPanelInner{
+  border-radius: 18px;
+  padding: 14px 16px 14px;
+  background: linear-gradient(to bottom, rgba(10,18,24,0.86), rgba(4,9,13,0.94));
+  box-shadow: inset 0 0 0 1px rgba(200,235,245,0.08), 0 18px 60px rgba(0,0,0,0.34);
+  backdrop-filter: blur(9px);
+  max-height: 620px;
+  overflow-y: auto;
+}
+
+.heartLabel{
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.48);
+  margin-bottom: 8px;
+}
+
+.heartTransport{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.heartVideoWrap{
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+}
+
+.heartIframe{
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+}
+
+.heartPanelAbout{
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(220,245,255,0.08);
+}
+
+.heartAboutTitle{
+  margin: 0 0 6px 0;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.54);
+}
+
+.heartAboutMeta{
+  margin: 0 0 12px 0;
+  font-size: 11px;
+  line-height: 1.55;
+  color: rgba(220,245,255,0.48);
+  font-style: italic;
+}
+
+.heartAboutSubtitle{
+  margin: 0 0 8px 0;
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.44);
+}
+
+.heartAboutText{
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(220,245,255,0.68);
+}
+
+@media (max-width: 720px){
+  .heartSvg{ width: 56px; }
+  .heartPanel{ width: min(380px, calc(100vw - 34px)); }
+}
+
+@media (max-width: 540px){
+  .heartPanel{
+    width: calc(100vw - 20px);
+    margin-left: -142px;
+  }
+}
+
+body.heart-mode {
+  background: #000;
+}
+
+body.heart-mode .top,
+body.heart-mode .rerollRow,
+body.heart-mode .tank,
+body.heart-mode .about {
+  opacity: 0.04 !important;
+  transition: opacity 500ms ease, filter 500ms ease;
+}
+
+body.heart-mode .wordBtn,
+body.heart-mode .needMoreBtn {
+  opacity: 0.04 !important;
+  color: rgba(220,245,255,0.04) !important;
+  pointer-events: none;
+  transition: opacity 500ms ease, color 500ms ease;
+}
+
+body.heart-mode .tank {
+  filter: brightness(0.05);
+}
+
+body.heart-mode .flightEasterEgg,
+body.heart-mode .bulbEasterEgg {
+  opacity: 0.04 !important;
+  pointer-events: none;
+}
+
+body.heart-mode .heartTrigger,
+body.heart-mode .heartPanel,
+body.heart-mode .heartPanelInner,
+body.heart-mode .heartEasterEgg {
   opacity: 1 !important;
   filter: none !important;
 }
