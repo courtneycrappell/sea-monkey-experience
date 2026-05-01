@@ -140,7 +140,7 @@ body{
 
 .flightEasterEgg{
   position: absolute;
-  left: 18px;
+  left: 80px;
   bottom: 0;
 
   transform: translateY(-40px);   /* pulls plane upward */
@@ -437,6 +437,7 @@ body.flight-mode .flightEasterEgg {
   filter: none !important;
 }
 
+body.flight-mode .seaEasterEgg,
 body.flight-mode .bulbEasterEgg,
 body.flight-mode .heartEasterEgg {
   opacity: 0.04 !important;
@@ -447,7 +448,7 @@ body.flight-mode .heartEasterEgg {
 
 .bulbEasterEgg{
   position: absolute;
-  left: 90px;
+  left: 152px;
   bottom: 0;
   transform: translateY(-40px);
   display: flex;
@@ -655,6 +656,7 @@ body.bulb-mode .tank {
   filter: brightness(0.05);
 }
 
+body.bulb-mode .seaEasterEgg,
 body.bulb-mode .flightEasterEgg,
 body.bulb-mode .heartEasterEgg {
   opacity: 0.04 !important;
@@ -673,7 +675,7 @@ body.bulb-mode .bulbEasterEgg {
 
 .heartEasterEgg{
   position: absolute;
-  left: 152px;
+  left: 214px;
   bottom: 0;
   transform: translateY(-40px);
   display: flex;
@@ -872,6 +874,7 @@ body.heart-mode .tank {
   filter: brightness(0.05);
 }
 
+body.heart-mode .seaEasterEgg,
 body.heart-mode .flightEasterEgg,
 body.heart-mode .bulbEasterEgg {
   opacity: 0.04 !important;
@@ -882,6 +885,201 @@ body.heart-mode .heartTrigger,
 body.heart-mode .heartPanel,
 body.heart-mode .heartPanelInner,
 body.heart-mode .heartEasterEgg {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* ── Sea Easter Egg ──────────────────────────────────── */
+
+.seaEasterEgg{
+  position: absolute;
+  left: 18px;
+  bottom: 0;
+  transform: translateY(-40px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  pointer-events: auto;
+  z-index: 80;
+}
+
+.seaTrigger{
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 4px 10px 13px;
+  cursor: none;
+  opacity: 0.68;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.45));
+  transition: transform 500ms ease, opacity 500ms ease, filter 500ms ease;
+}
+
+.seaTrigger:hover,
+.seaEasterEgg.open .seaTrigger{
+  opacity: 0.96;
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 8px rgba(205,235,245,0.12));
+}
+
+.seaSvg{
+  width: 32px;
+  height: 30px;
+  display: block;
+}
+
+.seaSvg path{
+  fill: none;
+  stroke: rgba(220,245,255,0.18);
+  stroke-width: 20;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.08)) drop-shadow(0 -1px 0 rgba(0,0,0,0.6));
+}
+
+.seaSvg line{
+  fill: none;
+  stroke: rgba(220,245,255,0.18);
+  stroke-width: 5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.08)) drop-shadow(0 -1px 0 rgba(0,0,0,0.6));
+}
+
+.seaTrigger:hover .seaSvg path,
+.seaEasterEgg.open .seaSvg path{
+  stroke: rgba(220,245,255,0.36);
+}
+
+.seaTrigger:hover .seaSvg line,
+.seaEasterEgg.open .seaSvg line{
+  stroke: rgba(220,245,255,0.36);
+}
+
+.seaPanel{
+  width: min(440px, calc(92vw - 40px));
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(18px) scaleY(0.96);
+  transform-origin: bottom left;
+  transition: max-height 700ms ease, opacity 500ms ease, transform 700ms ease, margin-bottom 700ms ease;
+  pointer-events: none;
+  margin-bottom: -8px;
+}
+
+.seaEasterEgg.open .seaPanel{
+  max-height: 360px;
+  opacity: 1;
+  transform: translateY(0) scaleY(1);
+  pointer-events: auto;
+  margin-bottom: 4px;
+}
+
+.seaPanelInner{
+  border-radius: 18px;
+  padding: 14px 16px 14px;
+  background: linear-gradient(to bottom, rgba(10,18,24,0.86), rgba(4,9,13,0.94));
+  box-shadow: inset 0 0 0 1px rgba(200,235,245,0.08), 0 18px 60px rgba(0,0,0,0.34);
+  backdrop-filter: blur(9px);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.seaLabel{
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.48);
+  margin-bottom: 8px;
+}
+
+.seaTransport{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.seaPanelAbout{
+  padding-top: 4px;
+}
+
+.seaAboutTitle{
+  margin: 0 0 8px 0;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.54);
+}
+
+.seaAboutText{
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(220,245,255,0.68);
+}
+
+@media (max-width: 720px){
+  .seaSvg{ width: 56px; }
+  .seaPanel{ width: min(360px, calc(100vw - 34px)); }
+}
+
+@media (max-width: 540px){
+  .seaEasterEgg{
+    transform: none;
+    bottom: 40px;
+  }
+  .seaPanel{
+    transition: opacity 400ms ease;
+  }
+  .seaEasterEgg.open .seaPanel{
+    position: fixed;
+    bottom: 80px;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-height: 75vh;
+    transform: none;
+  }
+}
+
+body.sea-mode {
+  background: #000;
+}
+
+body.sea-mode .top,
+body.sea-mode .rerollRow,
+body.sea-mode .tank,
+body.sea-mode .about {
+  opacity: 0.04 !important;
+  transition: opacity 500ms ease, filter 500ms ease;
+}
+
+body.sea-mode .wordBtn,
+body.sea-mode .needMoreBtn {
+  opacity: 0.04 !important;
+  color: rgba(220,245,255,0.04) !important;
+  pointer-events: none;
+  transition: opacity 500ms ease, color 500ms ease;
+}
+
+body.sea-mode .tank {
+  filter: brightness(0.05);
+}
+
+body.sea-mode .flightEasterEgg,
+body.sea-mode .bulbEasterEgg,
+body.sea-mode .heartEasterEgg {
+  opacity: 0.04 !important;
+  pointer-events: none;
+}
+
+body.sea-mode .seaTrigger,
+body.sea-mode .seaPanel,
+body.sea-mode .seaPanelInner,
+body.sea-mode .seaEasterEgg {
   opacity: 1 !important;
   filter: none !important;
 }

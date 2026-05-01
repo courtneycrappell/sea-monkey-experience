@@ -85,6 +85,12 @@ const flightCloseBtn = document.getElementById("flightCloseBtn");
 const flightTrackIndicator = document.getElementById("flightTrackIndicator");
 const flightProgress = document.getElementById("flightProgress");
 
+/* Sea easter egg DOM */
+const seaEasterEgg = document.getElementById("seaEasterEgg");
+const seaPanel = document.getElementById("seaPanel");
+const seaTrigger = document.getElementById("seaTrigger");
+const seaCloseBtn = document.getElementById("seaCloseBtn");
+
 /* Bulb easter egg DOM */
 const bulbEasterEgg = document.getElementById("bulbEasterEgg");
 const bulbPanel = document.getElementById("bulbPanel");
@@ -137,6 +143,9 @@ let flightIsPlaying = false;
 let flightCurrentIndex = 0;
 let flightScrubActive = false;
 const flightTrackMemory = new Map();
+
+/* Sea panel */
+let seaModeOpen = false;
 
 /* Bulb panel */
 const BULB_VIDEO_SRC = "https://www.youtube.com/embed/mHDPnzqlM1w";
@@ -252,6 +261,7 @@ function stepFlightTrack(delta, autoplay = true) {
 
 function openFlightPanel() {
   if (flightModeOpen) return;
+  if (seaModeOpen) closeSeaPanel();
   if (bulbModeOpen) closeBulbPanel();
   if (heartModeOpen) closeHeartPanel();
   flightModeOpen = true;
@@ -310,8 +320,52 @@ function setupFlightEasterEgg() {
   });
 }
 
+function openSeaPanel() {
+  if (seaModeOpen) return;
+  if (flightModeOpen) closeFlightPanel();
+  if (bulbModeOpen) closeBulbPanel();
+  if (heartModeOpen) closeHeartPanel();
+  seaModeOpen = true;
+  document.body.classList.add("sea-mode");
+  lastFrameTime = performance.now();
+  seaEasterEgg?.classList.add("open");
+  seaPanel?.setAttribute("aria-hidden", "false");
+  const inner = document.querySelector(".seaPanelInner");
+  if (inner) inner.scrollTop = 0;
+}
+
+function closeSeaPanel() {
+  if (!seaModeOpen) return;
+  seaModeOpen = false;
+  document.body.classList.remove("sea-mode");
+  lastFrameTime = performance.now();
+  seaEasterEgg?.classList.remove("open");
+  seaPanel?.setAttribute("aria-hidden", "true");
+}
+
+function setupSeaEasterEgg() {
+  if (!seaTrigger) return;
+
+  seaTrigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (seaModeOpen) closeSeaPanel();
+    else openSeaPanel();
+  });
+
+  seaCloseBtn?.addEventListener("click", (e) => { e.stopPropagation(); closeSeaPanel(); });
+  seaPanel?.addEventListener("click", (e) => e.stopPropagation());
+
+  document.addEventListener("click", (e) => {
+    if (!seaModeOpen) return;
+    const target = e.target;
+    if (seaPanel?.contains(target) || seaTrigger?.contains(target)) return;
+    closeSeaPanel();
+  });
+}
+
 function openBulbPanel() {
   if (bulbModeOpen) return;
+  if (seaModeOpen) closeSeaPanel();
   if (flightModeOpen) closeFlightPanel();
   if (heartModeOpen) closeHeartPanel();
   bulbModeOpen = true;
@@ -356,6 +410,7 @@ function setupBulbEasterEgg() {
 
 function openHeartPanel() {
   if (heartModeOpen) return;
+  if (seaModeOpen) closeSeaPanel();
   if (flightModeOpen) closeFlightPanel();
   if (bulbModeOpen) closeBulbPanel();
   heartModeOpen = true;
@@ -1306,7 +1361,7 @@ function drawBackgroundVignette(bounds) {
 let lastFrameTime = performance.now();
 
 function animate() {
-  if (flightModeOpen || bulbModeOpen || heartModeOpen) {
+  if (seaModeOpen || flightModeOpen || bulbModeOpen || heartModeOpen) {
     lastFrameTime = performance.now();
     requestAnimationFrame(animate);
     return;
@@ -2134,6 +2189,7 @@ async function init() {
     overlay.appendChild(aboutEl);
   }
 
+  setupSeaEasterEgg();
   setupFlightEasterEgg();
   setupBulbEasterEgg();
   setupHeartEasterEgg();
@@ -2188,6 +2244,10 @@ window.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && flightModeOpen) {
     e.preventDefault();
     closeFlightPanel();
+  }
+  if (e.key === "Escape" && seaModeOpen) {
+    e.preventDefault();
+    closeSeaPanel();
   }
   if (e.key === "Escape" && bulbModeOpen) {
     e.preventDefault();
