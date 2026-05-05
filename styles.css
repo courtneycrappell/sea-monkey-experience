@@ -405,6 +405,26 @@ canvas{
   .flightTrackIndicator{ min-width: 110px; letter-spacing: 0.12em; }
 }
 
+@media (max-width: 540px){
+  .flightEasterEgg{
+    transform: none;
+    bottom: 40px;
+  }
+  .flightPanel{
+    margin-left: 0;
+    transition: opacity 400ms ease;
+  }
+  .flightEasterEgg.open .flightPanel{
+    position: fixed;
+    bottom: 80px;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-height: 75vh;
+    transform: none;
+  }
+}
+
 body.flight-mode {
   background: #000;
 }
@@ -518,7 +538,7 @@ body.flight-mode .heartEasterEgg {
 }
 
 .bulbEasterEgg.open .bulbPanel{
-  max-height: 680px;
+  max-height: min(680px, 80vh);
   opacity: 1;
   transform: translateY(0) scaleY(1);
   pointer-events: auto;
@@ -738,7 +758,7 @@ body.bulb-mode .bulbEasterEgg {
 }
 
 .heartEasterEgg.open .heartPanel{
-  max-height: 680px;
+  max-height: min(680px, 80vh);
   opacity: 1;
   transform: translateY(0) scaleY(1);
   pointer-events: auto;
@@ -1022,7 +1042,6 @@ body.heart-mode .heartEasterEgg {
 
 @media (max-width: 720px){
   .seaSvg{ width: 56px; }
-  .seaTrigger{ padding-bottom: 36px; }
   .seaPanel{ width: min(360px, calc(100vw - 34px)); }
 }
 
