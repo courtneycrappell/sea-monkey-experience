@@ -1041,7 +1041,8 @@ body.heart-mode .heartEasterEgg {
 }
 
 @media (max-width: 720px){
-  .seaSvg{ width: 56px; height: auto; }
+  .seaSvg{ width: 56px; height: 64px; }
+  .seaTrigger{ padding-bottom: 2px; }
   .seaPanel{ width: min(360px, calc(100vw - 34px)); }
 }
 
