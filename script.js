@@ -152,7 +152,7 @@ const BULB_VIDEO_SRC = "https://www.youtube.com/embed/mHDPnzqlM1w";
 let bulbModeOpen = false;
 
 /* Heart panel */
-const HEART_VIDEO_SRC = "https://www.youtube.com/embed/8mVuKdjEj54";
+const HEART_VIDEO_SRC = "https://www.youtube.com/embed/0MzL03PqHH4";
 let heartModeOpen = false;
 
 function pauseMainExperienceForFlight() {
