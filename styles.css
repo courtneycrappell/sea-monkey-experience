@@ -420,7 +420,7 @@ canvas{
     left: 8px;
     right: 8px;
     width: auto;
-    max-height: 75vh;
+    max-height: 75dvh;
     transform: none;
   }
 }
@@ -647,7 +647,7 @@ body.flight-mode .heartEasterEgg {
     left: 8px;
     right: 8px;
     width: auto;
-    max-height: 75vh;
+    max-height: 75dvh;
     transform: none;
   }
 }
@@ -865,7 +865,7 @@ body.bulb-mode .bulbEasterEgg {
     left: 8px;
     right: 8px;
     width: auto;
-    max-height: 75vh;
+    max-height: 75dvh;
     transform: none;
   }
 }
@@ -1060,7 +1060,7 @@ body.heart-mode .heartEasterEgg {
     left: 8px;
     right: 8px;
     width: auto;
-    max-height: 75vh;
+    max-height: 75dvh;
     transform: none;
   }
 }
