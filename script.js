@@ -514,6 +514,27 @@ window.addEventListener("mouseleave", () => {
 });
 
 /* ---------------------------
+   Tank scare interaction
+----------------------------*/
+
+canvas.addEventListener("pointerdown", (e) => {
+  if (seaModeOpen || flightModeOpen || bulbModeOpen || heartModeOpen) return;
+  const rect = canvas.getBoundingClientRect();
+  const tx = e.clientX - rect.left;
+  const ty = e.clientY - rect.top;
+  const SCARE_RADIUS = 120;
+  const SCARE_DURATION = 2500;
+  const now = performance.now();
+  for (const o of organisms) {
+    if (Math.hypot(o.x - tx, o.y - ty) < SCARE_RADIUS) {
+      o.fleeFromX = tx;
+      o.fleeFromY = ty;
+      o.scaredUntil = now + SCARE_DURATION;
+    }
+  }
+}, { passive: true });
+
+/* ---------------------------
    About Toggle
 ----------------------------*/
 
@@ -987,11 +1008,16 @@ class Organism {
     this.orbitPhase = Math.random() * Math.PI * 2;
     this.orbitRadiusMul = 0.85 + Math.random() * 0.35;
     this.orbitNoise = Math.random() * 1000;
+
+    this.scaredUntil = 0;
+    this.fleeFromX = 0;
+    this.fleeFromY = 0;
   }
 
   update(bounds, cfg, fullBounds, orbitEnabled, fullTank) {
     const now = performance.now();
     const t = now * 0.001;
+    const scareT = clamp((this.scaredUntil - now) / 2000, 0, 1);
 
     // Ramp-in
     const elapsed = (now - activationStart) / 1000;
@@ -1081,6 +1107,19 @@ if (fullTank) {
   }
 }
 
+    // --- Scare: flee from touch/click point ---
+    if (scareT > 0) {
+      const fdx = this.x - this.fleeFromX;
+      const fdy = this.y - this.fleeFromY;
+      const fd = Math.hypot(fdx, fdy) || 1;
+      // Snap wander heading away from scare point quickly
+      const fleeAngle = Math.atan2(fdy, fdx);
+      this.wanderHeading = approachAngle(this.wanderHeading, fleeAngle, 0.35 * scareT);
+      // Apply flee impulse
+      this.vx += (fdx / fd) * 1.0 * scareT;
+      this.vy += (fdy / fd) * 1.0 * scareT;
+    }
+
     // Safety-net turning: near walls, bias intent inward (wall-normal)
     {
       const turnZone = 90;
@@ -1139,10 +1178,10 @@ if (fullTank) {
     this.vx *= 0.96;
     this.vy *= 0.96;
 
-    // Speed cap
+    // Speed cap (boosted during scare)
     const maxSpeed = Math.max(0, cfg.maxSpeed ?? 0.25);
     const capped = maxSpeed * (0.35 + 0.65 * rampEase);
-    limitSpeed(this, capped);
+    limitSpeed(this, capped * (scareT > 0 ? 1 + 5 * scareT : 1));
 
     // Soft edge field: nudges before touching wall
     const edgeSoftness = 60;
