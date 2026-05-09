@@ -517,7 +517,8 @@ window.addEventListener("mouseleave", () => {
    Tank scare interaction
 ----------------------------*/
 
-canvas.addEventListener("pointerdown", (e) => {
+const tankEl = canvas.parentElement;
+tankEl.addEventListener("pointerdown", (e) => {
   if (seaModeOpen || flightModeOpen || bulbModeOpen || heartModeOpen) return;
   const rect = canvas.getBoundingClientRect();
   const tx = e.clientX - rect.left;
@@ -530,6 +531,12 @@ canvas.addEventListener("pointerdown", (e) => {
       o.fleeFromX = tx;
       o.fleeFromY = ty;
       o.scaredUntil = now + SCARE_DURATION;
+      // One-time velocity kick away from touch point
+      const fdx = o.x - tx;
+      const fdy = o.y - ty;
+      const fd = Math.hypot(fdx, fdy) || 1;
+      o.vx += (fdx / fd) * 2.0;
+      o.vy += (fdy / fd) * 2.0;
     }
   }
 }, { passive: true });
@@ -1107,17 +1114,13 @@ if (fullTank) {
   }
 }
 
-    // --- Scare: flee from touch/click point ---
+    // --- Scare: bias heading away from touch/click point ---
     if (scareT > 0) {
       const fdx = this.x - this.fleeFromX;
       const fdy = this.y - this.fleeFromY;
       const fd = Math.hypot(fdx, fdy) || 1;
-      // Snap wander heading away from scare point quickly
       const fleeAngle = Math.atan2(fdy, fdx);
-      this.wanderHeading = approachAngle(this.wanderHeading, fleeAngle, 0.35 * scareT);
-      // Apply flee impulse
-      this.vx += (fdx / fd) * 1.0 * scareT;
-      this.vy += (fdy / fd) * 1.0 * scareT;
+      this.wanderHeading = approachAngle(this.wanderHeading, fleeAngle, 0.30 * scareT);
     }
 
     // Safety-net turning: near walls, bias intent inward (wall-normal)
@@ -1178,10 +1181,10 @@ if (fullTank) {
     this.vx *= 0.96;
     this.vy *= 0.96;
 
-    // Speed cap (boosted during scare)
+    // Speed cap (slightly boosted during scare)
     const maxSpeed = Math.max(0, cfg.maxSpeed ?? 0.25);
     const capped = maxSpeed * (0.35 + 0.65 * rampEase);
-    limitSpeed(this, capped * (scareT > 0 ? 1 + 5 * scareT : 1));
+    limitSpeed(this, capped * (scareT > 0 ? 1 + 3.0 * scareT : 1));
 
     // Soft edge field: nudges before touching wall
     const edgeSoftness = 60;

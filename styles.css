@@ -335,7 +335,8 @@ body{
   overflow: hidden;
   position: relative;
   z-index: 5;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: default;
 }
 
 canvas{
