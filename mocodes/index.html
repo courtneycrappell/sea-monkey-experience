@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoCode Finder — UMKC Conservatory</title>
+  <style>
+    /* ── Variables ────────────────────────────────────────────── */
+    :root {
+      --blue:      #002855;
+      --blue-mid:  #003d7a;
+      --gold:      #F0C522;
+      --gold-dark: #c9a200;
+      --bg:        #f4f6f9;
+      --card-bg:   #ffffff;
+      --text:      #1a1a1a;
+      --muted:     #555555;
+      --border:    #d0d7e2;
+      --success:   #1a6b2e;
+      --warn-bg:   #fff8e1;
+      --warn-border:#e0b000;
+      --shared-bg: #eaf2ff;
+      --shared-border:#b3cdf0;
+      --radius:    10px;
+      --shadow:    0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    /* ── Reset / Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: var(--blue); }
+    a:focus, button:focus, input:focus, select:focus {
+      outline: 3px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    header {
+      background: var(--blue);
+      color: #fff;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    header .org { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.8; }
+    header h1   { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
+    .header-gold-bar { height: 4px; background: var(--gold); }
+
+    /* ── Nav tabs ─────────────────────────────────────────────── */
+    .tab-nav {
+      display: flex;
+      background: var(--blue);
+      padding: 0 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      padding: 0.6rem 1rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .tab-btn:hover { color: #fff; }
+    .tab-btn.active { color: #fff; border-bottom-color: var(--gold); }
+
+    /* ── Main layout ──────────────────────────────────────────── */
+    main { flex: 1; padding: 1.5rem; max-width: 680px; width: 100%; margin: 0 auto; }
+
+    /* ── Screens ──────────────────────────────────────────────── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── Cards ────────────────────────────────────────────────── */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Progress ─────────────────────────────────────────────── */
+    .progress { margin-bottom: 1.25rem; }
+    .progress-steps {
+      display: flex;
+      gap: 0;
+      margin-bottom: 0.5rem;
+    }
+    .progress-step {
+      flex: 1;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 0.25rem 0;
+      border-bottom: 3px solid var(--border);
+    }
+    .progress-step.active   { color: var(--blue); border-color: var(--blue); font-weight: 600; }
+    .progress-step.complete { color: var(--success); border-color: var(--success); }
+    .progress-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: right;
+      margin-top: 0.25rem;
+    }
+
+    /* ── Questions ────────────────────────────────────────────── */
+    .question { font-size: 1.1rem; font-weight: 600; color: var(--blue); margin-bottom: 1.25rem; }
+    .question-sub { font-size: 0.875rem; color: var(--muted); font-weight: 400; margin-top: 0.25rem; }
+
+    /* ── Option groups ────────────────────────────────────────── */
+    .option-group-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding: 0.75rem 0 0.4rem;
+      border-top: 1px solid var(--border);
+      margin-top: 0.5rem;
+    }
+    .option-group-label:first-child { border-top: none; margin-top: 0; padding-top: 0; }
+
+    /* ── Supergroup accordion ─────────────────────────────────── */
+    .sg-wrap { display: flex; flex-direction: column; gap: 0.5rem; }
+    .sg-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.15s, border-color 0.15s;
+      width: 100%;
+      text-align: left;
+    }
+    .sg-header:hover { border-color: var(--blue-mid); background: #edf2fa; }
+    .sg-header.open  { border-color: var(--blue); background: #e8f0fb; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+    .sg-header .sg-icon  { font-size: 1.2rem; line-height: 1; }
+    .sg-header .sg-label { flex: 1; }
+    .sg-header .sg-count { font-size: 0.75rem; color: var(--muted); font-weight: 400; }
+    .sg-header .sg-arrow { font-size: 0.7rem; color: var(--muted); transition: transform 0.15s; }
+    .sg-header.open .sg-arrow { transform: rotate(90deg); }
+    .sg-body {
+      border: 2px solid var(--blue);
+      border-top: none;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      padding: 0.75rem;
+      display: none;
+    }
+    .sg-body.open { display: block; }
+
+    /* ── Radio options ────────────────────────────────────────── */
+    .option-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .option-item { position: relative; }
+    .option-item input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      left: 0; top: 0;
+      margin: 0;
+    }
+    .option-item label {
+      display: block;
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      font-size: 0.95rem;
+    }
+    .option-item label .option-sub {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+      font-weight: 400;
+    }
+    .option-item input:checked + label {
+      border-color: var(--blue);
+      background: #e8f0fb;
+    }
+    .option-item input:focus + label { outline: 3px solid var(--gold); outline-offset: 1px; }
+    .option-item label:hover { border-color: var(--blue-mid); }
+
+    /* ── Buttons ──────────────────────────────────────────────── */
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 1.25rem;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: var(--blue-mid); }
+    .btn-secondary {
+      background: #fff;
+      color: var(--blue);
+      border: 2px solid var(--blue);
+      border-radius: 8px;
+      padding: 0.6rem 1.1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: #e8f0fb; }
+    .btn-link {
+      background: none;
+      border: none;
+      color: var(--blue);
+      font-size: 0.875rem;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+    .btn-back {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 0.875rem;
+      cursor: pointer;
+      padding: 0 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .btn-back:hover { color: var(--blue); }
+    .btn-row {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    /* ── Welcome screen ───────────────────────────────────────── */
+    .welcome-title { font-size: 1.3rem; font-weight: 700; color: var(--blue); margin-bottom: 0.75rem; }
+    .welcome-body  { font-size: 0.95rem; color: var(--muted); line-height: 1.6; margin-bottom: 0.5rem; }
+    .divider { text-align: center; color: var(--muted); font-size: 0.8rem; margin: 0.75rem 0; }
+    .btn-ref-link {
+      display: block;
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--blue);
+      text-decoration: underline;
+      cursor: pointer;
+      background: none;
+      border: none;
+      width: 100%;
+    }
+
+    /* ── Result card ──────────────────────────────────────────── */
+    .result-card { margin-bottom: 1rem; }
+    .result-path {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .result-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    @media (max-width: 480px) { .result-fields { grid-template-columns: 1fr; } }
+    .result-field {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 0.875rem 1rem;
+      border: 1px solid var(--border);
+    }
+    .result-field .field-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+    .result-field .field-code {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--blue);
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+    }
+    .result-field .field-name {
+      font-size: 0.85rem;
+      color: var(--text);
+      margin-top: 0.2rem;
+    }
+    .result-why { margin-bottom: 1rem; }
+    .result-why h3 { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.4rem; }
+    .result-why p  { font-size: 0.9rem; line-height: 1.6; color: var(--text); }
+
+    .ambiguity-box {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      border-radius: 8px;
+      padding: 0.875rem 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+    }
+    .ambiguity-box strong { display: block; margin-bottom: 0.3rem; }
+
+    .shared-box {
+      background: var(--shared-bg);
+      border: 1px solid var(--shared-border);
+      border-radius: 8px;
+      padding: 0.875rem 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+    }
+    .shared-box strong { display: block; margin-bottom: 0.3rem; color: var(--blue); }
+
+    .prod-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: #f0f4f8;
+      border-radius: 6px;
+      padding: 0.6rem 0.875rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Compensation result ──────────────────────────────────── */
+    .comp-result-box {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.75rem;
+      margin-bottom: 1rem;
+    }
+    .comp-worker-type {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .comp-title { font-size: 1.1rem; font-weight: 700; color: var(--blue); margin-bottom: 1rem; }
+    .comp-account-row {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .comp-account-code { font-weight: 700; font-family: monospace; color: var(--blue); }
+    .comp-program-note {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+    .comp-redirect {
+      background: #f0f0f0;
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    /* ── Feedback ─────────────────────────────────────────────── */
+    .feedback-section {
+      text-align: center;
+      padding: 0.75rem 0;
+      border-top: 1px solid var(--border);
+      margin-top: 0.5rem;
+    }
+    .feedback-link {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .feedback-link:hover { color: var(--blue); }
+
+    /* ── Reference table ──────────────────────────────────────── */
+    .ref-controls {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .ref-controls label { font-size: 0.875rem; font-weight: 600; color: var(--blue); }
+    .ref-controls select {
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.875rem;
+      color: var(--text);
+      background: white;
+    }
+    .ref-count { font-size: 0.8rem; color: var(--muted); }
+    .ref-table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    th {
+      background: var(--blue);
+      color: #fff;
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:hover td { background: #f0f4f8; }
+    td.code { font-family: monospace; font-weight: 700; color: var(--blue); white-space: nowrap; }
+    td.shared-tag { color: var(--blue); font-size: 0.7rem; }
+    .tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      margin-top: 0.2rem;
+    }
+    .tag-prod   { background: #fff0e0; color: #944700; }
+    .tag-shared { background: var(--shared-bg); color: #00437a; }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    footer {
+      background: var(--blue);
+      color: rgba(255,255,255,0.6);
+      font-size: 0.75rem;
+      text-align: center;
+      padding: 0.75rem 1rem;
+    }
+
+    /* ── Easter egg ───────────────────────────────────────────── */
+    .easter-egg {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      z-index: 9999;
+      display: block;
+      line-height: 0;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .easter-egg img {
+      width: 38px;
+      height: 38px;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block;
+    }
+    @media print { .easter-egg { display: none !important; } }
+
+    /* ── Print styles ─────────────────────────────────────────── */
+    @media print {
+      header .org, .tab-nav, .btn-back, .btn-row, .feedback-section, footer, .screen:not(.active) { display: none !important; }
+      body { background: white; }
+      .card, .result-card, .comp-result-box { box-shadow: none; border: 1px solid #ccc; }
+      .result-fields { grid-template-columns: 1fr 1fr; }
+      main { max-width: 100%; padding: 0; }
+      .print-header { display: block !important; font-size: 0.8rem; color: #555; margin-bottom: 1rem; }
+    }
+    .print-header { display: none; }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="org">UMKC Conservatory</div>
+  <h1>MoCode Finder</h1>
+</header>
+<div class="header-gold-bar"></div>
+
+<div class="tab-nav" role="navigation" aria-label="Main navigation">
+  <button class="tab-btn active" id="tab-finder" onclick="showTab('finder')" aria-pressed="true">Find a Code</button>
+  <button class="tab-btn" id="tab-reference" onclick="showTab('reference')" aria-pressed="false">Full Reference</button>
+</div>
+
+<main id="main">
+
+  <!-- ── Welcome ─────────────────────────────────────────── -->
+  <section id="screen-welcome" class="screen active" aria-label="Welcome">
+    <div class="card">
+      <p class="welcome-title">Find the right MoCode for any Conservatory transaction.</p>
+      <p class="welcome-body">Answer three short questions to identify the correct MoCode and Account code. Use this tool to code transactions correctly in PeopleSoft.</p>
+      <p class="welcome-body">If a result doesn't look right, use the feedback button to send us a note — that helps us improve the taxonomy.</p>
+      <button class="btn-primary" onclick="showStep1()" id="btn-start">Get Started →</button>
+    </div>
+  </section>
+
+  <!-- ── Step 1: Division ────────────────────────────────── -->
+  <section id="screen-step1" class="screen" aria-label="Step 1 of 3: Division">
+    <div class="progress" aria-label="Progress: Step 1 of 3">
+      <div class="progress-steps">
+        <div class="progress-step active" aria-current="step">1. Division</div>
+        <div class="progress-step">2. Activity</div>
+        <div class="progress-step">3. Expense</div>
+      </div>
+    </div>
+    <div class="card">
+      <fieldset>
+        <legend class="question">Which division are you coding for?</legend>
+        <div class="option-list" id="division-options" role="radiogroup"></div>
+      </fieldset>
+    </div>
+  </section>
+
+  <!-- ── Step 2: Activity ────────────────────────────────── -->
+  <section id="screen-step2" class="screen" aria-label="Step 2 of 3: Activity type">
+    <button class="btn-back" onclick="showStep1()">← Back</button>
+    <div class="progress" aria-label="Progress: Step 2 of 3">
+      <div class="progress-steps">
+        <div class="progress-step complete">1. Division</div>
+        <div class="progress-step active" aria-current="step">2. Activity</div>
+        <div class="progress-step">3. Expense</div>
+      </div>
+    </div>
+    <div class="card">
+      <fieldset>
+        <legend class="question">
+          What type of activity is this?
+          <span class="question-sub" id="step2-sub"></span>
+        </legend>
+        <div id="activity-options"></div>
+      </fieldset>
+    </div>
+  </section>
+
+  <!-- ── Compensation sub-flow ───────────────────────────── -->
+  <section id="screen-compensation" class="screen" aria-label="Compensation coding: Worker type">
+    <button class="btn-back" onclick="showStep2()">← Back</button>
+    <div class="progress" aria-label="Progress: Step 2 of 3 — Compensation">
+      <div class="progress-steps">
+        <div class="progress-step complete">1. Division</div>
+        <div class="progress-step active" aria-current="step">2. Activity</div>
+        <div class="progress-step">3. Result</div>
+      </div>
+    </div>
+    <div class="card">
+      <fieldset>
+        <legend class="question">
+          What type of person are you paying?
+          <span class="question-sub">Select the worker type to see the correct account and program guidance.</span>
+        </legend>
+        <div class="option-list" id="comp-options" role="radiogroup"></div>
+      </fieldset>
+    </div>
+  </section>
+
+  <!-- ── Step 3: Expense / Account ──────────────────────── -->
+  <section id="screen-step3" class="screen" aria-label="Step 3 of 3: Expense type">
+    <button class="btn-back" onclick="showStep2()">← Back</button>
+    <div class="progress" aria-label="Progress: Step 3 of 3">
+      <div class="progress-steps">
+        <div class="progress-step complete">1. Division</div>
+        <div class="progress-step complete">2. Activity</div>
+        <div class="progress-step active" aria-current="step">3. Expense</div>
+      </div>
+    </div>
+    <div class="card">
+      <fieldset>
+        <legend class="question">
+          What type of expense is this?
+          <span class="question-sub" id="step3-sub"></span>
+        </legend>
+        <div class="option-list" id="account-options" role="radiogroup"></div>
+      </fieldset>
+    </div>
+  </section>
+
+  <!-- ── Result ──────────────────────────────────────────── -->
+  <section id="screen-result" class="screen" aria-label="Result: MoCode and Account">
+
+    <div class="print-header" aria-hidden="true">
+      UMKC Conservatory — MoCode Finder &nbsp;|&nbsp; Printed <span id="print-date"></span>
+    </div>
+
+    <div class="card result-card" id="result-content">
+      <p class="result-path" id="result-path" aria-label="Transaction path"></p>
+
+      <div class="result-fields">
+        <div class="result-field">
+          <div class="field-label">MoCode</div>
+          <div class="field-code" id="res-mocode-id"></div>
+          <div class="field-name" id="res-mocode-label"></div>
+        </div>
+        <div class="result-field">
+          <div class="field-label">Account</div>
+          <div class="field-code" id="res-account-code"></div>
+          <div class="field-name" id="res-account-desc"></div>
+        </div>
+      </div>
+
+      <div class="result-why">
+        <h3>Why this code</h3>
+        <p id="res-why"></p>
+      </div>
+
+      <div id="res-prod-note" class="prod-note" hidden>
+        <strong>Production note:</strong> Individual shows add a Project code on top of this MoCode.
+      </div>
+
+      <div id="res-ambiguity" class="ambiguity-box" hidden>
+        <strong>⚠ Could this also be something else?</strong>
+        <span id="res-ambiguity-text"></span>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="startOver()">↺ Code another</button>
+      <button class="btn-secondary" onclick="printResult()">🖨 Print</button>
+      <button class="btn-secondary" id="btn-see-division" onclick="showDivisionRef()">See all [Division] MoCodes</button>
+    </div>
+
+    <div class="feedback-section">
+      <a id="feedback-link" href="#" class="feedback-link">Something wrong or unclear? Send feedback →</a>
+    </div>
+
+  </section>
+
+  <!-- ── Compensation Result ─────────────────────────────── -->
+  <section id="screen-comp-result" class="screen" aria-label="Compensation coding result">
+
+    <div class="print-header" aria-hidden="true">
+      UMKC Conservatory — MoCode Finder &nbsp;|&nbsp; Printed <span id="print-date-comp"></span>
+    </div>
+
+    <div class="comp-result-box" id="comp-result-content">
+      <p class="comp-worker-type" id="comp-res-worker-type"></p>
+      <p class="comp-title" id="comp-res-title"></p>
+      <div class="comp-account-row">
+        <span class="comp-account-code" id="comp-res-account"></span>
+        <span id="comp-res-account-desc"></span>
+      </div>
+      <p class="comp-program-note" id="comp-res-program-note"></p>
+      <div class="result-why" style="margin-top:1rem;">
+        <h3>Why this code</h3>
+        <p id="comp-res-why"></p>
+      </div>
+      <div id="comp-res-redirect" class="comp-redirect" hidden></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="startOver()">↺ Code another</button>
+      <button class="btn-secondary" onclick="printResult()">🖨 Print</button>
+    </div>
+
+    <div class="feedback-section">
+      <a id="comp-feedback-link" href="#" class="feedback-link">Something wrong or unclear? Send feedback →</a>
+    </div>
+
+  </section>
+
+  <!-- ── Reference ───────────────────────────────────────── -->
+  <section id="screen-reference" class="screen" aria-label="Full MoCode Reference">
+    <div class="card" style="padding: 1.25rem 1.75rem;">
+      <div class="ref-controls">
+        <label for="ref-filter">Filter by division:</label>
+        <select id="ref-filter" onchange="filterReference()" aria-label="Filter MoCodes by division">
+          <option value="">All divisions</option>
+          <option value="Music">Music</option>
+          <option value="Dance">Dance</option>
+          <option value="Theatre">Theatre</option>
+          <option value="Dean's Office">Dean's Office</option>
+          <option value="Shared Production">Shared Production</option>
+        </select>
+        <span class="ref-count" id="ref-count" aria-live="polite"></span>
+      </div>
+      <div class="ref-table-wrap">
+        <table id="ref-table" aria-label="Full MoCode reference table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Label</th>
+              <th>DeptID</th>
+              <th>Program</th>
+              <th>HEADS</th>
+            </tr>
+          </thead>
+          <tbody id="ref-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Last updated: <span id="footer-date"></span> &nbsp;·&nbsp; UMKC Conservatory Dean's Office
+</footer>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  State
+// ════════════════════════════════════════════════════════════════
+const state = {
+  division:      null,
+  activityType:  null,
+  mocode:        null,
+  account:       null,
+  compRule:      null,
+  path:          []
+};
+
+let DB = null; // loaded from mocodes.json
+
+// ════════════════════════════════════════════════════════════════
+//  Boot
+// ════════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('mocodes.json')
+    .then(r => r.json())
+    .then(data => {
+      DB = data;
+      document.getElementById('footer-date').textContent = data.lastUpdated || '';
+      renderReference();
+    })
+    .catch(() => {
+      document.getElementById('main').innerHTML =
+        '<div class="card"><p style="color:red">Unable to load MoCode data. Please reload the page.</p></div>';
+    });
+});
+
+// ════════════════════════════════════════════════════════════════
+//  Tab navigation
+// ════════════════════════════════════════════════════════════════
+function showTab(tab) {
+  ['finder','reference'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t === tab);
+    document.getElementById('tab-'+t).setAttribute('aria-pressed', t === tab);
+  });
+  if (tab === 'reference') {
+    hideAllScreens();
+    document.getElementById('screen-reference').classList.add('active');
+    filterReference();
+  } else {
+    hideAllScreens();
+    document.getElementById('screen-welcome').classList.add('active');
+  }
+  console.log('[MoCode Finder] Tab:', tab);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Screen helpers
+// ════════════════════════════════════════════════════════════════
+const SCREENS = ['welcome','step1','step2','compensation','step3','result','comp-result','reference'];
+function hideAllScreens() {
+  SCREENS.forEach(id => document.getElementById('screen-'+id).classList.remove('active'));
+}
+function showScreen(id) {
+  hideAllScreens();
+  document.getElementById('screen-'+id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startOver() {
+  state.division = state.activityType = state.mocode = state.account = state.compRule = null;
+  state.path = [];
+  document.getElementById('tab-finder').classList.add('active');
+  document.getElementById('tab-reference').classList.remove('active');
+  showScreen('welcome');
+  console.log('[MoCode Finder] Start over');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Step 1 — Division
+// ════════════════════════════════════════════════════════════════
+function showStep1() {
+  document.getElementById('tab-finder').classList.add('active');
+  document.getElementById('tab-reference').classList.remove('active');
+  const divisions = ['Music','Dance','Theatre',"Dean's Office","Production"];
+  const container = document.getElementById('division-options');
+  container.innerHTML = '';
+  divisions.forEach(div => {
+    const sub = divisionSubtitle(div);
+    container.insertAdjacentHTML('beforeend', optionHTML('div', div, div, sub));
+  });
+  container.querySelectorAll('input').forEach(input => {
+    input.addEventListener('change', confirmStep1);
+  });
+  showScreen('step1');
+  console.log('[MoCode Finder] Step 1 shown');
+}
+
+function divisionSubtitle(div) {
+  const map = {
+    'Music': 'K1306001 Music Operations + TBD12 Music Productions',
+    'Dance': 'K1305002 Dance Operations + TBD10 Dance Productions',
+    'Theatre': 'K0923001 Theatre Operations + TBD7 Theatre Productions',
+    "Dean's Office": 'K1303052 Conservatory Administration',
+    'Production': 'Music, Dance, Theatre Productions + TBD6 Shared/Cross-Divisional'
+  };
+  return map[div] || '';
+}
+
+function confirmStep1() {
+  const sel = document.querySelector('input[name="div"]:checked');
+  if (!sel) return;
+  state.division = sel.value;
+  state.path = [state.division];
+  console.log('[MoCode Finder] Division:', state.division);
+  showStep2();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Step 2 — Activity type
+// ════════════════════════════════════════════════════════════════
+const SUPER_GROUPS = [
+  {
+    key: 'travel',
+    icon: '✈️',
+    label: 'Travel & Professional Development',
+    types: ['Faculty Travel','Faculty Searches & Hiring','Executive Travel & Professional Development','Student Touring']
+  },
+  {
+    key: 'artists',
+    icon: '🎭',
+    label: 'Guest Artists & Programming',
+    types: ['Visiting Artists & Residencies (Academic)','Visiting Artists (Nexus & Cross-Divisional)','Accompanist Services','Curricular Student Workers','Performance Materials','Instructional Support']
+  },
+  {
+    key: 'students',
+    icon: '🎓',
+    label: 'Students & Recruitment',
+    types: ['Student Recruitment','Student Recruitment & Admissions','Paying a Person']
+  },
+  {
+    key: 'ops',
+    icon: '⚙️',
+    label: 'Operations & Administration',
+    types: ['Office Operations','Technical Services & Instrument Maintenance','Technical Services','Piano & Instrument Maintenance','Equipment','Technology & Software','Technology & IT','External Relations','External Relations & Marketing','Facilities Operations']
+  }
+];
+
+function showStep2() {
+  state.mocode = null;
+
+  if (state.division === 'Production') {
+    showStep2Production();
+    return;
+  }
+
+  const mocodes = DB.mocodes.filter(m => m.division === state.division && !m.isProduction);
+  const available = new Set();
+  mocodes.forEach(m => available.add(m.activityType));
+
+  document.getElementById('step2-sub').textContent = state.division + ' — select a category, then choose the activity';
+
+  const container = document.getElementById('activity-options');
+  container.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'sg-wrap';
+
+  SUPER_GROUPS.forEach(sg => {
+    const sgTypes = sg.types.filter(t => available.has(t));
+    if (!sgTypes.length) return;
+
+    const header = document.createElement('button');
+    header.type = 'button';
+    header.className = 'sg-header';
+    header.setAttribute('aria-expanded', 'false');
+    header.innerHTML = `
+      <span class="sg-icon" aria-hidden="true">${sg.icon}</span>
+      <span class="sg-label">${sg.label}</span>
+      <span class="sg-count">${sgTypes.length} option${sgTypes.length > 1 ? 's' : ''}</span>
+      <span class="sg-arrow" aria-hidden="true">▶</span>`;
+
+    const body = document.createElement('div');
+    body.className = 'sg-body';
+    const list = document.createElement('div');
+    list.className = 'option-list';
+    sgTypes.forEach(type => {
+      list.insertAdjacentHTML('beforeend', optionHTML('act', type, type, activityTypeSub(type)));
+    });
+    body.appendChild(list);
+
+    header.addEventListener('click', () => {
+      const isOpen = header.classList.contains('open');
+      // Close all
+      wrap.querySelectorAll('.sg-header').forEach(h => {
+        h.classList.remove('open');
+        h.setAttribute('aria-expanded', 'false');
+        h.nextElementSibling.classList.remove('open');
+      });
+      // Open clicked (unless it was already open)
+      if (!isOpen) {
+        header.classList.add('open');
+        header.setAttribute('aria-expanded', 'true');
+        body.classList.add('open');
+      }
+    });
+
+    body.querySelectorAll('input').forEach(input => {
+      input.addEventListener('change', confirmStep2);
+    });
+
+    wrap.appendChild(header);
+    wrap.appendChild(body);
+  });
+
+  container.appendChild(wrap);
+  showScreen('step2');
+  console.log('[MoCode Finder] Step 2 shown for', state.division);
+}
+
+function showStep2Production() {
+  const prodGroups = [
+    { icon: '🎵', label: 'Music Productions',         filter: m => m.division === 'Music'             && m.isProduction },
+    { icon: '💃', label: 'Dance Productions',         filter: m => m.division === 'Dance'             && m.isProduction },
+    { icon: '🎭', label: 'Theatre Productions',       filter: m => m.division === 'Theatre'           && m.isProduction },
+    { icon: '🔗', label: 'Shared / Cross-Divisional', filter: m => m.division === 'Shared Production' }
+  ];
+
+  document.getElementById('step2-sub').textContent = 'Production — select a category, then choose the type';
+
+  const container = document.getElementById('activity-options');
+  container.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'sg-wrap';
+
+  prodGroups.forEach(group => {
+    const mocodes = DB.mocodes.filter(group.filter);
+    if (!mocodes.length) return;
+
+    const header = document.createElement('button');
+    header.type = 'button';
+    header.className = 'sg-header';
+    header.setAttribute('aria-expanded', 'false');
+    header.innerHTML = `
+      <span class="sg-icon" aria-hidden="true">${group.icon}</span>
+      <span class="sg-label">${group.label}</span>
+      <span class="sg-count">${mocodes.length} option${mocodes.length > 1 ? 's' : ''}</span>
+      <span class="sg-arrow" aria-hidden="true">▶</span>`;
+
+    const body = document.createElement('div');
+    body.className = 'sg-body';
+    const list = document.createElement('div');
+    list.className = 'option-list';
+    mocodes.forEach(m => {
+      const shortLabel = m.label
+        .replace(/^Music Productions – /, '')
+        .replace(/^Dance Productions – /, '')
+        .replace(/^Theatre Productions – /, '')
+        .replace(/^Production Admin – /, '');
+      list.insertAdjacentHTML('beforeend', optionHTML('act', m.id, shortLabel, activityTypeSub(m.activityType)));
+    });
+    body.appendChild(list);
+
+    header.addEventListener('click', () => {
+      const isOpen = header.classList.contains('open');
+      wrap.querySelectorAll('.sg-header').forEach(h => {
+        h.classList.remove('open');
+        h.setAttribute('aria-expanded', 'false');
+        h.nextElementSibling.classList.remove('open');
+      });
+      if (!isOpen) {
+        header.classList.add('open');
+        header.setAttribute('aria-expanded', 'true');
+        body.classList.add('open');
+      }
+    });
+
+    body.querySelectorAll('input').forEach(input => {
+      input.addEventListener('change', confirmStep2);
+    });
+
+    wrap.appendChild(header);
+    wrap.appendChild(body);
+  });
+
+  container.appendChild(wrap);
+  showScreen('step2');
+  console.log('[MoCode Finder] Step 2 Production shown');
+}
+
+function activityGroupLabel(group) {
+  const map = {
+    'Operations & Academic': 'Operations & Academic',
+    "Dean's Office Operations": "Dean's Office",
+    'Shared (Cost-Allocated)': "Dean's Office",
+    'Cross-Divisional Production': 'Shared / Cross-Divisional',
+    'Production': 'Production'
+  };
+  return map[group] || group;
+}
+
+function activityTypeSub(type) {
+  const map = {
+    'Faculty Travel': 'Airline tickets, hotel, meals, conference registration',
+    'Faculty Searches & Hiring': 'Candidate travel, search committee expenses',
+    'Instructional Support': 'Classroom materials, studio supplies, curriculum resources',
+    'Student Recruitment': 'Recruiting travel, auditions, admissions events',
+    'External Relations': 'Marketing, advertising, donor events, memberships',
+    'External Relations & Marketing': 'Season marketing, advertising, donor relations',
+    'Visiting Artists & Residencies (Academic)': 'Masterclasses, clinicians, residencies — not for productions',
+    'Visiting Artists (Nexus & Cross-Divisional)': 'Guest artists for Nexus or cross-divisional events',
+    'Office Operations': 'Supplies, postage, copying, business meetings',
+    'Technical Services & Instrument Maintenance': 'Piano tuning, instrument repair, equipment maintenance',
+    'Technical Services': 'Equipment repair, rigging/lighting/sound maintenance',
+    'Piano & Instrument Maintenance': 'Shared piano tuning, instrument repair',
+    'Equipment': 'Purchases, rentals, repairs (non-instrument)',
+    'Technology & Software': 'Computers, software licenses, IT services',
+    'Technology & IT': 'Shared IT contract, telephones, software',
+    'Student Touring': 'Ensemble tours, competitions, off-campus performances',
+    'Performance Materials': 'Sheet music, scores, music rentals for ensembles',
+    'Accompanist Services': 'Student accompanist pay — Account 703800',
+    'Curricular Student Workers': 'Ensemble conducting and other curricular support — Account 703800',
+    'Paying a Person': 'Adjuncts, GTAs, students, staff, overhire labor',
+    'Music Productions': 'All production expenses — add Project code per show',
+    'Dance Productions': 'All production expenses — add Project code per show',
+    'Performance Operations': 'Coordination, guest directors, contracted artists',
+    'Costumes & Wardrobe': 'Costumes, rentals, alterations, wardrobe supplies',
+    'Scenic & Production Materials': 'Scenery, props, lumber, paint, fabrication',
+    'Lighting, Sound & Stage Support': 'Lighting, audio, stage operations, projections',
+    'General Production Labor': 'Shared overhire, stagehands, run crews',
+    'Royalties & Licensing': 'Script licensing, performance rights, music rights',
+    'Facilities Operations': 'Building maintenance, performance hall, security',
+    'Executive Travel & Professional Development': "Dean's Office staff travel",
+    'Student Recruitment & Admissions': 'Conservatory-wide recruiting managed by Dean\'s Office',
+    'Technology': 'Shared technology and IT infrastructure',
+    'External Relations': 'Season-wide marketing and cross-divisional communications'
+  };
+  return map[type] || '';
+}
+
+function confirmStep2() {
+  const sel = document.querySelector('input[name="act"]:checked');
+  if (!sel) return;
+
+  // Production path: value is a MoCode ID
+  if (state.division === 'Production') {
+    state.mocode = DB.mocodes.find(m => m.id === sel.value);
+    state.activityType = state.mocode ? state.mocode.label : sel.value;
+    state.path = ['Production', state.activityType];
+    console.log('[MoCode Finder] Production MoCode selected:', sel.value);
+    showStep3();
+    return;
+  }
+
+  state.activityType = sel.value;
+  state.path = [state.division, state.activityType];
+  console.log('[MoCode Finder] Activity:', state.activityType);
+
+  if (state.activityType === 'Paying a Person') {
+    showCompensation();
+  } else {
+    showStep3();
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Compensation sub-flow
+// ════════════════════════════════════════════════════════════════
+function showCompensation() {
+  const rules = DB.compensationRules;
+  const container = document.getElementById('comp-options');
+  container.innerHTML = '';
+
+  // Filter music-specific options
+  const filtered = rules.filter(r => {
+    if (r.workerType.includes('Music') && state.division !== 'Music') return false;
+    return true;
+  });
+
+  filtered.forEach((rule, i) => {
+    const sub = rule.account + (rule.program ? ` · Program ${rule.program}` : ' · see guidance');
+    container.insertAdjacentHTML('beforeend', optionHTML('comp', String(i), rule.workerType, sub));
+  });
+
+  container.querySelectorAll('input').forEach(input => {
+    input.addEventListener('change', confirmCompensation);
+  });
+  showScreen('compensation');
+  console.log('[MoCode Finder] Compensation screen shown');
+}
+
+function confirmCompensation() {
+  const sel = document.querySelector('input[name="comp"]:checked');
+  if (!sel) return;
+  const idx = parseInt(sel.value);
+  // Re-filter same as showCompensation
+  const rules = DB.compensationRules.filter(r => {
+    if (r.workerType.includes('Music') && state.division !== 'Music') return false;
+    return true;
+  });
+  state.compRule = rules[idx];
+  state.path = [state.division, 'Paying a Person', state.compRule.workerType];
+  console.log('[MoCode Finder] Compensation worker type:', state.compRule.workerType);
+  renderCompResult();
+}
+
+function renderCompResult() {
+  const rule = state.compRule;
+  const isRedirect = rule.programNote && rule.programNote.includes('HR / payroll');
+
+  document.getElementById('comp-res-worker-type').textContent = 'Worker type';
+  document.getElementById('comp-res-title').textContent = rule.workerType;
+  document.getElementById('comp-res-account').textContent = rule.account;
+  document.getElementById('comp-res-account-desc').textContent = ' — ' + (rule.accountDescription || '');
+  document.getElementById('comp-res-program-note').textContent = rule.programNote || '';
+  document.getElementById('comp-res-why').textContent = rule.why || '';
+
+  const redirect = document.getElementById('comp-res-redirect');
+  if (isRedirect) {
+    redirect.hidden = false;
+    redirect.textContent = rule.programNote;
+  } else {
+    redirect.hidden = true;
+  }
+
+  // Print date
+  document.getElementById('print-date-comp').textContent = new Date().toLocaleDateString();
+
+  // Feedback link
+  const subject = `MoCode Tool Feedback — ${state.division} / Paying a Person / ${rule.workerType}`;
+  const body = [
+    `Division: ${state.division}`,
+    `Steps taken: ${state.path.join(' → ')}`,
+    `Result shown: Account ${rule.account} — ${rule.accountDescription}`,
+    `Issue type: [Ambiguous result / Dead end / Wrong answer / Other]`,
+    '',
+    'What went wrong or was unclear:',
+    ''
+  ].join('\n');
+  document.getElementById('comp-feedback-link').href =
+    `mailto:cjchgy@umsystem.edu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  showScreen('comp-result');
+  console.log('[MoCode Finder] Comp result shown:', rule.workerType, rule.account);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Step 3 — Account / Expense type
+// ════════════════════════════════════════════════════════════════
+function showStep3() {
+  // Production path sets mocode directly; all others look it up
+  if (!state.mocode) {
+    const matches = DB.mocodes.filter(m =>
+      m.division === state.division && m.activityType === state.activityType
+    );
+    if (!matches.length) { showDeadEnd(); return; }
+    state.mocode = matches[0];
+  }
+  document.getElementById('step3-sub').textContent =
+    state.mocode.label + ' — select the type of expense';
+
+  const container = document.getElementById('account-options');
+  container.innerHTML = '';
+  state.mocode.accounts.forEach((acct, i) => {
+    const examples = acct.examples && acct.examples.length
+      ? 'e.g. ' + acct.examples.join(', ')
+      : '';
+    container.insertAdjacentHTML('beforeend',
+      optionHTML('acct', String(i), acct.description + ' (' + acct.code + ')', examples)
+    );
+  });
+
+  container.querySelectorAll('input').forEach(input => {
+    input.addEventListener('change', showResult);
+  });
+  showScreen('step3');
+  console.log('[MoCode Finder] Step 3 shown for MoCode:', state.mocode.id);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Result
+// ════════════════════════════════════════════════════════════════
+function showResult() {
+  const sel = document.querySelector('input[name="acct"]:checked');
+  if (!sel) return;
+  state.account = state.mocode.accounts[parseInt(sel.value)];
+  state.path = [state.division, state.activityType, state.account.description];
+
+  // Path breadcrumb
+  document.getElementById('result-path').textContent =
+    state.path.join(' → ');
+
+  // MoCode fields
+  document.getElementById('res-mocode-id').textContent    = state.mocode.id;
+  document.getElementById('res-mocode-label').textContent = state.mocode.label;
+  document.getElementById('res-account-code').textContent = state.account.code;
+  document.getElementById('res-account-desc').textContent = state.account.description;
+
+  // Why — strip any cost-sharing language before displaying
+  const rawWhy = state.mocode.why || '';
+  const cleanWhy = rawWhy.replace(/\s*Costs (are )?allocated[^.]*\./g, '').trim();
+  document.getElementById('res-why').textContent = cleanWhy;
+
+  // Production note
+  document.getElementById('res-prod-note').hidden = !state.mocode.isProduction;
+
+  // Ambiguity
+  const ambBox = document.getElementById('res-ambiguity');
+  if (state.mocode.ambiguity) {
+    ambBox.hidden = false;
+    document.getElementById('res-ambiguity-text').textContent =
+      ' Also consider: ' + state.mocode.ambiguity.also + '. ' + state.mocode.ambiguity.guidance;
+  } else {
+    ambBox.hidden = true;
+  }
+
+  // "See all Division MoCodes" button
+  document.getElementById('btn-see-division').textContent =
+    'See all ' + state.division + ' MoCodes';
+
+  // Print date
+  document.getElementById('print-date').textContent = new Date().toLocaleDateString();
+
+  // Feedback link
+  const subject = `MoCode Tool Feedback — ${state.division} / ${state.activityType}`;
+  const resultStr = `${state.mocode.id} — ${state.mocode.label} / Account ${state.account.code} — ${state.account.description}`;
+  const body = [
+    `Division: ${state.division}`,
+    `Steps taken: ${state.path.join(' → ')}`,
+    `Result shown: ${resultStr}`,
+    `Issue type: [Ambiguous result / Dead end / Wrong answer / Other]`,
+    '',
+    'What went wrong or was unclear:',
+    ''
+  ].join('\n');
+  document.getElementById('feedback-link').href =
+    `mailto:cjchgy@umsystem.edu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  showScreen('result');
+  console.log('[MoCode Finder] Result:', state.mocode.id, state.account.code);
+}
+
+function showDeadEnd() {
+  // Show a dead-end result card
+  document.getElementById('res-mocode-id').textContent    = '—';
+  document.getElementById('res-mocode-label').textContent = 'No matching MoCode found';
+  document.getElementById('res-account-code').textContent = '—';
+  document.getElementById('res-account-desc').textContent = '';
+  document.getElementById('res-why').textContent =
+    'This combination doesn\'t map to a defined MoCode yet. Please use the feedback button below to describe the transaction — this helps us close gaps in the taxonomy.';
+  document.getElementById('res-shared-box').hidden   = true;
+  document.getElementById('res-prod-note').hidden    = true;
+  document.getElementById('res-ambiguity').hidden    = true;
+  document.getElementById('result-path').textContent = state.path.join(' → ');
+  document.getElementById('btn-see-division').textContent = 'See all ' + state.division + ' MoCodes';
+
+  const subject = `MoCode Tool Feedback — Dead end: ${state.division} / ${state.activityType}`;
+  const body = [
+    `Division: ${state.division}`,
+    `Steps taken: ${state.path.join(' → ')}`,
+    `Result shown: No result found`,
+    `Issue type: Dead end`,
+    '',
+    'What were you trying to code:',
+    ''
+  ].join('\n');
+  document.getElementById('feedback-link').href =
+    `mailto:cjchgy@umsystem.edu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  showScreen('result');
+  console.log('[MoCode Finder] Dead end for', state.division, state.activityType);
+}
+
+function showDivisionRef() {
+  document.getElementById('ref-filter').value = state.division || '';
+  showTab('reference');
+}
+
+function printResult() {
+  document.getElementById('print-date').textContent     = new Date().toLocaleDateString();
+  document.getElementById('print-date-comp').textContent = new Date().toLocaleDateString();
+  window.print();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Reference table
+// ════════════════════════════════════════════════════════════════
+function renderReference() {
+  if (!DB) return;
+  filterReference();
+}
+
+function filterReference() {
+  if (!DB) return;
+  const filter = document.getElementById('ref-filter').value;
+  const rows   = DB.mocodes.filter(m => !filter || m.division === filter);
+  const tbody  = document.getElementById('ref-tbody');
+  tbody.innerHTML = '';
+  rows.forEach(m => {
+    const tags = [
+      m.isProduction ? '<span class="tag tag-prod">Production</span>' : '',
+      m.isShared     ? '<span class="tag tag-shared">Shared</span>' : ''
+    ].filter(Boolean).join(' ');
+
+    const heads = m.heads.length > 50 ? m.heads.substring(0,47) + '...' : m.heads;
+
+    tbody.insertAdjacentHTML('beforeend', `
+      <tr>
+        <td class="code">${m.id}</td>
+        <td>${m.label}${tags ? '<br>' + tags : ''}</td>
+        <td class="code">${m.deptId}<br><span style="font-weight:400;font-size:0.75rem">${m.deptName}</span></td>
+        <td class="code">${m.program}<br><span style="font-weight:400;font-size:0.75rem">${m.programName}</span></td>
+        <td style="font-size:0.78rem">${heads}</td>
+      </tr>`);
+  });
+  document.getElementById('ref-count').textContent =
+    rows.length + ' of ' + DB.mocodes.length + ' MoCodes';
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Helpers
+// ════════════════════════════════════════════════════════════════
+function optionHTML(name, value, labelText, subText) {
+  const id = `opt-${name}-${value.replace(/[^a-z0-9]/gi, '-')}`;
+  const sub = subText ? `<span class="option-sub">${subText}</span>` : '';
+  return `
+    <div class="option-item">
+      <input type="radio" name="${name}" value="${value}" id="${id}">
+      <label for="${id}">${labelText}${sub}</label>
+    </div>`;
+}
+</script>
+
+
+<a href="https://courtneycrappell.com" target="_blank" rel="noopener noreferrer" class="easter-egg" title="monkey time?">
+  <img src="seaMonkeys.png" alt="monkey time?">
+</a>
+
+</body>
+</html>
