@@ -470,10 +470,10 @@
           ]
         }
       ],
-      "why": "Admin, front desk, technical, and non-academic student worker roles. Not GTAs (704000), accompanists (TBDP1), or curricular student workers (TBDP25).",
+      "why": "Admin, front desk, technical, and non-academic student worker roles. Not accompanists (TBDP1), or curricular student workers (TBDP25).",
       "ambiguity": {
         "also": "M-13 Accompanist Services or M-14 Curricular Student Worker Support",
-        "guidance": "Use M-09 for students in operational/administrative roles (front desk, office help, non-academic tech). Use M-13 for student accompanists. Use M-14 for students in ensemble conducting or other curricular support roles. Use M-16 for students with a formal graduate assistantship appointment (GTA/GRA, Account 704000)."
+        "guidance": "Use M-09 for students in operational/administrative roles (front desk, office help, non-academic tech). Use M-13 for student accompanists. Use M-14 for students in ensemble conducting or other curricular support roles."
       },
       "notes": "Compensation flow — triggered by worker type selection"
     },
@@ -672,7 +672,7 @@
           ]
         }
       ],
-      "why": "Student academic workers serving as accompanists supporting instructional activity, rehearsals, classes, coaching, and performance preparation. Not a GTA role.",
+      "why": "Student academic workers serving as accompanists supporting instructional activity, rehearsals, classes, coaching, and performance preparation.",
       "ambiguity": null,
       "notes": "Compensation flow — triggered by worker type selection. Account 703800 identifies these as student academic workers."
     },
@@ -701,7 +701,7 @@
           ]
         }
       ],
-      "why": "Non-GTA student worker positions providing curricular support, including ensemble conducting. Replaces old program K8971 (CONDUCTING ENSEMBLE). Do not use TBDP24/707100 for these positions.",
+      "why": "Student worker positions providing curricular support, including ensemble conducting. Replaces old program K8971 (CONDUCTING ENSEMBLE). Do not use TBDP24/707100 for these positions.",
       "ambiguity": null,
       "notes": "Compensation flow — triggered by worker type selection."
     },
@@ -752,39 +752,6 @@
         "guidance": "Use M-15 for music purchased for ensemble performance or concerts. Use M-03 for music or materials used primarily in classroom instruction (method books, theory texts)."
       },
       "notes": "TBDP26 identifier is TBD — update program code in this file when final assignment is confirmed."
-    },
-    {
-      "id": "M-16",
-      "label": "Music – Graduate Assistants",
-      "division": "Music",
-      "deptId": "K1306001",
-      "deptName": "MUSIC OPERATIONS",
-      "program": "TBDP5",
-      "programName": "Student Academic Employment",
-      "fund": "0000",
-      "heads": "V.C (student help); VI.A; VI.F (GTA tuition remission)",
-      "activityType": "Paying a Person",
-      "activityGroup": "Operations & Academic",
-      "isProduction": false,
-      "isShared": false,
-      "accounts": [
-        {
-          "code": "704000",
-          "description": "Graduate Student Assistants",
-          "examples": [
-            "GTA pay",
-            "Graduate teaching assistant stipend",
-            "Graduate research assistant stipend",
-            "Graduate professional assistant"
-          ]
-        }
-      ],
-      "why": "Formal graduate teaching and research assistant appointments in Music. Account 704000. GTA tuition remission for NASM reporting is calculated automatically from Account 704000 — no separate action needed.",
-      "ambiguity": {
-        "also": "M-13 Accompanist Services or M-14 Curricular Student Worker Support",
-        "guidance": "Use M-16 only for formal graduate assistantship appointments using Account 704000. If a grad student is working as an accompanist or in a curricular support role without a formal GTA appointment, use M-13 (accompanist) or M-14 (curricular support) with Account 703800 instead."
-      },
-      "notes": "Compensation flow — triggered by worker type selection."
     },
     {
       "id": "MP-01",
@@ -1321,7 +1288,7 @@
           ]
         }
       ],
-      "why": "Admin, front desk, technical, and non-academic student worker roles. Not GTAs (704000).",
+      "why": "Admin, front desk, technical, and non-academic student worker roles.",
       "ambiguity": {
         "also": "D-12 Accompanist Services",
         "guidance": "Use D-08 for students in operational or administrative roles (front desk, office help, non-academic support) using Account 707100. Use D-12 for students serving as accompanists in Dance classes and rehearsals using Account 703800."
@@ -1513,10 +1480,10 @@
           ]
         }
       ],
-      "why": "Student academic workers serving as accompanists for Dance classes, technique instruction, and curricular rehearsals. This is not a GTA role. Account 703800 identifies these as student academic workers.",
+      "why": "Student academic workers serving as accompanists for Dance classes, technique instruction, and curricular rehearsals. Account 703800 identifies these as student academic workers.",
       "ambiguity": {
         "also": "D-03 Instructional Support",
-        "guidance": "Use D-12 when the accompanist is an enrolled UMKC student paid as an academic worker (Account 703800). Use D-03 with Account 703500 when the accompanist is not an enrolled student — a freelance pianist or external part-time hire."
+        "guidance": "Use D-12 when the accompanist is an enrolled UMKC student paid as an academic worker (Account 703800)."
       },
       "notes": "Compensation flow — triggered by worker type selection. Account 703800 identifies the student academic worker category."
     },
@@ -3653,76 +3620,12 @@
   ],
   "compensationRules": [
     {
-      "workerType": "Adjunct / Part-time instructor",
-      "account": "703500",
-      "accountDescription": "Non-Ben Elg Faculty excl TNR",
-      "program": null,
-      "programNote": "Tag to the operational program matching their instructional work — e.g., Faculty Travel (TBDP2), Instructional Support (TBDP4), or the relevant divisional program",
-      "why": "Account 703500 identifies all adjunct and part-time instructional appointments. Code to the DeptID and Program that matches their instructional work — the Account is what distinguishes them.",
-      "examples": [
-        "Adjunct faculty teaching studio lessons",
-        "Part-time lecturer",
-        "Guest instructor paid per class"
-      ]
-    },
-    {
-      "workerType": "Graduate Teaching / Research Assistant (GTA / GRA)",
-      "account": "704000",
-      "accountDescription": "Graduate Student Assistants",
-      "program": "TBDP5",
-      "programNote": "Music: use Program TBDP5 — MoCode M-16. Other divisions: confirm with the Dean’s Office — no divisional MoCode currently exists for Dance or Theatre GTA positions.",
-      "why": "Account 704000 covers all graduate teaching, research, and professional assistantships.",
-      "examples": [
-        "Graduate teaching assistant",
-        "GRA",
-        "Graduate professional assistant"
-      ]
-    },
-    {
-      "workerType": "Full-time benefit-eligible faculty",
-      "account": "701000 or 701500",
-      "accountDescription": "Tenure/Tenure-Track Faculty (701000) or Benefit Eligible Faculty excl TNR (701500)",
-      "program": null,
-      "programNote": "Handled by HR / payroll — not a MoCode lookup decision",
-      "why": "Regular faculty salary is processed through HR. Contact the budget office if there is a question about faculty salary coding.",
-      "examples": [
-        "Tenured faculty salary",
-        "Tenure-track faculty salary",
-        "Visiting faculty with benefits"
-      ]
-    },
-    {
-      "workerType": "Full-time benefit-eligible staff",
-      "account": "705000",
-      "accountDescription": "Benefit Eligible Staff",
-      "program": null,
-      "programNote": "Handled by HR / payroll — not a MoCode lookup decision",
-      "why": "Full-time benefit-eligible administrative and operational staff salary is processed through HR.",
-      "examples": [
-        "Full-time administrative staff salary",
-        "Full-time operational staff salary"
-      ]
-    },
-    {
-      "workerType": "Part-time non-faculty staff",
-      "account": "705500",
-      "accountDescription": "Non-Benefit Eligible Staff",
-      "program": null,
-      "programNote": "Tag to the operational program matching their work — e.g., Office Operations (K8931), Technical Services (K8951), Facilities (TBDP21)",
-      "why": "Account 705500 identifies part-time non-faculty operational and administrative workers. The Program identifies what they do.",
-      "examples": [
-        "Part-time office staff",
-        "Part-time facilities worker",
-        "Part-time production crew (ongoing, not overhire)"
-      ]
-    },
-    {
       "workerType": "Student accompanist (Music or Dance)",
       "account": "703800",
       "accountDescription": "Non-Ben Elg Academic (Non-Faculty)",
       "program": "TBDP1",
       "programNote": "Music: always use Program TBDP1 — MoCode M-13. Dance: always use Program TBDP1 — MoCode D-12.",
-      "why": "Student academic workers serving as accompanists are coded to TBDP1 in both Music and Dance. This is not a GTA role and does not use 704000. Account 703800 identifies the student academic worker category. Non-student accompanists (freelance/external) use Account 703500 under the Instructional Support MoCode for that division.",
+      "why": "Student academic workers serving as accompanists are coded to TBDP1 in both Music and Dance. Account 703800 identifies the student academic worker category.",
       "examples": [
         "Student accompanying a voice lesson",
         "Student pianist for a Dance technique class",
@@ -3735,11 +3638,11 @@
       "accountDescription": "Non-Ben Elg Academic (Non-Faculty)",
       "program": "TBDP25",
       "programNote": "Always use Program TBDP25 — MoCode M-14. Do NOT use TBDP24 (707100) for these positions.",
-      "why": "Non-GTA student workers in curricular support roles (including ensemble conducting) use TBDP25. This replaces old program K8971 (CONDUCTING ENSEMBLE). Account 703800 identifies the student academic worker category.",
+      "why": "Student workers in curricular support roles (including ensemble conducting) use TBDP25. This replaces old program K8971 (CONDUCTING ENSEMBLE). Account 703800 identifies the student academic worker category.",
       "examples": [
         "Student assigned to conduct an ensemble",
         "Student in a curricular support role",
-        "Non-GTA student providing academic program support"
+        "Student providing academic program support"
       ]
     },
     {
