@@ -1,11 +1,6 @@
 {
-  "lastUpdated": "2026-05-13",
-
+  "lastUpdated": "2026-05-14",
   "mocodes": [
-
-    
-    
-    
     {
       "id": "M-01",
       "label": "Music – Faculty Travel",
@@ -21,11 +16,50 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721000", "description": "Business Travel", "examples": ["Airline ticket", "Conference travel", "Audition travel"] },
-        { "code": "721470", "description": "Ground Transportation", "examples": ["Rideshare/Uber", "Parking fees", "Shuttle", "Bus fare"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Hotel", "Lodging while traveling"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Per diem meals", "Meals while traveling"] },
-        { "code": "722000", "description": "Training & Development", "examples": ["Conference registration fee", "Workshop fee", "Professional development course"] }
+        {
+          "code": "721000",
+          "description": "Business Travel",
+          "examples": [
+            "Airline ticket",
+            "Conference travel",
+            "Audition travel"
+          ]
+        },
+        {
+          "code": "721470",
+          "description": "Ground Transportation",
+          "examples": [
+            "Rideshare/Uber",
+            "Parking fees",
+            "Shuttle",
+            "Bus fare"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Hotel",
+            "Lodging while traveling"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Per diem meals",
+            "Meals while traveling"
+          ]
+        },
+        {
+          "code": "722000",
+          "description": "Training & Development",
+          "examples": [
+            "Conference registration fee",
+            "Workshop fee",
+            "Professional development course"
+          ]
+        }
       ],
       "why": "Faculty conference travel, professional meetings, accreditation activity, research travel, and related professional development expenses.",
       "ambiguity": null,
@@ -46,10 +80,38 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721400", "description": "Bus Travel – Job Candidate", "examples": ["Candidate airline ticket", "Candidate travel reimbursement"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Candidate hotel", "Candidate lodging"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Candidate meal", "Search committee dinner"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Campus visit reception", "Search committee lunch"] }
+        {
+          "code": "721400",
+          "description": "Bus Travel – Job Candidate",
+          "examples": [
+            "Candidate airline ticket",
+            "Candidate travel reimbursement"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Candidate hotel",
+            "Candidate lodging"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Candidate meal",
+            "Search committee dinner"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Campus visit reception",
+            "Search committee lunch"
+          ]
+        }
       ],
       "why": "Faculty recruitment, candidate travel, onboarding support, search processes, and faculty hiring-related operational expenses.",
       "ambiguity": null,
@@ -70,9 +132,33 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "730300", "description": "Instructional Supplies", "examples": ["Classroom/studio materials", "Curriculum supplies", "Metronomes", "Practice aids"] },
-        { "code": "730200", "description": "Subscription, Book, Periodical", "examples": ["Theory textbook", "Music journal", "Method book for class use"] },
-        { "code": "750000", "description": "Professional & Consulting Services", "examples": ["Curricular consultant", "Instructional specialist fee"] }
+        {
+          "code": "730300",
+          "description": "Instructional Supplies",
+          "examples": [
+            "Classroom/studio materials",
+            "Curriculum supplies",
+            "Metronomes",
+            "Practice aids"
+          ]
+        },
+        {
+          "code": "730200",
+          "description": "Subscription, Book, Periodical",
+          "examples": [
+            "Theory textbook",
+            "Music journal",
+            "Method book for class use"
+          ]
+        },
+        {
+          "code": "750000",
+          "description": "Professional & Consulting Services",
+          "examples": [
+            "Curricular consultant",
+            "Instructional specialist fee"
+          ]
+        }
       ],
       "why": "Instructional supplies, classroom and studio materials, curriculum support resources, and academic instructional expenses.",
       "ambiguity": {
@@ -96,11 +182,45 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721450", "description": "Recruiting Travel", "examples": ["Recruiting fair travel", "High school visit travel", "Audition tour"] },
-        { "code": "725000", "description": "Marketing/Advertising Expense", "examples": ["Recruiting brochure", "Audition advertisement"] },
-        { "code": "727000", "description": "Copy Service", "examples": ["Recruiting materials printing"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Prospective student reception", "Audition day refreshments"] },
-        { "code": "730000", "description": "Supplies", "examples": ["Recruiting event supplies"] }
+        {
+          "code": "721450",
+          "description": "Recruiting Travel",
+          "examples": [
+            "Recruiting fair travel",
+            "High school visit travel",
+            "Audition tour"
+          ]
+        },
+        {
+          "code": "725000",
+          "description": "Marketing/Advertising Expense",
+          "examples": [
+            "Recruiting brochure",
+            "Audition advertisement"
+          ]
+        },
+        {
+          "code": "727000",
+          "description": "Copy Service",
+          "examples": [
+            "Recruiting materials printing"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Prospective student reception",
+            "Audition day refreshments"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "Recruiting event supplies"
+          ]
+        }
       ],
       "why": "Recruitment travel, auditions, campus visit events, admissions operations, recruiting materials, and student outreach efforts.",
       "ambiguity": null,
@@ -121,9 +241,31 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "725000", "description": "Marketing/Advertising Expense", "examples": ["Division promotional materials", "Program advertising"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Donor reception", "Community engagement event food"] },
-        { "code": "738000", "description": "Dues/Memberships", "examples": ["Professional organization membership", "NASM dues", "ACDA dues"] }
+        {
+          "code": "725000",
+          "description": "Marketing/Advertising Expense",
+          "examples": [
+            "Division promotional materials",
+            "Program advertising"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Donor reception",
+            "Community engagement event food"
+          ]
+        },
+        {
+          "code": "738000",
+          "description": "Dues/Memberships",
+          "examples": [
+            "Professional organization membership",
+            "NASM dues",
+            "ACDA dues"
+          ]
+        }
       ],
       "why": "Marketing, communications, donor relations, fundraising support, public-facing events, and external relations operations for the Music division.",
       "ambiguity": null,
@@ -144,11 +286,45 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "750000", "description": "Professional & Consulting Services", "examples": ["Guest artist honorarium", "Masterclass fee", "Clinician fee", "Residency fee"] },
-        { "code": "721000", "description": "Business Travel", "examples": ["Guest artist airfare reimbursement"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Guest artist hotel"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Guest artist per diem"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Guest artist reception", "Residency dinner"] }
+        {
+          "code": "750000",
+          "description": "Professional & Consulting Services",
+          "examples": [
+            "Guest artist honorarium",
+            "Masterclass fee",
+            "Clinician fee",
+            "Residency fee"
+          ]
+        },
+        {
+          "code": "721000",
+          "description": "Business Travel",
+          "examples": [
+            "Guest artist airfare reimbursement"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Guest artist hotel"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Guest artist per diem"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Guest artist reception",
+            "Residency dinner"
+          ]
+        }
       ],
       "why": "Guest artists, masterclasses, lecturers, clinicians, and residencies supporting curricular activity. For production guest artists, use Music Productions (MP-01).",
       "ambiguity": {
@@ -172,11 +348,50 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "730100", "description": "Office Supplies", "examples": ["Paper", "Pens/pencils", "Printer ink/toner", "Folders", "Binders"] },
-        { "code": "723000", "description": "Postage/Shipping & Delivery", "examples": ["Postage/stamps", "FedEx/UPS shipping", "Courier delivery"] },
-        { "code": "727000", "description": "Copy Service", "examples": ["Printing", "Photocopying", "Duplication"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Department meeting refreshments", "Faculty reception food"] },
-        { "code": "730000", "description": "Supplies", "examples": ["General supplies not elsewhere classified"] }
+        {
+          "code": "730100",
+          "description": "Office Supplies",
+          "examples": [
+            "Paper",
+            "Pens/pencils",
+            "Printer ink/toner",
+            "Folders",
+            "Binders"
+          ]
+        },
+        {
+          "code": "723000",
+          "description": "Postage/Shipping & Delivery",
+          "examples": [
+            "Postage/stamps",
+            "FedEx/UPS shipping",
+            "Courier delivery"
+          ]
+        },
+        {
+          "code": "727000",
+          "description": "Copy Service",
+          "examples": [
+            "Printing",
+            "Photocopying",
+            "Duplication"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Department meeting refreshments",
+            "Faculty reception food"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "General supplies not elsewhere classified"
+          ]
+        }
       ],
       "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Music division.",
       "ambiguity": null,
@@ -197,9 +412,33 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "789000", "description": "Equipment – M&R Non-Capital", "examples": ["Instrument repair", "Piano tuning", "Piano regulation", "String instrument repair", "Wind instrument repair"] },
-        { "code": "789300", "description": "Vendor Service Contracts – Non-Capital", "examples": ["Instrument service contract", "Equipment maintenance agreement"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Contracted piano technician", "Contracted repair specialist"] }
+        {
+          "code": "789000",
+          "description": "Equipment – M&R Non-Capital",
+          "examples": [
+            "Instrument repair",
+            "Piano tuning",
+            "Piano regulation",
+            "String instrument repair",
+            "Wind instrument repair"
+          ]
+        },
+        {
+          "code": "789300",
+          "description": "Vendor Service Contracts – Non-Capital",
+          "examples": [
+            "Instrument service contract",
+            "Equipment maintenance agreement"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Contracted piano technician",
+            "Contracted repair specialist"
+          ]
+        }
       ],
       "why": "Instrument maintenance, piano tuning, equipment repair, and related technical support services. Distinct from Technology Services (M-11).",
       "ambiguity": null,
@@ -220,12 +459,21 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "707100", "description": "Non-Academic Student Employees", "examples": ["Student office assistant", "Student front desk worker", "Student tech support", "Non-academic student worker"] }
+        {
+          "code": "707100",
+          "description": "Non-Academic Student Employees",
+          "examples": [
+            "Student office assistant",
+            "Student front desk worker",
+            "Student tech support",
+            "Non-academic student worker"
+          ]
+        }
       ],
       "why": "Admin, front desk, technical, and non-academic student worker roles. Not GTAs (704000), accompanists (TBDP1), or curricular student workers (TBDP25).",
       "ambiguity": {
         "also": "M-13 Accompanist Services or M-14 Curricular Student Worker Support",
-        "guidance": "Use M-09 for students in operational/administrative roles (front desk, office help, non-academic tech). Use M-13 for student accompanists. Use M-14 for students in ensemble conducting or other curricular support roles."
+        "guidance": "Use M-09 for students in operational/administrative roles (front desk, office help, non-academic tech). Use M-13 for student accompanists. Use M-14 for students in ensemble conducting or other curricular support roles. Use M-16 for students with a formal graduate assistantship appointment (GTA/GRA, Account 704000)."
       },
       "notes": "Compensation flow — triggered by worker type selection"
     },
@@ -244,10 +492,39 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "740300", "description": "Equipment – Non-Capital", "examples": ["Instrument purchase (under $5,000)", "Music stand purchase", "Equipment purchase under threshold"] },
-        { "code": "740400", "description": "Classroom Equipment – Non-Capital", "examples": ["Practice room equipment", "Studio equipment", "Keyboard/MIDI controller"] },
-        { "code": "789000", "description": "Equipment – M&R Non-Capital", "examples": ["Equipment repair (non-instrument)"] },
-        { "code": "770000", "description": "Equipment > $5,000", "examples": ["Major instrument purchase", "Capital equipment over $5,000"] }
+        {
+          "code": "740300",
+          "description": "Equipment – Non-Capital",
+          "examples": [
+            "Instrument purchase (under $5,000)",
+            "Music stand purchase",
+            "Equipment purchase under threshold"
+          ]
+        },
+        {
+          "code": "740400",
+          "description": "Classroom Equipment – Non-Capital",
+          "examples": [
+            "Practice room equipment",
+            "Studio equipment",
+            "Keyboard/MIDI controller"
+          ]
+        },
+        {
+          "code": "789000",
+          "description": "Equipment – M&R Non-Capital",
+          "examples": [
+            "Equipment repair (non-instrument)"
+          ]
+        },
+        {
+          "code": "770000",
+          "description": "Equipment > $5,000",
+          "examples": [
+            "Major instrument purchase",
+            "Capital equipment over $5,000"
+          ]
+        }
       ],
       "why": "Equipment purchases, rentals, leases, repairs, replacements, and operational equipment support activity.",
       "ambiguity": {
@@ -271,11 +548,47 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "739000", "description": "Computing Expense", "examples": ["IT services", "Computing support contract"] },
-        { "code": "739850", "description": "IT Maintenance Agreements", "examples": ["Software maintenance contract"] },
-        { "code": "739880", "description": "IT Subscription Exp (automated)", "examples": ["Auto-renewing software subscription", "Cloud service subscription"] },
-        { "code": "740100", "description": "Computers – Non-Capital", "examples": ["Computer purchase under $5,000", "Laptop", "Tablet"] },
-        { "code": "740150", "description": "Software – Non-Capital", "examples": ["Software purchase under $5,000", "Notation software", "Recording software license"] }
+        {
+          "code": "739000",
+          "description": "Computing Expense",
+          "examples": [
+            "IT services",
+            "Computing support contract"
+          ]
+        },
+        {
+          "code": "739850",
+          "description": "IT Maintenance Agreements",
+          "examples": [
+            "Software maintenance contract"
+          ]
+        },
+        {
+          "code": "739880",
+          "description": "IT Subscription Exp (automated)",
+          "examples": [
+            "Auto-renewing software subscription",
+            "Cloud service subscription"
+          ]
+        },
+        {
+          "code": "740100",
+          "description": "Computers – Non-Capital",
+          "examples": [
+            "Computer purchase under $5,000",
+            "Laptop",
+            "Tablet"
+          ]
+        },
+        {
+          "code": "740150",
+          "description": "Software – Non-Capital",
+          "examples": [
+            "Software purchase under $5,000",
+            "Notation software",
+            "Recording software license"
+          ]
+        }
       ],
       "why": "Software licenses, electronic media systems, instructional technology, digital platforms, computing support, and technology-related operational services.",
       "ambiguity": null,
@@ -296,10 +609,40 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721000", "description": "Business Travel", "examples": ["Student ensemble tour airfare", "MMEA conference travel", "Competition travel"] },
-        { "code": "721470", "description": "Ground Transportation", "examples": ["Bus charter", "Van rental", "Shuttle for student group"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Hotel for student group", "Lodging on tour"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Student group meals", "Per diem on tour"] }
+        {
+          "code": "721000",
+          "description": "Business Travel",
+          "examples": [
+            "Student ensemble tour airfare",
+            "MMEA conference travel",
+            "Competition travel"
+          ]
+        },
+        {
+          "code": "721470",
+          "description": "Ground Transportation",
+          "examples": [
+            "Bus charter",
+            "Van rental",
+            "Shuttle for student group"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Hotel for student group",
+            "Lodging on tour"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Student group meals",
+            "Per diem on tour"
+          ]
+        }
       ],
       "why": "Ensemble tours, conference attendance, student competition travel, off-campus performances, and related student travel activity.",
       "ambiguity": null,
@@ -320,7 +663,14 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "703800", "description": "Non-Ben Elg Academic (Non-Faculty)", "examples": ["Student accompanist pay", "Student academic worker in accompanying role"] }
+        {
+          "code": "703800",
+          "description": "Non-Ben Elg Academic (Non-Faculty)",
+          "examples": [
+            "Student accompanist pay",
+            "Student academic worker in accompanying role"
+          ]
+        }
       ],
       "why": "Student academic workers serving as accompanists supporting instructional activity, rehearsals, classes, coaching, and performance preparation. Not a GTA role.",
       "ambiguity": null,
@@ -341,7 +691,15 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "703800", "description": "Non-Ben Elg Academic (Non-Faculty)", "examples": ["Curricular student worker pay", "Ensemble conducting student worker", "Student in curricular support role"] }
+        {
+          "code": "703800",
+          "description": "Non-Ben Elg Academic (Non-Faculty)",
+          "examples": [
+            "Curricular student worker pay",
+            "Ensemble conducting student worker",
+            "Student in curricular support role"
+          ]
+        }
       ],
       "why": "Non-GTA student worker positions providing curricular support, including ensemble conducting. Replaces old program K8971 (CONDUCTING ENSEMBLE). Do not use TBDP24/707100 for these positions.",
       "ambiguity": null,
@@ -362,9 +720,31 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "730200", "description": "Subscription, Book, Periodical", "examples": ["Ensemble score purchase", "Sheet music for performance", "Score rental"] },
-        { "code": "788200", "description": "Library Acquisition – Non-Capital", "examples": ["Music library acquisition", "Permanent score addition to library"] },
-        { "code": "741600", "description": "Rent/Lease Equipment", "examples": ["Sheet music rental", "Score rental for production"] }
+        {
+          "code": "730200",
+          "description": "Subscription, Book, Periodical",
+          "examples": [
+            "Ensemble score purchase",
+            "Sheet music for performance",
+            "Score rental"
+          ]
+        },
+        {
+          "code": "788200",
+          "description": "Library Acquisition – Non-Capital",
+          "examples": [
+            "Music library acquisition",
+            "Permanent score addition to library"
+          ]
+        },
+        {
+          "code": "741600",
+          "description": "Rent/Lease Equipment",
+          "examples": [
+            "Sheet music rental",
+            "Score rental for production"
+          ]
+        }
       ],
       "why": "Performance scores, ensemble music purchases, sheet music rentals, and related music library and performance materials. Program identifier (TBDP26) is pending final assignment from K8967–K8984 range.",
       "ambiguity": {
@@ -373,10 +753,39 @@
       },
       "notes": "TBDP26 identifier is TBD — update program code in this file when final assignment is confirmed."
     },
-
-    
-    
-    
+    {
+      "id": "M-16",
+      "label": "Music – Graduate Assistants",
+      "division": "Music",
+      "deptId": "K1306001",
+      "deptName": "MUSIC OPERATIONS",
+      "program": "TBDP5",
+      "programName": "Student Academic Employment",
+      "fund": "0000",
+      "heads": "V.C (student help); VI.A; VI.F (GTA tuition remission)",
+      "activityType": "Paying a Person",
+      "activityGroup": "Operations & Academic",
+      "isProduction": false,
+      "isShared": false,
+      "accounts": [
+        {
+          "code": "704000",
+          "description": "Graduate Student Assistants",
+          "examples": [
+            "GTA pay",
+            "Graduate teaching assistant stipend",
+            "Graduate research assistant stipend",
+            "Graduate professional assistant"
+          ]
+        }
+      ],
+      "why": "Formal graduate teaching and research assistant appointments in Music. Account 704000. GTA tuition remission for NASM reporting is calculated automatically from Account 704000 — no separate action needed.",
+      "ambiguity": {
+        "also": "M-13 Accompanist Services or M-14 Curricular Student Worker Support",
+        "guidance": "Use M-16 only for formal graduate assistantship appointments using Account 704000. If a grad student is working as an accompanist or in a curricular support role without a formal GTA appointment, use M-13 (accompanist) or M-14 (curricular support) with Account 703800 instead."
+      },
+      "notes": "Compensation flow — triggered by worker type selection."
+    },
     {
       "id": "MP-01",
       "label": "Music Productions – General Production",
@@ -392,18 +801,110 @@
       "isProduction": true,
       "isShared": false,
       "accounts": [
-        { "code": "730800", "description": "Uniforms", "examples": ["Costume/uniform purchase", "Performance attire"] },
-        { "code": "730000", "description": "Supplies", "examples": ["Production supplies", "General materials"] },
-        { "code": "730300", "description": "Instructional Supplies", "examples": ["Production materials", "Rehearsal materials"] },
-        { "code": "741600", "description": "Rent/Lease Equipment", "examples": ["Audio/lighting equipment rental", "Staging rental"] },
-        { "code": "743800", "description": "Freight", "examples": ["Equipment freight", "Instrument shipping for production"] },
-        { "code": "750000", "description": "Professional & Consulting Services", "examples": ["Guest conductor fee", "Guest artist honorarium for production", "Royalty payment"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Contracted performer", "Contracted production specialist"] },
-        { "code": "705500", "description": "Non-Benefit Eligible Staff", "examples": ["Overhire labor", "Part-time production staff"] },
-        { "code": "708050", "description": "S&W – Overtime", "examples": ["Overtime pay for production"] },
-        { "code": "730200", "description": "Subscription, Book, Periodical", "examples": ["Production scores", "Performance scores"] },
-        { "code": "750900", "description": "Other Professional Fees", "examples": ["Licensing fee", "Rights fee"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Production reception", "Opening night hospitality"] }
+        {
+          "code": "730800",
+          "description": "Uniforms",
+          "examples": [
+            "Costume/uniform purchase",
+            "Performance attire"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "Production supplies",
+            "General materials"
+          ]
+        },
+        {
+          "code": "730300",
+          "description": "Instructional Supplies",
+          "examples": [
+            "Production materials",
+            "Rehearsal materials"
+          ]
+        },
+        {
+          "code": "741600",
+          "description": "Rent/Lease Equipment",
+          "examples": [
+            "Audio/lighting equipment rental",
+            "Staging rental"
+          ]
+        },
+        {
+          "code": "743800",
+          "description": "Freight",
+          "examples": [
+            "Equipment freight",
+            "Instrument shipping for production"
+          ]
+        },
+        {
+          "code": "750000",
+          "description": "Professional & Consulting Services",
+          "examples": [
+            "Guest conductor fee",
+            "Guest artist honorarium for production",
+            "Royalty payment"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Contracted performer",
+            "Contracted production specialist"
+          ]
+        },
+        {
+          "code": "705500",
+          "description": "Non-Benefit Eligible Staff",
+          "examples": [
+            "Overhire labor",
+            "Part-time production staff"
+          ]
+        },
+        {
+          "code": "708050",
+          "description": "S&W – Overtime",
+          "examples": [
+            "Overtime pay for production"
+          ]
+        },
+        {
+          "code": "730200",
+          "description": "Subscription, Book, Periodical",
+          "examples": [
+            "Production scores",
+            "Performance scores"
+          ]
+        },
+        {
+          "code": "750900",
+          "description": "Other Professional Fees",
+          "examples": [
+            "Licensing fee",
+            "Rights fee"
+          ]
+        },
+        {
+          "code": "789000",
+          "description": "Equipment M&R Non-Capital",
+          "examples": [
+            "Instrument repair for a production",
+            "Equipment maintenance tied to a specific show"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Production reception",
+            "Opening night hospitality"
+          ]
+        }
       ],
       "why": "All production expenses for music productions including costumes, scenic, lighting/sound, overhire labor, royalties, and guest artists. NASM HEADS VI.A reports one total — Account identifies the expense type. Individual shows add a Project code on top of this MoCode.",
       "ambiguity": {
@@ -412,10 +913,6 @@
       },
       "notes": "Individual shows add a Project code. Royalties and licensing are folded into this MoCode via Account 750000 or 750900."
     },
-
-    
-    
-    
     {
       "id": "D-01",
       "label": "Dance – Faculty Travel",
@@ -431,11 +928,48 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721000", "description": "Business Travel", "examples": ["Airline ticket", "Conference travel", "Audition travel"] },
-        { "code": "721470", "description": "Ground Transportation", "examples": ["Rideshare/Uber", "Parking fees", "Shuttle"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Hotel", "Lodging while traveling"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Per diem meals", "Meals while traveling"] },
-        { "code": "722000", "description": "Training & Development", "examples": ["Conference registration fee", "Professional development course"] }
+        {
+          "code": "721000",
+          "description": "Business Travel",
+          "examples": [
+            "Airline ticket",
+            "Conference travel",
+            "Audition travel"
+          ]
+        },
+        {
+          "code": "721470",
+          "description": "Ground Transportation",
+          "examples": [
+            "Rideshare/Uber",
+            "Parking fees",
+            "Shuttle"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Hotel",
+            "Lodging while traveling"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Per diem meals",
+            "Meals while traveling"
+          ]
+        },
+        {
+          "code": "722000",
+          "description": "Training & Development",
+          "examples": [
+            "Conference registration fee",
+            "Professional development course"
+          ]
+        }
       ],
       "why": "Faculty conference travel, professional meetings, accreditation activity, research travel, and related professional development expenses.",
       "ambiguity": null,
@@ -456,10 +990,37 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721400", "description": "Bus Travel – Job Candidate", "examples": ["Candidate airline ticket", "Candidate travel reimbursement"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Candidate hotel"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Candidate meal", "Search committee dinner"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Campus visit reception", "Search committee lunch"] }
+        {
+          "code": "721400",
+          "description": "Bus Travel – Job Candidate",
+          "examples": [
+            "Candidate airline ticket",
+            "Candidate travel reimbursement"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Candidate hotel"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Candidate meal",
+            "Search committee dinner"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Campus visit reception",
+            "Search committee lunch"
+          ]
+        }
       ],
       "why": "Faculty recruitment, candidate travel, onboarding support, search processes, and faculty hiring-related operational expenses.",
       "ambiguity": null,
@@ -480,9 +1041,32 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "730300", "description": "Instructional Supplies", "examples": ["Studio materials", "Curriculum supplies", "Resistance bands", "Dance supplies for class"] },
-        { "code": "730200", "description": "Subscription, Book, Periodical", "examples": ["Dance textbook", "Dance journal", "Method book for class"] },
-        { "code": "750000", "description": "Professional & Consulting Services", "examples": ["Curricular consultant"] }
+        {
+          "code": "730300",
+          "description": "Instructional Supplies",
+          "examples": [
+            "Studio materials",
+            "Curriculum supplies",
+            "Resistance bands",
+            "Dance supplies for class"
+          ]
+        },
+        {
+          "code": "730200",
+          "description": "Subscription, Book, Periodical",
+          "examples": [
+            "Dance textbook",
+            "Dance journal",
+            "Method book for class"
+          ]
+        },
+        {
+          "code": "750000",
+          "description": "Professional & Consulting Services",
+          "examples": [
+            "Curricular consultant"
+          ]
+        }
       ],
       "why": "Instructional supplies, classroom and studio materials, curriculum support resources, and academic instructional expenses.",
       "ambiguity": null,
@@ -503,11 +1087,44 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721450", "description": "Recruiting Travel", "examples": ["Recruiting fair travel", "Audition tour"] },
-        { "code": "725000", "description": "Marketing/Advertising Expense", "examples": ["Recruiting brochure", "Audition advertisement"] },
-        { "code": "727000", "description": "Copy Service", "examples": ["Recruiting materials printing"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Prospective student reception", "Audition day refreshments"] },
-        { "code": "730000", "description": "Supplies", "examples": ["Recruiting event supplies"] }
+        {
+          "code": "721450",
+          "description": "Recruiting Travel",
+          "examples": [
+            "Recruiting fair travel",
+            "Audition tour"
+          ]
+        },
+        {
+          "code": "725000",
+          "description": "Marketing/Advertising Expense",
+          "examples": [
+            "Recruiting brochure",
+            "Audition advertisement"
+          ]
+        },
+        {
+          "code": "727000",
+          "description": "Copy Service",
+          "examples": [
+            "Recruiting materials printing"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Prospective student reception",
+            "Audition day refreshments"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "Recruiting event supplies"
+          ]
+        }
       ],
       "why": "Recruitment travel, auditions, campus visit events, admissions operations, recruiting materials, and student outreach efforts.",
       "ambiguity": null,
@@ -528,9 +1145,30 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "725000", "description": "Marketing/Advertising Expense", "examples": ["Division promotional materials"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Donor reception", "Community event food"] },
-        { "code": "738000", "description": "Dues/Memberships", "examples": ["NASD dues", "NEDO membership", "Professional organization membership"] }
+        {
+          "code": "725000",
+          "description": "Marketing/Advertising Expense",
+          "examples": [
+            "Division promotional materials"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Donor reception",
+            "Community event food"
+          ]
+        },
+        {
+          "code": "738000",
+          "description": "Dues/Memberships",
+          "examples": [
+            "NASD dues",
+            "NEDO membership",
+            "Professional organization membership"
+          ]
+        }
       ],
       "why": "Marketing, communications, donor relations, fundraising support, public-facing events, and external relations operations for the Dance division.",
       "ambiguity": null,
@@ -551,11 +1189,45 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "750000", "description": "Professional & Consulting Services", "examples": ["Guest artist honorarium", "Masterclass fee", "Clinician fee", "Residency fee"] },
-        { "code": "721000", "description": "Business Travel", "examples": ["Guest artist airfare"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Guest artist hotel"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Guest artist per diem"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Guest artist reception", "Residency dinner"] }
+        {
+          "code": "750000",
+          "description": "Professional & Consulting Services",
+          "examples": [
+            "Guest artist honorarium",
+            "Masterclass fee",
+            "Clinician fee",
+            "Residency fee"
+          ]
+        },
+        {
+          "code": "721000",
+          "description": "Business Travel",
+          "examples": [
+            "Guest artist airfare"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Guest artist hotel"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Guest artist per diem"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Guest artist reception",
+            "Residency dinner"
+          ]
+        }
       ],
       "why": "Guest artists, masterclasses, lecturers, clinicians, and residencies supporting curricular activity. Production choreographers are tracked in Dance Productions (DP-01).",
       "ambiguity": {
@@ -579,11 +1251,46 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "730100", "description": "Office Supplies", "examples": ["Paper", "Pens/pencils", "Printer ink", "Folders"] },
-        { "code": "723000", "description": "Postage/Shipping & Delivery", "examples": ["Postage/stamps", "FedEx/UPS shipping"] },
-        { "code": "727000", "description": "Copy Service", "examples": ["Printing", "Photocopying"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Department meeting refreshments"] },
-        { "code": "730000", "description": "Supplies", "examples": ["General supplies not elsewhere classified"] }
+        {
+          "code": "730100",
+          "description": "Office Supplies",
+          "examples": [
+            "Paper",
+            "Pens/pencils",
+            "Printer ink",
+            "Folders"
+          ]
+        },
+        {
+          "code": "723000",
+          "description": "Postage/Shipping & Delivery",
+          "examples": [
+            "Postage/stamps",
+            "FedEx/UPS shipping"
+          ]
+        },
+        {
+          "code": "727000",
+          "description": "Copy Service",
+          "examples": [
+            "Printing",
+            "Photocopying"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Department meeting refreshments"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "General supplies not elsewhere classified"
+          ]
+        }
       ],
       "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Dance division.",
       "ambiguity": null,
@@ -604,10 +1311,21 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "707100", "description": "Non-Academic Student Employees", "examples": ["Student office assistant", "Student front desk worker", "Non-academic student worker"] }
+        {
+          "code": "707100",
+          "description": "Non-Academic Student Employees",
+          "examples": [
+            "Student office assistant",
+            "Student front desk worker",
+            "Non-academic student worker"
+          ]
+        }
       ],
       "why": "Admin, front desk, technical, and non-academic student worker roles. Not GTAs (704000).",
-      "ambiguity": null,
+      "ambiguity": {
+        "also": "D-12 Accompanist Services",
+        "guidance": "Use D-08 for students in operational or administrative roles (front desk, office help, non-academic support) using Account 707100. Use D-12 for students serving as accompanists in Dance classes and rehearsals using Account 703800."
+      },
       "notes": "Compensation flow — triggered by worker type selection."
     },
     {
@@ -625,10 +1343,37 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "740300", "description": "Equipment – Non-Capital", "examples": ["Equipment purchase under $5,000", "Sound system", "Sprung floor component"] },
-        { "code": "740400", "description": "Classroom Equipment – Non-Capital", "examples": ["Studio equipment", "Barre purchase"] },
-        { "code": "789000", "description": "Equipment – M&R Non-Capital", "examples": ["Equipment repair"] },
-        { "code": "770000", "description": "Equipment > $5,000", "examples": ["Major equipment over $5,000"] }
+        {
+          "code": "740300",
+          "description": "Equipment – Non-Capital",
+          "examples": [
+            "Equipment purchase under $5,000",
+            "Sound system",
+            "Sprung floor component"
+          ]
+        },
+        {
+          "code": "740400",
+          "description": "Classroom Equipment – Non-Capital",
+          "examples": [
+            "Studio equipment",
+            "Barre purchase"
+          ]
+        },
+        {
+          "code": "789000",
+          "description": "Equipment – M&R Non-Capital",
+          "examples": [
+            "Equipment repair"
+          ]
+        },
+        {
+          "code": "770000",
+          "description": "Equipment > $5,000",
+          "examples": [
+            "Major equipment over $5,000"
+          ]
+        }
       ],
       "why": "Equipment purchases, rentals, leases, repairs, replacements, and operational equipment support activity.",
       "ambiguity": null,
@@ -649,10 +1394,43 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "739000", "description": "Computing Expense", "examples": ["IT services contract"] },
-        { "code": "739880", "description": "IT Subscription Exp (automated)", "examples": ["Software subscription"] },
-        { "code": "740100", "description": "Computers – Non-Capital", "examples": ["Computer/laptop purchase under $5,000"] },
-        { "code": "740150", "description": "Software – Non-Capital", "examples": ["Software purchase", "Video editing software"] }
+        {
+          "code": "739000",
+          "description": "Computing Expense",
+          "examples": [
+            "IT services contract"
+          ]
+        },
+        {
+          "code": "739850",
+          "description": "IT Maintenance Agreements",
+          "examples": [
+            "Vendor service contract for tech equipment",
+            "Annual maintenance agreement for software/hardware"
+          ]
+        },
+        {
+          "code": "739880",
+          "description": "IT Subscription Exp (automated)",
+          "examples": [
+            "Software subscription"
+          ]
+        },
+        {
+          "code": "740100",
+          "description": "Computers – Non-Capital",
+          "examples": [
+            "Computer/laptop purchase under $5,000"
+          ]
+        },
+        {
+          "code": "740150",
+          "description": "Software – Non-Capital",
+          "examples": [
+            "Software purchase",
+            "Video editing software"
+          ]
+        }
       ],
       "why": "Software licenses, electronic media systems, digital platforms, computing support, and technology-related operational services.",
       "ambiguity": null,
@@ -673,19 +1451,75 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721000", "description": "Business Travel", "examples": ["Student group airfare", "Conference travel for students"] },
-        { "code": "721470", "description": "Ground Transportation", "examples": ["Bus charter", "Van rental", "Shuttle for student group"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Hotel for student group"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Student group meals", "Per diem on tour"] }
+        {
+          "code": "721000",
+          "description": "Business Travel",
+          "examples": [
+            "Student group airfare",
+            "Conference travel for students"
+          ]
+        },
+        {
+          "code": "721470",
+          "description": "Ground Transportation",
+          "examples": [
+            "Bus charter",
+            "Van rental",
+            "Shuttle for student group"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Hotel for student group"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Student group meals",
+            "Per diem on tour"
+          ]
+        }
       ],
       "why": "Ensemble tours, conference attendance, student competition travel, off-campus performances, and related student travel activity.",
       "ambiguity": null,
       "notes": null
     },
-
-    
-    
-    
+    {
+      "id": "D-12",
+      "label": "Dance – Accompanist Services",
+      "division": "Dance",
+      "deptId": "K1305002",
+      "deptName": "DANCE",
+      "program": "TBDP1",
+      "programName": "Accompanist Services",
+      "fund": "0000",
+      "heads": "V.C (student help); VI.A.1",
+      "activityType": "Paying a Person",
+      "activityGroup": "Operations & Academic",
+      "isProduction": false,
+      "isShared": false,
+      "accounts": [
+        {
+          "code": "703800",
+          "description": "Non-Ben Elg Academic (Non-Faculty)",
+          "examples": [
+            "Student accompanist pay",
+            "Student pianist for technique class",
+            "Student academic worker in accompanying role"
+          ]
+        }
+      ],
+      "why": "Student academic workers serving as accompanists for Dance classes, technique instruction, and curricular rehearsals. This is not a GTA role. Account 703800 identifies these as student academic workers.",
+      "ambiguity": {
+        "also": "D-03 Instructional Support",
+        "guidance": "Use D-12 when the accompanist is an enrolled UMKC student paid as an academic worker (Account 703800). Use D-03 with Account 703500 when the accompanist is not an enrolled student — a freelance pianist or external part-time hire."
+      },
+      "notes": "Compensation flow — triggered by worker type selection. Account 703800 identifies the student academic worker category."
+    },
     {
       "id": "DP-01",
       "label": "Dance Productions – General Production",
@@ -701,18 +1535,100 @@
       "isProduction": true,
       "isShared": false,
       "accounts": [
-        { "code": "730800", "description": "Uniforms", "examples": ["Costume purchase", "Performance attire"] },
-        { "code": "730000", "description": "Supplies", "examples": ["Production supplies", "General materials"] },
-        { "code": "730300", "description": "Instructional Supplies", "examples": ["Production materials"] },
-        { "code": "741600", "description": "Rent/Lease Equipment", "examples": ["Equipment rental for production", "Lighting/audio rental"] },
-        { "code": "743800", "description": "Freight", "examples": ["Equipment freight", "Shipping for production"] },
-        { "code": "750000", "description": "Professional & Consulting Services", "examples": ["Guest choreographer fee", "Royalty payment", "Production consultant"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Contracted performer", "Contracted production specialist"] },
-        { "code": "705500", "description": "Non-Benefit Eligible Staff", "examples": ["Overhire labor", "Part-time production staff"] },
-        { "code": "708050", "description": "S&W – Overtime", "examples": ["Overtime pay for production"] },
-        { "code": "730200", "description": "Subscription, Book, Periodical", "examples": ["Score/music for production"] },
-        { "code": "750900", "description": "Other Professional Fees", "examples": ["Licensing fee", "Rights fee"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Production reception", "Opening night hospitality"] }
+        {
+          "code": "730800",
+          "description": "Uniforms",
+          "examples": [
+            "Costume purchase",
+            "Performance attire"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "Production supplies",
+            "General materials"
+          ]
+        },
+        {
+          "code": "730300",
+          "description": "Instructional Supplies",
+          "examples": [
+            "Production materials"
+          ]
+        },
+        {
+          "code": "741600",
+          "description": "Rent/Lease Equipment",
+          "examples": [
+            "Equipment rental for production",
+            "Lighting/audio rental"
+          ]
+        },
+        {
+          "code": "743800",
+          "description": "Freight",
+          "examples": [
+            "Equipment freight",
+            "Shipping for production"
+          ]
+        },
+        {
+          "code": "750000",
+          "description": "Professional & Consulting Services",
+          "examples": [
+            "Guest choreographer fee",
+            "Royalty payment",
+            "Production consultant"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Contracted performer",
+            "Contracted production specialist"
+          ]
+        },
+        {
+          "code": "705500",
+          "description": "Non-Benefit Eligible Staff",
+          "examples": [
+            "Overhire labor",
+            "Part-time production staff"
+          ]
+        },
+        {
+          "code": "708050",
+          "description": "S&W – Overtime",
+          "examples": [
+            "Overtime pay for production"
+          ]
+        },
+        {
+          "code": "730200",
+          "description": "Subscription, Book, Periodical",
+          "examples": [
+            "Score/music for production"
+          ]
+        },
+        {
+          "code": "750900",
+          "description": "Other Professional Fees",
+          "examples": [
+            "Licensing fee",
+            "Rights fee"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Production reception",
+            "Opening night hospitality"
+          ]
+        }
       ],
       "why": "All production expenses for dance productions. NASD HEADS VI.A.2 reports one production total — Account identifies the expense type within PeopleSoft. Individual shows add a Project code on top of this MoCode.",
       "ambiguity": {
@@ -721,10 +1637,6 @@
       },
       "notes": "Individual shows add a Project code."
     },
-
-    
-    
-    
     {
       "id": "TO-01",
       "label": "Theatre – Faculty Travel",
@@ -740,11 +1652,49 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721000", "description": "Business Travel", "examples": ["Airline ticket", "Conference travel", "URTA travel"] },
-        { "code": "721470", "description": "Ground Transportation", "examples": ["Rideshare/Uber", "Parking fees", "Shuttle"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Hotel", "Lodging while traveling"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Per diem meals", "Meals while traveling"] },
-        { "code": "722000", "description": "Training & Development", "examples": ["Conference registration fee", "NAST meeting registration", "Workshop fee"] }
+        {
+          "code": "721000",
+          "description": "Business Travel",
+          "examples": [
+            "Airline ticket",
+            "Conference travel",
+            "URTA travel"
+          ]
+        },
+        {
+          "code": "721470",
+          "description": "Ground Transportation",
+          "examples": [
+            "Rideshare/Uber",
+            "Parking fees",
+            "Shuttle"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Hotel",
+            "Lodging while traveling"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Per diem meals",
+            "Meals while traveling"
+          ]
+        },
+        {
+          "code": "722000",
+          "description": "Training & Development",
+          "examples": [
+            "Conference registration fee",
+            "NAST meeting registration",
+            "Workshop fee"
+          ]
+        }
       ],
       "why": "Faculty conference travel, professional meetings, accreditation activity, research travel, and related professional development expenses.",
       "ambiguity": null,
@@ -765,10 +1715,37 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721400", "description": "Bus Travel – Job Candidate", "examples": ["Candidate airline ticket", "Candidate travel reimbursement"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Candidate hotel"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Candidate meal", "Search committee dinner"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Campus visit reception", "Search committee lunch"] }
+        {
+          "code": "721400",
+          "description": "Bus Travel – Job Candidate",
+          "examples": [
+            "Candidate airline ticket",
+            "Candidate travel reimbursement"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Candidate hotel"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Candidate meal",
+            "Search committee dinner"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Campus visit reception",
+            "Search committee lunch"
+          ]
+        }
       ],
       "why": "Faculty recruitment, candidate travel, onboarding support, search processes, and faculty hiring-related operational expenses.",
       "ambiguity": null,
@@ -789,9 +1766,31 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "730300", "description": "Instructional Supplies", "examples": ["Classroom/studio materials", "Script copies for class", "Curriculum supplies"] },
-        { "code": "730200", "description": "Subscription, Book, Periodical", "examples": ["Theatre textbook", "Script for class use", "Theatre journal"] },
-        { "code": "750000", "description": "Professional & Consulting Services", "examples": ["Curricular consultant"] }
+        {
+          "code": "730300",
+          "description": "Instructional Supplies",
+          "examples": [
+            "Classroom/studio materials",
+            "Script copies for class",
+            "Curriculum supplies"
+          ]
+        },
+        {
+          "code": "730200",
+          "description": "Subscription, Book, Periodical",
+          "examples": [
+            "Theatre textbook",
+            "Script for class use",
+            "Theatre journal"
+          ]
+        },
+        {
+          "code": "750000",
+          "description": "Professional & Consulting Services",
+          "examples": [
+            "Curricular consultant"
+          ]
+        }
       ],
       "why": "Instructional supplies, classroom and studio materials, curriculum support resources, and academic instructional expenses.",
       "ambiguity": null,
@@ -812,10 +1811,38 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721450", "description": "Recruiting Travel", "examples": ["Recruiting fair travel", "URTA audition travel", "High school visit"] },
-        { "code": "725000", "description": "Marketing/Advertising Expense", "examples": ["Recruiting brochure", "Audition advertisement"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Prospective student reception", "Audition day refreshments"] },
-        { "code": "730000", "description": "Supplies", "examples": ["Recruiting event supplies"] }
+        {
+          "code": "721450",
+          "description": "Recruiting Travel",
+          "examples": [
+            "Recruiting fair travel",
+            "URTA audition travel",
+            "High school visit"
+          ]
+        },
+        {
+          "code": "725000",
+          "description": "Marketing/Advertising Expense",
+          "examples": [
+            "Recruiting brochure",
+            "Audition advertisement"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Prospective student reception",
+            "Audition day refreshments"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "Recruiting event supplies"
+          ]
+        }
       ],
       "why": "Recruitment travel, auditions, campus visit events, admissions operations, recruiting materials, and student outreach efforts.",
       "ambiguity": null,
@@ -836,9 +1863,30 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "725000", "description": "Marketing/Advertising Expense", "examples": ["Division promotional materials"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Donor reception", "Community event food"] },
-        { "code": "738000", "description": "Dues/Memberships", "examples": ["NAST dues", "USITT membership", "ATHE membership"] }
+        {
+          "code": "725000",
+          "description": "Marketing/Advertising Expense",
+          "examples": [
+            "Division promotional materials"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Donor reception",
+            "Community event food"
+          ]
+        },
+        {
+          "code": "738000",
+          "description": "Dues/Memberships",
+          "examples": [
+            "NAST dues",
+            "USITT membership",
+            "ATHE membership"
+          ]
+        }
       ],
       "why": "Marketing, communications, donor relations, fundraising support, public-facing events, and external relations operations for the Theatre division.",
       "ambiguity": null,
@@ -859,11 +1907,44 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "750000", "description": "Professional & Consulting Services", "examples": ["Guest artist honorarium", "Masterclass fee", "Clinician fee", "Residency fee"] },
-        { "code": "721000", "description": "Business Travel", "examples": ["Guest artist airfare"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Guest artist hotel"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Guest artist per diem"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Guest artist reception"] }
+        {
+          "code": "750000",
+          "description": "Professional & Consulting Services",
+          "examples": [
+            "Guest artist honorarium",
+            "Masterclass fee",
+            "Clinician fee",
+            "Residency fee"
+          ]
+        },
+        {
+          "code": "721000",
+          "description": "Business Travel",
+          "examples": [
+            "Guest artist airfare"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Guest artist hotel"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Guest artist per diem"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Guest artist reception"
+          ]
+        }
       ],
       "why": "Guest artists, masterclasses, lecturers, clinicians, and residencies supporting curricular activity. Production guest directors and designers are tracked in Theatre Productions (TBD7).",
       "ambiguity": {
@@ -887,11 +1968,47 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "730100", "description": "Office Supplies", "examples": ["Paper", "Pens/pencils", "Printer ink", "Folders"] },
-        { "code": "723000", "description": "Postage/Shipping & Delivery", "examples": ["Postage/stamps", "FedEx/UPS shipping"] },
-        { "code": "727000", "description": "Copy Service", "examples": ["Printing", "Photocopying", "Script duplication"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Department meeting refreshments"] },
-        { "code": "730000", "description": "Supplies", "examples": ["General supplies"] }
+        {
+          "code": "730100",
+          "description": "Office Supplies",
+          "examples": [
+            "Paper",
+            "Pens/pencils",
+            "Printer ink",
+            "Folders"
+          ]
+        },
+        {
+          "code": "723000",
+          "description": "Postage/Shipping & Delivery",
+          "examples": [
+            "Postage/stamps",
+            "FedEx/UPS shipping"
+          ]
+        },
+        {
+          "code": "727000",
+          "description": "Copy Service",
+          "examples": [
+            "Printing",
+            "Photocopying",
+            "Script duplication"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Department meeting refreshments"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "General supplies"
+          ]
+        }
       ],
       "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Theatre division.",
       "ambiguity": null,
@@ -912,9 +2029,31 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "789000", "description": "Equipment – M&R Non-Capital", "examples": ["Lighting board repair", "Sound system repair", "Rigging maintenance"] },
-        { "code": "789300", "description": "Vendor Service Contracts – Non-Capital", "examples": ["Equipment service contract", "Maintenance agreement"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Contracted technical specialist", "Equipment repair service"] }
+        {
+          "code": "789000",
+          "description": "Equipment – M&R Non-Capital",
+          "examples": [
+            "Lighting board repair",
+            "Sound system repair",
+            "Rigging maintenance"
+          ]
+        },
+        {
+          "code": "789300",
+          "description": "Vendor Service Contracts – Non-Capital",
+          "examples": [
+            "Equipment service contract",
+            "Maintenance agreement"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Contracted technical specialist",
+            "Equipment repair service"
+          ]
+        }
       ],
       "why": "Maintenance and repair of technical infrastructure including lighting boards, sound systems, rigging, and related equipment. Distinct from Technology Services (TO-11).",
       "ambiguity": null,
@@ -935,7 +2074,15 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "707100", "description": "Non-Academic Student Employees", "examples": ["Student office assistant", "Student front desk worker", "Non-academic student worker"] }
+        {
+          "code": "707100",
+          "description": "Non-Academic Student Employees",
+          "examples": [
+            "Student office assistant",
+            "Student front desk worker",
+            "Non-academic student worker"
+          ]
+        }
       ],
       "why": "Admin, front desk, technical, and non-academic student worker roles. Account 707100 identifies as non-academic student employees.",
       "ambiguity": null,
@@ -956,10 +2103,35 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "740300", "description": "Equipment – Non-Capital", "examples": ["Equipment purchase under $5,000", "Technical equipment"] },
-        { "code": "740400", "description": "Classroom Equipment – Non-Capital", "examples": ["Studio/classroom equipment"] },
-        { "code": "789000", "description": "Equipment – M&R Non-Capital", "examples": ["Equipment repair (non-production)"] },
-        { "code": "770000", "description": "Equipment > $5,000", "examples": ["Major equipment over $5,000"] }
+        {
+          "code": "740300",
+          "description": "Equipment – Non-Capital",
+          "examples": [
+            "Equipment purchase under $5,000",
+            "Technical equipment"
+          ]
+        },
+        {
+          "code": "740400",
+          "description": "Classroom Equipment – Non-Capital",
+          "examples": [
+            "Studio/classroom equipment"
+          ]
+        },
+        {
+          "code": "789000",
+          "description": "Equipment – M&R Non-Capital",
+          "examples": [
+            "Equipment repair (non-production)"
+          ]
+        },
+        {
+          "code": "770000",
+          "description": "Equipment > $5,000",
+          "examples": [
+            "Major equipment over $5,000"
+          ]
+        }
       ],
       "why": "Equipment purchases, rentals, leases, repairs, replacements, and operational equipment support activity.",
       "ambiguity": null,
@@ -980,10 +2152,45 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "739000", "description": "Computing Expense", "examples": ["IT services contract"] },
-        { "code": "739880", "description": "IT Subscription Exp (automated)", "examples": ["Software subscription", "Adobe subscription"] },
-        { "code": "740100", "description": "Computers – Non-Capital", "examples": ["Computer/laptop purchase under $5,000"] },
-        { "code": "740150", "description": "Software – Non-Capital", "examples": ["Software purchase", "Design software", "DRI software"] }
+        {
+          "code": "739000",
+          "description": "Computing Expense",
+          "examples": [
+            "IT services contract"
+          ]
+        },
+        {
+          "code": "739850",
+          "description": "IT Maintenance Agreements",
+          "examples": [
+            "Vendor service contract for tech equipment",
+            "Annual maintenance agreement for software/hardware"
+          ]
+        },
+        {
+          "code": "739880",
+          "description": "IT Subscription Exp (automated)",
+          "examples": [
+            "Software subscription",
+            "Adobe subscription"
+          ]
+        },
+        {
+          "code": "740100",
+          "description": "Computers – Non-Capital",
+          "examples": [
+            "Computer/laptop purchase under $5,000"
+          ]
+        },
+        {
+          "code": "740150",
+          "description": "Software – Non-Capital",
+          "examples": [
+            "Software purchase",
+            "Design software",
+            "DRI software"
+          ]
+        }
       ],
       "why": "Software licenses, electronic media systems, digital platforms, computing support, and technology-related operational services.",
       "ambiguity": null,
@@ -1004,19 +2211,42 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721000", "description": "Business Travel", "examples": ["Student group airfare", "Festival travel"] },
-        { "code": "721470", "description": "Ground Transportation", "examples": ["Bus charter", "Van rental"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Hotel for student group"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Student group meals", "Per diem on tour"] }
+        {
+          "code": "721000",
+          "description": "Business Travel",
+          "examples": [
+            "Student group airfare",
+            "Festival travel"
+          ]
+        },
+        {
+          "code": "721470",
+          "description": "Ground Transportation",
+          "examples": [
+            "Bus charter",
+            "Van rental"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Hotel for student group"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Student group meals",
+            "Per diem on tour"
+          ]
+        }
       ],
       "why": "Student group travel for curricular and competitive purposes, including festival attendance and off-campus performances.",
       "ambiguity": null,
       "notes": null
     },
-
-    
-    
-    
     {
       "id": "TP-01",
       "label": "Theatre Productions – Performance Operations",
@@ -1032,11 +2262,46 @@
       "isProduction": true,
       "isShared": false,
       "accounts": [
-        { "code": "750000", "description": "Professional & Consulting Services", "examples": ["Guest director fee", "Guest designer fee", "Production consultant"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Contracted performer", "Contracted production specialist"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Production reception", "Opening night hospitality"] },
-        { "code": "705500", "description": "Non-Benefit Eligible Staff", "examples": ["Part-time production staff", "Overhire labor for specific show"] },
-        { "code": "708050", "description": "S&W – Overtime", "examples": ["Overtime for specific production"] }
+        {
+          "code": "750000",
+          "description": "Professional & Consulting Services",
+          "examples": [
+            "Guest director fee",
+            "Guest designer fee",
+            "Production consultant"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Contracted performer",
+            "Contracted production specialist"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Production reception",
+            "Opening night hospitality"
+          ]
+        },
+        {
+          "code": "705500",
+          "description": "Non-Benefit Eligible Staff",
+          "examples": [
+            "Part-time production staff",
+            "Overhire labor for specific show"
+          ]
+        },
+        {
+          "code": "708050",
+          "description": "S&W – Overtime",
+          "examples": [
+            "Overtime for specific production"
+          ]
+        }
       ],
       "why": "Production coordination, guest directors, designers, and contracted artists for specific productions. NAST HEADS VI.A.2 reports one production total. Individual shows use a Project code on top of this MoCode.",
       "ambiguity": {
@@ -1060,10 +2325,40 @@
       "isProduction": true,
       "isShared": false,
       "accounts": [
-        { "code": "730800", "description": "Uniforms", "examples": ["Costume purchase", "Performance attire", "Formal wear"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Costume designer fee", "Wardrobe contractor"] },
-        { "code": "741600", "description": "Rent/Lease Equipment", "examples": ["Costume rental"] },
-        { "code": "730000", "description": "Supplies", "examples": ["Fabric", "Sewing supplies", "Alterations materials", "Makeup/hair supplies"] }
+        {
+          "code": "730800",
+          "description": "Uniforms",
+          "examples": [
+            "Costume purchase",
+            "Performance attire",
+            "Formal wear"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Costume designer fee",
+            "Wardrobe contractor"
+          ]
+        },
+        {
+          "code": "741600",
+          "description": "Rent/Lease Equipment",
+          "examples": [
+            "Costume rental"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "Fabric",
+            "Sewing supplies",
+            "Alterations materials",
+            "Makeup/hair supplies"
+          ]
+        }
       ],
       "why": "Costume purchases, rentals, alterations, wardrobe supplies, hair and makeup support, and related production costume activity.",
       "ambiguity": null,
@@ -1084,11 +2379,48 @@
       "isProduction": true,
       "isShared": false,
       "accounts": [
-        { "code": "730000", "description": "Supplies", "examples": ["Lumber", "Paint", "Hardware", "Build materials"] },
-        { "code": "730300", "description": "Instructional Supplies", "examples": ["Production materials", "Fabrication supplies"] },
-        { "code": "743800", "description": "Freight", "examples": ["Scenic freight", "Materials shipping"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Scenic designer fee", "Props contractor"] },
-        { "code": "741600", "description": "Rent/Lease Equipment", "examples": ["Staging rental", "Props rental"] }
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "Lumber",
+            "Paint",
+            "Hardware",
+            "Build materials"
+          ]
+        },
+        {
+          "code": "730300",
+          "description": "Instructional Supplies",
+          "examples": [
+            "Production materials",
+            "Fabrication supplies"
+          ]
+        },
+        {
+          "code": "743800",
+          "description": "Freight",
+          "examples": [
+            "Scenic freight",
+            "Materials shipping"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Scenic designer fee",
+            "Props contractor"
+          ]
+        },
+        {
+          "code": "741600",
+          "description": "Rent/Lease Equipment",
+          "examples": [
+            "Staging rental",
+            "Props rental"
+          ]
+        }
       ],
       "why": "Scenery, props, staging materials, lumber, paint, fabrication supplies, rehearsal materials, and related production support materials.",
       "ambiguity": null,
@@ -1109,10 +2441,41 @@
       "isProduction": true,
       "isShared": false,
       "accounts": [
-        { "code": "741600", "description": "Rent/Lease Equipment", "examples": ["Lighting rental", "Audio equipment rental", "Follow spot rental"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Lighting designer fee", "Sound designer fee", "Contracted technician"] },
-        { "code": "730000", "description": "Supplies", "examples": ["Gels", "Cable", "Stage supplies", "Rigging supplies"] },
-        { "code": "751100", "description": "Security", "examples": ["Event security for production"] }
+        {
+          "code": "741600",
+          "description": "Rent/Lease Equipment",
+          "examples": [
+            "Lighting rental",
+            "Audio equipment rental",
+            "Follow spot rental"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Lighting designer fee",
+            "Sound designer fee",
+            "Contracted technician"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "Gels",
+            "Cable",
+            "Stage supplies",
+            "Rigging supplies"
+          ]
+        },
+        {
+          "code": "751100",
+          "description": "Security",
+          "examples": [
+            "Event security for production"
+          ]
+        }
       ],
       "why": "Lighting systems, audio support, stage operations, projections, and backstage support for specific productions.",
       "ambiguity": null,
@@ -1133,9 +2496,29 @@
       "isProduction": true,
       "isShared": false,
       "accounts": [
-        { "code": "705500", "description": "Non-Benefit Eligible Staff", "examples": ["Stagehand (seasonal/pooled)", "Overhire crew (not show-specific)", "Run crew (shared across season)"] },
-        { "code": "708050", "description": "S&W – Overtime", "examples": ["Overtime for shared production labor"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Contracted labor (pooled, not show-specific)"] }
+        {
+          "code": "705500",
+          "description": "Non-Benefit Eligible Staff",
+          "examples": [
+            "Stagehand (seasonal/pooled)",
+            "Overhire crew (not show-specific)",
+            "Run crew (shared across season)"
+          ]
+        },
+        {
+          "code": "708050",
+          "description": "S&W – Overtime",
+          "examples": [
+            "Overtime for shared production labor"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Contracted labor (pooled, not show-specific)"
+          ]
+        }
       ],
       "why": "Overhire labor, stagehands, run crews, and temporary technical staffing shared across productions — not specific to one show. For labor tied to a specific show, use a Project code on TP-01.",
       "ambiguity": {
@@ -1159,17 +2542,28 @@
       "isProduction": true,
       "isShared": false,
       "accounts": [
-        { "code": "750000", "description": "Professional & Consulting Services", "examples": ["Performance rights payment", "Script licensing fee", "Royalty payment to publisher"] },
-        { "code": "750900", "description": "Other Professional Fees", "examples": ["Music licensing fee", "Choreography licensing fee"] }
+        {
+          "code": "750000",
+          "description": "Professional & Consulting Services",
+          "examples": [
+            "Performance rights payment",
+            "Script licensing fee",
+            "Royalty payment to publisher"
+          ]
+        },
+        {
+          "code": "750900",
+          "description": "Other Professional Fees",
+          "examples": [
+            "Music licensing fee",
+            "Choreography licensing fee"
+          ]
+        }
       ],
       "why": "Performance rights, script licensing, choreography licensing, music licensing, and other production-related royalty and intellectual property expenses.",
       "ambiguity": null,
       "notes": "Individual shows add a Project code."
     },
-
-    
-    
-    
     {
       "id": "DA-01",
       "label": "Conservatory Admin – Office Operations",
@@ -1185,18 +2579,106 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "730000", "description": "Supplies", "examples": ["General supplies", "Performance hall supplies"] },
-        { "code": "730100", "description": "Office Supplies", "examples": ["Paper", "Pens/printer ink", "Folders"] },
-        { "code": "723000", "description": "Postage/Shipping & Delivery", "examples": ["Postage/stamps", "FedEx/UPS shipping"] },
-        { "code": "727000", "description": "Copy Service", "examples": ["Printing", "Photocopying"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Dean's meeting refreshments", "Reception food"] },
-        { "code": "730900", "description": "Fuel", "examples": ["Vehicle fuel"] },
-        { "code": "738000", "description": "Dues/Memberships", "examples": ["Executive-level membership", "Dean's professional membership"] },
-        { "code": "740600", "description": "Furniture – Non-Capital", "examples": ["Office furniture under $5,000"] },
-        { "code": "742000", "description": "Other Misc Expense", "examples": ["Miscellaneous administrative expense"] },
-        { "code": "750000", "description": "Professional & Consulting Services", "examples": ["Consultant fee", "Professional service (Dean's Office)"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Contracted service (Dean's Office)"] },
-        { "code": "750910", "description": "Other Prof (Internal)", "examples": ["Internal professional fee"] }
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "General supplies",
+            "Performance hall supplies"
+          ]
+        },
+        {
+          "code": "730100",
+          "description": "Office Supplies",
+          "examples": [
+            "Paper",
+            "Pens/printer ink",
+            "Folders"
+          ]
+        },
+        {
+          "code": "723000",
+          "description": "Postage/Shipping & Delivery",
+          "examples": [
+            "Postage/stamps",
+            "FedEx/UPS shipping"
+          ]
+        },
+        {
+          "code": "727000",
+          "description": "Copy Service",
+          "examples": [
+            "Printing",
+            "Photocopying"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Dean's meeting refreshments",
+            "Reception food"
+          ]
+        },
+        {
+          "code": "730900",
+          "description": "Fuel",
+          "examples": [
+            "Vehicle fuel"
+          ]
+        },
+        {
+          "code": "740100",
+          "description": "Computers – Non-Capital",
+          "examples": [
+            "Computer or laptop purchase under $5,000",
+            "Dean's Office hardware purchase"
+          ]
+        },
+        {
+          "code": "738000",
+          "description": "Dues/Memberships",
+          "examples": [
+            "Executive-level membership",
+            "Dean's professional membership"
+          ]
+        },
+        {
+          "code": "740600",
+          "description": "Furniture – Non-Capital",
+          "examples": [
+            "Office furniture under $5,000"
+          ]
+        },
+        {
+          "code": "742000",
+          "description": "Other Misc Expense",
+          "examples": [
+            "Miscellaneous administrative expense"
+          ]
+        },
+        {
+          "code": "750000",
+          "description": "Professional & Consulting Services",
+          "examples": [
+            "Consultant fee",
+            "Professional service (Dean's Office)"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Contracted service (Dean's Office)"
+          ]
+        },
+        {
+          "code": "750910",
+          "description": "Other Prof (Internal)",
+          "examples": [
+            "Internal professional fee"
+          ]
+        }
       ],
       "why": "Day-to-day Dean's Office administrative operations. Not allocated to divisions for HEADS purposes.",
       "ambiguity": null,
@@ -1217,11 +2699,44 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721000", "description": "Business Travel", "examples": ["Dean's Office staff airfare", "Transportation to events"] },
-        { "code": "721470", "description": "Ground Transportation", "examples": ["Rideshare/Uber", "Parking"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Hotel for Dean's Office staff"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Per diem meals"] },
-        { "code": "722000", "description": "Training & Development", "examples": ["Professional development course", "Training workshop"] }
+        {
+          "code": "721000",
+          "description": "Business Travel",
+          "examples": [
+            "Dean's Office staff airfare",
+            "Transportation to events"
+          ]
+        },
+        {
+          "code": "721470",
+          "description": "Ground Transportation",
+          "examples": [
+            "Rideshare/Uber",
+            "Parking"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Hotel for Dean's Office staff"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Per diem meals"
+          ]
+        },
+        {
+          "code": "722000",
+          "description": "Training & Development",
+          "examples": [
+            "Professional development course",
+            "Training workshop"
+          ]
+        }
       ],
       "why": "Dean's Office staff travel and professional development. Not allocated to divisions for HEADS purposes.",
       "ambiguity": null,
@@ -1242,11 +2757,42 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721450", "description": "Recruiting Travel", "examples": ["Conservatory-wide recruiting travel", "Admissions fair"] },
-        { "code": "725000", "description": "Marketing/Advertising Expense", "examples": ["Conservatory recruiting brochure"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Admissions event reception"] },
-        { "code": "723000", "description": "Postage/Shipping & Delivery", "examples": ["Recruiting materials mailing"] },
-        { "code": "730000", "description": "Supplies", "examples": ["Recruiting event supplies"] }
+        {
+          "code": "721450",
+          "description": "Recruiting Travel",
+          "examples": [
+            "Conservatory-wide recruiting travel",
+            "Admissions fair"
+          ]
+        },
+        {
+          "code": "725000",
+          "description": "Marketing/Advertising Expense",
+          "examples": [
+            "Conservatory recruiting brochure"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Admissions event reception"
+          ]
+        },
+        {
+          "code": "723000",
+          "description": "Postage/Shipping & Delivery",
+          "examples": [
+            "Recruiting materials mailing"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "Recruiting event supplies"
+          ]
+        }
       ],
       "why": "Conservatory-wide student recruitment operations managed centrally by the Dean's Office.",
       "ambiguity": null,
@@ -1267,10 +2813,36 @@
       "isProduction": false,
       "isShared": false,
       "accounts": [
-        { "code": "721400", "description": "Bus Travel – Job Candidate", "examples": ["Candidate airline ticket", "Candidate travel reimbursement"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Candidate hotel"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Candidate meal", "Search committee dinner"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Campus visit reception"] }
+        {
+          "code": "721400",
+          "description": "Bus Travel – Job Candidate",
+          "examples": [
+            "Candidate airline ticket",
+            "Candidate travel reimbursement"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Candidate hotel"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Candidate meal",
+            "Search committee dinner"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Campus visit reception"
+          ]
+        }
       ],
       "why": "Cross-divisional faculty search costs managed centrally by the Dean's Office. Division-specific searches may code to the divisional DeptID instead.",
       "ambiguity": null,
@@ -1292,10 +2864,38 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "725000", "description": "Marketing/Advertising Expense", "examples": ["Season marketing", "Conservatory-wide advertising", "Season brochure"] },
-        { "code": "727000", "description": "Copy Service", "examples": ["Season program printing", "Marketing print materials"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Conservatory-wide reception", "Donor event"] },
-        { "code": "738000", "description": "Dues/Memberships", "examples": ["Conservatory-level organizational membership"] }
+        {
+          "code": "725000",
+          "description": "Marketing/Advertising Expense",
+          "examples": [
+            "Season marketing",
+            "Conservatory-wide advertising",
+            "Season brochure"
+          ]
+        },
+        {
+          "code": "727000",
+          "description": "Copy Service",
+          "examples": [
+            "Season program printing",
+            "Marketing print materials"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Conservatory-wide reception",
+            "Donor event"
+          ]
+        },
+        {
+          "code": "738000",
+          "description": "Dues/Memberships",
+          "examples": [
+            "Conservatory-level organizational membership"
+          ]
+        }
       ],
       "why": "Season-wide marketing, advertising, and Conservatory external relations managed centrally. Costs allocated by formula: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
@@ -1317,10 +2917,37 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "795000", "description": "Bldgs – M&R – Non-Capital", "examples": ["Building repair", "Facility maintenance"] },
-        { "code": "730000", "description": "Supplies", "examples": ["Performance hall supplies", "Facilities supplies"] },
-        { "code": "750800", "description": "Trash Removal/Hauling", "examples": ["Trash/waste removal service"] },
-        { "code": "751100", "description": "Security", "examples": ["Card swipe system", "Building security"] }
+        {
+          "code": "795000",
+          "description": "Bldgs – M&R – Non-Capital",
+          "examples": [
+            "Building repair",
+            "Facility maintenance"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "Performance hall supplies",
+            "Facilities supplies"
+          ]
+        },
+        {
+          "code": "750800",
+          "description": "Trash Removal/Hauling",
+          "examples": [
+            "Trash/waste removal service"
+          ]
+        },
+        {
+          "code": "751100",
+          "description": "Security",
+          "examples": [
+            "Card swipe system",
+            "Building security"
+          ]
+        }
       ],
       "why": "Shared building maintenance, performance hall supplies, trash removal, and security for Conservatory facilities. Costs allocated by formula: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
@@ -1342,8 +2969,23 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "789000", "description": "Equipment – M&R Non-Capital", "examples": ["Piano tuning", "Piano regulation", "Instrument repair"] },
-        { "code": "740300", "description": "Equipment – Non-Capital", "examples": ["Piano parts", "Instrument maintenance supplies"] }
+        {
+          "code": "789000",
+          "description": "Equipment – M&R Non-Capital",
+          "examples": [
+            "Piano tuning",
+            "Piano regulation",
+            "Instrument repair"
+          ]
+        },
+        {
+          "code": "740300",
+          "description": "Equipment – Non-Capital",
+          "examples": [
+            "Piano parts",
+            "Instrument maintenance supplies"
+          ]
+        }
       ],
       "why": "Piano tuning, regulation, and repair plus instrument maintenance costs shared across all divisions. Costs allocated by formula: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
@@ -1365,12 +3007,51 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "739000", "description": "Computing Expense", "examples": ["IT contract", "Computing support"] },
-        { "code": "724000", "description": "Telephone/Fax Services", "examples": ["Phone service", "Building telephone service"] },
-        { "code": "740100", "description": "Computers – Non-Capital", "examples": ["Computer purchase under $5,000", "Laptop"] },
-        { "code": "740150", "description": "Software – Non-Capital", "examples": ["Software purchase/license"] },
-        { "code": "739850", "description": "IT Maintenance Agreements", "examples": ["Software maintenance contract"] },
-        { "code": "739880", "description": "IT Subscription Exp (automated)", "examples": ["Auto-renewing software subscription"] }
+        {
+          "code": "739000",
+          "description": "Computing Expense",
+          "examples": [
+            "IT contract",
+            "Computing support"
+          ]
+        },
+        {
+          "code": "724000",
+          "description": "Telephone/Fax Services",
+          "examples": [
+            "Phone service",
+            "Building telephone service"
+          ]
+        },
+        {
+          "code": "740100",
+          "description": "Computers – Non-Capital",
+          "examples": [
+            "Computer purchase under $5,000",
+            "Laptop"
+          ]
+        },
+        {
+          "code": "740150",
+          "description": "Software – Non-Capital",
+          "examples": [
+            "Software purchase/license"
+          ]
+        },
+        {
+          "code": "739850",
+          "description": "IT Maintenance Agreements",
+          "examples": [
+            "Software maintenance contract"
+          ]
+        },
+        {
+          "code": "739880",
+          "description": "IT Subscription Exp (automated)",
+          "examples": [
+            "Auto-renewing software subscription"
+          ]
+        }
       ],
       "why": "Shared technology infrastructure including IT contract, telephone service, computers, and software supporting Conservatory-wide operations. Costs allocated by formula: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
@@ -1392,17 +3073,27 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "740300", "description": "Equipment – Non-Capital", "examples": ["Copy machine purchase", "Shared equipment purchase under $5,000"] },
-        { "code": "741600", "description": "Rent/Lease Equipment", "examples": ["Copy machine lease", "Equipment rental"] }
+        {
+          "code": "740300",
+          "description": "Equipment – Non-Capital",
+          "examples": [
+            "Copy machine purchase",
+            "Shared equipment purchase under $5,000"
+          ]
+        },
+        {
+          "code": "741600",
+          "description": "Rent/Lease Equipment",
+          "examples": [
+            "Copy machine lease",
+            "Equipment rental"
+          ]
+        }
       ],
       "why": "Shared Conservatory equipment including copy machines. Costs allocated by formula: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
       "notes": null
     },
-
-    
-    
-    
     {
       "id": "PA-01",
       "label": "Production Admin – Performance Operations",
@@ -1419,11 +3110,45 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "750000", "description": "Professional & Consulting Services", "examples": ["Nexus guest artist fee", "Cross-divisional production consultant"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Contracted performer (cross-divisional)", "Contracted production specialist"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Cross-divisional production reception", "Nexus event hospitality"] },
-        { "code": "705500", "description": "Non-Benefit Eligible Staff", "examples": ["Shared production staff", "Cross-divisional overhire"] },
-        { "code": "708050", "description": "S&W – Overtime", "examples": ["Overtime for shared production"] }
+        {
+          "code": "750000",
+          "description": "Professional & Consulting Services",
+          "examples": [
+            "Nexus guest artist fee",
+            "Cross-divisional production consultant"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Contracted performer (cross-divisional)",
+            "Contracted production specialist"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Cross-divisional production reception",
+            "Nexus event hospitality"
+          ]
+        },
+        {
+          "code": "705500",
+          "description": "Non-Benefit Eligible Staff",
+          "examples": [
+            "Shared production staff",
+            "Cross-divisional overhire"
+          ]
+        },
+        {
+          "code": "708050",
+          "description": "S&W – Overtime",
+          "examples": [
+            "Overtime for shared production"
+          ]
+        }
       ],
       "why": "Shared production coordination and event management across all divisions including Nexus and cross-divisional events. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
@@ -1445,9 +3170,28 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "705500", "description": "Non-Benefit Eligible Staff", "examples": ["Shared stagehand (cross-divisional)", "Overhire labor (not division-specific)"] },
-        { "code": "708050", "description": "S&W – Overtime", "examples": ["Overtime for shared production labor"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Contracted labor (cross-divisional, pooled)"] }
+        {
+          "code": "705500",
+          "description": "Non-Benefit Eligible Staff",
+          "examples": [
+            "Shared stagehand (cross-divisional)",
+            "Overhire labor (not division-specific)"
+          ]
+        },
+        {
+          "code": "708050",
+          "description": "S&W – Overtime",
+          "examples": [
+            "Overtime for shared production labor"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Contracted labor (cross-divisional, pooled)"
+          ]
+        }
       ],
       "why": "Shared overhire labor, stagehands, run crews, and temporary technical staffing not specific to a single division. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
@@ -1469,10 +3213,37 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "741600", "description": "Rent/Lease Equipment", "examples": ["Shared lighting rental", "Shared audio rental", "Cross-divisional staging rental"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Shared lighting/sound technician"] },
-        { "code": "730000", "description": "Supplies", "examples": ["Shared stage supplies", "Cross-divisional technical supplies"] },
-        { "code": "751100", "description": "Security", "examples": ["Shared event security"] }
+        {
+          "code": "741600",
+          "description": "Rent/Lease Equipment",
+          "examples": [
+            "Shared lighting rental",
+            "Shared audio rental",
+            "Cross-divisional staging rental"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Shared lighting/sound technician"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "Shared stage supplies",
+            "Cross-divisional technical supplies"
+          ]
+        },
+        {
+          "code": "751100",
+          "description": "Security",
+          "examples": [
+            "Shared event security"
+          ]
+        }
       ],
       "why": "Shared lighting, audio, and stage support activity spanning multiple divisions or productions. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
@@ -1494,11 +3265,42 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "750000", "description": "Professional & Consulting Services", "examples": ["Nexus guest artist honorarium", "Cross-divisional guest artist fee"] },
-        { "code": "721000", "description": "Business Travel", "examples": ["Nexus artist airfare"] },
-        { "code": "721480", "description": "Lodging Expenses", "examples": ["Nexus artist hotel"] },
-        { "code": "721490", "description": "Travel Meals Expenses", "examples": ["Nexus artist per diem"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Nexus event hospitality"] }
+        {
+          "code": "750000",
+          "description": "Professional & Consulting Services",
+          "examples": [
+            "Nexus guest artist honorarium",
+            "Cross-divisional guest artist fee"
+          ]
+        },
+        {
+          "code": "721000",
+          "description": "Business Travel",
+          "examples": [
+            "Nexus artist airfare"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Nexus artist hotel"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Nexus artist per diem"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Nexus event hospitality"
+          ]
+        }
       ],
       "why": "Guest artists for Nexus events and cross-divisional productions not attributable to a single division. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
@@ -1520,10 +3322,35 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "730800", "description": "Uniforms", "examples": ["Shared costume purchase", "Cross-divisional costume stock"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Shared costume contractor"] },
-        { "code": "741600", "description": "Rent/Lease Equipment", "examples": ["Shared costume rental"] },
-        { "code": "730000", "description": "Supplies", "examples": ["Shared wardrobe supplies"] }
+        {
+          "code": "730800",
+          "description": "Uniforms",
+          "examples": [
+            "Shared costume purchase",
+            "Cross-divisional costume stock"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Shared costume contractor"
+          ]
+        },
+        {
+          "code": "741600",
+          "description": "Rent/Lease Equipment",
+          "examples": [
+            "Shared costume rental"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "Shared wardrobe supplies"
+          ]
+        }
       ],
       "why": "Shared costume stock and wardrobe resources used across multiple divisions. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
@@ -1545,11 +3372,43 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "730000", "description": "Supplies", "examples": ["Shared scenic stock", "Shared lumber/paint", "Shared props inventory"] },
-        { "code": "730300", "description": "Instructional Supplies", "examples": ["Shared production materials"] },
-        { "code": "743800", "description": "Freight", "examples": ["Shared scenic freight"] },
-        { "code": "750250", "description": "Contracted Services", "examples": ["Shared scenic contractor"] },
-        { "code": "741600", "description": "Rent/Lease Equipment", "examples": ["Shared staging rental"] }
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "Shared scenic stock",
+            "Shared lumber/paint",
+            "Shared props inventory"
+          ]
+        },
+        {
+          "code": "730300",
+          "description": "Instructional Supplies",
+          "examples": [
+            "Shared production materials"
+          ]
+        },
+        {
+          "code": "743800",
+          "description": "Freight",
+          "examples": [
+            "Shared scenic freight"
+          ]
+        },
+        {
+          "code": "750250",
+          "description": "Contracted Services",
+          "examples": [
+            "Shared scenic contractor"
+          ]
+        },
+        {
+          "code": "741600",
+          "description": "Rent/Lease Equipment",
+          "examples": [
+            "Shared staging rental"
+          ]
+        }
       ],
       "why": "Shared scenic stock, props, and production materials used across multiple divisions. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
@@ -1571,8 +3430,22 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "750000", "description": "Professional & Consulting Services", "examples": ["Nexus event licensing fee", "Cross-divisional royalty payment"] },
-        { "code": "750900", "description": "Other Professional Fees", "examples": ["Music licensing (Nexus)", "Choreography licensing (cross-divisional)"] }
+        {
+          "code": "750000",
+          "description": "Professional & Consulting Services",
+          "examples": [
+            "Nexus event licensing fee",
+            "Cross-divisional royalty payment"
+          ]
+        },
+        {
+          "code": "750900",
+          "description": "Other Professional Fees",
+          "examples": [
+            "Music licensing (Nexus)",
+            "Choreography licensing (cross-divisional)"
+          ]
+        }
       ],
       "why": "Royalties and licensing fees for Nexus events or cross-divisional productions. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
@@ -1594,10 +3467,34 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "740300", "description": "Equipment – Non-Capital", "examples": ["Shared production equipment purchase under $5,000"] },
-        { "code": "741600", "description": "Rent/Lease Equipment", "examples": ["Shared equipment rental"] },
-        { "code": "789000", "description": "Equipment – M&R Non-Capital", "examples": ["Shared production equipment repair"] },
-        { "code": "770000", "description": "Equipment > $5,000", "examples": ["Major shared equipment over $5,000"] }
+        {
+          "code": "740300",
+          "description": "Equipment – Non-Capital",
+          "examples": [
+            "Shared production equipment purchase under $5,000"
+          ]
+        },
+        {
+          "code": "741600",
+          "description": "Rent/Lease Equipment",
+          "examples": [
+            "Shared equipment rental"
+          ]
+        },
+        {
+          "code": "789000",
+          "description": "Equipment – M&R Non-Capital",
+          "examples": [
+            "Shared production equipment repair"
+          ]
+        },
+        {
+          "code": "770000",
+          "description": "Equipment > $5,000",
+          "examples": [
+            "Major shared equipment over $5,000"
+          ]
+        }
       ],
       "why": "Shared production equipment not specific to a single division. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
@@ -1619,11 +3516,41 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "739000", "description": "Computing Expense", "examples": ["Shared production technology platform"] },
-        { "code": "739850", "description": "IT Maintenance Agreements", "examples": ["Shared software maintenance contract"] },
-        { "code": "739880", "description": "IT Subscription Exp (automated)", "examples": ["Shared production software subscription"] },
-        { "code": "740100", "description": "Computers – Non-Capital", "examples": ["Shared production computer under $5,000"] },
-        { "code": "740150", "description": "Software – Non-Capital", "examples": ["Shared production software license"] }
+        {
+          "code": "739000",
+          "description": "Computing Expense",
+          "examples": [
+            "Shared production technology platform"
+          ]
+        },
+        {
+          "code": "739850",
+          "description": "IT Maintenance Agreements",
+          "examples": [
+            "Shared software maintenance contract"
+          ]
+        },
+        {
+          "code": "739880",
+          "description": "IT Subscription Exp (automated)",
+          "examples": [
+            "Shared production software subscription"
+          ]
+        },
+        {
+          "code": "740100",
+          "description": "Computers – Non-Capital",
+          "examples": [
+            "Shared production computer under $5,000"
+          ]
+        },
+        {
+          "code": "740150",
+          "description": "Software – Non-Capital",
+          "examples": [
+            "Shared production software license"
+          ]
+        }
       ],
       "why": "Shared production technology platforms and digital systems supporting cross-divisional operations. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
@@ -1645,9 +3572,27 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "730100", "description": "Office Supplies", "examples": ["Production office supplies"] },
-        { "code": "723000", "description": "Postage/Shipping & Delivery", "examples": ["Production office postage/shipping"] },
-        { "code": "730000", "description": "Supplies", "examples": ["General production office supplies"] }
+        {
+          "code": "730100",
+          "description": "Office Supplies",
+          "examples": [
+            "Production office supplies"
+          ]
+        },
+        {
+          "code": "723000",
+          "description": "Postage/Shipping & Delivery",
+          "examples": [
+            "Production office postage/shipping"
+          ]
+        },
+        {
+          "code": "730000",
+          "description": "Supplies",
+          "examples": [
+            "General production office supplies"
+          ]
+        }
       ],
       "why": "Administrative overhead for the shared production operations unit. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
@@ -1669,18 +3614,43 @@
       "isShared": true,
       "shareFormula": "Music 75% / Dance 10% / Theatre 15%",
       "accounts": [
-        { "code": "725000", "description": "Marketing/Advertising Expense", "examples": ["Season-wide production marketing", "Cross-divisional advertising"] },
-        { "code": "727000", "description": "Copy Service", "examples": ["Season program printing", "Cross-divisional print materials"] },
-        { "code": "728000", "description": "Business Meeting Expense – Food", "examples": ["Season launch event", "Cross-divisional reception"] },
-        { "code": "738000", "description": "Dues/Memberships", "examples": ["Production-related organizational membership"] }
+        {
+          "code": "725000",
+          "description": "Marketing/Advertising Expense",
+          "examples": [
+            "Season-wide production marketing",
+            "Cross-divisional advertising"
+          ]
+        },
+        {
+          "code": "727000",
+          "description": "Copy Service",
+          "examples": [
+            "Season program printing",
+            "Cross-divisional print materials"
+          ]
+        },
+        {
+          "code": "728000",
+          "description": "Business Meeting Expense – Food",
+          "examples": [
+            "Season launch event",
+            "Cross-divisional reception"
+          ]
+        },
+        {
+          "code": "738000",
+          "description": "Dues/Memberships",
+          "examples": [
+            "Production-related organizational membership"
+          ]
+        }
       ],
       "why": "Season-wide marketing, cross-divisional communications, and shared external relations activity. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
       "notes": null
     }
-
   ],
-
   "compensationRules": [
     {
       "workerType": "Adjunct / Part-time instructor",
@@ -1689,16 +3659,24 @@
       "program": null,
       "programNote": "Tag to the operational program matching their instructional work — e.g., Faculty Travel (TBDP2), Instructional Support (TBDP4), or the relevant divisional program",
       "why": "Account 703500 identifies all adjunct and part-time instructional appointments. Code to the DeptID and Program that matches their instructional work — the Account is what distinguishes them.",
-      "examples": ["Adjunct faculty teaching studio lessons", "Part-time lecturer", "Guest instructor paid per class"]
+      "examples": [
+        "Adjunct faculty teaching studio lessons",
+        "Part-time lecturer",
+        "Guest instructor paid per class"
+      ]
     },
     {
       "workerType": "Graduate Teaching / Research Assistant (GTA / GRA)",
       "account": "704000",
       "accountDescription": "Graduate Student Assistants",
-      "program": null,
-      "programNote": "Tag to the operational program matching their assignment",
+      "program": "TBDP5",
+      "programNote": "Music: use Program TBDP5 — MoCode M-16. Other divisions: confirm with the Dean’s Office — no divisional MoCode currently exists for Dance or Theatre GTA positions.",
       "why": "Account 704000 covers all graduate teaching, research, and professional assistantships.",
-      "examples": ["Graduate teaching assistant", "GRA", "Graduate professional assistant"]
+      "examples": [
+        "Graduate teaching assistant",
+        "GRA",
+        "Graduate professional assistant"
+      ]
     },
     {
       "workerType": "Full-time benefit-eligible faculty",
@@ -1707,7 +3685,11 @@
       "program": null,
       "programNote": "Handled by HR / payroll — not a MoCode lookup decision",
       "why": "Regular faculty salary is processed through HR. Contact the budget office if there is a question about faculty salary coding.",
-      "examples": ["Tenured faculty salary", "Tenure-track faculty salary", "Visiting faculty with benefits"]
+      "examples": [
+        "Tenured faculty salary",
+        "Tenure-track faculty salary",
+        "Visiting faculty with benefits"
+      ]
     },
     {
       "workerType": "Full-time benefit-eligible staff",
@@ -1716,7 +3698,10 @@
       "program": null,
       "programNote": "Handled by HR / payroll — not a MoCode lookup decision",
       "why": "Full-time benefit-eligible administrative and operational staff salary is processed through HR.",
-      "examples": ["Full-time administrative staff salary", "Full-time operational staff salary"]
+      "examples": [
+        "Full-time administrative staff salary",
+        "Full-time operational staff salary"
+      ]
     },
     {
       "workerType": "Part-time non-faculty staff",
@@ -1725,16 +3710,24 @@
       "program": null,
       "programNote": "Tag to the operational program matching their work — e.g., Office Operations (K8931), Technical Services (K8951), Facilities (TBDP21)",
       "why": "Account 705500 identifies part-time non-faculty operational and administrative workers. The Program identifies what they do.",
-      "examples": ["Part-time office staff", "Part-time facilities worker", "Part-time production crew (ongoing, not overhire)"]
+      "examples": [
+        "Part-time office staff",
+        "Part-time facilities worker",
+        "Part-time production crew (ongoing, not overhire)"
+      ]
     },
     {
-      "workerType": "Student accompanist (Music)",
+      "workerType": "Student accompanist (Music or Dance)",
       "account": "703800",
       "accountDescription": "Non-Ben Elg Academic (Non-Faculty)",
       "program": "TBDP1",
-      "programNote": "Always use Program TBDP1 — MoCode M-13",
-      "why": "Student academic workers serving as accompanists are coded to TBDP1. This is not a GTA role and does not use 704000. Account 703800 identifies the student academic worker category.",
-      "examples": ["Student accompanying a voice lesson", "Student playing for a dance rehearsal", "Student piano accompanist for studio class"]
+      "programNote": "Music: always use Program TBDP1 — MoCode M-13. Dance: always use Program TBDP1 — MoCode D-12.",
+      "why": "Student academic workers serving as accompanists are coded to TBDP1 in both Music and Dance. This is not a GTA role and does not use 704000. Account 703800 identifies the student academic worker category. Non-student accompanists (freelance/external) use Account 703500 under the Instructional Support MoCode for that division.",
+      "examples": [
+        "Student accompanying a voice lesson",
+        "Student pianist for a Dance technique class",
+        "Student piano accompanist for studio class"
+      ]
     },
     {
       "workerType": "Curricular student worker — Music (ensemble conducting, curricular support)",
@@ -1743,7 +3736,11 @@
       "program": "TBDP25",
       "programNote": "Always use Program TBDP25 — MoCode M-14. Do NOT use TBDP24 (707100) for these positions.",
       "why": "Non-GTA student workers in curricular support roles (including ensemble conducting) use TBDP25. This replaces old program K8971 (CONDUCTING ENSEMBLE). Account 703800 identifies the student academic worker category.",
-      "examples": ["Student assigned to conduct an ensemble", "Student in a curricular support role", "Non-GTA student providing academic program support"]
+      "examples": [
+        "Student assigned to conduct an ensemble",
+        "Student in a curricular support role",
+        "Non-GTA student providing academic program support"
+      ]
     },
     {
       "workerType": "Student operational worker (admin, front desk, tech support)",
@@ -1752,7 +3749,11 @@
       "program": "TBDP24",
       "programNote": "Always use Program TBDP24. Use the divisional DeptID (K1306001, K1305002, K0923001) matching where the student works.",
       "why": "Non-academic student workers in admin, front desk, technical, and operational roles use Account 707100 and Program TBDP24. Distinct from academic student workers (703800).",
-      "examples": ["Student office assistant", "Student working front desk", "Student helping with non-academic technical tasks"]
+      "examples": [
+        "Student office assistant",
+        "Student working front desk",
+        "Student helping with non-academic technical tasks"
+      ]
     },
     {
       "workerType": "Overhire / stagehand / production crew",
@@ -1761,7 +3762,11 @@
       "program": null,
       "programNote": "Use the relevant production MoCode for that division — TP-01, TP-05, DP-01, MP-01, or PA-02. Add a Project code for show-specific labor.",
       "why": "Production overhire and stagehands are coded as part-time staff (705500) or overtime (708050) under the production Program and DeptID for that division.",
-      "examples": ["Stagehand hired for a run", "Overhire crew for load-in", "Production labor for a specific show"]
+      "examples": [
+        "Stagehand hired for a run",
+        "Overhire crew for load-in",
+        "Production labor for a specific show"
+      ]
     }
   ]
 }
