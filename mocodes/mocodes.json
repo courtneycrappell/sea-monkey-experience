@@ -63,7 +63,8 @@
       ],
       "why": "Faculty conference travel, professional meetings, accreditation activity, research travel, and related professional development expenses.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "M-02",
@@ -115,7 +116,8 @@
       ],
       "why": "Faculty recruitment, candidate travel, onboarding support, search processes, and faculty hiring-related operational expenses.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "M-03",
@@ -165,7 +167,8 @@
         "also": "M-15 Music – Performance Materials",
         "guidance": "Use M-03 for materials used in teaching (method books, classroom supplies). Use M-15 for music purchased specifically for ensemble performance or concerts."
       },
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "M-04",
@@ -224,7 +227,8 @@
       ],
       "why": "Recruitment travel, auditions, campus visit events, admissions operations, recruiting materials, and student outreach efforts.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "M-05",
@@ -269,7 +273,8 @@
       ],
       "why": "Marketing, communications, donor relations, fundraising support, public-facing events, and external relations operations for the Music division.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "M-06",
@@ -331,7 +336,8 @@
         "also": "MP-01 Music Productions – General Production",
         "guidance": "Use M-06 when the guest artist is visiting for a masterclass, residency, or curricular purpose. Use MP-01 when the artist is performing in or directing a specific production."
       },
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "M-07",
@@ -339,8 +345,8 @@
       "division": "Music",
       "deptId": "K1306001",
       "deptName": "MUSIC OPERATIONS",
-      "program": "K8931",
-      "programName": "Office Operations",
+      "program": "K8948",
+      "programName": "Music Office Operations",
       "fund": "0000",
       "heads": "VI.A",
       "activityType": "Office Operations",
@@ -395,7 +401,8 @@
       ],
       "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Music division.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": "KDH80"
     },
     {
       "id": "M-08",
@@ -442,7 +449,8 @@
       ],
       "why": "Instrument maintenance, piano tuning, equipment repair, and related technical support services. Distinct from Technology Services (M-11).",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": "KDH82"
     },
     {
       "id": "M-09",
@@ -475,7 +483,8 @@
         "also": "M-13 Accompanist Services or M-14 Curricular Student Worker Support",
         "guidance": "Use M-09 for students in operational/administrative roles (front desk, office help, non-academic tech). Use M-13 for student accompanists. Use M-14 for students in ensemble conducting or other curricular support roles."
       },
-      "notes": "Compensation flow — triggered by worker type selection"
+      "notes": "Compensation flow — triggered by worker type selection",
+      "mocode": null
     },
     {
       "id": "M-10",
@@ -531,7 +540,8 @@
         "also": "M-08 Technical Services",
         "guidance": "Use M-10 for purchasing or replacing equipment. Use M-08 for repairing or maintaining instruments and equipment (piano tuning, instrument repair)."
       },
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "M-11",
@@ -592,7 +602,8 @@
       ],
       "why": "Software licenses, electronic media systems, instructional technology, digital platforms, computing support, and technology-related operational services.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "M-12",
@@ -646,7 +657,8 @@
       ],
       "why": "Ensemble tours, conference attendance, student competition travel, off-campus performances, and related student travel activity.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "M-13",
@@ -674,7 +686,8 @@
       ],
       "why": "Student academic workers serving as accompanists supporting instructional activity, rehearsals, classes, coaching, and performance preparation.",
       "ambiguity": null,
-      "notes": "Compensation flow — triggered by worker type selection. Account 703800 identifies these as student academic workers."
+      "notes": "Compensation flow — triggered by worker type selection. Account 703800 identifies these as student academic workers.",
+      "mocode": null
     },
     {
       "id": "M-14",
@@ -703,7 +716,8 @@
       ],
       "why": "Student worker positions providing curricular support, including ensemble conducting. Replaces old program K8971 (CONDUCTING ENSEMBLE). Do not use TBDP24/707100 for these positions.",
       "ambiguity": null,
-      "notes": "Compensation flow — triggered by worker type selection."
+      "notes": "Compensation flow — triggered by worker type selection.",
+      "mocode": null
     },
     {
       "id": "M-15",
@@ -751,7 +765,8 @@
         "also": "M-03 Instructional Support",
         "guidance": "Use M-15 for music purchased for ensemble performance or concerts. Use M-03 for music or materials used primarily in classroom instruction (method books, theory texts)."
       },
-      "notes": "TBDP26 identifier is TBD — update program code in this file when final assignment is confirmed."
+      "notes": "TBDP26 identifier is TBD — update program code in this file when final assignment is confirmed.",
+      "mocode": null
     },
     {
       "id": "MP-01",
@@ -878,7 +893,8 @@
         "also": "M-06 Visiting Artists (Academic)",
         "guidance": "Use MP-01 when the guest artist is performing in or directing a specific production. Use M-06 when the artist is visiting for a masterclass, residency, or curricular purpose unrelated to a specific show."
       },
-      "notes": "Individual shows add a Project code. Royalties and licensing are folded into this MoCode via Account 750000 or 750900."
+      "notes": "Individual shows add a Project code. Royalties and licensing are folded into this MoCode via Account 750000 or 750900.",
+      "mocode": null
     },
     {
       "id": "D-01",
@@ -940,7 +956,8 @@
       ],
       "why": "Faculty conference travel, professional meetings, accreditation activity, research travel, and related professional development expenses.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "D-02",
@@ -991,7 +1008,8 @@
       ],
       "why": "Faculty recruitment, candidate travel, onboarding support, search processes, and faculty hiring-related operational expenses.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "D-03",
@@ -1037,7 +1055,8 @@
       ],
       "why": "Instructional supplies, classroom and studio materials, curriculum support resources, and academic instructional expenses.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "D-04",
@@ -1095,7 +1114,8 @@
       ],
       "why": "Recruitment travel, auditions, campus visit events, admissions operations, recruiting materials, and student outreach efforts.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "D-05",
@@ -1139,7 +1159,8 @@
       ],
       "why": "Marketing, communications, donor relations, fundraising support, public-facing events, and external relations operations for the Dance division.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "D-06",
@@ -1201,7 +1222,8 @@
         "also": "DP-01 Dance Productions – General Production",
         "guidance": "Use D-06 when the guest artist is visiting for a masterclass, residency, or curricular purpose. Use DP-01 when the artist is a choreographer or performer for a specific production."
       },
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "D-07",
@@ -1261,7 +1283,8 @@
       ],
       "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Dance division.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "D-08",
@@ -1293,7 +1316,8 @@
         "also": "D-12 Accompanist Services",
         "guidance": "Use D-08 for students in operational or administrative roles (front desk, office help, non-academic support) using Account 707100. Use D-12 for students serving as accompanists in Dance classes and rehearsals using Account 703800."
       },
-      "notes": "Compensation flow — triggered by worker type selection."
+      "notes": "Compensation flow — triggered by worker type selection.",
+      "mocode": null
     },
     {
       "id": "D-09",
@@ -1344,7 +1368,8 @@
       ],
       "why": "Equipment purchases, rentals, leases, repairs, replacements, and operational equipment support activity.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "D-10",
@@ -1401,7 +1426,8 @@
       ],
       "why": "Software licenses, electronic media systems, digital platforms, computing support, and technology-related operational services.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "D-11",
@@ -1453,7 +1479,8 @@
       ],
       "why": "Ensemble tours, conference attendance, student competition travel, off-campus performances, and related student travel activity.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "D-12",
@@ -1485,7 +1512,8 @@
         "also": "D-03 Instructional Support",
         "guidance": "Use D-12 when the accompanist is an enrolled UMKC student paid as an academic worker (Account 703800)."
       },
-      "notes": "Compensation flow — triggered by worker type selection. Account 703800 identifies the student academic worker category."
+      "notes": "Compensation flow — triggered by worker type selection. Account 703800 identifies the student academic worker category.",
+      "mocode": null
     },
     {
       "id": "DP-01",
@@ -1602,7 +1630,8 @@
         "also": "D-06 Visiting Artists (Academic)",
         "guidance": "Use DP-01 for guest choreographers or performers engaged for a specific production. Use D-06 for guest artists visiting for a masterclass, residency, or curricular purpose."
       },
-      "notes": "Individual shows add a Project code."
+      "notes": "Individual shows add a Project code.",
+      "mocode": null
     },
     {
       "id": "TO-01",
@@ -1665,7 +1694,8 @@
       ],
       "why": "Faculty conference travel, professional meetings, accreditation activity, research travel, and related professional development expenses.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "TO-02",
@@ -1716,7 +1746,8 @@
       ],
       "why": "Faculty recruitment, candidate travel, onboarding support, search processes, and faculty hiring-related operational expenses.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "TO-03",
@@ -1761,7 +1792,8 @@
       ],
       "why": "Instructional supplies, classroom and studio materials, curriculum support resources, and academic instructional expenses.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "TO-04",
@@ -1813,7 +1845,8 @@
       ],
       "why": "Recruitment travel, auditions, campus visit events, admissions operations, recruiting materials, and student outreach efforts.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "TO-05",
@@ -1857,7 +1890,8 @@
       ],
       "why": "Marketing, communications, donor relations, fundraising support, public-facing events, and external relations operations for the Theatre division.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "TO-06",
@@ -1918,7 +1952,8 @@
         "also": "TP-01 Theatre Productions – Performance Operations",
         "guidance": "Use TO-06 when the guest artist is visiting for a masterclass, residency, or curricular purpose. Use TP-01 when the artist is a director, designer, or performer engaged for a specific production."
       },
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "TO-07",
@@ -1979,7 +2014,8 @@
       ],
       "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Theatre division.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "TO-08",
@@ -2024,7 +2060,8 @@
       ],
       "why": "Maintenance and repair of technical infrastructure including lighting boards, sound systems, rigging, and related equipment. Distinct from Technology Services (TO-11).",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "TO-09",
@@ -2053,7 +2090,8 @@
       ],
       "why": "Admin, front desk, technical, and non-academic student worker roles. Account 707100 identifies as non-academic student employees.",
       "ambiguity": null,
-      "notes": "Compensation flow — triggered by worker type selection."
+      "notes": "Compensation flow — triggered by worker type selection.",
+      "mocode": null
     },
     {
       "id": "TO-10",
@@ -2102,7 +2140,8 @@
       ],
       "why": "Equipment purchases, rentals, leases, repairs, replacements, and operational equipment support activity.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "TO-11",
@@ -2161,7 +2200,8 @@
       ],
       "why": "Software licenses, electronic media systems, digital platforms, computing support, and technology-related operational services.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "TO-12",
@@ -2212,7 +2252,8 @@
       ],
       "why": "Student group travel for curricular and competitive purposes, including festival attendance and off-campus performances.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "TP-01",
@@ -2275,7 +2316,8 @@
         "also": "TO-06 Visiting Artists (Academic)",
         "guidance": "Use TP-01 when the artist is a director, designer, or performer engaged for a specific production. Use TO-06 when the guest artist is visiting for a masterclass or curricular residency."
       },
-      "notes": "Individual shows add a Project code. NAST requires a production count — each Project code represents one production."
+      "notes": "Individual shows add a Project code. NAST requires a production count — each Project code represents one production.",
+      "mocode": null
     },
     {
       "id": "TP-02",
@@ -2329,7 +2371,8 @@
       ],
       "why": "Costume purchases, rentals, alterations, wardrobe supplies, hair and makeup support, and related production costume activity.",
       "ambiguity": null,
-      "notes": "Individual shows add a Project code."
+      "notes": "Individual shows add a Project code.",
+      "mocode": null
     },
     {
       "id": "TP-03",
@@ -2391,7 +2434,8 @@
       ],
       "why": "Scenery, props, staging materials, lumber, paint, fabrication supplies, rehearsal materials, and related production support materials.",
       "ambiguity": null,
-      "notes": "Individual shows add a Project code."
+      "notes": "Individual shows add a Project code.",
+      "mocode": null
     },
     {
       "id": "TP-04",
@@ -2446,7 +2490,8 @@
       ],
       "why": "Lighting systems, audio support, stage operations, projections, and backstage support for specific productions.",
       "ambiguity": null,
-      "notes": "Individual shows add a Project code."
+      "notes": "Individual shows add a Project code.",
+      "mocode": null
     },
     {
       "id": "TP-05",
@@ -2492,7 +2537,8 @@
         "also": "TP-01 Theatre Productions – Performance Operations",
         "guidance": "Use TP-05 (Project = 00) for labor that serves multiple shows or the season generally — e.g., a stagehand hired for the whole season. Use TP-01 with a Project code for labor engaged specifically for one production."
       },
-      "notes": "NOT for use on specific theatre shows. Use Project = 00."
+      "notes": "NOT for use on specific theatre shows. Use Project = 00.",
+      "mocode": null
     },
     {
       "id": "TP-06",
@@ -2529,7 +2575,8 @@
       ],
       "why": "Performance rights, script licensing, choreography licensing, music licensing, and other production-related royalty and intellectual property expenses.",
       "ambiguity": null,
-      "notes": "Individual shows add a Project code."
+      "notes": "Individual shows add a Project code.",
+      "mocode": null
     },
     {
       "id": "DA-01",
@@ -2649,7 +2696,8 @@
       ],
       "why": "Day-to-day Dean's Office administrative operations. Not allocated to divisions for HEADS purposes.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": "KDH63"
     },
     {
       "id": "DA-02",
@@ -2707,7 +2755,8 @@
       ],
       "why": "Dean's Office staff travel and professional development. Not allocated to divisions for HEADS purposes.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "DA-03",
@@ -2763,7 +2812,8 @@
       ],
       "why": "Conservatory-wide student recruitment operations managed centrally by the Dean's Office.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": "KDH59"
     },
     {
       "id": "DA-04",
@@ -2813,7 +2863,8 @@
       ],
       "why": "Cross-divisional faculty search costs managed centrally by the Dean's Office. Division-specific searches may code to the divisional DeptID instead.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "DA-05",
@@ -2866,7 +2917,8 @@
       ],
       "why": "Season-wide marketing, advertising, and Conservatory external relations managed centrally. Costs allocated by formula: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "DA-06",
@@ -2918,7 +2970,8 @@
       ],
       "why": "Shared building maintenance, performance hall supplies, trash removal, and security for Conservatory facilities. Costs allocated by formula: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": "Account 795000 feeds VI.C (Building) in all three HEADS surveys."
+      "notes": "Account 795000 feeds VI.C (Building) in all three HEADS surveys.",
+      "mocode": null
     },
     {
       "id": "DA-07",
@@ -2956,7 +3009,8 @@
       ],
       "why": "Piano tuning, regulation, and repair plus instrument maintenance costs shared across all divisions. Costs allocated by formula: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "DA-08",
@@ -3022,7 +3076,8 @@
       ],
       "why": "Shared technology infrastructure including IT contract, telephone service, computers, and software supporting Conservatory-wide operations. Costs allocated by formula: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "DA-09",
@@ -3059,7 +3114,8 @@
       ],
       "why": "Shared Conservatory equipment including copy machines. Costs allocated by formula: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "PA-01",
@@ -3119,7 +3175,8 @@
       ],
       "why": "Shared production coordination and event management across all divisions including Nexus and cross-divisional events. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "PA-02",
@@ -3162,7 +3219,8 @@
       ],
       "why": "Shared overhire labor, stagehands, run crews, and temporary technical staffing not specific to a single division. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "PA-03",
@@ -3214,7 +3272,8 @@
       ],
       "why": "Shared lighting, audio, and stage support activity spanning multiple divisions or productions. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "PA-04",
@@ -3271,7 +3330,8 @@
       ],
       "why": "Guest artists for Nexus events and cross-divisional productions not attributable to a single division. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "PA-05",
@@ -3321,7 +3381,8 @@
       ],
       "why": "Shared costume stock and wardrobe resources used across multiple divisions. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "PA-06",
@@ -3379,7 +3440,8 @@
       ],
       "why": "Shared scenic stock, props, and production materials used across multiple divisions. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "PA-07",
@@ -3416,7 +3478,8 @@
       ],
       "why": "Royalties and licensing fees for Nexus events or cross-divisional productions. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "PA-08",
@@ -3465,7 +3528,8 @@
       ],
       "why": "Shared production equipment not specific to a single division. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "PA-09",
@@ -3521,7 +3585,8 @@
       ],
       "why": "Shared production technology platforms and digital systems supporting cross-divisional operations. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "PA-10",
@@ -3563,7 +3628,8 @@
       ],
       "why": "Administrative overhead for the shared production operations unit. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     },
     {
       "id": "PA-11",
@@ -3615,7 +3681,8 @@
       ],
       "why": "Season-wide marketing, cross-divisional communications, and shared external relations activity. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
       "ambiguity": null,
-      "notes": null
+      "notes": null,
+      "mocode": null
     }
   ],
   "compensationRules": [

@@ -700,7 +700,7 @@
         <table id="ref-table" aria-label="Full MoCode reference table">
           <thead>
             <tr>
-              <th>ID</th>
+              <th>MoCode</th>
               <th>Label</th>
               <th>DeptID</th>
               <th>Program</th>
@@ -1206,7 +1206,7 @@ function showResult() {
     state.path.join(' → ');
 
   // MoCode fields
-  document.getElementById('res-mocode-id').textContent    = state.mocode.id;
+  document.getElementById('res-mocode-id').textContent    = state.mocode.mocode || state.mocode.id;
   document.getElementById('res-mocode-label').textContent = state.mocode.label;
   document.getElementById('res-account-code').textContent = state.account.code;
   document.getElementById('res-account-desc').textContent = state.account.description;
@@ -1238,7 +1238,7 @@ function showResult() {
 
   // Feedback link
   const subject = `MoCode Tool Feedback — ${state.division} / ${state.activityType}`;
-  const resultStr = `${state.mocode.id} — ${state.mocode.label} / Account ${state.account.code} — ${state.account.description}`;
+  const resultStr = `${state.mocode.mocode || state.mocode.id} — ${state.mocode.label} / Account ${state.account.code} — ${state.account.description}`;
   const body = [
     `Division: ${state.division}`,
     `Steps taken: ${state.path.join(' → ')}`,
@@ -1321,7 +1321,7 @@ function filterReference() {
 
     tbody.insertAdjacentHTML('beforeend', `
       <tr>
-        <td class="code">${m.id}</td>
+        <td class="code">${m.mocode || m.id}</td>
         <td>${m.label}${tags ? '<br>' + tags : ''}</td>
         <td class="code">${m.deptId}<br><span style="font-weight:400;font-size:0.75rem">${m.deptName}</span></td>
         <td class="code">${m.program}<br><span style="font-weight:400;font-size:0.75rem">${m.programName}</span></td>
