@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Finder — UMKC Conservatory</title>
+  <style>
+    /* ── Variables ──────────────────────────────────────────────── */
+    :root {
+      --blue:      #002855;
+      --blue-mid:  #003d7a;
+      --gold:      #F0C522;
+      --gold-dark: #c9a200;
+      --bg:        #f4f6f9;
+      --card-bg:   #ffffff;
+      --text:      #1a1a1a;
+      --muted:     #555555;
+      --border:    #d0d7e2;
+      --success:   #1a6b2e;
+      --radius:    10px;
+      --shadow:    0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    /* ── Reset / Base ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: var(--blue); }
+    a:focus, button:focus, input:focus { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+    /* ── Header ─────────────────────────────────────────────────── */
+    header {
+      background: var(--blue);
+      color: #fff;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    header .org { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.8; }
+    header h1   { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
+    .header-gold-bar { height: 4px; background: var(--gold); }
+
+    /* ── Main layout ────────────────────────────────────────────── */
+    main { flex: 1; padding: 1.5rem; max-width: 680px; width: 100%; margin: 0 auto; }
+
+    /* ── Screens ────────────────────────────────────────────────── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── Cards ──────────────────────────────────────────────────── */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Progress ───────────────────────────────────────────────── */
+    .progress { margin-bottom: 1.25rem; }
+    .progress-steps { display: flex; gap: 0; margin-bottom: 0.5rem; }
+    .progress-step {
+      flex: 1;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 0.25rem 0;
+      border-bottom: 3px solid var(--border);
+    }
+    .progress-step.active   { color: var(--blue); border-color: var(--blue); font-weight: 600; }
+    .progress-step.complete { color: var(--success); border-color: var(--success); }
+
+    /* ── Questions ──────────────────────────────────────────────── */
+    fieldset { padding: 1.25rem; }
+    legend { padding: 0 0.25rem; }
+    .question { font-size: 1.1rem; font-weight: 600; color: var(--blue); margin-bottom: 1.25rem; }
+    .question-sub { font-size: 0.875rem; color: var(--muted); font-weight: 400; margin-top: 0.25rem; }
+
+    /* ── Radio options ──────────────────────────────────────────── */
+    .option-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .option-item { position: relative; }
+    .option-item input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      left: 0; top: 0;
+      margin: 0;
+    }
+    .option-item label {
+      display: block;
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      font-size: 0.95rem;
+    }
+    .option-item label .option-sub {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+      font-weight: 400;
+    }
+    .option-item label .option-icon {
+      margin-right: 0.4rem;
+    }
+    .option-item input:checked + label { border-color: var(--blue); background: #e8f0fb; }
+    .option-item input:focus  + label { outline: 3px solid var(--gold); outline-offset: 1px; }
+    .option-item label:hover { border-color: var(--blue-mid); }
+
+    /* ── Buttons ────────────────────────────────────────────────── */
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 1.25rem;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: var(--blue-mid); }
+    .btn-secondary {
+      background: #fff;
+      color: var(--blue);
+      border: 2px solid var(--blue);
+      border-radius: 8px;
+      padding: 0.6rem 1.1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: #e8f0fb; }
+    .btn-back {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 0.875rem;
+      cursor: pointer;
+      padding: 0 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .btn-back:hover { color: var(--blue); }
+    .btn-row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; }
+
+    /* ── Welcome screen ─────────────────────────────────────────── */
+    .welcome-title { font-size: 1.3rem; font-weight: 700; color: var(--blue); margin-bottom: 0.75rem; }
+    .welcome-body  { font-size: 0.95rem; color: var(--muted); line-height: 1.6; margin-bottom: 0.5rem; }
+    .welcome-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.25rem 0;
+    }
+    .cross-link-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .cross-link-box strong { display: block; color: var(--text); margin-bottom: 0.25rem; font-size: 0.9rem; }
+    .cross-link-box a { font-weight: 600; }
+
+    /* ── Result card ────────────────────────────────────────────── */
+    .result-path { font-size: 0.75rem; color: var(--muted); margin-bottom: 1rem; }
+    .result-account-block {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--border);
+      margin-bottom: 1.25rem;
+    }
+    .result-account-block .field-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+    .result-account-block .field-code {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--blue);
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      letter-spacing: 0.04em;
+    }
+    .result-account-block .field-name {
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-top: 0.2rem;
+    }
+    .result-why { margin-bottom: 1rem; }
+    .result-why h3 { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.4rem; }
+    .result-why p  { font-size: 0.9rem; line-height: 1.6; color: var(--text); }
+    .result-examples { margin-bottom: 1rem; }
+    .result-examples h3 { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.4rem; }
+    .result-examples ul { list-style: none; display: flex; flex-direction: column; gap: 0.25rem; }
+    .result-examples li {
+      font-size: 0.875rem;
+      color: var(--text);
+      padding-left: 1rem;
+      position: relative;
+    }
+    .result-examples li::before { content: "·"; position: absolute; left: 0; color: var(--muted); }
+    .result-cross-link {
+      background: #eaf2ff;
+      border: 1px solid #b3cdf0;
+      border-radius: 8px;
+      padding: 0.875rem 1rem;
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+    .result-cross-link a { font-weight: 600; }
+
+    /* ── Feedback ───────────────────────────────────────────────── */
+    .feedback-section {
+      text-align: center;
+      padding: 0.75rem 0;
+      border-top: 1px solid var(--border);
+      margin-top: 0.5rem;
+    }
+    .feedback-link {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .feedback-link:hover { color: var(--blue); }
+
+    /* ── Footer ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--blue);
+      color: rgba(255,255,255,0.6);
+      font-size: 0.75rem;
+      text-align: center;
+      padding: 0.75rem 1rem;
+    }
+
+    /* ── Print styles ───────────────────────────────────────────── */
+    @media print {
+      header .org, .btn-back, .btn-row, .feedback-section, footer, .screen:not(.active), .cross-link-box, .result-cross-link { display: none !important; }
+      body { background: white; }
+      .card { box-shadow: none; border: 1px solid #ccc; }
+      main { max-width: 100%; padding: 0; }
+      .print-header { display: block !important; font-size: 0.8rem; color: #555; margin-bottom: 1rem; }
+    }
+    .print-header { display: none; }
+
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      main { padding: 1rem; }
+      .card { padding: 1.25rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="org">UMKC Conservatory</div>
+  <h1>Account Finder</h1>
+</header>
+<div class="header-gold-bar"></div>
+
+<main id="main">
+
+  <!-- ── Welcome ──────────────────────────────────────────────── -->
+  <section id="screen-welcome" class="screen active" aria-label="Welcome">
+    <div class="card">
+      <p class="welcome-title">Find the right account code for any Conservatory expense.</p>
+      <p class="welcome-body">Answer two or three short questions to identify the correct account code. Works for any fund — operating, gift, endowment, or grant.</p>
+      <button class="btn-primary" onclick="showStep1()" id="btn-start">Get Started →</button>
+      <hr class="welcome-divider">
+      <div class="cross-link-box">
+        <strong>Need a MoCode too?</strong>
+        If you're coding an operating-fund transaction and need the full MoCode + account combination, use the <a href="../mocodes/" target="_blank">MoCode Finder</a>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Step 1: Category ─────────────────────────────────────── -->
+  <section id="screen-step1" class="screen" aria-label="Step 1: Expense category">
+    <div class="progress" aria-label="Progress: Step 1">
+      <div class="progress-steps">
+        <div class="progress-step active" aria-current="step">1. Category</div>
+        <div class="progress-step">2. Activity</div>
+        <div class="progress-step">3. Account</div>
+      </div>
+    </div>
+    <div class="card">
+      <fieldset>
+        <legend class="question">What type of expense is this?</legend>
+        <div class="option-list" id="category-options" role="radiogroup"></div>
+      </fieldset>
+    </div>
+  </section>
+
+  <!-- ── Step 2: Subcategory ──────────────────────────────────── -->
+  <section id="screen-step2" class="screen" aria-label="Step 2: Specific activity">
+    <button class="btn-back" onclick="showStep1()" aria-label="Back to category">← Back</button>
+    <div class="progress" aria-label="Progress: Step 2">
+      <div class="progress-steps">
+        <div class="progress-step complete">1. Category</div>
+        <div class="progress-step active" aria-current="step">2. Activity</div>
+        <div class="progress-step">3. Account</div>
+      </div>
+    </div>
+    <div class="card">
+      <fieldset>
+        <legend class="question">
+          What best describes this expense?
+          <span class="question-sub" id="step2-sub"></span>
+        </legend>
+        <div class="option-list" id="subcategory-options" role="radiogroup"></div>
+      </fieldset>
+    </div>
+  </section>
+
+  <!-- ── Step 3: Account (shown only when multiple accounts) ──── -->
+  <section id="screen-step3" class="screen" aria-label="Step 3: Expense type">
+    <button class="btn-back" onclick="showStep2()" aria-label="Back to activity">← Back</button>
+    <div class="progress" aria-label="Progress: Step 3">
+      <div class="progress-steps">
+        <div class="progress-step complete">1. Category</div>
+        <div class="progress-step complete">2. Activity</div>
+        <div class="progress-step active" aria-current="step">3. Account</div>
+      </div>
+    </div>
+    <div class="card">
+      <fieldset>
+        <legend class="question">
+          Which best describes the specific purchase?
+          <span class="question-sub" id="step3-sub"></span>
+        </legend>
+        <div class="option-list" id="account-options" role="radiogroup"></div>
+      </fieldset>
+    </div>
+  </section>
+
+  <!-- ── Result ───────────────────────────────────────────────── -->
+  <section id="screen-result" class="screen" aria-label="Result">
+    <button class="btn-back" onclick="goBackFromResult()" aria-label="Back">← Back</button>
+    <div class="card">
+      <div class="print-header" id="print-header">UMKC Conservatory — Account Finder result</div>
+      <p class="result-path" id="result-path"></p>
+      <div class="result-account-block">
+        <div class="field-label">Account Code</div>
+        <div class="field-code" id="result-code"></div>
+        <div class="field-name" id="result-name"></div>
+      </div>
+      <div class="result-why" id="result-why-wrap">
+        <h3>Use this account when</h3>
+        <p id="result-why"></p>
+      </div>
+      <div class="result-examples" id="result-examples-wrap">
+        <h3>Common examples</h3>
+        <ul id="result-examples"></ul>
+      </div>
+      <div class="result-cross-link">
+        Need a MoCode too? If this is an operating-fund transaction, the <a href="../mocodes/" target="_blank">MoCode Finder</a> will give you the full MoCode + account combination.
+      </div>
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="startOver()">Code another</button>
+        <button class="btn-secondary" onclick="window.print()">Print</button>
+      </div>
+      <div class="feedback-section">
+        <a class="feedback-link" id="feedback-link" href="#">✉ Something look wrong? Send feedback</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  UMKC Conservatory — Account Finder &nbsp;·&nbsp; <span id="footer-date"></span>
+</footer>
+
+<script>
+  let data = null;
+
+  const state = {
+    category: null,
+    subcategory: null,
+    account: null,
+    path: []
+  };
+
+  fetch('accounts.json')
+    .then(r => r.json())
+    .then(d => {
+      data = d;
+      document.getElementById('footer-date').textContent = 'Updated ' + d.lastUpdated;
+    })
+    .catch(() => {
+      document.getElementById('main').innerHTML =
+        '<div class="card"><p style="color:#c00">Unable to load account data. Please refresh the page.</p></div>';
+    });
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function optionHTML(name, value, label, sub) {
+    const id = name + '-' + value;
+    return `<div class="option-item">
+      <input type="radio" name="${name}" id="${id}" value="${value}">
+      <label for="${id}">${label}${sub ? `<span class="option-sub">${sub}</span>` : ''}</label>
+    </div>`;
+  }
+
+  function showStep1() {
+    if (!data) return;
+    state.category = null; state.subcategory = null; state.account = null; state.path = [];
+
+    const container = document.getElementById('category-options');
+    container.innerHTML = data.categories.map(cat =>
+      optionHTML('category', cat.id,
+        `<span class="option-icon">${cat.icon}</span>${cat.label}`)
+    ).join('');
+
+    container.querySelectorAll('input[type="radio"]').forEach(input => {
+      input.addEventListener('change', () => {
+        state.category = input.value;
+        state.path = [data.categories.find(c => c.id === input.value).label];
+        showStep2();
+      });
+    });
+
+    showScreen('screen-step1');
+  }
+
+  function showStep2() {
+    if (!data || !state.category) return;
+    const cat = data.categories.find(c => c.id === state.category);
+    state.subcategory = null; state.account = null;
+
+    document.getElementById('step2-sub').textContent = cat.label;
+
+    const container = document.getElementById('subcategory-options');
+    container.innerHTML = cat.subcategories.map(sub =>
+      optionHTML('subcategory', sub.id, sub.label, sub.description)
+    ).join('');
+
+    container.querySelectorAll('input[type="radio"]').forEach(input => {
+      input.addEventListener('change', () => {
+        state.subcategory = input.value;
+        const sub = cat.subcategories.find(s => s.id === input.value);
+        state.path = [cat.label, sub.label];
+        if (sub.accounts.length === 1) {
+          state.account = sub.accounts[0];
+          showResult();
+        } else {
+          showStep3(sub);
+        }
+      });
+    });
+
+    showScreen('screen-step2');
+  }
+
+  function showStep3(sub) {
+    document.getElementById('step3-sub').textContent = sub.label;
+
+    const container = document.getElementById('account-options');
+    container.innerHTML = sub.accounts.map(acct =>
+      optionHTML('account', acct.code,
+        `<span style="font-family:monospace;font-weight:700;color:var(--blue)">${acct.code}</span> — ${acct.description}`,
+        acct.examples.slice(0, 2).join(' · '))
+    ).join('');
+
+    container.querySelectorAll('input[type="radio"]').forEach(input => {
+      input.addEventListener('change', () => {
+        const cat = data.categories.find(c => c.id === state.category);
+        const subcat = cat.subcategories.find(s => s.id === state.subcategory);
+        state.account = subcat.accounts.find(a => a.code === input.value);
+        showResult();
+      });
+    });
+
+    showScreen('screen-step3');
+  }
+
+  function showResult() {
+    const acct = state.account;
+    document.getElementById('result-path').textContent = state.path.join(' › ');
+    document.getElementById('result-code').textContent = acct.code;
+    document.getElementById('result-name').textContent = acct.description;
+    document.getElementById('result-why').textContent = acct.why;
+
+    const ul = document.getElementById('result-examples');
+    ul.innerHTML = acct.examples.map(ex => `<li>${ex}</li>`).join('');
+
+    const subject = encodeURIComponent('Account Finder Feedback — ' + state.path.join(' / '));
+    const body = encodeURIComponent(
+      'Path: ' + state.path.join(' › ') + '\n' +
+      'Result shown: ' + acct.code + ' — ' + acct.description + '\n\n' +
+      'Issue or suggestion:\n'
+    );
+    document.getElementById('feedback-link').href =
+      'mailto:cjchgy@umsystem.edu?subject=' + subject + '&body=' + body;
+
+    document.getElementById('print-header').textContent =
+      'UMKC Conservatory — Account Finder — ' + new Date().toLocaleDateString();
+
+    showScreen('screen-result');
+  }
+
+  function goBackFromResult() {
+    const cat = data.categories.find(c => c.id === state.category);
+    const sub = cat ? cat.subcategories.find(s => s.id === state.subcategory) : null;
+    if (sub && sub.accounts.length > 1) {
+      showStep3(sub);
+    } else {
+      showStep2();
+    }
+  }
+
+  function startOver() {
+    state.category = null; state.subcategory = null; state.account = null; state.path = [];
+    showScreen('screen-welcome');
+  }
+</script>
+
+</body>
+</html>

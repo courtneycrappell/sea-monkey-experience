@@ -1,0 +1,542 @@
+{
+  "lastUpdated": "2026-05-15",
+  "categories": [
+    {
+      "id": "travel",
+      "label": "Travel & Transportation",
+      "icon": "✈️",
+      "subcategories": [
+        {
+          "id": "faculty-staff-travel",
+          "label": "Faculty or staff business travel",
+          "description": "Any trip for a current employee — conference, audition panel, research, or other business purpose.",
+          "accounts": [
+            {
+              "code": "721000",
+              "description": "Business Travel",
+              "why": "Use for any travel by a current Conservatory employee — airfare, hotel, conference registration, meals while traveling, or ground transportation.",
+              "examples": ["Airline ticket for faculty conference", "Hotel for accreditation site visit", "Conference registration that includes travel"]
+            }
+          ]
+        },
+        {
+          "id": "candidate-travel",
+          "label": "Recruiting a job candidate",
+          "description": "Travel reimbursement or direct booking for a faculty or staff candidate visiting campus.",
+          "accounts": [
+            {
+              "code": "721400",
+              "description": "Bus Travel – Job Candidate",
+              "why": "Use for all travel expenses related to bringing a job candidate to campus for an interview or audition — airfare, hotel, meals, and ground transportation.",
+              "examples": ["Candidate airfare for faculty search visit", "Hotel for visiting faculty finalist", "Candidate meal during campus interview day"]
+            }
+          ]
+        },
+        {
+          "id": "training",
+          "label": "Training or professional development (no travel)",
+          "description": "Registration fees for workshops, online courses, or certifications — no travel component.",
+          "accounts": [
+            {
+              "code": "722000",
+              "description": "Training & Development",
+              "why": "Use for professional development that doesn't involve travel — webinar fees, online certification programs, or local workshop registration.",
+              "examples": ["Online workshop registration fee", "Professional certification program", "Virtual conference registration (no travel)"]
+            }
+          ]
+        },
+        {
+          "id": "fuel",
+          "label": "Fuel for a university vehicle or van",
+          "description": "Gas or fuel purchases for a Conservatory or university-owned vehicle.",
+          "accounts": [
+            {
+              "code": "730900",
+              "description": "Fuel",
+              "why": "Use when purchasing fuel for a university-owned or rented vehicle used for Conservatory business.",
+              "examples": ["Gas for van transporting students to performance", "Fuel for equipment transport vehicle", "Gas station charge on university card for touring trip"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "personnel",
+      "label": "Personnel & Labor",
+      "icon": "👤",
+      "subcategories": [
+        {
+          "id": "benefit-eligible-staff",
+          "label": "Benefit-eligible employee (regular staff position)",
+          "description": "A regular full-time or part-time staff employee who receives benefits.",
+          "accounts": [
+            {
+              "code": "705000",
+              "description": "Benefit Eligible Staff",
+              "why": "Use for wages and salary paid to benefit-eligible staff employees — those in regular positions that include health insurance, retirement, and other benefits.",
+              "examples": ["Administrative coordinator salary", "Technical director wages", "Production manager compensation"]
+            }
+          ]
+        },
+        {
+          "id": "non-benefit-staff",
+          "label": "Part-time or temporary staff (no benefits)",
+          "description": "Temporary or part-time employees who are not benefit-eligible.",
+          "accounts": [
+            {
+              "code": "705500",
+              "description": "Non-Benefit Eligible Staff",
+              "why": "Use for wages paid to non-benefit-eligible employees — part-time, temporary, or casual workers hired for operational or production support.",
+              "examples": ["Part-time production crew member", "Temporary office worker", "Overhire labor for a production"]
+            }
+          ]
+        },
+        {
+          "id": "student-worker",
+          "label": "Student employee (non-academic role)",
+          "description": "A student hired in an operational or administrative role (not academic/instructional work).",
+          "accounts": [
+            {
+              "code": "707100",
+              "description": "Non-Academic Student Employees",
+              "why": "Use for student employees working in operational, administrative, or support roles — not for accompanist or curricular work.",
+              "examples": ["Student office assistant", "Student box office worker", "Student costume crew member"]
+            }
+          ]
+        },
+        {
+          "id": "academic-non-faculty",
+          "label": "Academic worker — accompanist or curricular support",
+          "description": "A student or non-faculty worker in an academic or instructional role.",
+          "accounts": [
+            {
+              "code": "703800",
+              "description": "Non-Ben Elg Academic (Non-Faculty)",
+              "why": "Use for academic workers who are not faculty — primarily student accompanists and students in curricular support roles like ensemble conducting.",
+              "examples": ["Student accompanist for lessons or ensemble", "Student conducting an ensemble as part of curriculum", "Non-faculty academic support worker"]
+            }
+          ]
+        },
+        {
+          "id": "overtime",
+          "label": "Overtime pay",
+          "description": "Overtime wages for an hourly employee.",
+          "accounts": [
+            {
+              "code": "708050",
+              "description": "S&W – Overtime",
+              "why": "Use specifically for overtime pay — hours worked beyond the standard workweek for hourly employees.",
+              "examples": ["Production crew overtime during tech week", "Staff overtime for a major event", "Hourly employee overtime hours"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "supplies",
+      "label": "Supplies & Materials",
+      "icon": "📦",
+      "subcategories": [
+        {
+          "id": "general-supplies",
+          "label": "General or office supplies",
+          "description": "Everyday consumable supplies for office, administrative, or operational use.",
+          "accounts": [
+            {
+              "code": "730000",
+              "description": "Supplies",
+              "why": "Use for general consumable supplies that don't fit a more specific category — office materials, production consumables, or general operational supplies.",
+              "examples": ["Paper, pens, folders", "Toner cartridges", "Gaffer tape, cable ties, consumable production materials"]
+            }
+          ]
+        },
+        {
+          "id": "instructional-supplies",
+          "label": "Instructional or academic materials",
+          "description": "Supplies used directly in teaching — scores, method books, classroom materials.",
+          "accounts": [
+            {
+              "code": "730300",
+              "description": "Instructional Supplies",
+              "why": "Use for materials directly supporting instruction or curriculum — not equipment, not general office supplies.",
+              "examples": ["Music scores for ensemble", "Method books or textbooks for a course", "Classroom or studio teaching materials"]
+            }
+          ]
+        },
+        {
+          "id": "shop-supplies",
+          "label": "Shop, production, or technical supplies",
+          "description": "Materials used in production shops — scenic, costume, lighting, or sound supplies.",
+          "accounts": [
+            {
+              "code": "731600",
+              "description": "Shop Supplies",
+              "why": "Use for consumable materials used in production shops or technical departments — scenic materials, hardware, costume consumables, and similar.",
+              "examples": ["Lumber and hardware for scenic construction", "Fabric for costume shop", "Cable, connectors, or hardware for sound/lighting"]
+            }
+          ]
+        },
+        {
+          "id": "recruiting-supplies",
+          "label": "Recruiting or audition materials",
+          "description": "Supplies specifically for student recruitment or audition events.",
+          "accounts": [
+            {
+              "code": "730450",
+              "description": "Recruiting Supplies",
+              "why": "Use for supplies specifically purchased for student recruitment or audition days — distinct from general marketing or office supplies.",
+              "examples": ["Audition day materials and folders", "Giveaways or handouts for prospective students", "Supplies for recruitment event table"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "equipment-technology",
+      "label": "Equipment & Technology",
+      "icon": "💻",
+      "subcategories": [
+        {
+          "id": "computer",
+          "label": "Computer, tablet, or peripheral device",
+          "description": "Hardware purchase under $5,000.",
+          "accounts": [
+            {
+              "code": "740100",
+              "description": "Computers – Non-Capital",
+              "why": "Use for computers, laptops, tablets, or peripherals (keyboard, monitor, etc.) that cost less than $5,000.",
+              "examples": ["Laptop for faculty office", "iPad for production management", "External monitor or keyboard"]
+            }
+          ]
+        },
+        {
+          "id": "software",
+          "label": "Software license or subscription",
+          "description": "Software purchase, license, or recurring digital subscription.",
+          "accounts": [
+            {
+              "code": "740150",
+              "description": "Software – Non-Capital",
+              "why": "Use for software purchases, annual license renewals, and digital subscriptions under $5,000.",
+              "examples": ["Notation software license (Finale, Sibelius)", "Adobe Creative Cloud subscription", "Production management software"]
+            }
+          ]
+        },
+        {
+          "id": "equipment-purchase",
+          "label": "Equipment purchase under $5,000",
+          "description": "Non-computer equipment — instruments, audio/visual gear, studio equipment.",
+          "accounts": [
+            {
+              "code": "740300",
+              "description": "Equipment – Non-Capital",
+              "why": "Use for equipment purchases that are not computers and cost less than $5,000.",
+              "examples": ["Microphone or audio equipment", "Instrument purchase under $5,000", "Lighting fixture or stage equipment"]
+            }
+          ]
+        },
+        {
+          "id": "equipment-major",
+          "label": "Equipment purchase $5,000 or more",
+          "description": "Capital equipment purchase at or above the $5,000 threshold.",
+          "accounts": [
+            {
+              "code": "770000",
+              "description": "Equipment > $5,000",
+              "why": "Use for any single equipment purchase at or above $5,000 — these are capitalized and tracked as university assets.",
+              "examples": ["Grand piano purchase", "Major sound system or console", "Capital lighting or rigging equipment"]
+            }
+          ]
+        },
+        {
+          "id": "furniture",
+          "label": "Furniture or fixtures",
+          "description": "Desks, chairs, shelving, or other furniture under $5,000.",
+          "accounts": [
+            {
+              "code": "740600",
+              "description": "Furniture – Non-Capital",
+              "why": "Use for furniture and fixture purchases under $5,000 — office furniture, studio furniture, or production fixtures.",
+              "examples": ["Office desk or chair", "Music stand storage unit", "Studio or rehearsal room furniture"]
+            }
+          ]
+        },
+        {
+          "id": "equipment-rental",
+          "label": "Equipment rental or lease",
+          "description": "Short-term or one-time equipment rental — not an automated recurring lease.",
+          "accounts": [
+            {
+              "code": "741600",
+              "description": "Rent/Lease Equipment",
+              "why": "Use for renting or leasing equipment on a one-time or short-term basis.",
+              "examples": ["Audio equipment rental for a concert", "Piano rental for a performance", "Staging or rigging rental"]
+            }
+          ]
+        },
+        {
+          "id": "computing-services",
+          "label": "IT services or computing support",
+          "description": "Technology services, support contracts, or computing-related expenses that aren't hardware or software purchases.",
+          "accounts": [
+            {
+              "code": "739000",
+              "description": "Computing Expense",
+              "why": "Use for IT service charges, computing support, or technology-related expenses that aren't a discrete hardware or software purchase.",
+              "examples": ["IT support service charge", "Cloud storage or data service", "Technology service contract"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "professional-services",
+      "label": "Professional Services & Fees",
+      "icon": "🤝",
+      "subcategories": [
+        {
+          "id": "guest-artist-consultant",
+          "label": "Guest artist, clinician, or external consultant",
+          "description": "Honorarium or fee for an outside individual providing professional services.",
+          "accounts": [
+            {
+              "code": "750000",
+              "description": "Professional & Consulting Services",
+              "why": "Use for honoraria, fees, and payments to external individuals or businesses for professional services — guest artists, clinicians, consultants, royalties, and licensing fees.",
+              "examples": ["Guest artist or clinician honorarium", "Consulting fee for an external professional", "Royalty or licensing fee payment"]
+            }
+          ]
+        },
+        {
+          "id": "contracted-services",
+          "label": "Contracted performer or production specialist",
+          "description": "A contracted individual or company providing performance or production services.",
+          "accounts": [
+            {
+              "code": "750250",
+              "description": "Contracted Services",
+              "why": "Use for contracted performers, technicians, or production specialists engaged through a formal contract or service agreement.",
+              "examples": ["Contracted pianist for a production", "Piano technician or instrument repair specialist", "Contracted stage crew or production specialist"]
+            }
+          ]
+        },
+        {
+          "id": "internal-services",
+          "label": "Service from another UM department (internal)",
+          "description": "Charges from another university department or UM System unit.",
+          "accounts": [
+            {
+              "code": "750910",
+              "description": "Other Professional Services (Internal)",
+              "why": "Use for interdepartmental charges — services billed from one UM unit to another.",
+              "examples": ["UMKC facilities or AV services charge", "UM Print & Mail services", "University Police or event security through campus"]
+            }
+          ]
+        },
+        {
+          "id": "security",
+          "label": "External security services",
+          "description": "Security services from an outside vendor (not UM campus police).",
+          "accounts": [
+            {
+              "code": "751100",
+              "description": "Security",
+              "why": "Use for external security vendor charges for events or facilities.",
+              "examples": ["Event security contractor for a performance", "External security services for a large event"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "marketing-events",
+      "label": "Marketing, Printing & Events",
+      "icon": "📣",
+      "subcategories": [
+        {
+          "id": "printing",
+          "label": "Printing or copying",
+          "description": "Printed materials — programs, flyers, reports, photocopies.",
+          "accounts": [
+            {
+              "code": "727000",
+              "description": "Copy Service",
+              "why": "Use for printing and copying charges — programs, posters, promotional materials, or documents.",
+              "examples": ["Concert program printing", "Audition flyer or poster printing", "Large-format print for lobby display"]
+            }
+          ]
+        },
+        {
+          "id": "advertising",
+          "label": "Advertising or marketing",
+          "description": "Paid placement — digital ads, print ads, or promotional campaigns.",
+          "accounts": [
+            {
+              "code": "725000",
+              "description": "Marketing/Advertising Expense",
+              "why": "Use for paid advertising placements and marketing campaigns — digital, print, or broadcast.",
+              "examples": ["Facebook or Instagram ad campaign", "Newspaper or magazine advertisement", "Sponsored listing or promotional placement"]
+            }
+          ]
+        },
+        {
+          "id": "food-meetings",
+          "label": "Food for a meeting, reception, or event",
+          "description": "Catering or food purchased for a university business purpose.",
+          "accounts": [
+            {
+              "code": "728000",
+              "description": "Business Meeting Expense – Food",
+              "why": "Use for food and beverage purchased for meetings, receptions, audition days, or university events with a documented business purpose.",
+              "examples": ["Catering for faculty reception", "Refreshments for audition day", "Food for a board or advisory committee meeting"]
+            }
+          ]
+        },
+        {
+          "id": "postage-shipping",
+          "label": "Postage, shipping, or delivery",
+          "description": "Mailing or shipping charges.",
+          "accounts": [
+            {
+              "code": "723000",
+              "description": "Postage/Shipping & Delivery",
+              "why": "Use for postage and shipping — mailing recruitment materials, shipping equipment, or any delivery charges.",
+              "examples": ["FedEx or UPS shipment", "Postage for mailed season brochures", "Instrument shipping for a tour"]
+            }
+          ]
+        },
+        {
+          "id": "phone-communications",
+          "label": "Phone or communications services",
+          "description": "Telephone, mobile, or communications service charges.",
+          "accounts": [
+            {
+              "code": "724000",
+              "description": "Telephone/Fax Services",
+              "why": "Use for recurring or one-time phone and communications charges.",
+              "examples": ["Monthly office phone line", "Mobile device service charge", "Long-distance or conference call fees"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "facilities",
+      "label": "Facilities, Rentals & Maintenance",
+      "icon": "🏛️",
+      "subcategories": [
+        {
+          "id": "space-rental",
+          "label": "Renting a space or venue",
+          "description": "Rental of a space or facility for a Conservatory event or activity.",
+          "accounts": [
+            {
+              "code": "789500",
+              "description": "Rent/Lease Space & Equipment",
+              "why": "Use for renting or leasing a venue, rehearsal space, or facility.",
+              "examples": ["Off-campus venue rental for performance", "Rehearsal space rental", "Storage unit rental"]
+            }
+          ]
+        },
+        {
+          "id": "facilities-charges",
+          "label": "Facilities charges or building services",
+          "description": "Charges for building-related services, maintenance, or facility use fees.",
+          "accounts": [
+            {
+              "code": "740900",
+              "description": "Miscellaneous Facilities Charges",
+              "why": "Use for miscellaneous facility-related charges under $5,000 that don't fit a more specific category.",
+              "examples": ["Facility use fee", "Custodial or building setup charge", "Utility or service connection fee"]
+            }
+          ]
+        },
+        {
+          "id": "equipment-repair",
+          "label": "Equipment repair or maintenance",
+          "description": "Repair or maintenance of equipment — instruments, audio gear, etc.",
+          "accounts": [
+            {
+              "code": "789000",
+              "description": "Equipment – Maintenance & Repair (Non-Capital)",
+              "why": "Use for repairing or maintaining equipment — instruments, audio/visual equipment, or other non-capital items.",
+              "examples": ["Instrument repair (bow rehair, pad replacement, etc.)", "Audio equipment service or repair", "Piano tuning or regulation"]
+            }
+          ]
+        },
+        {
+          "id": "building-repair",
+          "label": "Building repair or maintenance",
+          "description": "Repairs, maintenance, or minor renovation to a building or facility.",
+          "accounts": [
+            {
+              "code": "795000",
+              "description": "Buildings – Maintenance & Repair (Non-Capital)",
+              "why": "Use for non-capital building maintenance and repair work.",
+              "examples": ["Minor plumbing or electrical repair", "HVAC service", "Door, window, or fixture repair"]
+            }
+          ]
+        },
+        {
+          "id": "renovation",
+          "label": "Minor renovation or facility improvement",
+          "description": "Small renovation or improvement project that doesn't meet the capital threshold.",
+          "accounts": [
+            {
+              "code": "796000",
+              "description": "Minor Renovation/Rehab (Non-Capital)",
+              "why": "Use for renovation or rehabilitation work on a facility that falls below the capital project threshold.",
+              "examples": ["Studio or office remodel", "Flooring replacement in a rehearsal room", "Minor facility upgrade or improvement"]
+            }
+          ]
+        },
+        {
+          "id": "insurance",
+          "label": "Insurance",
+          "description": "Insurance premiums or coverage charges.",
+          "accounts": [
+            {
+              "code": "726000",
+              "description": "Insurance",
+              "why": "Use for insurance premiums and coverage charges — event liability, instrument insurance, or similar.",
+              "examples": ["Event liability insurance", "Instrument or equipment insurance premium", "Touring or travel insurance"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "memberships",
+      "label": "Memberships & Professional Development",
+      "icon": "🎓",
+      "subcategories": [
+        {
+          "id": "dues-memberships",
+          "label": "Dues or membership fees",
+          "description": "Annual dues or membership fees for a professional organization.",
+          "accounts": [
+            {
+              "code": "738000",
+              "description": "Dues/Memberships",
+              "why": "Use for annual dues or membership fees paid to professional organizations, accrediting bodies, or associations.",
+              "examples": ["NASM or NASD accreditation dues", "NAfME, CMS, or other professional membership", "Union or guild dues"]
+            }
+          ]
+        },
+        {
+          "id": "training-dev",
+          "label": "Professional development or training",
+          "description": "Registration for a workshop, seminar, or training program.",
+          "accounts": [
+            {
+              "code": "722000",
+              "description": "Training & Development",
+              "why": "Use for professional development registration fees — workshops, online training, certifications, and seminars.",
+              "examples": ["Online workshop or webinar registration", "Leadership or administrative training program", "Certification or licensure renewal course"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

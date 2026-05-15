@@ -262,6 +262,18 @@
     .welcome-title { font-size: 1.3rem; font-weight: 700; color: var(--blue); margin-bottom: 0.75rem; }
     .welcome-body  { font-size: 0.95rem; color: var(--muted); line-height: 1.6; margin-bottom: 0.5rem; }
     .divider { text-align: center; color: var(--muted); font-size: 0.8rem; margin: 0.75rem 0; }
+    .welcome-divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+    .cross-link-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .cross-link-box strong { display: block; color: var(--text); margin-bottom: 0.25rem; font-size: 0.9rem; }
+    .cross-link-box a { font-weight: 600; }
     .btn-ref-link {
       display: block;
       text-align: center;
@@ -515,6 +527,11 @@
       <p class="welcome-body">Answer three short questions to identify the correct MoCode and Account code. Use this tool to code transactions correctly in PeopleSoft.</p>
       <p class="welcome-body">If a result doesn't look right, use the feedback button to send us a note — that helps us improve the taxonomy.</p>
       <button class="btn-primary" onclick="showStep1()" id="btn-start">Get Started →</button>
+      <hr class="welcome-divider">
+      <div class="cross-link-box">
+        <strong>Only need an account code?</strong>
+        If you're spending from a gift account or just need the right expense code without a MoCode, use the <a href="../accounts/" target="_blank">Account Finder</a>.
+      </div>
     </div>
   </section>
 
