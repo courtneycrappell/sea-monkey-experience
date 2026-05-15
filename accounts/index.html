@@ -296,6 +296,26 @@
     tr:hover td { background: #dcfce7; }
     td.code { font-family: monospace; font-weight: 700; color: var(--blue); white-space: nowrap; font-size: 0.95rem; }
 
+    /* ── Easter egg ───────────────────────────────────────────── */
+    .easter-egg {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      z-index: 9999;
+      display: block;
+      line-height: 0;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .easter-egg img {
+      width: 38px;
+      height: 38px;
+      object-fit: cover;
+      border-radius: 50%;
+      display: block;
+    }
+    @media print { .easter-egg { display: none !important; } }
+
     /* ── Print styles ───────────────────────────────────────────── */
     @media print {
       header .org, .tab-nav, .btn-back, .btn-row, .feedback-section, footer, .screen:not(.active), .cross-link-box, .result-cross-link { display: none !important; }
@@ -660,6 +680,11 @@
     showScreen('screen-welcome');
   }
 </script>
+
+
+<a href="https://courtneycrappell.com" target="_blank" rel="noopener noreferrer" class="easter-egg" title="monkey time?">
+  <img src="seaMonkeys.png" alt="monkey time?">
+</a>
 
 </body>
 </html>
