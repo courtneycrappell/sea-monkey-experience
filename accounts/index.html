@@ -7,15 +7,15 @@
   <style>
     /* ── Variables ──────────────────────────────────────────────── */
     :root {
-      --blue:      #002855;
-      --blue-mid:  #003d7a;
+      --blue:      #166534;
+      --blue-mid:  #14532d;
       --gold:      #F0C522;
       --gold-dark: #c9a200;
-      --bg:        #f4f6f9;
+      --bg:        #f0fdf4;
       --card-bg:   #ffffff;
       --text:      #1a1a1a;
       --muted:     #555555;
-      --border:    #d0d7e2;
+      --border:    #bbf7d0;
       --success:   #1a6b2e;
       --radius:    10px;
       --shadow:    0 2px 12px rgba(0,0,0,0.08);
@@ -47,6 +47,26 @@
     header .org { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.8; }
     header h1   { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
     .header-gold-bar { height: 4px; background: var(--gold); }
+
+    /* ── Nav tabs ───────────────────────────────────────────────── */
+    .tab-nav {
+      display: flex;
+      background: var(--blue);
+      padding: 0 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      padding: 0.6rem 1rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .tab-btn:hover { color: #fff; }
+    .tab-btn.active { color: #fff; border-bottom-color: var(--gold); }
 
     /* ── Main layout ────────────────────────────────────────────── */
     main { flex: 1; padding: 1.5rem; max-width: 680px; width: 100%; margin: 0 auto; }
@@ -115,7 +135,7 @@
     .option-item label .option-icon {
       margin-right: 0.4rem;
     }
-    .option-item input:checked + label { border-color: var(--blue); background: #e8f0fb; }
+    .option-item input:checked + label { border-color: var(--blue); background: #dcfce7; }
     .option-item input:focus  + label { outline: 3px solid var(--gold); outline-offset: 1px; }
     .option-item label:hover { border-color: var(--blue-mid); }
 
@@ -145,7 +165,7 @@
       cursor: pointer;
       transition: background 0.15s;
     }
-    .btn-secondary:hover { background: #e8f0fb; }
+    .btn-secondary:hover { background: #dcfce7; }
     .btn-back {
       background: none;
       border: none;
@@ -161,7 +181,7 @@
     .btn-row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; }
 
     /* ── Welcome screen ─────────────────────────────────────────── */
-    .welcome-title { font-size: 1.3rem; font-weight: 700; color: var(--blue); margin-bottom: 0.75rem; }
+    .welcome-title { font-size: 1.3rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem; }
     .welcome-body  { font-size: 0.95rem; color: var(--muted); line-height: 1.6; margin-bottom: 0.5rem; }
     .welcome-divider {
       border: none;
@@ -223,8 +243,8 @@
     }
     .result-examples li::before { content: "·"; position: absolute; left: 0; color: var(--muted); }
     .result-cross-link {
-      background: #eaf2ff;
-      border: 1px solid #b3cdf0;
+      background: #dcfce7;
+      border: 1px solid #bbf7d0;
       border-radius: 8px;
       padding: 0.875rem 1rem;
       font-size: 0.875rem;
@@ -260,9 +280,25 @@
       padding: 0.75rem 1rem;
     }
 
+    /* ── Reference table ────────────────────────────────────────── */
+    .ref-table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    th {
+      background: var(--blue);
+      color: #fff;
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:hover td { background: #dcfce7; }
+    td.code { font-family: monospace; font-weight: 700; color: var(--blue); white-space: nowrap; font-size: 0.95rem; }
+
     /* ── Print styles ───────────────────────────────────────────── */
     @media print {
-      header .org, .btn-back, .btn-row, .feedback-section, footer, .screen:not(.active), .cross-link-box, .result-cross-link { display: none !important; }
+      header .org, .tab-nav, .btn-back, .btn-row, .feedback-section, footer, .screen:not(.active), .cross-link-box, .result-cross-link { display: none !important; }
       body { background: white; }
       .card { box-shadow: none; border: 1px solid #ccc; }
       main { max-width: 100%; padding: 0; }
@@ -286,6 +322,11 @@
 </header>
 <div class="header-gold-bar"></div>
 
+<div class="tab-nav" role="navigation" aria-label="Main navigation">
+  <button class="tab-btn active" id="tab-finder" onclick="showTab('finder')" aria-pressed="true">Find a Code</button>
+  <button class="tab-btn" id="tab-reference" onclick="showTab('reference')" aria-pressed="false">Full Reference</button>
+</div>
+
 <main id="main">
 
   <!-- ── Welcome ──────────────────────────────────────────────── -->
@@ -293,6 +334,7 @@
     <div class="card">
       <p class="welcome-title">Find the right account code for any Conservatory expense.</p>
       <p class="welcome-body">Answer two or three short questions to identify the correct account code. Works for any fund — operating, gift, endowment, or grant.</p>
+      <p class="welcome-body">If a result doesn't look right, use the feedback button to send us a note — that helps us improve the taxonomy.</p>
       <button class="btn-primary" onclick="showStep1()" id="btn-start">Get Started →</button>
       <hr class="welcome-divider">
       <div class="cross-link-box">
@@ -393,6 +435,24 @@
     </div>
   </section>
 
+  <!-- ── Reference ──────────────────────────────────────────────── -->
+  <section id="screen-reference" class="screen" aria-label="Full Account Reference">
+    <div class="card" style="padding: 1.25rem 1.75rem;">
+      <div class="ref-table-wrap">
+        <table id="ref-table" aria-label="Full account reference table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Account Name</th>
+              <th>Use When</th>
+            </tr>
+          </thead>
+          <tbody id="ref-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer>
@@ -420,10 +480,60 @@
         '<div class="card"><p style="color:#c00">Unable to load account data. Please refresh the page.</p></div>';
     });
 
-  function showScreen(id) {
+  function hideAllScreens() {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  }
+
+  function showScreen(id) {
+    hideAllScreens();
     document.getElementById(id).classList.add('active');
     window.scrollTo(0, 0);
+  }
+
+  function showTab(tab) {
+    ['finder','reference'].forEach(t => {
+      document.getElementById('tab-'+t).classList.toggle('active', t === tab);
+      document.getElementById('tab-'+t).setAttribute('aria-pressed', t === tab);
+    });
+    if (tab === 'reference') {
+      hideAllScreens();
+      document.getElementById('screen-reference').classList.add('active');
+      renderReference();
+    } else {
+      hideAllScreens();
+      document.getElementById('screen-welcome').classList.add('active');
+    }
+    window.scrollTo(0, 0);
+  }
+
+  function renderReference() {
+    if (!data) return;
+    const tbody = document.getElementById('ref-tbody');
+    if (tbody.children.length > 0) return;
+
+    const seen = new Set();
+    const accounts = [];
+    data.categories.forEach(cat => {
+      cat.subcategories.forEach(sub => {
+        sub.accounts.forEach(acct => {
+          if (!seen.has(acct.code)) {
+            seen.add(acct.code);
+            accounts.push(acct);
+          }
+        });
+      });
+    });
+
+    accounts.sort((a, b) => a.code.localeCompare(b.code));
+
+    accounts.forEach(acct => {
+      tbody.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td class="code">${acct.code}</td>
+          <td>${acct.description}</td>
+          <td style="font-size:0.78rem">${acct.why}</td>
+        </tr>`);
+    });
   }
 
   function optionHTML(name, value, label, sub) {
@@ -543,6 +653,10 @@
 
   function startOver() {
     state.category = null; state.subcategory = null; state.account = null; state.path = [];
+    document.getElementById('tab-finder').classList.add('active');
+    document.getElementById('tab-reference').classList.remove('active');
+    document.getElementById('tab-finder').setAttribute('aria-pressed', 'true');
+    document.getElementById('tab-reference').setAttribute('aria-pressed', 'false');
     showScreen('screen-welcome');
   }
 </script>
