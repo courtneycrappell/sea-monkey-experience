@@ -134,7 +134,8 @@ const FLIGHT_PLAYLIST = [
   "FULP7.m4a",
   "FULP8.m4a",
   "FULP9.m4a",
-  "FULP10.m4a"
+  "FULP10.m4a",
+  "FULP11.m4a"
 ];
 const FLIGHT_AUDIO_BASE = "./assets/";
 let flightAudio = null;
