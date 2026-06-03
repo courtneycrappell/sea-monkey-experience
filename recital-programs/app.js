@@ -134,7 +134,7 @@ function updateEntryIndicator() {
   if (editingIndex !== null) {
     label.textContent = 'Editing Program Entry ' + (editingIndex + 1);
   } else {
-    label.textContent = 'Program Entry ' + (programEntries.length + 1);
+    label.textContent = 'Program Entry ' + (programEntries.filter(e => e.type === 'entry').length + 1);
   }
 }
 
@@ -1130,12 +1130,38 @@ function toggleLectureTitle() {
 }
 
 function advanceFromRecitalDetails() {
-  // Pre-fill academic year field if blank
+  // Pre-fill academic year if blank
   const yearEl = document.getElementById('rd-year');
   if (yearEl && !recitalDetails.academicYear) {
     recitalDetails.academicYear = autoAcademicYear();
     yearEl.value = recitalDetails.academicYear;
   }
+
+  // Required field validation
+  const required = [
+    { key: 'recitalType',    id: 'rd-type',  label: 'Type of recital' },
+    { key: 'performerName',  id: 'rd-name',  label: 'Your name' },
+    { key: 'recitalDate',    id: 'rd-date',  label: 'Date' },
+    { key: 'venue',          id: 'rd-venue', label: 'Venue' },
+  ];
+  const missing = required.filter(f => !recitalDetails[f.key]?.trim());
+  const valEl = document.getElementById('rd-validation');
+  if (missing.length) {
+    if (valEl) {
+      valEl.textContent = 'Please fill in: ' + missing.map(f => f.label).join(', ');
+      valEl.style.display = 'block';
+    }
+    // Highlight the first missing field
+    const firstEl = document.getElementById(missing[0].id);
+    if (firstEl) { firstEl.focus(); firstEl.style.borderColor = 'var(--warn-border)'; }
+    return;
+  }
+  if (valEl) valEl.style.display = 'none';
+  // Clear any red borders
+  required.forEach(f => {
+    const el = document.getElementById(f.id);
+    if (el) el.style.borderColor = '';
+  });
   goToScreen('relationship');
 }
 
@@ -1651,4 +1677,265 @@ document.addEventListener('DOMContentLoaded', () => {
   const yearEl = document.getElementById('rd-year');
   if (yearEl) yearEl.value = autoAcademicYear();
   initRadioHandlers();
+  // Spell checker: load dictionaries and wire up fields
+  loadDictionaries();
+  initSpellCheck();
 });
+
+// ════════════════════════════════════════════════════════════════
+//  Spell Checker — Layer 2 (Typo.js multilingual)
+// ════════════════════════════════════════════════════════════════
+
+const SPELL_DICT_LANGS = [
+  { code: 'en_US', pkg: 'dictionary-en' },
+  { code: 'de_DE', pkg: 'dictionary-de' },
+  { code: 'fr_FR', pkg: 'dictionary-fr' },
+  { code: 'it_IT', pkg: 'dictionary-it' },
+  { code: 'es_ES', pkg: 'dictionary-es' },
+  { code: 'pt_PT', pkg: 'dictionary-pt' },
+];
+let loadedDicts = [];
+let dictsReady = false;
+
+async function loadDictionaries() {
+  if (typeof Typo === 'undefined') return; // Typo.js not loaded
+  const base = 'https://cdn.jsdelivr.net/npm/';
+  try {
+    await Promise.all(SPELL_DICT_LANGS.map(async ({ code, pkg }) => {
+      try {
+        const [aff, dic] = await Promise.all([
+          fetch(base + pkg + '/index.aff').then(r => r.text()),
+          fetch(base + pkg + '/index.dic').then(r => r.text()),
+        ]);
+        loadedDicts.push(new Typo(code, aff, dic, { platform: 'any' }));
+      } catch (e) { /* silent: one dict failing doesn't block others */ }
+    }));
+    dictsReady = loadedDicts.length > 0;
+    // Re-check any fields that already have content
+    if (dictsReady) SPELL_TEXTAREA_IDS.concat(SPELL_INPUT_IDS).forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.value?.trim()) runSpellCheck(id);
+    });
+  } catch (e) { /* silent */ }
+}
+
+// Fields to check
+const SPELL_TEXTAREA_IDS = ['movements-input', 'rd-additional', 'performers-input'];
+const SPELL_INPUT_IDS    = ['rd-degree', 'rd-lecture', 'lyricist-input'];
+
+// Words and patterns that should never be flagged
+const SPELL_SKIP_WORDS = new Set([
+  'allegro','andante','adagio','largo','presto','vivace','moderato','lento','grave',
+  'piano','forte','pianissimo','fortissimo','mezzo','molto','poco','con','ma','non',
+  'e','il','la','le','les','du','des','un','une','und','der','die','das','ein','eine',
+  'von','soprano','tenor','baritone','contralto','bass','alto','lyr','arr','trans',
+  'op','no','nos','pp','ff','mf','mp','sf','sfz',
+]);
+const SPELL_SKIP_RE = [
+  /^[IVXLCDM]+\.?$/,        // Roman numerals: I. II. XIV
+  /^\d/,                     // starts with digit
+  /^[^a-zA-ZÀ-ÿĀ-ɏ]/, // non-letter start
+  /^[a-z]{1,2}\.?$/,        // short abbreviations: e., p., f.
+];
+
+function spellSkip(word) {
+  const w = word.replace(/[.,;:!?'"()[\]{}–—]/g, '');
+  if (!w || w.length <= 2) return true;
+  if (SPELL_SKIP_WORDS.has(w.toLowerCase())) return true;
+  return SPELL_SKIP_RE.some(re => re.test(w));
+}
+
+function spellCheck(word) {
+  if (!dictsReady || spellSkip(word)) return true;
+  const clean = word.replace(/[.,;:!?'"()[\]{}–—]/g, '');
+  if (!clean) return true;
+  return loadedDicts.some(d => d.check(clean));
+}
+
+function spellSuggest(word) {
+  if (!dictsReady) return [];
+  const clean = word.replace(/[.,;:!?'"()[\]{}–—]/g, '');
+  for (const d of loadedDicts) {
+    const s = d.suggest(clean);
+    if (s && s.length) return s.slice(0, 5);
+  }
+  return [];
+}
+
+// Tokenise text into word spans and gap spans
+function spellTokenize(text) {
+  const re = /[a-zA-ZÀ-ÿĀ-ɏḀ-ỿ]+/g;
+  const tokens = [];
+  let last = 0, m;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) tokens.push({ word: false, val: text.slice(last, m.index) });
+    tokens.push({ word: true, val: m[0] });
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) tokens.push({ word: false, val: text.slice(last) });
+  return tokens;
+}
+
+function escSC(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── Textarea backdrop ──────────────────────────────────────────
+const spellBackdrops = {}; // fieldId → backdrop div
+const spellTimers   = {};
+
+function initSpellCheck() {
+  SPELL_TEXTAREA_IDS.forEach(id => {
+    const ta = document.getElementById(id);
+    if (!ta) return;
+    // Wrap in spell-wrap
+    const wrap = document.createElement('div');
+    wrap.className = 'spell-wrap';
+    ta.parentNode.insertBefore(wrap, ta);
+    wrap.appendChild(ta);
+    // Create backdrop
+    const bd = document.createElement('div');
+    bd.className = 'spell-backdrop';
+    bd.setAttribute('aria-hidden', 'true');
+    wrap.insertBefore(bd, ta);
+    spellBackdrops[id] = { bd, ta };
+    ta.classList.add('spell-active');
+    // Sync on scroll
+    ta.addEventListener('scroll', () => { bd.scrollTop = ta.scrollTop; });
+    // Check on input (debounced)
+    ta.addEventListener('input', () => scheduleSpellCheck(id));
+    // Check immediately on blur
+    ta.addEventListener('blur',  () => runSpellCheck(id));
+    // Status div
+    injectSpellStatus(id, ta.parentNode.parentNode);
+  });
+
+  SPELL_INPUT_IDS.forEach(id => {
+    const inp = document.getElementById(id);
+    if (!inp) return;
+    inp.addEventListener('input', () => scheduleSpellCheck(id));
+    inp.addEventListener('blur',  () => runSpellCheck(id));
+    injectSpellStatus(id, inp.parentNode);
+  });
+}
+
+function injectSpellStatus(id, container) {
+  const existing = document.getElementById('spell-status-' + id);
+  if (existing) return;
+  const div = document.createElement('div');
+  div.className = 'spell-status';
+  div.id = 'spell-status-' + id;
+  container.appendChild(div);
+}
+
+function scheduleSpellCheck(id) {
+  clearTimeout(spellTimers[id]);
+  spellTimers[id] = setTimeout(() => runSpellCheck(id), 450);
+}
+
+function runSpellCheck(id) {
+  if (!dictsReady) return;
+  const isTextarea = SPELL_TEXTAREA_IDS.includes(id);
+  const el = document.getElementById(id);
+  if (!el) return;
+  const text = el.value || '';
+  const tokens = spellTokenize(text);
+  const errors = tokens.filter(t => t.word && !spellCheck(t.val)).map(t => t.val);
+
+  if (isTextarea) {
+    updateBackdrop(id, tokens);
+  }
+  updateSpellStatus(id, errors);
+}
+
+function updateBackdrop(id, tokens) {
+  const info = spellBackdrops[id];
+  if (!info) return;
+  const { bd, ta } = info;
+  // Match backdrop padding/font to textarea
+  const cs = window.getComputedStyle(ta);
+  bd.style.padding    = cs.padding;
+  bd.style.fontSize   = cs.fontSize;
+  bd.style.fontFamily = cs.fontFamily;
+  bd.style.lineHeight = cs.lineHeight;
+  bd.style.borderWidth = cs.borderWidth;
+
+  const html = tokens.map(t => {
+    const s = escSC(t.val);
+    if (t.word && !spellCheck(t.val)) return '<mark>' + s + '</mark>';
+    return s;
+  }).join('');
+  bd.innerHTML = html;
+  bd.scrollTop = ta.scrollTop;
+}
+
+function updateSpellStatus(id, errors) {
+  const el = document.getElementById('spell-status-' + id);
+  if (!el) return;
+  if (!errors.length) { el.innerHTML = ''; return; }
+  const unique = [...new Set(errors)];
+  el.innerHTML = '⚠ Possible spelling: ' +
+    unique.map(w =>
+      `<span class="spell-word" tabindex="0"
+        onclick="showSpellSuggestions(event,'${escSC(w)}','${id}')"
+        onkeydown="if(event.key==='Enter')showSpellSuggestions(event,'${escSC(w)}','${id}')"
+      >${escSC(w)}</span>`
+    ).join(', ');
+}
+
+// ── Suggestion popup ───────────────────────────────────────────
+let activeSuggPopup = null;
+
+function showSpellSuggestions(evt, word, fieldId) {
+  hideSpellSuggestions();
+  const suggestions = spellSuggest(word);
+  const pop = document.createElement('div');
+  pop.className = 'spell-suggestions';
+  pop.id = 'spell-popup';
+
+  if (suggestions.length) {
+    suggestions.forEach(s => {
+      const item = document.createElement('div');
+      item.className = 'spell-suggestion-item';
+      item.textContent = s;
+      item.onclick = () => { applySpellSuggestion(word, s, fieldId); hideSpellSuggestions(); };
+      pop.appendChild(item);
+    });
+  } else {
+    const noSugg = document.createElement('div');
+    noSugg.className = 'spell-suggestion-item ignore';
+    noSugg.textContent = 'No suggestions';
+    pop.appendChild(noSugg);
+  }
+  const ign = document.createElement('div');
+  ign.className = 'spell-suggestion-item ignore';
+  ign.textContent = 'Ignore';
+  ign.onclick = hideSpellSuggestions;
+  pop.appendChild(ign);
+
+  document.body.appendChild(pop);
+  activeSuggPopup = pop;
+
+  // Position near the clicked word
+  const rect = evt.target.getBoundingClientRect();
+  pop.style.left = Math.min(rect.left, window.innerWidth - 160) + 'px';
+  pop.style.top  = (rect.bottom + 4) + 'px';
+
+  // Close on outside click
+  setTimeout(() => document.addEventListener('click', hideSpellSuggestions, { once: true }), 10);
+  evt.stopPropagation();
+}
+
+function hideSpellSuggestions() {
+  if (activeSuggPopup) { activeSuggPopup.remove(); activeSuggPopup = null; }
+}
+
+function applySpellSuggestion(original, replacement, fieldId) {
+  const el = document.getElementById(fieldId);
+  if (!el) return;
+  // Replace only the first occurrence to be safe
+  el.value = el.value.replace(original, replacement);
+  // Trigger state update
+  el.dispatchEvent(new Event('input', { bubbles: true }));
+  runSpellCheck(fieldId);
+}

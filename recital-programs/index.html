@@ -6,6 +6,7 @@
   <title>Recital Program Generator — UMKC Conservatory</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/typo-js@1.2.1/Typo.js"></script>
 </head>
 <body>
 
@@ -82,29 +83,29 @@
           </div>
           <div class="field" id="rd-lecture-field" style="display:none">
             <label for="rd-lecture">Lecture title</label>
-            <input type="text" id="rd-lecture" placeholder="Title of your lecture presentation"
+            <input type="text" spellcheck="true" id="rd-lecture" placeholder="Title of your lecture presentation"
                    oninput="updateRD('lectureTitle', this.value)">
           </div>
           <div class="field-row">
             <div class="field">
               <label for="rd-year">Academic year</label>
-              <input type="text" id="rd-year" placeholder="e.g. 2025-2026"
+              <input type="text" spellcheck="true" id="rd-year" placeholder="e.g. 2025-2026"
                      oninput="updateRD('academicYear', this.value)">
             </div>
             <div class="field">
               <label for="rd-time">Time</label>
-              <input type="text" id="rd-time" placeholder="e.g. 7:30 p.m."
+              <input type="text" spellcheck="true" id="rd-time" placeholder="e.g. 7:30 p.m."
                      oninput="updateRD('recitalTime', this.value)">
             </div>
           </div>
           <div class="field">
             <label for="rd-date">Date</label>
-            <input type="text" id="rd-date" placeholder="e.g. Monday, April 27, 2026"
+            <input type="text" spellcheck="true" id="rd-date" placeholder="e.g. Monday, April 27, 2026"
                    oninput="updateRD('recitalDate', this.value)">
           </div>
           <div class="field">
             <label for="rd-venue">Venue</label>
-            <input type="text" id="rd-venue" placeholder="e.g. Grant Recital Hall"
+            <input type="text" spellcheck="true" id="rd-venue" placeholder="e.g. Grant Recital Hall"
                    oninput="updateRD('venue', this.value)">
           </div>
         </div>
@@ -114,23 +115,23 @@
           <div class="field-row">
             <div class="field">
               <label for="rd-name">Your name (as printed)</label>
-              <input type="text" id="rd-name" placeholder="e.g. Michael Brown"
+              <input type="text" spellcheck="true" id="rd-name" placeholder="e.g. Michael Brown"
                      oninput="updateRD('performerName', this.value)">
             </div>
             <div class="field">
               <label for="rd-instrument">Instrument / voice type</label>
-              <input type="text" id="rd-instrument" placeholder="e.g. horn, soprano"
+              <input type="text" spellcheck="true" id="rd-instrument" placeholder="e.g. horn, soprano"
                      oninput="updateRD('instrument', this.value)">
             </div>
           </div>
           <div class="field">
             <label for="rd-accompanist">Accompanist (if any)</label>
-            <input type="text" id="rd-accompanist" placeholder="e.g. Wai Tung Choi"
+            <input type="text" spellcheck="true" id="rd-accompanist" placeholder="e.g. Wai Tung Choi"
                    oninput="updateRD('accompanist', this.value)">
           </div>
           <div class="field">
             <label for="rd-additional">Additional performers <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
-            <textarea id="rd-additional" rows="3"
+            <textarea spellcheck="true" id="rd-additional" rows="3"
                       placeholder="One per line: Name, instrument&#10;e.g. Wai Tung Choi, piano"
                       oninput="updateRD('additionalPerformers', this.value)"></textarea>
           </div>
@@ -144,19 +145,20 @@
             </div>
             <div class="field">
               <label for="rd-prof-name">Applied professor name</label>
-              <input type="text" id="rd-prof-name" placeholder="e.g. Alberto Suarez"
+              <input type="text" spellcheck="true" id="rd-prof-name" placeholder="e.g. Alberto Suarez"
                      oninput="updateRD('profName', this.value)">
             </div>
           </div>
           <div class="field">
             <label for="rd-degree">Degree or certificate (full text)</label>
-            <input type="text" id="rd-degree"
+            <input type="text" spellcheck="true" id="rd-degree"
                    placeholder="e.g. Doctor of Musical Arts in Horn Performance"
                    oninput="updateRD('degree', this.value)">
             <span class="field-hint">Type it exactly as it should appear in the program footer.</span>
           </div>
         </div>
 
+        <div class="validation-msg" id="rd-validation" style="display:none"></div>
         <button class="btn-primary" onclick="advanceFromRecitalDetails()">Continue to Program →</button>
       </div>
     </section>
@@ -275,7 +277,7 @@
         <div class="field-group">
           <div class="field">
             <label for="parent-title">Larger work title</label>
-            <input type="text" id="parent-title" placeholder="e.g. Candide, Elijah, Hermit Songs"
+            <input type="text" spellcheck="true" id="parent-title" placeholder="e.g. Candide, Elijah, Hermit Songs"
                    oninput="updateState('parentTitle', this.value)">
           </div>
           <div class="field-row">
@@ -300,13 +302,13 @@
             </div>
             <div class="field">
               <label for="parent-cat-num">Catalog number</label>
-              <input type="text" id="parent-cat-num" placeholder="e.g. 70, 244, 339"
+              <input type="text" spellcheck="true" id="parent-cat-num" placeholder="e.g. 70, 244, 339"
                      oninput="updateState('parentCatalogNumber', this.value)">
             </div>
           </div>
           <div class="field">
             <label for="parent-date">Year or date</label>
-            <input type="text" id="parent-date" placeholder="e.g. 1846, 1901–03, ca. 1719, pub. 1922"
+            <input type="text" spellcheck="true" id="parent-date" placeholder="e.g. 1846, 1901–03, ca. 1719, pub. 1922"
                    oninput="updateState('parentDate', this.value)">
           </div>
         </div>
@@ -338,7 +340,7 @@
         <div class="field-group">
           <div class="field">
             <label for="work-title">Work title</label>
-            <input type="text" id="work-title" placeholder="Enter the title exactly as it should appear"
+            <input type="text" spellcheck="true" id="work-title" placeholder="Enter the title exactly as it should appear"
                    oninput="updateState('workTitle', this.value)">
             <span class="field-hint" id="title-hint"></span>
           </div>
@@ -364,24 +366,24 @@
             </div>
             <div class="field" id="cat-num-field" style="display:none">
               <label for="cat-num">Catalog number</label>
-              <input type="text" id="cat-num" placeholder="e.g. 49, 339, 1001"
+              <input type="text" spellcheck="true" id="cat-num" placeholder="e.g. 49, 339, 1001"
                      oninput="updateState('catalogNumber', this.value)">
             </div>
           </div>
           <div class="field" id="cat-other-field" style="display:none">
             <label for="cat-other-label">Custom catalog prefix</label>
-            <input type="text" id="cat-other-label" placeholder="e.g. HC"
+            <input type="text" spellcheck="true" id="cat-other-label" placeholder="e.g. HC"
                    oninput="updateState('catalogType', this.value)">
           </div>
           <div class="field">
             <label for="work-date">Year or date of composition</label>
-            <input type="text" id="work-date" placeholder="e.g. 1841, 1796–98, ca. 1719, pub. 1922"
+            <input type="text" spellcheck="true" id="work-date" placeholder="e.g. 1841, 1796–98, ca. 1719, pub. 1922"
                    oninput="updateState('workDate', this.value)">
           </div>
           <!-- Nickname field — shown only for genre description path -->
           <div class="field" id="nickname-field" style="display:none">
             <label for="work-nickname">Popular nickname (optional)</label>
-            <input type="text" id="work-nickname" placeholder='e.g. "Jupiter", "Moonlight", "Eroica"'
+            <input type="text" spellcheck="true" id="work-nickname" placeholder='e.g. "Jupiter", "Moonlight", "Eroica"'
                    oninput="updateState('nickname', this.value)">
             <span class="field-hint">If the work has a well-known popular name (in addition to its generic title)</span>
           </div>
@@ -402,12 +404,12 @@
           <div class="field-row">
             <div class="field">
               <label for="composer-first">First name</label>
-              <input type="text" id="composer-first" placeholder="e.g. Claude"
+              <input type="text" spellcheck="true" id="composer-first" placeholder="e.g. Claude"
                      oninput="updateState('composerFirst', this.value)">
             </div>
             <div class="field">
               <label for="composer-last">Last name</label>
-              <input type="text" id="composer-last" placeholder="e.g. Debussy"
+              <input type="text" spellcheck="true" id="composer-last" placeholder="e.g. Debussy"
                      oninput="updateState('composerLast', this.value)">
             </div>
           </div>
@@ -428,12 +430,12 @@
             <div class="field-row">
               <div class="field">
                 <label for="composer-born">Birth year</label>
-                <input type="text" id="composer-born" placeholder="e.g. 1862"
+                <input type="text" spellcheck="true" id="composer-born" placeholder="e.g. 1862"
                        oninput="updateState('composerBorn', this.value)">
               </div>
               <div class="field">
                 <label for="composer-died">Death year</label>
-                <input type="text" id="composer-died" placeholder="e.g. 1918"
+                <input type="text" spellcheck="true" id="composer-died" placeholder="e.g. 1918"
                        oninput="updateState('composerDied', this.value)">
               </div>
             </div>
@@ -442,7 +444,7 @@
           <div class="sub-fields" id="living-fields">
             <div class="field">
               <label for="composer-born-living">Birth year</label>
-              <input type="text" id="composer-born-living" placeholder="e.g. 1970"
+              <input type="text" spellcheck="true" id="composer-born-living" placeholder="e.g. 1970"
                      oninput="updateState('composerBorn', this.value)">
             </div>
           </div>
@@ -465,14 +467,14 @@
         <div class="field-group">
           <div class="field">
             <label for="movements-input">Movements / songs</label>
-            <textarea id="movements-input" rows="6"
+            <textarea spellcheck="true" id="movements-input" rows="6"
                       placeholder="I. Allegro&#10;II. Andante&#10;III. Presto"
                       oninput="updateState('movements', this.value)"></textarea>
             <span class="field-hint">For partial performance: list only the movements you are performing. Keep their original Roman numerals.</span>
           </div>
           <div class="field">
             <label for="lyricist-input">Lyricist / poet <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional — for vocal works)</span></label>
-            <input type="text" id="lyricist-input" placeholder="e.g. Heinrich Heine"
+            <input type="text" spellcheck="true" id="lyricist-input" placeholder="e.g. Heinrich Heine"
                    oninput="updateState('lyricist', this.value)">
             <span class="field-hint">If credited, the name appears as "lyr. Name" next to the first song.</span>
           </div>
@@ -516,7 +518,7 @@
                 </div>
                 <div class="field">
                   <label for="arr-name">Name</label>
-                  <input type="text" id="arr-name" placeholder="First Last"
+                  <input type="text" spellcheck="true" id="arr-name" placeholder="First Last"
                          oninput="updateState('arrangementName', this.value)">
                 </div>
               </div>
@@ -536,12 +538,12 @@
                 <div class="field-row">
                   <div class="field">
                     <label for="arr-born">Birth year</label>
-                    <input type="text" id="arr-born" placeholder="e.g. 1900"
+                    <input type="text" spellcheck="true" id="arr-born" placeholder="e.g. 1900"
                            oninput="updateState('arrangementBorn', this.value)">
                   </div>
                   <div class="field">
                     <label for="arr-died">Death year</label>
-                    <input type="text" id="arr-died" placeholder="e.g. 1985"
+                    <input type="text" spellcheck="true" id="arr-died" placeholder="e.g. 1985"
                            oninput="updateState('arrangementDied', this.value)">
                   </div>
                 </div>
@@ -549,7 +551,7 @@
               <div class="sub-fields" id="arr-living-fields">
                 <div class="field">
                   <label for="arr-born-living">Birth year (optional)</label>
-                  <input type="text" id="arr-born-living" placeholder="e.g. 1970"
+                  <input type="text" spellcheck="true" id="arr-born-living" placeholder="e.g. 1970"
                          oninput="updateState('arrangementBorn', this.value)">
                 </div>
               </div>
@@ -567,7 +569,7 @@
             <div class="field-group" style="margin-bottom:0">
               <div class="field">
                 <label for="performers-input">Performers</label>
-                <textarea id="performers-input" rows="3"
+                <textarea spellcheck="true" id="performers-input" rows="3"
                           placeholder="JJ Jamison, alto saxophone&#10;Dan Velicer, piano"
                           oninput="updateState('performers', this.value)"></textarea>
                 <span class="field-hint">One per line. Format: Name, instrument — e.g. "Dan Velicer, piano"</span>
@@ -586,7 +588,7 @@
             <div class="field-group" style="margin-bottom:0">
               <div class="field">
                 <label for="premiere-input">Performance occasion</label>
-                <input type="text" id="premiere-input"
+                <input type="text" spellcheck="true" id="premiere-input"
                        placeholder="e.g. world premiere, first American performance"
                        oninput="updateState('premiereType', this.value)">
                 <span class="field-hint">Lowercase, except proper nouns (e.g. "world premiere" not "World Premiere")</span>

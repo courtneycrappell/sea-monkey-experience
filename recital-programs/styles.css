@@ -710,6 +710,75 @@ header h1   { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
   margin-bottom: 1rem;
 }
 
+/* ── Spell checker ───────────────────────────────────────── */
+.spell-wrap {
+  position: relative;
+  display: block;
+}
+.spell-backdrop {
+  position: absolute;
+  inset: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+  color: transparent;
+  background: transparent;
+  box-sizing: border-box;
+  border-radius: 8px;
+  /* padding/font matched dynamically in JS */
+}
+.spell-backdrop mark {
+  background: transparent;
+  color: transparent;
+  text-decoration: underline wavy #e53e3e;
+  text-decoration-skip-ink: none;
+  -webkit-text-decoration: underline wavy #e53e3e;
+}
+textarea.spell-active {
+  background: transparent !important;
+  position: relative;
+  z-index: 2;
+}
+.spell-status {
+  font-size: 0.72rem;
+  color: #c05000;
+  margin-top: 0.3rem;
+  line-height: 1.5;
+  min-height: 0;
+}
+.spell-word {
+  text-decoration: underline dotted #e53e3e;
+  cursor: pointer;
+  font-weight: 600;
+}
+.spell-word:hover { color: #9b1c1c; }
+.spell-suggestions {
+  position: fixed;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.25rem 0;
+  font-size: 0.82rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  z-index: 9999;
+  min-width: 140px;
+}
+.spell-suggestion-item {
+  padding: 0.35rem 0.875rem;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--text);
+}
+.spell-suggestion-item:hover { background: #e8f0ec; }
+.spell-suggestion-item.ignore { color: var(--muted); font-style: italic; }
+.spell-loading {
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
+}
+
 /* ── Easter egg ───────────────────────────────────────────── */
 .easter-egg {
   position: fixed;
