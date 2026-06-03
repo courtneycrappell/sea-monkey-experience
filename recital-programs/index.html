@@ -26,6 +26,18 @@
       <span id="entry-indicator-label">Program Entry 1</span>
     </div>
 
+    <!-- ── Restore banner (shown if saved session found) ──── -->
+    <div id="restore-banner" style="display:none" class="restore-banner" role="alert">
+      <div class="restore-info">
+        <strong id="restore-title">Saved session found</strong>
+        <span id="restore-detail"></span>
+      </div>
+      <div class="restore-actions">
+        <button class="btn-primary restore-btn" onclick="restoreSessionFromBanner()">Resume session</button>
+        <button class="btn-secondary" onclick="dismissRestore()">Start fresh</button>
+      </div>
+    </div>
+
     <!-- ── Welcome ──────────────────────────────────────── -->
     <section id="screen-welcome" class="screen active" aria-label="Welcome">
       <div class="card">

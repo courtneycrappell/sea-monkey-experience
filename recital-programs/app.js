@@ -82,6 +82,7 @@ function resetState() {
 function updateState(key, value) {
   state[key] = value;
   renderPreview();
+  autoSave();
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -116,6 +117,7 @@ function goToScreen(id) {
   renderProgressFor(id);
   renderPreview();
   updateEntryIndicator();
+  autoSave();
 }
 
 function updateEntryIndicator() {
@@ -202,6 +204,7 @@ function startOver() {
   isFinalized = false;
   editingIndex = null;
   programEntries = [];
+  clearSavedSession();
   resetRecitalDetails();
   document.getElementById('preview-card')?.classList.remove('finalized');
   const hint = document.getElementById('preview-edit-hint');
@@ -873,6 +876,7 @@ function addToProgram() {
   });
   renderProgramList();
   updateRightColumn();
+  autoSave();
 
   // Reset for next entry
   isFinalized = false;
@@ -898,6 +902,7 @@ function saveProgramEntry() {
     entryState: JSON.parse(JSON.stringify(state))
   };
   renderProgramList();
+  autoSave();
 
   editingIndex = null;
   editMode = false;
@@ -922,12 +927,14 @@ function deleteProgramEntry(index) {
   programEntries.splice(index, 1);
   renderProgramList();
   updateRightColumn();
+  autoSave();
 }
 
 function clearProgram() {
   if (!confirm('Remove all entries from the program?')) return;
   programEntries = [];
   editingIndex = null;
+  clearSavedSession();
   renderProgramList();
   updateRightColumn();
 }
@@ -1083,6 +1090,7 @@ function previewPDF() {
 // ════════════════════════════════════════════════════════════════
 function updateRD(key, value) {
   recitalDetails[key] = value;
+  autoSave();
 }
 
 function toggleLectureTitle() {
@@ -1133,11 +1141,13 @@ function advanceFromRecitalDetails() {
 function addIntermissionAfter(index) {
   programEntries.splice(index + 1, 0, { type: 'intermission' });
   renderProgramList();
+  autoSave();
 }
 
 function removeIntermission(index) {
   programEntries.splice(index, 1);
   renderProgramList();
+  autoSave();
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1247,16 +1257,17 @@ function generatePDF(mode = 'save') {
 
   // ── PAGE 1: Outside (fold closed) ─────────────────────────
   // RIGHT PANEL = Front Cover
-  doc.setFont('helvetica', 'normal');
+  doc.setFont('helvetica', 'normal'); // keep Helvetica for institutional label only
   doc.setFontSize(8);
   doc.text('UMKC CONSERVATORY', pc('R'), 14, { align: 'center' });
+  doc.setFont('times', 'normal');
   doc.setFontSize(7);
   doc.text(academicYear, pc('R'), 20, { align: 'center' });
 
-  // Recital type — largest text
+  // Recital type — largest text, Times bold for consistency with interior
   const rtLen = recitalDisplayType.length;
   const rtSize = rtLen > 28 ? 13 : rtLen > 22 ? 16 : 20;
-  doc.setFont('helvetica', 'bold');
+  doc.setFont('times', 'bold');
   doc.setFontSize(rtSize);
   doc.text(recitalDisplayType.toUpperCase(), pc('R'), PH * 0.40, { align: 'center' });
 
@@ -1282,7 +1293,7 @@ function generatePDF(mode = 'save') {
   doc.line(PANEL + 20, PH - 16, PW - 20, PH - 16);
 
   // LEFT PANEL = Back Cover
-  doc.setFont('helvetica', 'bold');
+  doc.setFont('times', 'bold');
   doc.setFontSize(12);
   doc.text('UMKC Conservatory', pc('L'), 20, { align: 'center' });
   doc.setLineWidth(0.3);
@@ -1315,10 +1326,10 @@ function generatePDF(mode = 'save') {
   doc.line(pl('L') + 5, bcY - 2, pr('L') - 5, bcY - 2);
   bcY += 2;
 
-  doc.setFont('helvetica', 'bold');
+  doc.setFont('times', 'bold');
   doc.setFontSize(8.5);
   doc.text('TO PURCHASE TICKETS:', pl('L'), bcY); bcY += 5;
-  doc.setFont('helvetica', 'normal');
+  doc.setFont('times', 'normal');
   doc.setFontSize(8);
   doc.text('go.umkc.edu/conservatory-tickets', pl('L'), bcY); bcY += 4.5;
   doc.text('conservatory.umkc.edu', pl('L'), bcY); bcY += 4.5;
@@ -1512,8 +1523,9 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
   if (compName) { doc.setFont('times', 'normal'); doc.text(compName, compX, y); }
   y += LH;
 
-  // Composer dates
-  if (compDates) {
+  // Composer dates — skip if already rendered on the "from" line (excerpt-one)
+  let datesRendered = false;
+  if (compDates && !(s.workType === 'excerpt' && s.excerptCount === 'one')) {
     checkPage();
     doc.setFont('times', 'normal');
     doc.setFontSize(FS);
@@ -1521,6 +1533,7 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
     doc.text(compDates, RM - textWidth(compDates), y);
     doc.setTextColor(...DARK);
     y += LH * 0.8;
+    datesRendered = true;
   }
 
   // Arrangement
@@ -1613,6 +1626,11 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
 //  Init
 // ════════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
+  // Check for saved session BEFORE resetting state
+  const saved = loadSavedSession();
+  if (saved) {
+    showRestoreBanner(saved);
+  }
   resetState();
   resetRecitalDetails();
   // Pre-fill academic year
@@ -1623,6 +1641,136 @@ document.addEventListener('DOMContentLoaded', () => {
   loadDictionaries();
   initSpellCheck();
 });
+
+// ════════════════════════════════════════════════════════════════
+//  Auto-Save (localStorage)
+// ════════════════════════════════════════════════════════════════
+let autoSaveTimer = null;
+
+function autoSave() {
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => {
+    const currentScreen = ALL_SCREENS.find(s => {
+      const el = document.getElementById('screen-' + s);
+      return el && el.classList.contains('active');
+    }) || 'welcome';
+    const snapshot = {
+      version: 1,
+      savedAt: new Date().toISOString(),
+      recitalDetails: JSON.parse(JSON.stringify(recitalDetails)),
+      programEntries: JSON.parse(JSON.stringify(programEntries)),
+      currentScreen,
+      wizardState: JSON.parse(JSON.stringify(state)),
+      navHistory: [...navHistory],
+    };
+    try { localStorage.setItem('umkc-recital-draft', JSON.stringify(snapshot)); }
+    catch (e) { /* silent — storage full or disabled */ }
+  }, 800);
+}
+
+function loadSavedSession() {
+  try {
+    const raw = localStorage.getItem('umkc-recital-draft');
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    // Only restore if there's meaningful content
+    const hasContent = parsed.programEntries?.length > 0 ||
+      parsed.recitalDetails?.performerName?.trim() ||
+      parsed.wizardState?.workTitle?.trim();
+    return hasContent ? parsed : null;
+  } catch (e) { return null; }
+}
+
+function clearSavedSession() {
+  localStorage.removeItem('umkc-recital-draft');
+}
+
+function showRestoreBanner(saved) {
+  const banner = document.getElementById('restore-banner');
+  const title  = document.getElementById('restore-title');
+  const detail = document.getElementById('restore-detail');
+  if (!banner) return;
+
+  const entryCount = (saved.programEntries || []).filter(e => e.type === 'entry').length;
+  const date = new Date(saved.savedAt);
+  const dateStr = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+  if (title) title.textContent = 'Saved session found — ' + dateStr;
+  if (detail) detail.textContent =
+    (entryCount > 0 ? entryCount + ' program ' + (entryCount === 1 ? 'entry' : 'entries') : 'Recital details filled in') +
+    ' · Last saved ' + timeStr;
+
+  banner.style.display = 'flex';
+  banner._savedData = saved; // store for restore
+}
+
+function hideRestoreBanner() {
+  const banner = document.getElementById('restore-banner');
+  if (banner) banner.style.display = 'none';
+}
+
+function restoreSessionFromBanner() {
+  const banner = document.getElementById('restore-banner');
+  const saved = banner?._savedData;
+  if (!saved) { hideRestoreBanner(); return; }
+  restoreSession(saved);
+}
+
+function dismissRestore() {
+  clearSavedSession();
+  hideRestoreBanner();
+}
+
+function restoreSession(saved) {
+  recitalDetails = saved.recitalDetails || {};
+  programEntries = saved.programEntries || [];
+  state = saved.wizardState || {};
+  navHistory = saved.navHistory || [];
+  isFinalized = false;
+  editingIndex = null;
+  editMode = false;
+
+  // Repopulate form fields
+  populateRecitalDetailsForm();
+  if (state.workType) populateFormFromState(state);
+
+  renderProgramList();
+  updateRightColumn();
+  updateEntryIndicator();
+
+  const screen = saved.currentScreen || (programEntries.length ? 'relationship' : 'recital-details');
+  // Don't restore to welcome — always go at least to recital-details
+  const targetScreen = screen === 'welcome' ? 'recital-details' : screen;
+  goToScreen(targetScreen);
+  hideRestoreBanner();
+}
+
+function populateRecitalDetailsForm() {
+  function setVal(id, val) {
+    const el = document.getElementById(id);
+    if (el && val !== undefined && val !== null) el.value = val;
+  }
+  function setSel(id, val) {
+    const el = document.getElementById(id);
+    if (el && val) el.value = val;
+  }
+  setVal('rd-type', recitalDetails.recitalType);
+  setSel('rd-type', recitalDetails.recitalType);
+  setVal('rd-year', recitalDetails.academicYear);
+  setVal('rd-time', recitalDetails.recitalTime);
+  setVal('rd-date', recitalDetails.recitalDate);
+  setVal('rd-venue', recitalDetails.venue);
+  setVal('rd-name', recitalDetails.performerName);
+  setVal('rd-instrument', recitalDetails.instrument);
+  setVal('rd-accompanist', recitalDetails.accompanist);
+  setVal('rd-additional', recitalDetails.additionalPerformers);
+  setSel('rd-prof-title', recitalDetails.profTitle);
+  setVal('rd-prof-name', recitalDetails.profName);
+  setVal('rd-degree', recitalDetails.degree);
+  setVal('rd-lecture', recitalDetails.lectureTitle);
+  toggleLectureTitle();
+}
 
 // ════════════════════════════════════════════════════════════════
 //  Spell Checker — Layer 2 (Typo.js multilingual)
@@ -1687,11 +1835,32 @@ function spellSkip(word) {
   return SPELL_SKIP_RE.some(re => re.test(w));
 }
 
-function spellCheck(word) {
+function getContextDicts(text) {
+  const hasGerman  = /[äöüÄÖÜß]/.test(text);
+  const hasFrench  = /[àâçéèêëîïôùûœæÀÂÇÉÈÊËÎÏÔÙÛŒÆ]/.test(text);
+  const hasItPt    = /[àèìòùÀÈÌÒÙãõÃÕ]/.test(text);
+  const hasSpanish = /[ñÑ]/.test(text);
+
+  const codes = ['en_US'];
+  if (hasGerman)  codes.push('de_DE');
+  if (hasFrench)  codes.push('fr_FR');
+  if (hasItPt)    codes.push('it_IT', 'pt_PT');
+  if (hasSpanish) codes.push('es_ES');
+
+  if (codes.length === 1) return loadedDicts; // no language detected → use all
+  return loadedDicts.filter(d => codes.includes(d.dictionary));
+}
+
+function spellCheckWithDicts(word, dicts) {
   if (!dictsReady || spellSkip(word)) return true;
+  if (!dicts || dicts.length === 0) return true;
   const clean = word.replace(/[.,;:!?'"()[\]{}–—]/g, '');
   if (!clean) return true;
-  return loadedDicts.some(d => d.check(clean));
+  return dicts.some(d => d.check(clean));
+}
+
+function spellCheck(word) {
+  return spellCheckWithDicts(word, loadedDicts);
 }
 
 function spellSuggest(word) {
@@ -1781,16 +1950,17 @@ function runSpellCheck(id) {
   const el = document.getElementById(id);
   if (!el) return;
   const text = el.value || '';
+  const contextDicts = getContextDicts(text);
   const tokens = spellTokenize(text);
-  const errors = tokens.filter(t => t.word && !spellCheck(t.val)).map(t => t.val);
+  const errors = tokens.filter(t => t.word && !spellCheckWithDicts(t.val, contextDicts)).map(t => t.val);
 
   if (isTextarea) {
-    updateBackdrop(id, tokens);
+    updateBackdrop(id, tokens, contextDicts);
   }
   updateSpellStatus(id, errors);
 }
 
-function updateBackdrop(id, tokens) {
+function updateBackdrop(id, tokens, contextDicts) {
   const info = spellBackdrops[id];
   if (!info) return;
   const { bd, ta } = info;
@@ -1804,7 +1974,7 @@ function updateBackdrop(id, tokens) {
 
   const html = tokens.map(t => {
     const s = escSC(t.val);
-    if (t.word && !spellCheck(t.val)) return '<mark>' + s + '</mark>';
+    if (t.word && !spellCheckWithDicts(t.val, contextDicts || loadedDicts)) return '<mark>' + s + '</mark>';
     return s;
   }).join('');
   bd.innerHTML = html;
