@@ -763,7 +763,8 @@ function renderPreview() {
 
 function updatePreviewPlaceholder() {
   const el = document.getElementById('preview-output');
-  if (el && (!buildEntry() || !buildEntry().html.trim())) {
+  const entry = buildEntry();
+  if (el && (!entry || !entry.html.trim())) {
     el.classList.add('placeholder');
     el.innerHTML = 'Your formatted entry will appear here as you fill in the wizard.';
     const statusEl = document.getElementById('preview-status');
@@ -1223,6 +1224,22 @@ function hasDegreeFooter(recitalType) {
 // ════════════════════════════════════════════════════════════════
 //  PDF Generation (jsPDF)
 // ════════════════════════════════════════════════════════════════
+
+let jspdfLoadPromise = null;
+
+function loadJsPDF() {
+  if (window.jspdf) return Promise.resolve();
+  if (jspdfLoadPromise) return jspdfLoadPromise;
+  jspdfLoadPromise = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('Failed to load jsPDF'));
+    document.head.appendChild(s);
+  });
+  return jspdfLoadPromise;
+}
+
 // ── Text wrap helper ───────────────────────────────────────────
 function pdfWrapText(doc, text, x, y, maxWidth, lineHeight) {
   const lines = doc.splitTextToSize(text, maxWidth);
@@ -1230,9 +1247,16 @@ function pdfWrapText(doc, text, x, y, maxWidth, lineHeight) {
   return y;
 }
 
-function generatePDF(mode = 'save') {
+async function generatePDF(mode = 'save') {
   if (programEntries.filter(e => e.type === 'entry').length === 0) {
     alert('Add at least one program entry before ' + (mode === 'preview' ? 'previewing.' : 'downloading.'));
+    return;
+  }
+
+  try {
+    await loadJsPDF();
+  } catch (e) {
+    alert('Could not load PDF library. Check your internet connection and try again.');
     return;
   }
 
@@ -1786,27 +1810,41 @@ const SPELL_DICT_LANGS = [
 ];
 let loadedDicts = [];
 let dictsReady = false;
+const DICT_CACHE = {}; // code → Typo instance | 'loading'
 
-async function loadDictionaries() {
-  if (typeof Typo === 'undefined') return; // Typo.js not loaded
+async function loadDictForLang(code) {
+  if (DICT_CACHE[code]) return; // already loaded or in flight
+  DICT_CACHE[code] = 'loading';
+  const lang = SPELL_DICT_LANGS.find(l => l.code === code);
+  if (!lang) return;
   const base = 'https://cdn.jsdelivr.net/npm/';
   try {
-    await Promise.all(SPELL_DICT_LANGS.map(async ({ code, pkg }) => {
-      try {
-        const [aff, dic] = await Promise.all([
-          fetch(base + pkg + '/index.aff').then(r => r.text()),
-          fetch(base + pkg + '/index.dic').then(r => r.text()),
-        ]);
-        loadedDicts.push(new Typo(code, aff, dic, { platform: 'any' }));
-      } catch (e) { /* silent: one dict failing doesn't block others */ }
-    }));
-    dictsReady = loadedDicts.length > 0;
-    // Re-check any fields that already have content
-    if (dictsReady) SPELL_TEXTAREA_IDS.concat(SPELL_INPUT_IDS).forEach(id => {
+    const [aff, dic] = await Promise.all([
+      fetch(base + lang.pkg + '/index.aff').then(r => r.text()),
+      fetch(base + lang.pkg + '/index.dic').then(r => r.text()),
+    ]);
+    const inst = new Typo(code, aff, dic, { platform: 'any' });
+    DICT_CACHE[code] = inst;
+    loadedDicts.push(inst);
+    dictsReady = true;
+    // Re-check active fields now that this dict is ready
+    SPELL_TEXTAREA_IDS.concat(SPELL_INPUT_IDS).forEach(id => {
       const el = document.getElementById(id);
       if (el && el.value?.trim()) runSpellCheck(id);
     });
-  } catch (e) { /* silent */ }
+  } catch (e) {
+    delete DICT_CACHE[code]; // allow retry on next input
+  }
+}
+
+async function loadDictionaries() {
+  if (typeof Typo === 'undefined') return;
+  // Load English only at startup; other languages load on-demand
+  await loadDictForLang('en_US');
+  if (dictsReady) SPELL_TEXTAREA_IDS.concat(SPELL_INPUT_IDS).forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value?.trim()) runSpellCheck(id);
+  });
 }
 
 // Fields to check
@@ -1841,14 +1879,23 @@ function getContextDicts(text) {
   const hasItPt    = /[àèìòùÀÈÌÒÙãõÃÕ]/.test(text);
   const hasSpanish = /[ñÑ]/.test(text);
 
+  // Trigger lazy loading for any needed language not yet fetched (fire and forget)
+  if (hasGerman  && !DICT_CACHE['de_DE']) loadDictForLang('de_DE');
+  if (hasFrench  && !DICT_CACHE['fr_FR']) loadDictForLang('fr_FR');
+  if (hasItPt    && !DICT_CACHE['it_IT']) loadDictForLang('it_IT');
+  if (hasItPt    && !DICT_CACHE['pt_PT']) loadDictForLang('pt_PT');
+  if (hasSpanish && !DICT_CACHE['es_ES']) loadDictForLang('es_ES');
+
+  // Return whichever relevant dicts are currently loaded
   const codes = ['en_US'];
   if (hasGerman)  codes.push('de_DE');
   if (hasFrench)  codes.push('fr_FR');
   if (hasItPt)    codes.push('it_IT', 'pt_PT');
   if (hasSpanish) codes.push('es_ES');
 
-  if (codes.length === 1) return loadedDicts; // no language detected → use all
-  return loadedDicts.filter(d => codes.includes(d.dictionary));
+  if (codes.length === 1) return loadedDicts; // no special chars → use all loaded
+  const active = loadedDicts.filter(d => codes.includes(d.dictionary));
+  return active.length > 0 ? active : loadedDicts;
 }
 
 function spellCheckWithDicts(word, dicts) {

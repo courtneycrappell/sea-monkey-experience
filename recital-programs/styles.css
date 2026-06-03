@@ -92,6 +92,7 @@ header h1   { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
     border-top: none;
     width: 340px;
     flex-shrink: 0;
+    position: -webkit-sticky;
     position: sticky;
     top: 1.5rem;
   }
@@ -735,7 +736,10 @@ header h1   { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
 }
 .spell-backdrop {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow: hidden;
