@@ -1070,50 +1070,12 @@ function updateRightColumn() {
 // ════════════════════════════════════════════════════════════════
 //  Print Preview
 // ════════════════════════════════════════════════════════════════
-function openPrintPreview() {
-  if (programEntries.length === 0) return;
-  const win = window.open('', '_blank', 'width=720,height=900,scrollbars=yes');
-  if (!win) { alert('Please allow pop-ups for this page to use Print preview.'); return; }
-
-  const entriesHTML = programEntries.map((e, i) =>
-    `<div class="entry">${e.html}</div>${i < programEntries.length - 1 ? '<hr class="entry-sep">' : ''}`
-  ).join('\n');
-
-  win.document.write(`<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8">
-<title>Concert Program — Print Preview</title>
-<style>
-  body { font-family: Georgia, "Times New Roman", serif;
-         padding: 2.5rem 3rem; font-size: 0.95rem; line-height: 1.4;
-         color: #1a1a1a; max-width: 680px; margin: 0 auto; }
-  .page-header { font-family: system-ui, sans-serif; font-size: 0.7rem;
-                  text-transform: uppercase; letter-spacing: 0.1em;
-                  color: #555; margin-bottom: 1.5rem; padding-bottom: 0.5rem;
-                  border-bottom: 2px solid #0d3d2a; }
-  .entry { margin-bottom: 1.25rem; }
-  .entry-sep { border: none; border-top: 1px solid #ddd; margin: 1rem 0; }
-  .entry-row { display: flex; justify-content: space-between;
-               align-items: baseline; gap: 1rem; margin: 0; line-height: 1.35; }
-  .entry-title { flex: 1; }
-  .entry-composer { white-space: nowrap; }
-  .entry-right { text-align: right; color: #555; font-size: 0.9em; }
-  .entry-indent { padding-left: 1.5rem; display: block; margin: 0; line-height: 1.35; }
-  .entry-indent-right { padding-left: 1.5rem; display: flex;
-                          justify-content: space-between; margin: 0; line-height: 1.35; }
-  .entry-arranger { text-align: right; color: #555; }
-  em { font-style: italic; }
-  #print-btn { font-family: system-ui; font-size: 0.85rem; padding: 0.5rem 1.25rem;
-               margin-bottom: 1.5rem; cursor: pointer; background: #0d3d2a;
-               color: white; border: none; border-radius: 6px; }
-  #print-btn:hover { background: #1a5c3e; }
-  @media print { #print-btn { display: none; } }
-</style>
-</head><body>
-<button id="print-btn" onclick="window.print()">Print</button>
-<div class="page-header">UMKC Conservatory — Concert Program</div>
-${entriesHTML}
-</body></html>`);
-  win.document.close();
+function previewPDF() {
+  if (programEntries.filter(e => e.type === 'entry').length === 0) {
+    alert('Add at least one program entry before previewing.');
+    return;
+  }
+  generatePDF('preview');
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1251,145 +1213,189 @@ function hasDegreeFooter(recitalType) {
 // ════════════════════════════════════════════════════════════════
 //  PDF Generation (jsPDF)
 // ════════════════════════════════════════════════════════════════
-function generatePDF() {
+// ── Text wrap helper ───────────────────────────────────────────
+function pdfWrapText(doc, text, x, y, maxWidth, lineHeight) {
+  const lines = doc.splitTextToSize(text, maxWidth);
+  lines.forEach(line => { doc.text(line, x, y); y += lineHeight; });
+  return y;
+}
+
+function generatePDF(mode = 'save') {
   if (programEntries.filter(e => e.type === 'entry').length === 0) {
-    alert('Add at least one program entry before downloading.');
+    alert('Add at least one program entry before ' + (mode === 'preview' ? 'previewing.' : 'downloading.'));
     return;
   }
 
   const { jsPDF } = window.jspdf;
-  // Page dimensions in mm: 5.5" x 8.5"
-  const PW = 139.7, PH = 215.9;
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [PW, PH] });
 
-  const LM = 14, RM = PW - 14, TM = 14, BM = PH - 14;
-  const CW = RM - LM;
-  const UMKC_BLUE = [0, 40, 85];
-  const UMKC_GOLD = [181, 148, 90];
-  const DARK = [26, 26, 26];
-  const MUTED = [85, 85, 85];
+  // ── Landscape 11"×8.5" — two 5.5" panels per page ───────────
+  const PW = 279.4, PH = 215.9;  // 11" × 8.5" in mm
+  const PANEL = 139.7;            // 5.5" per panel
+  const LM = 14, RM_PAD = 14;   // inner margins
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [PW, PH] });
 
+  // Panel helpers
+  const pc = (s) => s === 'R' ? PANEL + PANEL / 2 : PANEL / 2;       // center x
+  const pl = (s) => s === 'R' ? PANEL + LM : LM;                       // left x
+  const pr = (s) => s === 'R' ? PW - RM_PAD : PANEL - RM_PAD;         // right x
+  const cw = PANEL - LM - RM_PAD;                                       // content width
+
+  doc.setTextColor(0, 0, 0);
   const rd = recitalDetails;
   const academicYear = rd.academicYear || autoAcademicYear();
-
-  // ── PAGE 1: Cover ──────────────────────────────────────────
-  // Blue header bar
-  doc.setFillColor(...UMKC_BLUE);
-  doc.rect(0, 0, PW, 22, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-  doc.text(academicYear, LM, 9);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.text('UMKC CONSERVATORY', LM, 16);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-  doc.text('PERFORMANCE', LM, 21);
-
-  // Recital type (large, centered)
-  doc.setTextColor(...DARK);
-  doc.setFont('helvetica', 'normal');
   const recitalDisplayType = rd.recitalType || 'Recital';
-  const rtSize = recitalDisplayType.length > 25 ? 14 : 18;
-  doc.setFontSize(rtSize);
-  doc.text(recitalDisplayType, PW / 2, 48, { align: 'center' });
 
-  // Performer name + instrument
+  // ── PAGE 1: Outside (fold closed) ─────────────────────────
+  // RIGHT PANEL = Front Cover
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.text('UMKC CONSERVATORY', pc('R'), 14, { align: 'center' });
+  doc.setFontSize(7);
+  doc.text(academicYear, pc('R'), 20, { align: 'center' });
+
+  // Recital type — largest text
+  const rtLen = recitalDisplayType.length;
+  const rtSize = rtLen > 28 ? 13 : rtLen > 22 ? 16 : 20;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(rtSize);
+  doc.text(recitalDisplayType.toUpperCase(), pc('R'), PH * 0.40, { align: 'center' });
+
+  // Performer + instrument
   if (rd.performerName) {
-    doc.setFontSize(14);
-    const perfStr = rd.instrument ? rd.performerName + ', ' + rd.instrument : rd.performerName;
-    doc.text(perfStr, PW / 2, 57, { align: 'center' });
+    const perfStr = [rd.performerName, rd.instrument].filter(Boolean).join(', ');
+    doc.setFont('times', 'normal');
+    doc.setFontSize(15);
+    doc.text(perfStr, pc('R'), PH * 0.40 + 13, { align: 'center' });
   }
 
   // Date / time / venue
-  doc.setTextColor(...MUTED);
-  doc.setFontSize(10);
-  let coverY = 74;
-  if (rd.recitalDate) { doc.text(rd.recitalDate, PW / 2, coverY, { align: 'center' }); coverY += 7; }
-  if (rd.recitalTime) { doc.text(rd.recitalTime, PW / 2, coverY, { align: 'center' }); coverY += 7; }
-  if (rd.venue)       { doc.text(rd.venue, PW / 2, coverY, { align: 'center' }); }
+  doc.setFont('times', 'normal');
+  doc.setFontSize(11);
+  let coverY = PH * 0.63;
+  [rd.recitalDate, rd.recitalTime, rd.venue].filter(Boolean).forEach(line => {
+    doc.text(line, pc('R'), coverY, { align: 'center' }); coverY += 7;
+  });
 
-  // Gold accent line at bottom
-  doc.setDrawColor(...UMKC_GOLD);
-  doc.setLineWidth(1.5);
-  doc.line(LM, PH - 18, RM, PH - 18);
-  doc.setTextColor(...UMKC_GOLD);
+  // Thin rule at bottom of front cover
+  doc.setDrawColor(0, 0, 0);
+  doc.setLineWidth(0.3);
+  doc.line(PANEL + 20, PH - 16, PW - 20, PH - 16);
+
+  // LEFT PANEL = Back Cover
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(7);
-  doc.text('UMKC CONSERVATORY', PW / 2, PH - 12, { align: 'center' });
+  doc.setFontSize(12);
+  doc.text('UMKC Conservatory', pc('L'), 20, { align: 'center' });
+  doc.setLineWidth(0.3);
+  doc.line(pl('L') + 5, 24, pr('L') - 5, 24);
 
-  // ── PAGE 2: Blank ──────────────────────────────────────────
+  // Donation text
+  doc.setFont('times', 'normal');
+  doc.setFontSize(8);
+  let bcY = 31;
+  bcY = pdfWrapText(doc,
+    'The UMKC Conservatory relies on philanthropic support to provide the highest quality educational experiences for our students as well as exceptional performances to the community.',
+    pl('L'), bcY, cw, 4.5);
+  bcY += 2;
+  doc.text('To make an online gift, visit:', pl('L'), bcY); bcY += 5;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.text('go.umkc.edu/donate-to-conservatory', pl('L'), bcY); bcY += 6;
+  doc.setFont('times', 'normal');
+  bcY = pdfWrapText(doc,
+    'For information about scholarships, endowed funds, or estate gifts, contact:',
+    pl('L'), bcY, cw, 4.5);
+  bcY += 2;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7.5);
+  doc.text('Mark Mattison', pl('L'), bcY); bcY += 4.5;
+  doc.setFont('times', 'normal');
+  doc.text('markmattison@umkc.edu  |  816-235-1247', pl('L'), bcY); bcY += 8;
+
+  doc.setLineWidth(0.3);
+  doc.line(pl('L') + 5, bcY - 2, pr('L') - 5, bcY - 2);
+  bcY += 2;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8.5);
+  doc.text('TO PURCHASE TICKETS:', pl('L'), bcY); bcY += 5;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.text('go.umkc.edu/conservatory-tickets', pl('L'), bcY); bcY += 4.5;
+  doc.text('conservatory.umkc.edu', pl('L'), bcY); bcY += 4.5;
+  doc.text('Relay Missouri: 800-735-2966 (TTY)  |  CNS 2511813', pl('L'), bcY);
+
+  // Divider line between panels (fold guide)
+  doc.setDrawColor(200, 200, 200);
+  doc.setLineWidth(0.2);
+  doc.line(PANEL, 0, PANEL, PH);
+  doc.setDrawColor(0, 0, 0);
+
+  // ── PAGE 2: Inside (fold open) ─────────────────────────────
   doc.addPage();
 
-  // ── PAGE 3: Interior ───────────────────────────────────────
-  doc.addPage();
-  doc.setLineWidth(0.1);
+  // LEFT PANEL = blank (inside front cover)
+  // (nothing)
 
-  const FS = 10;  // body font size pt
-  const LH = 5.2; // line height mm
-  const SH = 3.5; // small line height
-  let y = TM;
+  // Divider line between panels
+  doc.setDrawColor(200, 200, 200);
+  doc.setLineWidth(0.2);
+  doc.line(PANEL, 0, PANEL, PH);
+  doc.setDrawColor(0, 0, 0);
+
+  // RIGHT PANEL = Program Interior
+  const iLM = pl('R');  // PANEL + LM
+  const iRM = pr('R');  // PW - RM_PAD
+  const iTM = 14;
+  const iBM = PH - 14;
+
+  const FS = 10;
+  const LH = 5.2;
+  const SH = 3.5;
+  const DARK  = [26, 26, 26];
+  const MUTED = [85, 85, 85];
+  let y = iTM;
 
   function cText(text, yPos, opts = {}) {
     const sz = opts.size || FS;
     doc.setFontSize(sz);
     doc.setFont(opts.font || 'times', opts.style || 'normal');
     doc.setTextColor(...(opts.color || DARK));
-    if (opts.align === 'right') {
-      const w = doc.getTextWidth(text);
-      doc.text(text, RM - w, yPos);
-    } else {
-      doc.text(text, PW / 2, yPos, { align: 'center' });
-    }
+    doc.text(text, pc('R'), yPos, { align: 'center' });
   }
 
   function checkOverflow(neededMM) {
-    if (y + neededMM > BM - 30) { // leave room for footer
+    if (y + neededMM > iBM - 30) {
       doc.addPage();
-      y = TM;
+      // On overflow pages the interior spans full page
+      y = iTM;
     }
   }
 
-  // Recital type header
-  const headerText = getHeaderText(rd.recitalType || '');
-  cText(headerText, y, { font: 'helvetica', style: 'bold', size: 10 });
+  // Header
+  cText(getHeaderText(rd.recitalType || ''), y, { font: 'helvetica', style: 'bold', size: 10 });
   y += LH + 1;
 
-  // Performer name (italic) + instrument
   if (rd.performerName) {
-    const perfLine = rd.instrument ? rd.performerName + ', ' + rd.instrument : rd.performerName;
-    cText(perfLine, y, { style: 'italic', size: 10 });
+    cText([rd.performerName, rd.instrument].filter(Boolean).join(', '), y, { style: 'italic', size: 10 });
     y += LH;
   }
-
-  // Accompanist
-  if (rd.accompanist) {
-    cText(rd.accompanist + ', piano', y, { size: FS });
-    y += LH;
-  }
-
-  // Additional performers
+  if (rd.accompanist) { cText(rd.accompanist + ', piano', y, { size: FS }); y += LH; }
   if (rd.additionalPerformers) {
     rd.additionalPerformers.split('\n').filter(l => l.trim()).forEach(line => {
-      cText(line.trim(), y, { size: FS });
-      y += LH;
+      cText(line.trim(), y, { size: FS }); y += LH;
     });
   }
-
-  // Lecture title (Doctoral Lecture)
   if (rd.lectureTitle && rd.recitalType === 'Doctoral Lecture Recital') {
     y += SH;
-    cText('“' + rd.lectureTitle + '”', y, { style: 'italic', size: FS });
+    cText('”' + rd.lectureTitle + '”', y, { style: 'italic', size: FS });
     y += LH;
   }
 
-  // PROGRAM heading
   y += LH * 1.5;
   cText('PROGRAM', y, { font: 'helvetica', style: 'bold', size: 10 });
   y += LH * 2;
 
-  // ── Program entries ────────────────────────────────────────
+  // Entries
   programEntries.forEach(item => {
     if (item.type === 'intermission') {
       checkOverflow(LH * 2);
@@ -1398,101 +1404,37 @@ function generatePDF() {
       y += LH + SH;
       return;
     }
-
-    const s = item.entryState;
-    y = renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED);
-    y += LH * 0.8; // spacing between entries
+    y = renderEntryToPDF(doc, item.entryState, iLM, iRM, y, PH, iBM, FS, LH, SH, DARK, MUTED);
+    y += LH * 0.8;
   });
 
-  // ── Footer ─────────────────────────────────────────────────
-  // Push footer to near bottom
-  const footerY = Math.max(y + LH, BM - 32);
-
-  doc.setTextColor(...MUTED);
-
-  // "Student is a student of Professor X" — italic, centered
+  // Footer
+  const footerY = Math.max(y + LH, iBM - 32);
   if (rd.profName) {
     const profLine = rd.performerName
-      ? rd.performerName + ' is a student of ' + rd.profTitle + ' ' + rd.profName
-      : '';
-    if (profLine) {
-      cText(profLine, footerY, { style: 'italic', size: 8, color: DARK });
-    }
+      ? rd.performerName + ' is a student of ' + rd.profTitle + ' ' + rd.profName : '';
+    if (profLine) cText(profLine, footerY, { style: 'italic', size: 8, color: DARK });
   }
-
   const f2y = footerY + 5;
   if (hasDegreeFooter(rd.recitalType) && rd.degree) {
-    const degLine1 = 'This recital is being presented in partial fulfillment of the requirements';
-    const degLine2 = 'for the degree of ' + rd.degree + '.';
-    cText(degLine1, f2y, { size: 7.5, color: MUTED });
-    cText(degLine2, f2y + 4, { size: 7.5, color: MUTED });
+    cText('This recital is being presented in partial fulfillment of the requirements', f2y, { size: 7.5, color: MUTED });
+    cText('for the degree of ' + rd.degree + '.', f2y + 4, { size: 7.5, color: MUTED });
   }
-
   const f3y = hasDegreeFooter(rd.recitalType) && rd.degree ? f2y + 11 : f2y;
   cText('UMKC Conservatory recitals are recorded.', f3y, { size: 7.5, color: MUTED });
   cText('Thank you for helping us maintain a silence in the hall that is conducive to', f3y + 4, { size: 7.5, color: MUTED });
   cText('music-making. Be sure to turn off all electronic devices.', f3y + 8, { size: 7.5, color: MUTED });
 
-  // ── PAGE 4: Back cover ─────────────────────────────────────
-  doc.addPage();
-
-  // Blue header
-  doc.setFillColor(...UMKC_BLUE);
-  doc.rect(0, 0, PW, 28, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(18);
-  doc.text('UMKC', PW / 2, 13, { align: 'center' });
-  doc.setFontSize(10);
-  doc.text('Conservatory', PW / 2, 21, { align: 'center' });
-
-  // Donation text
-  doc.setTextColor(...DARK);
-  doc.setFont('times', 'normal');
-  doc.setFontSize(8.5);
-  const donationLines = [
-    'The UMKC Conservatory relies on philanthropic support to provide the highest',
-    'quality educational experiences for our students as well as exceptional',
-    'performances to the community. To make an online gift to the Conservatory or',
-    'to direct your gift toward a designated area of study, visit',
-  ];
-  let bcY = 38;
-  donationLines.forEach(line => { doc.text(line, LM, bcY); bcY += 5; });
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8.5);
-  doc.text('go.umkc.edu/donate-to-conservatory', LM, bcY); bcY += 5;
-  doc.setFont('times', 'normal');
-  doc.text('or scan the QR code. For information about other ways to give', LM, bcY); bcY += 5;
-  doc.text('including establishing a scholarship, endowed fund or estate gift,', LM, bcY); bcY += 5;
-  doc.text('please contact:', LM, bcY); bcY += 7;
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...UMKC_BLUE);
-  doc.text('Mark Mattison  |  markmattison@umkc.edu  |  816-235-1247', LM, bcY); bcY += 14;
-
-  // Divider line
-  doc.setDrawColor(...UMKC_GOLD);
-  doc.setLineWidth(0.8);
-  doc.line(LM, bcY - 4, RM, bcY - 4);
-
-  // Tickets section
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
-  doc.setTextColor(...UMKC_GOLD);
-  doc.text('TO PURCHASE TICKETS:', LM, bcY + 2); bcY += 7;
-  doc.setTextColor(...UMKC_BLUE);
-  doc.setFontSize(9);
-  doc.text('go.umkc.edu/conservatory-tickets', LM, bcY); bcY += 6;
-  doc.setFont('times', 'normal');
-  doc.setFontSize(8);
-  doc.setTextColor(...DARK);
-  doc.text('conservatory.umkc.edu', LM, bcY); bcY += 5;
-  doc.text('Relay Missouri: 800-735-2966 (TTY)  |  CNS 2511813', LM, bcY);
-
-  // ── Save ───────────────────────────────────────────────────
+  // ── Output ─────────────────────────────────────────────────
   const filename = rd.performerName
     ? rd.performerName.replace(/\s+/g, '_') + '_Program.pdf'
     : 'UMKC_Recital_Program.pdf';
-  doc.save(filename);
+
+  if (mode === 'preview') {
+    window.open(doc.output('bloburl'), '_blank');
+  } else {
+    doc.save(filename);
+  }
 }
 
 // ════════════════════════════════════════════════════════════════

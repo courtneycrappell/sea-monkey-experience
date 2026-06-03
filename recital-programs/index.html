@@ -6,7 +6,7 @@
   <title>Recital Program Generator — UMKC Conservatory</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/typo-js@1.2.1/Typo.js"></script>
+  <script src="typo.js"></script>
 </head>
 <body>
 
@@ -656,7 +656,7 @@ Your formatted entry will appear here as you fill in the wizard.
       <div id="program-list"></div>
       <div class="program-footer">
         <button class="btn-primary btn-download" onclick="generatePDF()">⬇ Download PDF</button>
-        <button class="btn-secondary" style="margin-top:0.5rem" onclick="openPrintPreview()">Print preview →</button>
+        <button class="btn-secondary" style="margin-top:0.5rem" onclick="previewPDF()">Preview PDF →</button>
       </div>
     </div>
   </div>
