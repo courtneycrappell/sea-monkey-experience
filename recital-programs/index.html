@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Program Entry Formatter — UMKC Conservatory</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="org">UMKC Conservatory</div>
+  <h1>Program Entry Formatter</h1>
+</header>
+<div class="header-accent-bar"></div>
+
+<div class="app-body">
+
+  <!-- ── Wizard column ───────────────────────────────────── -->
+  <div id="wizard-col">
+
+    <!-- ── Entry indicator ────────────────────────────────── -->
+    <div id="entry-indicator" style="display:none">
+      <span id="entry-indicator-label">Program Entry 1</span>
+    </div>
+
+    <!-- ── Welcome ──────────────────────────────────────── -->
+    <section id="screen-welcome" class="screen active" aria-label="Welcome">
+      <div class="card">
+        <p class="welcome-title">Format a concert program entry correctly — in seconds.</p>
+        <p class="welcome-body">Answer a few questions about the work you're listing. The tool applies Chicago-style formatting rules and shows you a ready-to-copy program entry.</p>
+        <p class="welcome-body">No formatting knowledge required — the tool handles italics, quotation marks, catalog numbers, composer dates, and movement listings automatically.</p>
+        <button class="btn-primary" id="btn-start" onclick="goToScreen('relationship')">Get Started →</button>
+        <hr class="welcome-divider">
+        <div class="how-it-works">
+          <strong>How it works</strong>
+          <ol>
+            <li>Answer questions about your work (type, title, composer, etc.)</li>
+            <li>See the correctly formatted entry update in real time</li>
+            <li>Copy and paste it into your program document</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Screen 2: Relationship ────────────────────────── -->
+    <section id="screen-relationship" class="screen" aria-label="Step: Work type">
+      <div class="progress" aria-label="Progress">
+        <div class="progress-steps" id="progress-relationship"></div>
+      </div>
+      <div class="card">
+        <p class="question">What kind of entry is this?</p>
+        <div class="option-list" role="radiogroup" aria-label="Work type">
+          <div class="option-item">
+            <input type="radio" name="relationship" value="complete" id="rel-complete">
+            <label for="rel-complete">A complete work or standalone piece
+              <span class="option-sub">I'm listing the entire work — a sonata, song cycle, single song, aria, etc.</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <input type="radio" name="relationship" value="excerpt" id="rel-excerpt">
+            <label for="rel-excerpt">An excerpt, aria, or selection from a larger work
+              <span class="option-sub">A piece pulled from a larger work — "Glitter and Be Gay" from <em>Candide</em>, or a selection from a song cycle</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Screen 3A: Title type (complete work) ─────────── -->
+    <section id="screen-title-type" class="screen" aria-label="Step: Title type">
+      <button class="btn-back" onclick="goBack()">← Back</button>
+      <div class="progress" aria-label="Progress">
+        <div class="progress-steps" id="progress-title-type"></div>
+      </div>
+      <div class="card">
+        <p class="question">How is this work identified?
+          <span class="question-sub">This determines whether the title gets italics, quotation marks, or plain text.</span>
+        </p>
+        <div class="option-list" role="radiogroup" aria-label="Title type">
+          <div class="option-item">
+            <input type="radio" name="titleType" value="distinctive" id="tt-distinctive">
+            <label for="tt-distinctive">Distinctive proper name
+              <span class="option-sub">The composer gave it a unique name beyond a genre label — e.g., <em>Three Irish Legends</em>, <em>Dichterliebe</em>, "Beau soir", "A Dream"</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <input type="radio" name="titleType" value="genre" id="tt-genre">
+            <label for="tt-genre">Genre description
+              <span class="option-sub">The title is a genre name, optionally with number and/or key — e.g., Piano Sonata in F Major, Nocturne, Improviso No. 1</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Screen 3A-2: Work size (distinctive name) ─────── -->
+    <section id="screen-work-size" class="screen" aria-label="Step: Work size">
+      <button class="btn-back" onclick="goBack()">← Back</button>
+      <div class="progress" aria-label="Progress">
+        <div class="progress-steps" id="progress-work-size"></div>
+      </div>
+      <div class="card">
+        <p class="question">Is this a larger work, or a single short piece?
+          <span class="question-sub">Larger works get italics. Single short pieces get quotation marks.</span>
+        </p>
+        <div class="option-list" role="radiogroup" aria-label="Work size">
+          <div class="option-item">
+            <input type="radio" name="workSize" value="multi" id="ws-multi">
+            <label for="ws-multi">Larger / multi-movement work → <em>italics</em>
+              <span class="option-sub">Song cycles, operas, oratorios, cantatas, multi-movement instrumental works — e.g., <em>Dichterliebe</em>, <em>Six Elizabethan Songs</em>, <em>Three Irish Legends</em></span>
+            </label>
+          </div>
+          <div class="option-item">
+            <input type="radio" name="workSize" value="single" id="ws-single">
+            <label for="ws-single">Single short piece → "quotation marks"
+              <span class="option-sub">One song, one aria, one short instrumental — e.g., "Beau soir", "A Dream", "Turning Point"</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Screen 3B: Excerpt count ──────────────────────── -->
+    <section id="screen-excerpt-count" class="screen" aria-label="Step: Excerpt count">
+      <button class="btn-back" onclick="goBack()">← Back</button>
+      <div class="progress" aria-label="Progress">
+        <div class="progress-steps" id="progress-excerpt-count"></div>
+      </div>
+      <div class="card">
+        <p class="question">How many pieces are you performing from this larger work?</p>
+        <div class="option-list" role="radiogroup" aria-label="Excerpt count">
+          <div class="option-item">
+            <input type="radio" name="excerptCount" value="one" id="ec-one">
+            <label for="ec-one">Just one — one aria, one song, one number
+              <span class="option-sub">The piece title appears first, with "from <em>Work</em>" on the next line</span>
+            </label>
+          </div>
+          <div class="option-item">
+            <input type="radio" name="excerptCount" value="multiple" id="ec-multiple">
+            <label for="ec-multiple">Two or more from the same larger work
+              <span class="option-sub">The larger work title appears first, with individual titles listed below</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Screen 4B: Parent work details ────────────────── -->
+    <section id="screen-parent-work" class="screen" aria-label="Step: Parent work">
+      <button class="btn-back" onclick="goBack()">← Back</button>
+      <div class="progress" aria-label="Progress">
+        <div class="progress-steps" id="progress-parent-work"></div>
+      </div>
+      <div class="card">
+        <p class="question">What is the larger work this comes from?</p>
+        <div class="field-group">
+          <div class="field">
+            <label for="parent-title">Larger work title</label>
+            <input type="text" id="parent-title" placeholder="e.g. Candide, Elijah, Hermit Songs"
+                   oninput="updateState('parentTitle', this.value)">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="parent-cat-type">Catalog type</label>
+              <select id="parent-cat-type" onchange="updateState('parentCatalogType', this.value)">
+                <option value="">None</option>
+                <option value="Op.">Op. (Opus)</option>
+                <option value="K.">K. (Köchel — Mozart)</option>
+                <option value="BWV">BWV (Bach)</option>
+                <option value="RV">RV (Vivaldi)</option>
+                <option value="D.">D. (Deutsch — Schubert)</option>
+                <option value="Hob.">Hob. (Hoboken — Haydn)</option>
+                <option value="HWV">HWV (Handel)</option>
+                <option value="L.">L. (Lesure — Debussy)</option>
+                <option value="S.">S. (Searle — Liszt)</option>
+                <option value="J.">J. (Jahn — Weber)</option>
+                <option value="WoO">WoO (Beethoven)</option>
+                <option value="HC">HC (Cowell)</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="parent-cat-num">Catalog number</label>
+              <input type="text" id="parent-cat-num" placeholder="e.g. 70, 244, 339"
+                     oninput="updateState('parentCatalogNumber', this.value)">
+            </div>
+          </div>
+          <div class="field">
+            <label for="parent-date">Year or date</label>
+            <input type="text" id="parent-date" placeholder="e.g. 1846, 1901–03, ca. 1719, pub. 1922"
+                   oninput="updateState('parentDate', this.value)">
+          </div>
+        </div>
+        <button class="btn-primary" onclick="advanceFromParentWork()">Continue →</button>
+      </div>
+    </section>
+
+    <!-- ── Screen 4B-2: Excerpt title(s) ─────────────────── -->
+    <section id="screen-excerpt-titles" class="screen" aria-label="Step: Excerpt titles">
+      <button class="btn-back" onclick="goBack()">← Back</button>
+      <div class="progress" aria-label="Progress">
+        <div class="progress-steps" id="progress-excerpt-titles"></div>
+      </div>
+      <div class="card">
+        <p class="question" id="excerpt-titles-question">What piece(s) are you performing?</p>
+        <div class="field-group" id="excerpt-titles-fields"></div>
+        <button class="btn-primary" onclick="advanceFromExcerptTitles()">Continue →</button>
+      </div>
+    </section>
+
+    <!-- ── Screen 4A: Work details (complete work) ────────── -->
+    <section id="screen-work-details" class="screen" aria-label="Step: Work details">
+      <button class="btn-back" onclick="goBack()">← Back</button>
+      <div class="progress" aria-label="Progress">
+        <div class="progress-steps" id="progress-work-details"></div>
+      </div>
+      <div class="card">
+        <p class="question" id="work-details-question">Enter the work's title and details</p>
+        <div class="field-group">
+          <div class="field">
+            <label for="work-title">Work title</label>
+            <input type="text" id="work-title" placeholder="Enter the title exactly as it should appear"
+                   oninput="updateState('workTitle', this.value)">
+            <span class="field-hint" id="title-hint"></span>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="cat-type">Catalog / opus type</label>
+              <select id="cat-type" onchange="updateCatalogType(this.value)">
+                <option value="">None</option>
+                <option value="Op.">Op. (Opus)</option>
+                <option value="K.">K. (Köchel — Mozart)</option>
+                <option value="BWV">BWV (Bach)</option>
+                <option value="RV">RV (Vivaldi)</option>
+                <option value="D.">D. (Deutsch — Schubert)</option>
+                <option value="Hob.">Hob. (Hoboken — Haydn)</option>
+                <option value="HWV">HWV (Handel)</option>
+                <option value="L.">L. (Lesure — Debussy)</option>
+                <option value="S.">S. (Searle — Liszt)</option>
+                <option value="J.">J. (Jahn — Weber)</option>
+                <option value="WoO">WoO (Beethoven)</option>
+                <option value="HC">HC (Cowell)</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="field" id="cat-num-field" style="display:none">
+              <label for="cat-num">Catalog number</label>
+              <input type="text" id="cat-num" placeholder="e.g. 49, 339, 1001"
+                     oninput="updateState('catalogNumber', this.value)">
+            </div>
+          </div>
+          <div class="field" id="cat-other-field" style="display:none">
+            <label for="cat-other-label">Custom catalog prefix</label>
+            <input type="text" id="cat-other-label" placeholder="e.g. HC"
+                   oninput="updateState('catalogType', this.value)">
+          </div>
+          <div class="field">
+            <label for="work-date">Year or date of composition</label>
+            <input type="text" id="work-date" placeholder="e.g. 1841, 1796–98, ca. 1719, pub. 1922"
+                   oninput="updateState('workDate', this.value)">
+          </div>
+          <!-- Nickname field — shown only for genre description path -->
+          <div class="field" id="nickname-field" style="display:none">
+            <label for="work-nickname">Popular nickname (optional)</label>
+            <input type="text" id="work-nickname" placeholder='e.g. "Jupiter", "Moonlight", "Eroica"'
+                   oninput="updateState('nickname', this.value)">
+            <span class="field-hint">If the work has a well-known popular name (in addition to its generic title)</span>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="advanceFromWorkDetails()">Continue →</button>
+      </div>
+    </section>
+
+    <!-- ── Screen 5: Composer ─────────────────────────────── -->
+    <section id="screen-composer" class="screen" aria-label="Step: Composer">
+      <button class="btn-back" onclick="goBack()">← Back</button>
+      <div class="progress" aria-label="Progress">
+        <div class="progress-steps" id="progress-composer"></div>
+      </div>
+      <div class="card">
+        <p class="question">Who composed this work?</p>
+        <div class="field-group">
+          <div class="field-row">
+            <div class="field">
+              <label for="composer-first">First name</label>
+              <input type="text" id="composer-first" placeholder="e.g. Claude"
+                     oninput="updateState('composerFirst', this.value)">
+            </div>
+            <div class="field">
+              <label for="composer-last">Last name</label>
+              <input type="text" id="composer-last" placeholder="e.g. Debussy"
+                     oninput="updateState('composerLast', this.value)">
+            </div>
+          </div>
+          <div class="option-list" role="radiogroup" aria-label="Composer status" style="margin-bottom: 0.5rem;">
+            <div class="option-item">
+              <input type="radio" name="composerStatus" value="deceased" id="cs-deceased"
+                     onchange="updateComposerStatus('deceased')">
+              <label for="cs-deceased">Composer is deceased</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" name="composerStatus" value="living" id="cs-living"
+                     onchange="updateComposerStatus('living')">
+              <label for="cs-living">Composer is living</label>
+            </div>
+          </div>
+          <!-- Deceased dates -->
+          <div class="sub-fields" id="deceased-fields">
+            <div class="field-row">
+              <div class="field">
+                <label for="composer-born">Birth year</label>
+                <input type="text" id="composer-born" placeholder="e.g. 1862"
+                       oninput="updateState('composerBorn', this.value)">
+              </div>
+              <div class="field">
+                <label for="composer-died">Death year</label>
+                <input type="text" id="composer-died" placeholder="e.g. 1918"
+                       oninput="updateState('composerDied', this.value)">
+              </div>
+            </div>
+          </div>
+          <!-- Living dates -->
+          <div class="sub-fields" id="living-fields">
+            <div class="field">
+              <label for="composer-born-living">Birth year</label>
+              <input type="text" id="composer-born-living" placeholder="e.g. 1970"
+                     oninput="updateState('composerBorn', this.value)">
+            </div>
+          </div>
+        </div>
+        <div class="validation-msg" id="composer-val">Please enter at least the composer's last name.</div>
+        <button class="btn-primary" onclick="advanceFromComposer()">Continue →</button>
+      </div>
+    </section>
+
+    <!-- ── Screen 6: Movements ────────────────────────────── -->
+    <section id="screen-movements" class="screen" aria-label="Step: Movements">
+      <button class="btn-back" onclick="goBack()">← Back</button>
+      <div class="progress" aria-label="Progress">
+        <div class="progress-steps" id="progress-movements"></div>
+      </div>
+      <div class="card">
+        <p class="question">List the movements or songs
+          <span class="question-sub">Enter one movement per line, including the Roman numeral.</span>
+        </p>
+        <div class="field-group">
+          <div class="field">
+            <label for="movements-input">Movements / songs</label>
+            <textarea id="movements-input" rows="6"
+                      placeholder="I. Allegro&#10;II. Andante&#10;III. Presto"
+                      oninput="updateState('movements', this.value)"></textarea>
+            <span class="field-hint">For partial performance: list only the movements you are performing. Keep their original Roman numerals.</span>
+          </div>
+          <div class="field">
+            <label for="lyricist-input">Lyricist / poet <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional — for vocal works)</span></label>
+            <input type="text" id="lyricist-input" placeholder="e.g. Heinrich Heine"
+                   oninput="updateState('lyricist', this.value)">
+            <span class="field-hint">If credited, the name appears as "lyr. Name" next to the first song.</span>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="advanceFromMovements()">Continue →</button>
+      </div>
+    </section>
+
+    <!-- ── Screen 7: Credits (arrangement + performers + premiere) -->
+    <section id="screen-credits" class="screen" aria-label="Step: Additional credits">
+      <button class="btn-back" onclick="goBack()">← Back</button>
+      <div class="last-chance-banner">
+        <strong>Last chance to make live changes.</strong>
+        After this step, use the Edit button to correct text — but the live preview won't update.
+      </div>
+      <div class="progress" aria-label="Progress">
+        <div class="progress-steps" id="progress-credits"></div>
+      </div>
+      <div class="card">
+        <p class="question">Any additional credits or notes?
+          <span class="question-sub">All sections below are optional. Skip any that don't apply.</span>
+        </p>
+
+        <!-- Arrangement -->
+        <div class="credits-section">
+          <button type="button" class="credits-header" id="arr-header" onclick="toggleCredits('arr')">
+            Arrangement or transcription
+            <span class="credits-arrow">▶</span>
+          </button>
+          <div class="credits-body" id="arr-body">
+            <div class="field-group" style="margin-bottom:0">
+              <div class="field-row">
+                <div class="field">
+                  <label for="arr-role">Role</label>
+                  <select id="arr-role" onchange="updateState('arrangementRole', this.value)">
+                    <option value="arr.">arr. (arranged)</option>
+                    <option value="trans.">trans. (transcribed)</option>
+                    <option value="ad.">ad. (adapted)</option>
+                    <option value="ed.">ed. (edited)</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="arr-name">Name</label>
+                  <input type="text" id="arr-name" placeholder="First Last"
+                         oninput="updateState('arrangementName', this.value)">
+                </div>
+              </div>
+              <div class="option-list" role="radiogroup" aria-label="Arranger status" style="margin-bottom:0.5rem">
+                <div class="option-item">
+                  <input type="radio" name="arrStatus" value="deceased" id="as-deceased"
+                         onchange="updateArrStatus('deceased')">
+                  <label for="as-deceased">Arranger is deceased</label>
+                </div>
+                <div class="option-item">
+                  <input type="radio" name="arrStatus" value="living" id="as-living"
+                         onchange="updateArrStatus('living')">
+                  <label for="as-living">Arranger is living</label>
+                </div>
+              </div>
+              <div class="sub-fields" id="arr-deceased-fields">
+                <div class="field-row">
+                  <div class="field">
+                    <label for="arr-born">Birth year</label>
+                    <input type="text" id="arr-born" placeholder="e.g. 1900"
+                           oninput="updateState('arrangementBorn', this.value)">
+                  </div>
+                  <div class="field">
+                    <label for="arr-died">Death year</label>
+                    <input type="text" id="arr-died" placeholder="e.g. 1985"
+                           oninput="updateState('arrangementDied', this.value)">
+                  </div>
+                </div>
+              </div>
+              <div class="sub-fields" id="arr-living-fields">
+                <div class="field">
+                  <label for="arr-born-living">Birth year (optional)</label>
+                  <input type="text" id="arr-born-living" placeholder="e.g. 1970"
+                         oninput="updateState('arrangementBorn', this.value)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Per-piece performers -->
+        <div class="credits-section">
+          <button type="button" class="credits-header" id="perf-header" onclick="toggleCredits('perf')">
+            Per-piece performers
+            <span class="credits-arrow">▶</span>
+          </button>
+          <div class="credits-body" id="perf-body">
+            <div class="field-group" style="margin-bottom:0">
+              <div class="field">
+                <label for="performers-input">Performers</label>
+                <textarea id="performers-input" rows="3"
+                          placeholder="JJ Jamison, alto saxophone&#10;Dan Velicer, piano"
+                          oninput="updateState('performers', this.value)"></textarea>
+                <span class="field-hint">One per line. Format: Name, instrument — e.g. "Dan Velicer, piano"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Premiere note -->
+        <div class="credits-section">
+          <button type="button" class="credits-header" id="prem-header" onclick="toggleCredits('prem')">
+            World premiere or first performance
+            <span class="credits-arrow">▶</span>
+          </button>
+          <div class="credits-body" id="prem-body">
+            <div class="field-group" style="margin-bottom:0">
+              <div class="field">
+                <label for="premiere-input">Performance occasion</label>
+                <input type="text" id="premiere-input"
+                       placeholder="e.g. world premiere, first American performance"
+                       oninput="updateState('premiereType', this.value)">
+                <span class="field-hint">Lowercase, except proper nouns (e.g. "world premiere" not "World Premiere")</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <button class="btn-primary" onclick="finalizeEntry()">See Formatted Entry →</button>
+    </section>
+
+    <!-- ── Screen 8: Result ───────────────────────────────── -->
+    <section id="screen-result" class="screen" aria-label="Result: Formatted entry">
+      <button class="btn-back" onclick="returnToEditing()">← Edit this entry</button>
+      <div class="card">
+        <p class="result-intro" id="result-intro-text">Review the formatted entry below. Click <strong>Add to program</strong> to save it and format the next piece.</p>
+        <div class="result-preview-card">
+          <div class="result-preview-label">Formatted Entry</div>
+          <div id="result-output" aria-label="Formatted program entry"></div>
+        </div>
+        <!-- New entry buttons -->
+        <div class="btn-row" id="new-entry-buttons">
+          <button class="btn-secondary" onclick="toggleEdit()">Edit text</button>
+          <button class="btn-primary" id="btn-add-to-program" onclick="addToProgram()">Add to program →</button>
+        </div>
+        <!-- Edit existing entry buttons (hidden by default) -->
+        <div class="btn-row" id="save-changes-row" style="display:none">
+          <button class="btn-secondary" onclick="cancelEditEntry()">Cancel</button>
+          <button class="btn-primary" onclick="saveProgramEntry()">Save changes</button>
+        </div>
+        <div style="margin-top:0.5rem;text-align:center">
+          <button class="btn-link" onclick="startOver()">↺ Start over</button>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /wizard-col -->
+
+  <!-- ── Preview / Program column ──────────────────────────── -->
+  <div id="preview-col">
+    <!-- Live preview (shown until first entry added) -->
+    <div class="preview-card" id="preview-card">
+      <div class="preview-label">
+        Live Preview
+        <span id="preview-status">Start answering questions →</span>
+      </div>
+      <div id="preview-output" class="placeholder" aria-live="polite" aria-label="Live preview of formatted entry">
+Your formatted entry will appear here as you fill in the wizard.
+      </div>
+    </div>
+    <div class="preview-actions" id="preview-actions" style="display:none">
+      <button class="btn-secondary" onclick="editPreview()">Edit</button>
+    </div>
+    <p class="preview-edit-hint" id="preview-edit-hint" style="display:none">
+      Edit corrects text only. Spacing and layout are automatic.
+    </p>
+
+    <!-- Program list (shown once entries exist) -->
+    <div id="program-panel" style="display:none">
+      <div class="program-panel-header">
+        <span class="program-panel-label">PROGRAM <span id="entry-count"></span></span>
+        <button class="btn-secondary-sm" onclick="clearProgram()">Clear all</button>
+      </div>
+      <div id="program-list"></div>
+      <div class="program-footer">
+        <button class="btn-secondary" onclick="openPrintPreview()">Print preview →</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app-body -->
+
+<footer>
+  UMKC Conservatory Dean's Office &nbsp;·&nbsp; Program Entry Formatter
+</footer>
+
+<script src="app.js"></script>
+
+</body>
+</html>
