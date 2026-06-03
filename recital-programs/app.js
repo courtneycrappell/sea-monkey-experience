@@ -4,8 +4,34 @@
 let state = {};
 let navHistory = [];
 let isFinalized = false;
-let programEntries = []; // [{html, text, entryState}]
+let programEntries = []; // [{type:'entry', html, text, entryState} | {type:'intermission'}]
 let editingIndex = null; // null = new entry; number = editing existing
+let recitalDetails = {};
+
+function resetRecitalDetails() {
+  recitalDetails = {
+    academicYear:        autoAcademicYear(),
+    recitalType:         '',
+    performerName:       '',
+    instrument:          '',
+    recitalDate:         '',
+    recitalTime:         '',
+    venue:               '',
+    accompanist:         '',
+    additionalPerformers:'',
+    profTitle:           'Professor',
+    profName:            '',
+    degree:              '',
+    lectureTitle:        '',
+  };
+}
+
+function autoAcademicYear() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth(); // 0-based; academic year starts ~Aug
+  return month >= 7 ? `${year}-${year + 1}` : `${year - 1}-${year}`;
+}
 
 function resetState() {
   state = {
@@ -62,7 +88,7 @@ function updateState(key, value) {
 //  Navigation
 // ════════════════════════════════════════════════════════════════
 const ALL_SCREENS = [
-  'welcome', 'relationship', 'title-type', 'work-size',
+  'welcome', 'recital-details', 'relationship', 'title-type', 'work-size',
   'excerpt-count', 'parent-work', 'excerpt-titles',
   'work-details', 'composer', 'movements', 'credits', 'result'
 ];
@@ -176,6 +202,7 @@ function startOver() {
   isFinalized = false;
   editingIndex = null;
   programEntries = [];
+  resetRecitalDetails();
   document.getElementById('preview-card')?.classList.remove('finalized');
   const hint = document.getElementById('preview-edit-hint');
   if (hint) hint.style.display = 'none';
@@ -839,6 +866,7 @@ function addToProgram() {
   const entry = buildEntry();
   if (!entry) return;
   programEntries.push({
+    type: 'entry',
     html: entry.html,
     text: entry.text,
     entryState: JSON.parse(JSON.stringify(state))
@@ -864,6 +892,7 @@ function saveProgramEntry() {
   const entry = buildEntry();
   if (!entry || editingIndex === null) return;
   programEntries[editingIndex] = {
+    type: 'entry',
     html: entry.html,
     text: entry.text,
     entryState: JSON.parse(JSON.stringify(state))
@@ -904,6 +933,7 @@ function clearProgram() {
 }
 
 function editProgramEntry(index) {
+  if (!programEntries[index] || programEntries[index].type !== 'entry') return;
   editingIndex = index;
   isFinalized = false;
   editMode = false;
@@ -1026,35 +1056,11 @@ function populateFormFromState(s) {
 // ════════════════════════════════════════════════════════════════
 //  Program panel rendering
 // ════════════════════════════════════════════════════════════════
-function renderProgramList() {
-  const listEl = document.getElementById('program-list');
-  const countEl = document.getElementById('entry-count');
-  if (!listEl) return;
-
-  const n = programEntries.length;
-  if (countEl) countEl.textContent = n === 0 ? '' : `(${n} ${n === 1 ? 'entry' : 'entries'})`;
-
-  if (n === 0) {
-    listEl.innerHTML = '<div class="program-empty-state">No entries yet. Add your first piece.</div>';
-    return;
-  }
-
-  listEl.innerHTML = programEntries.map((e, i) => `
-    <div class="program-entry-card">
-      <div class="program-entry-content">${e.html}</div>
-      <div class="program-entry-actions">
-        <button onclick="editProgramEntry(${i})">✏ Edit</button>
-        <button class="remove-btn" onclick="deleteProgramEntry(${i})">✕ Remove</button>
-      </div>
-    </div>
-  `).join('');
-}
-
 function updateRightColumn() {
   const previewCard = document.getElementById('preview-card');
   const previewActions = document.getElementById('preview-actions');
   const programPanel = document.getElementById('program-panel');
-  const hasProgramEntries = programEntries.length > 0;
+  const hasProgramEntries = programEntries.filter(e => e.type === 'entry').length > 0;
 
   if (previewCard) previewCard.style.display = hasProgramEntries ? 'none' : 'block';
   if (previewActions) { if (hasProgramEntries) previewActions.style.display = 'none'; }
@@ -1111,9 +1117,538 @@ ${entriesHTML}
 }
 
 // ════════════════════════════════════════════════════════════════
+//  Recital Details
+// ════════════════════════════════════════════════════════════════
+function updateRD(key, value) {
+  recitalDetails[key] = value;
+}
+
+function toggleLectureTitle() {
+  const isLecture = recitalDetails.recitalType === 'Doctoral Lecture Recital';
+  const field = document.getElementById('rd-lecture-field');
+  if (field) field.style.display = isLecture ? 'flex' : 'none';
+}
+
+function advanceFromRecitalDetails() {
+  // Pre-fill academic year field if blank
+  const yearEl = document.getElementById('rd-year');
+  if (yearEl && !recitalDetails.academicYear) {
+    recitalDetails.academicYear = autoAcademicYear();
+    yearEl.value = recitalDetails.academicYear;
+  }
+  goToScreen('relationship');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Intermission support
+// ════════════════════════════════════════════════════════════════
+function addIntermissionAfter(index) {
+  programEntries.splice(index + 1, 0, { type: 'intermission' });
+  renderProgramList();
+}
+
+function removeIntermission(index) {
+  programEntries.splice(index, 1);
+  renderProgramList();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Program List — updated to support intermission items
+// ════════════════════════════════════════════════════════════════
+function renderProgramList() {
+  const listEl = document.getElementById('program-list');
+  const countEl = document.getElementById('entry-count');
+  if (!listEl) return;
+
+  const entryCount = programEntries.filter(e => e.type === 'entry').length;
+  if (countEl) countEl.textContent = entryCount === 0 ? '' : `(${entryCount} ${entryCount === 1 ? 'entry' : 'entries'})`;
+
+  if (entryCount === 0) {
+    listEl.innerHTML = '<div class="program-empty-state">No entries yet. Add your first piece.</div>';
+    return;
+  }
+
+  listEl.innerHTML = programEntries.map((e, i) => {
+    if (e.type === 'intermission') {
+      return `<div class="intermission-marker">
+        <span>— INTERMISSION —</span>
+        <button class="remove-btn" onclick="removeIntermission(${i})" title="Remove intermission">✕</button>
+      </div>`;
+    }
+    // Find the entry index among entries only (for display)
+    const entryNum = programEntries.slice(0, i + 1).filter(x => x.type === 'entry').length;
+    return `
+      <div class="program-entry-card">
+        <div class="program-entry-content">${e.html}</div>
+        <div class="program-entry-actions">
+          <button onclick="editProgramEntry(${i})">✏ Edit</button>
+          <button class="add-intermission-btn" onclick="addIntermissionAfter(${i})" title="Add intermission after this piece">+ Intermission</button>
+          <button class="remove-btn" onclick="deleteProgramEntry(${i})">✕ Remove</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Recital type → interior header text
+// ════════════════════════════════════════════════════════════════
+function getHeaderText(recitalType) {
+  const map = {
+    "Doctoral Recital":             "DOCTORAL RECITAL",
+    "Doctoral Lecture Recital":     "DOCTORAL LECTURE RECITAL",
+    "Master's Recital":             "MASTER'S DEGREE RECITAL",
+    "Bachelor's Recital":           "BACHELOR'S DEGREE RECITAL",
+    "Senior Undergraduate Recital": "BACHELOR'S DEGREE RECITAL",
+    "Junior Undergraduate Recital": "BACHELOR'S DEGREE RECITAL",
+    "Artist's Certificate Recital": "ARTIST'S CERTIFICATE RECITAL",
+    "Performer's Certificate Recital": "PERFORMER'S CERTIFICATE RECITAL",
+    "Non-Credit Graduate Recital":  "NON-CREDIT RECITAL",
+    "Non-Credit Undergraduate Recital": "NON-CREDIT RECITAL",
+    "Guest Artist Recital":         "GUEST ARTIST RECITAL",
+    "Faculty Recital":              "FACULTY RECITAL",
+    "Faculty Chamber Music Concert":"FACULTY CHAMBER MUSIC CONCERT",
+    "Studio Recital":               "STUDIO RECITAL",
+    "Graduate Chamber Ensemble Recital": "GRADUATE CHAMBER ENSEMBLE RECITAL",
+    "Student Chamber Music Recital":"STUDENT CHAMBER MUSIC RECITAL",
+    "Joint Recital":                "JOINT RECITAL",
+  };
+  return map[recitalType] || recitalType.toUpperCase();
+}
+
+function hasDegreeFooter(recitalType) {
+  const noDegree = ['Guest Artist Recital','Faculty Recital','Faculty Chamber Music Concert',
+    'Studio Recital','Graduate Chamber Ensemble Recital','Student Chamber Music Recital'];
+  return !noDegree.includes(recitalType);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  PDF Generation (jsPDF)
+// ════════════════════════════════════════════════════════════════
+function generatePDF() {
+  if (programEntries.filter(e => e.type === 'entry').length === 0) {
+    alert('Add at least one program entry before downloading.');
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  // Page dimensions in mm: 5.5" x 8.5"
+  const PW = 139.7, PH = 215.9;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [PW, PH] });
+
+  const LM = 14, RM = PW - 14, TM = 14, BM = PH - 14;
+  const CW = RM - LM;
+  const UMKC_BLUE = [0, 40, 85];
+  const UMKC_GOLD = [181, 148, 90];
+  const DARK = [26, 26, 26];
+  const MUTED = [85, 85, 85];
+
+  const rd = recitalDetails;
+  const academicYear = rd.academicYear || autoAcademicYear();
+
+  // ── PAGE 1: Cover ──────────────────────────────────────────
+  // Blue header bar
+  doc.setFillColor(...UMKC_BLUE);
+  doc.rect(0, 0, PW, 22, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.text(academicYear, LM, 9);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.text('UMKC CONSERVATORY', LM, 16);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.text('PERFORMANCE', LM, 21);
+
+  // Recital type (large, centered)
+  doc.setTextColor(...DARK);
+  doc.setFont('helvetica', 'normal');
+  const recitalDisplayType = rd.recitalType || 'Recital';
+  const rtSize = recitalDisplayType.length > 25 ? 14 : 18;
+  doc.setFontSize(rtSize);
+  doc.text(recitalDisplayType, PW / 2, 48, { align: 'center' });
+
+  // Performer name + instrument
+  if (rd.performerName) {
+    doc.setFontSize(14);
+    const perfStr = rd.instrument ? rd.performerName + ', ' + rd.instrument : rd.performerName;
+    doc.text(perfStr, PW / 2, 57, { align: 'center' });
+  }
+
+  // Date / time / venue
+  doc.setTextColor(...MUTED);
+  doc.setFontSize(10);
+  let coverY = 74;
+  if (rd.recitalDate) { doc.text(rd.recitalDate, PW / 2, coverY, { align: 'center' }); coverY += 7; }
+  if (rd.recitalTime) { doc.text(rd.recitalTime, PW / 2, coverY, { align: 'center' }); coverY += 7; }
+  if (rd.venue)       { doc.text(rd.venue, PW / 2, coverY, { align: 'center' }); }
+
+  // Gold accent line at bottom
+  doc.setDrawColor(...UMKC_GOLD);
+  doc.setLineWidth(1.5);
+  doc.line(LM, PH - 18, RM, PH - 18);
+  doc.setTextColor(...UMKC_GOLD);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7);
+  doc.text('UMKC CONSERVATORY', PW / 2, PH - 12, { align: 'center' });
+
+  // ── PAGE 2: Blank ──────────────────────────────────────────
+  doc.addPage();
+
+  // ── PAGE 3: Interior ───────────────────────────────────────
+  doc.addPage();
+  doc.setLineWidth(0.1);
+
+  const FS = 10;  // body font size pt
+  const LH = 5.2; // line height mm
+  const SH = 3.5; // small line height
+  let y = TM;
+
+  function cText(text, yPos, opts = {}) {
+    const sz = opts.size || FS;
+    doc.setFontSize(sz);
+    doc.setFont(opts.font || 'times', opts.style || 'normal');
+    doc.setTextColor(...(opts.color || DARK));
+    if (opts.align === 'right') {
+      const w = doc.getTextWidth(text);
+      doc.text(text, RM - w, yPos);
+    } else {
+      doc.text(text, PW / 2, yPos, { align: 'center' });
+    }
+  }
+
+  function checkOverflow(neededMM) {
+    if (y + neededMM > BM - 30) { // leave room for footer
+      doc.addPage();
+      y = TM;
+    }
+  }
+
+  // Recital type header
+  const headerText = getHeaderText(rd.recitalType || '');
+  cText(headerText, y, { font: 'helvetica', style: 'bold', size: 10 });
+  y += LH + 1;
+
+  // Performer name (italic) + instrument
+  if (rd.performerName) {
+    const perfLine = rd.instrument ? rd.performerName + ', ' + rd.instrument : rd.performerName;
+    cText(perfLine, y, { style: 'italic', size: 10 });
+    y += LH;
+  }
+
+  // Accompanist
+  if (rd.accompanist) {
+    cText(rd.accompanist + ', piano', y, { size: FS });
+    y += LH;
+  }
+
+  // Additional performers
+  if (rd.additionalPerformers) {
+    rd.additionalPerformers.split('\n').filter(l => l.trim()).forEach(line => {
+      cText(line.trim(), y, { size: FS });
+      y += LH;
+    });
+  }
+
+  // Lecture title (Doctoral Lecture)
+  if (rd.lectureTitle && rd.recitalType === 'Doctoral Lecture Recital') {
+    y += SH;
+    cText('“' + rd.lectureTitle + '”', y, { style: 'italic', size: FS });
+    y += LH;
+  }
+
+  // PROGRAM heading
+  y += LH * 1.5;
+  cText('PROGRAM', y, { font: 'helvetica', style: 'bold', size: 10 });
+  y += LH * 2;
+
+  // ── Program entries ────────────────────────────────────────
+  programEntries.forEach(item => {
+    if (item.type === 'intermission') {
+      checkOverflow(LH * 2);
+      y += SH;
+      cText('INTERMISSION', y, { font: 'times', style: 'bold', size: FS });
+      y += LH + SH;
+      return;
+    }
+
+    const s = item.entryState;
+    y = renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED);
+    y += LH * 0.8; // spacing between entries
+  });
+
+  // ── Footer ─────────────────────────────────────────────────
+  // Push footer to near bottom
+  const footerY = Math.max(y + LH, BM - 32);
+
+  doc.setTextColor(...MUTED);
+
+  // "Student is a student of Professor X" — italic, centered
+  if (rd.profName) {
+    const profLine = rd.performerName
+      ? rd.performerName + ' is a student of ' + rd.profTitle + ' ' + rd.profName
+      : '';
+    if (profLine) {
+      cText(profLine, footerY, { style: 'italic', size: 8, color: DARK });
+    }
+  }
+
+  const f2y = footerY + 5;
+  if (hasDegreeFooter(rd.recitalType) && rd.degree) {
+    const degLine1 = 'This recital is being presented in partial fulfillment of the requirements';
+    const degLine2 = 'for the degree of ' + rd.degree + '.';
+    cText(degLine1, f2y, { size: 7.5, color: MUTED });
+    cText(degLine2, f2y + 4, { size: 7.5, color: MUTED });
+  }
+
+  const f3y = hasDegreeFooter(rd.recitalType) && rd.degree ? f2y + 11 : f2y;
+  cText('UMKC Conservatory recitals are recorded.', f3y, { size: 7.5, color: MUTED });
+  cText('Thank you for helping us maintain a silence in the hall that is conducive to', f3y + 4, { size: 7.5, color: MUTED });
+  cText('music-making. Be sure to turn off all electronic devices.', f3y + 8, { size: 7.5, color: MUTED });
+
+  // ── PAGE 4: Back cover ─────────────────────────────────────
+  doc.addPage();
+
+  // Blue header
+  doc.setFillColor(...UMKC_BLUE);
+  doc.rect(0, 0, PW, 28, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
+  doc.text('UMKC', PW / 2, 13, { align: 'center' });
+  doc.setFontSize(10);
+  doc.text('Conservatory', PW / 2, 21, { align: 'center' });
+
+  // Donation text
+  doc.setTextColor(...DARK);
+  doc.setFont('times', 'normal');
+  doc.setFontSize(8.5);
+  const donationLines = [
+    'The UMKC Conservatory relies on philanthropic support to provide the highest',
+    'quality educational experiences for our students as well as exceptional',
+    'performances to the community. To make an online gift to the Conservatory or',
+    'to direct your gift toward a designated area of study, visit',
+  ];
+  let bcY = 38;
+  donationLines.forEach(line => { doc.text(line, LM, bcY); bcY += 5; });
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8.5);
+  doc.text('go.umkc.edu/donate-to-conservatory', LM, bcY); bcY += 5;
+  doc.setFont('times', 'normal');
+  doc.text('or scan the QR code. For information about other ways to give', LM, bcY); bcY += 5;
+  doc.text('including establishing a scholarship, endowed fund or estate gift,', LM, bcY); bcY += 5;
+  doc.text('please contact:', LM, bcY); bcY += 7;
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...UMKC_BLUE);
+  doc.text('Mark Mattison  |  markmattison@umkc.edu  |  816-235-1247', LM, bcY); bcY += 14;
+
+  // Divider line
+  doc.setDrawColor(...UMKC_GOLD);
+  doc.setLineWidth(0.8);
+  doc.line(LM, bcY - 4, RM, bcY - 4);
+
+  // Tickets section
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9);
+  doc.setTextColor(...UMKC_GOLD);
+  doc.text('TO PURCHASE TICKETS:', LM, bcY + 2); bcY += 7;
+  doc.setTextColor(...UMKC_BLUE);
+  doc.setFontSize(9);
+  doc.text('go.umkc.edu/conservatory-tickets', LM, bcY); bcY += 6;
+  doc.setFont('times', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...DARK);
+  doc.text('conservatory.umkc.edu', LM, bcY); bcY += 5;
+  doc.text('Relay Missouri: 800-735-2966 (TTY)  |  CNS 2511813', LM, bcY);
+
+  // ── Save ───────────────────────────────────────────────────
+  const filename = rd.performerName
+    ? rd.performerName.replace(/\s+/g, '_') + '_Program.pdf'
+    : 'UMKC_Recital_Program.pdf';
+  doc.save(filename);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Render a single program entry to jsPDF
+// ════════════════════════════════════════════════════════════════
+function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
+  const CW = RM - LM;
+
+  function checkPage() {
+    if (y > BM - 36) { doc.addPage(); y = 14; }
+    return y;
+  }
+
+  function textWidth(str, font, style, size) {
+    doc.setFont(font || 'times', style || 'normal');
+    doc.setFontSize(size || FS);
+    return doc.getTextWidth(str);
+  }
+
+  doc.setTextColor(...DARK);
+
+  // ── Build title parts [{text, italic}] ──
+  const catStr = (s.catalogType && s.catalogNumber)
+    ? ', ' + s.catalogType + (s.catalogType.endsWith('.') ? '' : '') + ' ' + s.catalogNumber : '';
+  const dateStr = s.workDate ? ' (' + s.workDate + ')' : '';
+  let titleParts = [];
+
+  if (s.workType === 'complete') {
+    if (s.titleType === 'genre') {
+      const nick = s.nickname ? ', “' + s.nickname + '”' : '';
+      titleParts = [{ t: s.workTitle + nick + catStr + dateStr, i: false }];
+    } else if (s.workSize === 'single') {
+      titleParts = [{ t: '“' + s.workTitle + '”' + catStr + dateStr, i: false }];
+    } else {
+      titleParts = [{ t: s.workTitle, i: true }, { t: catStr + dateStr, i: false }];
+    }
+  } else if (s.excerptCount === 'one') {
+    titleParts = [{ t: '“' + s.excerptOnePiece + '”', i: false }];
+  } else {
+    const pCat = s.parentCatalogType ? ', ' + s.parentCatalogType + ' ' + s.parentCatalogNumber : '';
+    const pDate = s.parentDate ? ' (' + s.parentDate + ')' : '';
+    titleParts = [{ t: 'from ', i: false }, { t: s.parentTitle, i: true }, { t: pCat + pDate, i: false }];
+  }
+
+  // Measure title width
+  let tw = 0;
+  titleParts.forEach(p => { tw += textWidth(p.t, 'times', p.i ? 'italic' : 'normal', FS); });
+
+  // Composer
+  const compName = [s.composerFirst, s.composerLast].filter(Boolean).join(' ');
+  const compW = compName ? textWidth(compName, 'times', 'normal', FS) : 0;
+  const compDates = formatComposerDates(s.composerBorn, s.composerDied, s.composerLiving);
+
+  // Dot leaders
+  doc.setFont('times', 'normal');
+  doc.setFontSize(FS);
+  const dotW = doc.getTextWidth('.');
+  const dotsX = LM + tw + 1;
+  const compX = RM - compW;
+  const numDots = compName && compX > dotsX + 2 ? Math.floor((compX - dotsX - 1) / dotW) : 0;
+  const dots = '.'.repeat(Math.max(0, numDots));
+
+  checkPage();
+
+  // Draw title
+  let cx = LM;
+  titleParts.forEach(p => {
+    doc.setFont('times', p.i ? 'italic' : 'normal');
+    doc.setFontSize(FS);
+    doc.setTextColor(...DARK);
+    doc.text(p.t, cx, y);
+    cx += textWidth(p.t, 'times', p.i ? 'italic' : 'normal', FS);
+  });
+  if (dots) { doc.setFont('times', 'normal'); doc.text(dots, dotsX, y); }
+  if (compName) { doc.setFont('times', 'normal'); doc.text(compName, compX, y); }
+  y += LH;
+
+  // Composer dates
+  if (compDates) {
+    checkPage();
+    doc.setFont('times', 'normal');
+    doc.setFontSize(FS);
+    doc.setTextColor(...MUTED);
+    doc.text(compDates, RM - textWidth(compDates), y);
+    doc.setTextColor(...DARK);
+    y += LH * 0.8;
+  }
+
+  // Arrangement
+  if (s.arrangementName) {
+    checkPage();
+    const arrStr = s.arrangementRole + ' ' + s.arrangementName;
+    const arrDates = s.arrangementLiving === false && s.arrangementBorn
+      ? formatComposerDates(s.arrangementBorn, s.arrangementDied, false) : '';
+    doc.setFont('times', 'normal');
+    doc.setFontSize(FS);
+    doc.setTextColor(...MUTED);
+    doc.text(arrStr, RM - textWidth(arrStr), y);
+    y += LH * 0.8;
+    if (arrDates) {
+      doc.text(arrDates, RM - textWidth(arrDates), y);
+      y += LH * 0.8;
+    }
+    doc.setTextColor(...DARK);
+  }
+
+  // Premiere
+  if (s.premiereType) {
+    checkPage();
+    doc.setFont('times', 'italic');
+    doc.setFontSize(FS);
+    doc.text('(' + s.premiereType + ')', LM + 12, y);
+    y += LH * 0.8;
+    doc.setFont('times', 'normal');
+  }
+
+  // Excerpt one — "from *Parent*" line
+  if (s.workType === 'excerpt' && s.excerptCount === 'one') {
+    checkPage();
+    const pCat = s.parentCatalogType ? ', ' + s.parentCatalogType + ' ' + s.parentCatalogNumber : '';
+    const pDate = s.parentDate ? ' (' + s.parentDate + ')' : '';
+    const fromStr = 'from ';
+    doc.setFont('times', 'normal');
+    doc.setFontSize(FS);
+    doc.text(fromStr, LM + 12, y);
+    const fromW = textWidth(fromStr);
+    doc.setFont('times', 'italic');
+    doc.text(s.parentTitle, LM + 12 + fromW, y);
+    const ptW = textWidth(s.parentTitle, 'times', 'italic');
+    doc.setFont('times', 'normal');
+    doc.text(pCat + pDate, LM + 12 + fromW + ptW, y);
+    if (compDates) {
+      doc.setTextColor(...MUTED);
+      doc.text(compDates, RM - textWidth(compDates), y);
+      doc.setTextColor(...DARK);
+    }
+    y += LH;
+  }
+
+  // Movements (multi-movement complete works or excerpt-multiple)
+  const movText = s.workSize === 'multi' ? s.movements
+    : (s.workType === 'excerpt' && s.excerptCount === 'multiple' ? s.excerptMultiple : '');
+  if (movText) {
+    movText.split('\n').filter(l => l.trim()).forEach((line, idx) => {
+      checkPage();
+      doc.setFont('times', 'normal');
+      doc.setFontSize(FS);
+      doc.setTextColor(...DARK);
+      doc.text(line.trim(), LM + 12, y);
+      if (idx === 0 && s.lyricist) {
+        const lyrStr = 'lyr. ' + s.lyricist;
+        doc.setTextColor(...MUTED);
+        doc.text(lyrStr, RM - textWidth(lyrStr), y);
+        doc.setTextColor(...DARK);
+      }
+      y += LH * 0.85;
+    });
+  }
+
+  // Per-piece performers (centered)
+  if (s.performers) {
+    s.performers.split('\n').filter(l => l.trim()).forEach(line => {
+      checkPage();
+      doc.setFont('times', 'normal');
+      doc.setFontSize(FS);
+      const lw = textWidth(line.trim());
+      doc.text(line.trim(), LM + (CW - lw) / 2, y);
+      y += LH * 0.85;
+    });
+  }
+
+  return y;
+}
+
+// ════════════════════════════════════════════════════════════════
 //  Init
 // ════════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
   resetState();
+  resetRecitalDetails();
+  // Pre-fill academic year
+  const yearEl = document.getElementById('rd-year');
+  if (yearEl) yearEl.value = autoAcademicYear();
   initRadioHandlers();
 });

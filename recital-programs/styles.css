@@ -537,6 +537,62 @@ header h1   { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
 }
 .credits-body.open { display: block; }
 
+/* ── Recital details section labels ──────────────────────── */
+.rd-section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--green);
+  padding: 0.6rem 0 0.4rem;
+  border-top: 1px solid var(--border);
+  margin-top: 0.25rem;
+  margin-bottom: 0.1rem;
+}
+
+/* ── Intermission marker in program panel ─────────────────── */
+.intermission-marker {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--green);
+  padding: 0.4rem 0;
+  margin-bottom: 0.5rem;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.intermission-marker span { flex: 1; text-align: center; }
+.intermission-marker .remove-btn {
+  background: none;
+  border: none;
+  color: #b33;
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 0 0.3rem;
+}
+
+/* Add intermission button on entry cards */
+.add-intermission-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-left: 1px solid var(--border);
+}
+.add-intermission-btn:hover { color: var(--green); }
+
+/* ── Download button ──────────────────────────────────────── */
+.btn-download {
+  width: 100%;
+  margin-top: 0;
+}
+
 /* ── Entry indicator ─────────────────────────────────────── */
 #entry-indicator {
   font-size: 0.7rem;
