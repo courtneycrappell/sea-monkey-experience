@@ -371,7 +371,7 @@ function advanceFromParentWork() {
         <textarea id="excerpt-multi-titles" rows="5"
                   placeholder="Erbarme dich&#10;Können tränen&#10;Et exultavit"
                   oninput="updateState('excerptMultiple', this.value)"></textarea>
-        <span class="field-hint">List the individual pieces in the order you will perform them.</span>
+        <span class="field-hint">One per line. To add a per-song arranger, type a pipe after the title: e.g. "Hello" | arr. Jim Snell</span>
       </div>`;
     const ta = document.getElementById('excerpt-multi-titles');
     if (ta) ta.value = state.excerptMultiple || '';
@@ -467,6 +467,18 @@ function esc(str) {
     .replace(/"/g, '&quot;');
 }
 
+// Normalize text for jsPDF rendering: Latin-1 chars pass through unchanged;
+// characters above U+00FF (e.g. ō, ā, ş) are decomposed to their ASCII base.
+// This preserves é, ü, ä, ç, ñ while fixing garbled rendering of ō in "Tōru".
+function normalizePdfText(str) {
+  if (!str) return '';
+  return String(str).split('').map(ch => {
+    if (ch.charCodeAt(0) <= 255) return ch;
+    const base = ch.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    return (base && base.charCodeAt(0) <= 127) ? base : '?';
+  }).join('');
+}
+
 function formatCatalogStr(type, number) {
   if (!type || !number) return '';
   const t = type.trim();
@@ -528,27 +540,32 @@ function buildTitleHTML() {
   if (!title) return '';
   const cat   = formatCatalogStr(state.catalogType, state.catalogNumber);
   const date  = formatDateStr(state.workDate);
-  const suffix = esc(cat) + esc(date);
 
   if (state.titleType === 'genre') {
     const nick = state.nickname.trim();
     const nickPart = nick ? ', &quot;' + esc(nick) + '&quot;' : '';
-    return esc(title) + nickPart + suffix;
+    return esc(title) + nickPart + esc(cat) + esc(date);
   }
   if (state.workSize === 'single') {
-    return '“' + esc(title) + '”' + suffix;
+    // American style: comma inside closing quotation mark
+    if (cat.startsWith(', ')) {
+      return '”' + esc(title) + ',”' + esc(cat.slice(1)) + esc(date);
+    }
+    return '”' + esc(title) + '”' + esc(cat) + esc(date);
   }
   // multi
-  return '<em>' + esc(title) + '</em>' + suffix;
+  return '<em>' + esc(title) + '</em>' + esc(cat) + esc(date);
 }
 
 // Build excerpt title HTML string
 function buildExcerptTitleHTML() {
   if (state.excerptCount === 'one') {
     const piece = state.excerptOnePiece.trim();
-    return piece ? '“' + esc(piece) + '”' : '';
+    if (!piece) return '';
+    // American style: comma inside closing quotation mark if catalog follows
+    // (excerpts typically have no catalog, but apply consistently)
+    return '”' + esc(piece) + '”';
   }
-  // multiple: parent work first (handled separately)
   return '';
 }
 
@@ -692,23 +709,47 @@ function buildEntry() {
         textLines.push('                                          ' + composerDates);
       }
 
-      // Individual piece titles
+      // Entry-level arrangement appears before song list (matches PDF order)
+      if (arrangerLine) {
+        const arrLines = arrangerLine.split('\n');
+        arrLines.forEach(al => {
+          htmlLines.push('<div class="entry-row"><span></span><span class="entry-arranger">' + esc(al) + '</span></div>');
+          textLines.push('                                          ' + al);
+        });
+      }
+
+      // Individual piece titles — support per-song arranger via " | " separator
       if (state.excerptMultiple.trim()) {
         const pieces = state.excerptMultiple.split('\n').map(l => l.trim()).filter(l => l);
-        pieces.forEach(p => {
-          htmlLines.push('<div class="entry-indent">' + esc(p) + '</div>');
-          textLines.push('    ' + p);
+        pieces.forEach(rawLine => {
+          const sepIdx   = rawLine.indexOf(' | ');
+          const songTitle = sepIdx >= 0 ? rawLine.slice(0, sepIdx).trim() : rawLine;
+          const songArr   = sepIdx >= 0 ? rawLine.slice(sepIdx + 3).trim() : '';
+          if (songArr) {
+            htmlLines.push(
+              '<div class="entry-indent-right">' +
+              '<span>' + esc(songTitle) + '</span>' +
+              '<span class="entry-arranger" style="font-size:0.8rem">' + esc(songArr) + '</span>' +
+              '</div>'
+            );
+            textLines.push('    ' + songTitle + '    ' + songArr);
+          } else {
+            htmlLines.push('<div class="entry-indent">' + esc(songTitle) + '</div>');
+            textLines.push('    ' + songTitle);
+          }
         });
       }
     }
 
-    // Arrangement
-    if (arrangerLine) {
-      const arrLines = arrangerLine.split('\n');
-      arrLines.forEach(al => {
-        htmlLines.push('<div class="entry-row"><span></span><span class="entry-arranger">' + esc(al) + '</span></div>');
-        textLines.push('                                          ' + al);
-      });
+    // Arrangement for non-excerpt-multiple paths (excerpt-one and complete work)
+    if (state.workType !== 'excerpt' || state.excerptCount !== 'multiple') {
+      if (arrangerLine) {
+        const arrLines = arrangerLine.split('\n');
+        arrLines.forEach(al => {
+          htmlLines.push('<div class="entry-row"><span></span><span class="entry-arranger">' + esc(al) + '</span></div>');
+          textLines.push('                                          ' + al);
+        });
+      }
     }
 
     // Premiere
@@ -1087,10 +1128,163 @@ function previewPDF() {
 }
 
 // ════════════════════════════════════════════════════════════════
+//  Word Doc (.doc) download — HTML blob, opens in Word
+// ════════════════════════════════════════════════════════════════
+function generateDoc() {
+  const entries = programEntries.filter(e => e.type === 'entry');
+  if (entries.length === 0) {
+    alert('Add at least one program entry before downloading.');
+    return;
+  }
+  const rd = recitalDetails;
+
+  function entryToDocHtml(e) {
+    return e.html || '';
+  }
+
+  let programHtml = '';
+  programEntries.forEach(item => {
+    if (item.type === 'intermission') {
+      programHtml += '<p style="text-align:center;font-weight:bold;border-top:1px solid #999;border-bottom:1px solid #999;padding:4pt 0;margin:10pt 0">— INTERMISSION —</p>';
+    } else {
+      programHtml += '<div style="margin-bottom:14pt;font-family:\'Times New Roman\',serif;font-size:11pt">' + entryToDocHtml(item) + '</div>';
+    }
+  });
+
+  const footerHtml = rd.profName && rd.performerName
+    ? '<p style="text-align:center;font-style:italic;font-size:9pt;margin-top:18pt">' +
+      rd.performerName + ' is a student of ' + (rd.profTitle || 'Professor') + ' ' + rd.profName + '</p>'
+    : '';
+  const degreeHtml = hasDegreeFooter(rd.recitalType) && rd.degree
+    ? '<p style="text-align:center;font-size:8pt;color:#555;margin-top:4pt">' +
+      'This recital is being presented in partial fulfillment of the requirements for the degree of ' + rd.degree + '.</p>'
+    : '';
+
+  const html = `<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<style>
+  body { font-family: 'Times New Roman', serif; font-size: 11pt; margin: 1in; }
+  .disclaimer { background: #FFF3CD; border: 2px solid #FFC107; padding: 10pt 14pt; margin-bottom: 18pt;
+                font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold; line-height: 1.5; }
+  h1 { font-size: 13pt; text-align: center; font-family: Arial, sans-serif; margin-bottom: 4pt; }
+  .subtitle { text-align: center; font-style: italic; font-size: 11pt; margin-bottom: 2pt; }
+  .info { text-align: center; font-size: 10pt; margin-bottom: 2pt; }
+  hr { border: none; border-top: 1px solid #333; margin: 12pt 0; }
+  .program-head { text-align: center; font-family: Arial, sans-serif; font-weight: bold;
+                  font-size: 12pt; letter-spacing: .08em; margin: 14pt 0; }
+  .entry-row { display: flex; justify-content: space-between; }
+  .entry-indent { padding-left: 1.5em; display: block; }
+  .entry-indent-right { display: flex; justify-content: space-between; padding-left: 1.5em; }
+  .entry-arranger { color: #555; }
+  .entry-right { color: #555; }
+  em { font-style: italic; }
+  .approval { margin-top: 36pt; border-top: 1px solid #ccc; padding-top: 14pt; font-family: Arial, sans-serif; font-size: 10pt; }
+</style>
+</head>
+<body>
+<div class="disclaimer">
+  ⚠ FOR EDITING AND PROOFING ONLY — Spacing in this document will not be correct for distribution.
+  Review with your faculty member before submitting for printing.
+</div>
+<h1>${rd.recitalType ? rd.recitalType.toUpperCase() : 'RECITAL'}</h1>
+${rd.performerName ? '<p class="subtitle">' + [rd.performerName, rd.instrument].filter(Boolean).join(', ') + '</p>' : ''}
+${rd.accompanist ? '<p class="info">' + rd.accompanist + ', piano</p>' : ''}
+${(rd.additionalPerformers || '').split('\n').filter(l => l.trim()).map(l => '<p class="info">' + l.trim() + '</p>').join('')}
+${rd.recitalDate ? '<p class="info">' + rd.recitalDate + '</p>' : ''}
+${rd.recitalTime || rd.venue ? '<p class="info">' + [rd.recitalTime, rd.venue].filter(Boolean).join(' · ') + '</p>' : ''}
+<hr>
+<div class="program-head">PROGRAM</div>
+<hr>
+${programHtml}
+${footerHtml}
+${degreeHtml}
+<div class="approval">
+  <p><strong>Faculty Review &amp; Approval</strong></p>
+  <p>Reviewed and approved by: ________________________________&nbsp;&nbsp;&nbsp;Date: ______________</p>
+  <p style="margin-top:8pt;font-size:9pt;color:#555">Professor signature confirms this program has been reviewed for accuracy and formatting.</p>
+</div>
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'application/msword' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = (rd.performerName ? rd.performerName.replace(/\s+/g, '_') : 'Recital') + '_Program_DRAFT.doc';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Faculty Email Modal
+// ════════════════════════════════════════════════════════════════
+function openFacultyEmailModal() {
+  if (programEntries.filter(e => e.type === 'entry').length === 0) {
+    alert('Add at least one program entry before submitting.');
+    return;
+  }
+  const modal = document.getElementById('faculty-email-modal');
+  if (modal) modal.style.display = 'flex';
+  const input = document.getElementById('faculty-email-input');
+  if (input) { input.value = ''; input.focus(); }
+  const val = document.getElementById('faculty-email-val');
+  if (val) val.style.display = 'none';
+}
+
+function closeFacultyEmailModal() {
+  const modal = document.getElementById('faculty-email-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function submitToFaculty() {
+  const emailEl = document.getElementById('faculty-email-input');
+  const valEl   = document.getElementById('faculty-email-val');
+  const email   = (emailEl?.value || '').trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (valEl) valEl.style.display = 'block';
+    if (emailEl) emailEl.focus();
+    return;
+  }
+  if (valEl) valEl.style.display = 'none';
+  closeFacultyEmailModal();
+
+  // Download the PDF first
+  await generatePDF('save');
+
+  // Build mailto: URL (400ms delay to let download begin)
+  setTimeout(() => {
+    const rd = recitalDetails;
+    const subject = encodeURIComponent(
+      'Recital Program for Review' +
+      (rd.performerName ? ' — ' + rd.performerName : '') +
+      (rd.recitalDate   ? ', ' + rd.recitalDate    : '')
+    );
+    const body = encodeURIComponent(
+      'Dear ' + (rd.profTitle || 'Professor') + ' ' + (rd.profName || '') + ',\n\n' +
+      'Please find my recital program attached for your review and approval.\n\n' +
+      'The PDF has been downloaded to your computer — please attach it to this email before sending, ' +
+      'or reply to confirm you have reviewed it.\n\n' +
+      'Thank you,\n' + (rd.performerName || 'Your student')
+    );
+    window.location.href = 'mailto:' + encodeURIComponent(email) + '?subject=' + subject + '&body=' + body;
+  }, 400);
+}
+
+// ════════════════════════════════════════════════════════════════
 //  Recital Details
 // ════════════════════════════════════════════════════════════════
 function updateRD(key, value) {
   recitalDetails[key] = value;
+  if (key === 'recitalType') {
+    toggleDegreeSection();
+    toggleLectureTitle();
+  }
   autoSave();
 }
 
@@ -1098,6 +1292,21 @@ function toggleLectureTitle() {
   const isLecture = recitalDetails.recitalType === 'Doctoral Lecture Recital';
   const field = document.getElementById('rd-lecture-field');
   if (field) field.style.display = isLecture ? 'flex' : 'none';
+}
+
+function updateDegreeField() {
+  const prefix = (document.getElementById('rd-degree-prefix')?.value || '').trim();
+  const instrument = (document.getElementById('rd-degree-instrument')?.value || '').trim();
+  const wrap = document.getElementById('rd-degree-instrument-wrap');
+  if (wrap) wrap.style.display = prefix ? 'block' : 'none';
+  recitalDetails.degree = prefix && instrument ? prefix + ' ' + instrument : '';
+  autoSave();
+}
+
+function toggleDegreeSection() {
+  const section = document.getElementById('rd-degree-section');
+  const noDegree = ['Student Chamber Music Recital'];
+  if (section) section.style.display = noDegree.includes(recitalDetails.recitalType) ? 'none' : 'flex';
 }
 
 function advanceFromRecitalDetails() {
@@ -1204,20 +1413,13 @@ function getHeaderText(recitalType) {
     "Performer's Certificate Recital": "PERFORMER'S CERTIFICATE RECITAL",
     "Non-Credit Graduate Recital":  "NON-CREDIT RECITAL",
     "Non-Credit Undergraduate Recital": "NON-CREDIT RECITAL",
-    "Guest Artist Recital":         "GUEST ARTIST RECITAL",
-    "Faculty Recital":              "FACULTY RECITAL",
-    "Faculty Chamber Music Concert":"FACULTY CHAMBER MUSIC CONCERT",
-    "Studio Recital":               "STUDIO RECITAL",
-    "Graduate Chamber Ensemble Recital": "GRADUATE CHAMBER ENSEMBLE RECITAL",
     "Student Chamber Music Recital":"STUDENT CHAMBER MUSIC RECITAL",
-    "Joint Recital":                "JOINT RECITAL",
   };
   return map[recitalType] || recitalType.toUpperCase();
 }
 
 function hasDegreeFooter(recitalType) {
-  const noDegree = ['Guest Artist Recital','Faculty Recital','Faculty Chamber Music Concert',
-    'Studio Recital','Graduate Chamber Ensemble Recital','Student Chamber Music Recital'];
+  const noDegree = ['Student Chamber Music Recital'];
   return !noDegree.includes(recitalType);
 }
 
@@ -1299,7 +1501,7 @@ async function generatePDF(mode = 'save') {
 
   // Performer + instrument
   if (rd.performerName) {
-    const perfStr = [rd.performerName, rd.instrument].filter(Boolean).join(', ');
+    const perfStr = normalizePdfText([rd.performerName, rd.instrument].filter(Boolean).join(', '));
     doc.setFont('times', 'normal');
     doc.setFontSize(15);
     doc.text(perfStr, pc('R'), PH * 0.40 + 13, { align: 'center' });
@@ -1310,7 +1512,7 @@ async function generatePDF(mode = 'save') {
   doc.setFontSize(11);
   let coverY = PH * 0.63;
   [rd.recitalDate, rd.recitalTime, rd.venue].filter(Boolean).forEach(line => {
-    doc.text(line, pc('R'), coverY, { align: 'center' }); coverY += 7;
+    doc.text(normalizePdfText(line), pc('R'), coverY, { align: 'center' }); coverY += 7;
   });
 
   // Thin rule at bottom of front cover
@@ -1397,7 +1599,7 @@ async function generatePDF(mode = 'save') {
     doc.setFontSize(sz);
     doc.setFont(opts.font || 'times', opts.style || 'normal');
     doc.setTextColor(...(opts.color || DARK));
-    doc.text(text, pc('R'), yPos, { align: 'center' });
+    doc.text(normalizePdfText(text), pc('R'), yPos, { align: 'center' });
   }
 
   function checkOverflow(neededMM) {
@@ -1479,6 +1681,7 @@ async function generatePDF(mode = 'save') {
 // ════════════════════════════════════════════════════════════════
 function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
   const CW = RM - LM;
+  const p = normalizePdfText; // shorthand for PDF-safe text
 
   function checkPage() {
     if (y > BM - 36) { doc.addPage(); y = 14; }
@@ -1493,116 +1696,123 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
 
   doc.setTextColor(...DARK);
 
+  // ── Normalize user strings for PDF rendering ──
+  const workTitle     = p(s.workTitle || '');
+  const parentTitle   = p(s.parentTitle || '');
+  const excerptOne    = p(s.excerptOnePiece || '');
+  const compFirst     = p(s.composerFirst || '');
+  const compLast      = p(s.composerLast || '');
+  const arrName       = p(s.arrangementName || '');
+  const lyricist      = p(s.lyricist || '');
+  const premiereType  = p(s.premiereType || '');
+  const nickname      = p(s.nickname || '');
+
   // ── Build title parts [{text, italic}] ──
   const catStr = (s.catalogType && s.catalogNumber)
-    ? ', ' + s.catalogType + (s.catalogType.endsWith('.') ? '' : '') + ' ' + s.catalogNumber : '';
-  const dateStr = s.workDate ? ' (' + s.workDate + ')' : '';
+    ? ', ' + p(s.catalogType) + ' ' + p(s.catalogNumber) : '';
+  const dateStr = s.workDate ? ' (' + p(s.workDate) + ')' : '';
   let titleParts = [];
 
   if (s.workType === 'complete') {
     if (s.titleType === 'genre') {
-      const nick = s.nickname ? ', “' + s.nickname + '”' : '';
-      titleParts = [{ t: s.workTitle + nick + catStr + dateStr, i: false }];
+      const nick = nickname ? ', “' + nickname + '”' : '';
+      titleParts = [{ t: workTitle + nick + catStr + dateStr, i: false }];
     } else if (s.workSize === 'single') {
-      titleParts = [{ t: '“' + s.workTitle + '”' + catStr + dateStr, i: false }];
+      const leadComma = catStr.startsWith(', ') ? ',' : '';
+      const catRest   = leadComma ? catStr.slice(1) : catStr;
+      titleParts = [{ t: '”' + workTitle + '”' + leadComma + catRest + dateStr, i: false }];
     } else {
-      titleParts = [{ t: s.workTitle, i: true }, { t: catStr + dateStr, i: false }];
+      titleParts = [{ t: workTitle, i: true }, { t: catStr + dateStr, i: false }];
     }
   } else if (s.excerptCount === 'one') {
-    titleParts = [{ t: '“' + s.excerptOnePiece + '”', i: false }];
+    titleParts = [{ t: '”' + excerptOne + '”', i: false }];
   } else {
-    const pCat = s.parentCatalogType ? ', ' + s.parentCatalogType + ' ' + s.parentCatalogNumber : '';
-    const pDate = s.parentDate ? ' (' + s.parentDate + ')' : '';
-    titleParts = [{ t: 'from ', i: false }, { t: s.parentTitle, i: true }, { t: pCat + pDate, i: false }];
+    const pCat = s.parentCatalogType ? ', ' + p(s.parentCatalogType) + ' ' + p(s.parentCatalogNumber) : '';
+    const pDate = s.parentDate ? ' (' + p(s.parentDate) + ')' : '';
+    titleParts = [{ t: 'from ', i: false }, { t: parentTitle, i: true }, { t: pCat + pDate, i: false }];
   }
 
   // Measure title width
   let tw = 0;
-  titleParts.forEach(p => { tw += textWidth(p.t, 'times', p.i ? 'italic' : 'normal', FS); });
+  titleParts.forEach(pt => { tw += textWidth(pt.t, 'times', pt.i ? 'italic' : 'normal', FS); });
 
   // Composer
-  const compName = [s.composerFirst, s.composerLast].filter(Boolean).join(' ');
-  const compW = compName ? textWidth(compName, 'times', 'normal', FS) : 0;
+  const compName  = [compFirst, compLast].filter(Boolean).join(' ');
+  const compW     = compName ? textWidth(compName, 'times', 'normal', FS) : 0;
   const compDates = formatComposerDates(s.composerBorn, s.composerDied, s.composerLiving);
 
   // Dot leaders
   doc.setFont('times', 'normal');
   doc.setFontSize(FS);
-  const dotW = doc.getTextWidth('.');
+  const dotW  = doc.getTextWidth('.');
   const dotsX = LM + tw + 1;
   const compX = RM - compW;
   const numDots = compName && compX > dotsX + 2 ? Math.floor((compX - dotsX - 1) / dotW) : 0;
-  const dots = '.'.repeat(Math.max(0, numDots));
+  const dots  = '.'.repeat(Math.max(0, numDots));
 
   checkPage();
 
   // Draw title
   let cx = LM;
-  titleParts.forEach(p => {
-    doc.setFont('times', p.i ? 'italic' : 'normal');
+  titleParts.forEach(pt => {
+    doc.setFont('times', pt.i ? 'italic' : 'normal');
     doc.setFontSize(FS);
     doc.setTextColor(...DARK);
-    doc.text(p.t, cx, y);
-    cx += textWidth(p.t, 'times', p.i ? 'italic' : 'normal', FS);
+    doc.text(pt.t, cx, y);
+    cx += textWidth(pt.t, 'times', pt.i ? 'italic' : 'normal', FS);
   });
-  if (dots) { doc.setFont('times', 'normal'); doc.text(dots, dotsX, y); }
-  if (compName) { doc.setFont('times', 'normal'); doc.text(compName, compX, y); }
+  if (dots)    { doc.setFont('times', 'normal'); doc.text(dots, dotsX, y); }
+  if (compName){ doc.setFont('times', 'normal'); doc.text(compName, compX, y); }
   y += LH;
 
-  // Composer dates — skip if already rendered on the "from" line (excerpt-one)
-  let datesRendered = false;
+  // Composer dates — skip for excerpt-one (rendered on the indented “from” line below)
   if (compDates && !(s.workType === 'excerpt' && s.excerptCount === 'one')) {
     checkPage();
-    doc.setFont('times', 'normal');
-    doc.setFontSize(FS);
+    doc.setFont('times', 'normal'); doc.setFontSize(FS);
     doc.setTextColor(...MUTED);
     doc.text(compDates, RM - textWidth(compDates), y);
     doc.setTextColor(...DARK);
-    y += LH * 0.8;
-    datesRendered = true;
+    y += LH * 0.65;
   }
 
-  // Arrangement
-  if (s.arrangementName) {
+  // Arrangement (entry-level — applies to whole work, not per-song)
+  if (arrName) {
     checkPage();
-    const arrStr = s.arrangementRole + ' ' + s.arrangementName;
+    const arrStr  = (s.arrangementRole || 'arr.') + ' ' + arrName;
     const arrDates = s.arrangementLiving === false && s.arrangementBorn
       ? formatComposerDates(s.arrangementBorn, s.arrangementDied, false) : '';
-    doc.setFont('times', 'normal');
-    doc.setFontSize(FS);
+    doc.setFont('times', 'normal'); doc.setFontSize(FS);
     doc.setTextColor(...MUTED);
     doc.text(arrStr, RM - textWidth(arrStr), y);
-    y += LH * 0.8;
+    y += LH * 0.65;
     if (arrDates) {
       doc.text(arrDates, RM - textWidth(arrDates), y);
-      y += LH * 0.8;
+      y += LH * 0.65;
     }
     doc.setTextColor(...DARK);
   }
 
   // Premiere
-  if (s.premiereType) {
+  if (premiereType) {
     checkPage();
-    doc.setFont('times', 'italic');
-    doc.setFontSize(FS);
-    doc.text('(' + s.premiereType + ')', LM + 12, y);
-    y += LH * 0.8;
+    doc.setFont('times', 'italic'); doc.setFontSize(FS);
+    doc.text('(' + premiereType + ')', LM + 12, y);
+    y += LH * 0.65;
     doc.setFont('times', 'normal');
   }
 
-  // Excerpt one — "from *Parent*" line
+  // Excerpt-one: indented “from *Parent*” line with composer dates on the right
   if (s.workType === 'excerpt' && s.excerptCount === 'one') {
     checkPage();
-    const pCat = s.parentCatalogType ? ', ' + s.parentCatalogType + ' ' + s.parentCatalogNumber : '';
-    const pDate = s.parentDate ? ' (' + s.parentDate + ')' : '';
+    const pCat    = s.parentCatalogType ? ', ' + p(s.parentCatalogType) + ' ' + p(s.parentCatalogNumber) : '';
+    const pDate   = s.parentDate ? ' (' + p(s.parentDate) + ')' : '';
     const fromStr = 'from ';
-    doc.setFont('times', 'normal');
-    doc.setFontSize(FS);
+    doc.setFont('times', 'normal'); doc.setFontSize(FS);
     doc.text(fromStr, LM + 12, y);
     const fromW = textWidth(fromStr);
     doc.setFont('times', 'italic');
-    doc.text(s.parentTitle, LM + 12 + fromW, y);
-    const ptW = textWidth(s.parentTitle, 'times', 'italic');
+    doc.text(parentTitle, LM + 12 + fromW, y);
+    const ptW = textWidth(parentTitle, 'times', 'italic');
     doc.setFont('times', 'normal');
     doc.text(pCat + pDate, LM + 12 + fromW + ptW, y);
     if (compDates) {
@@ -1613,18 +1823,25 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
     y += LH;
   }
 
-  // Movements (multi-movement complete works or excerpt-multiple)
-  const movText = s.workSize === 'multi' ? s.movements
-    : (s.workType === 'excerpt' && s.excerptCount === 'multiple' ? s.excerptMultiple : '');
-  if (movText) {
-    movText.split('\n').filter(l => l.trim()).forEach((line, idx) => {
+  // Movements / songs
+  // For excerpt-multiple: each line may include a per-song arranger after “ | “
+  const movRaw = s.workSize === 'multi' ? (s.movements || '')
+    : (s.workType === 'excerpt' && s.excerptCount === 'multiple' ? (s.excerptMultiple || '') : '');
+  if (movRaw.trim()) {
+    movRaw.split('\n').filter(l => l.trim()).forEach((rawLine, idx) => {
       checkPage();
-      doc.setFont('times', 'normal');
-      doc.setFontSize(FS);
+      const sepIdx  = rawLine.indexOf(' | ');
+      const lineTitle = p(sepIdx >= 0 ? rawLine.slice(0, sepIdx).trim() : rawLine.trim());
+      const lineArr   = sepIdx >= 0 ? p(rawLine.slice(sepIdx + 3).trim()) : '';
+      doc.setFont('times', 'normal'); doc.setFontSize(FS);
       doc.setTextColor(...DARK);
-      doc.text(line.trim(), LM + 12, y);
-      if (idx === 0 && s.lyricist) {
-        const lyrStr = 'lyr. ' + s.lyricist;
+      doc.text(lineTitle, LM + 12, y);
+      if (lineArr) {
+        doc.setTextColor(...MUTED);
+        doc.text(lineArr, RM - textWidth(lineArr), y);
+        doc.setTextColor(...DARK);
+      } else if (idx === 0 && lyricist) {
+        const lyrStr = 'lyr. ' + lyricist;
         doc.setTextColor(...MUTED);
         doc.text(lyrStr, RM - textWidth(lyrStr), y);
         doc.setTextColor(...DARK);
@@ -1637,10 +1854,10 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
   if (s.performers) {
     s.performers.split('\n').filter(l => l.trim()).forEach(line => {
       checkPage();
-      doc.setFont('times', 'normal');
-      doc.setFontSize(FS);
-      const lw = textWidth(line.trim());
-      doc.text(line.trim(), LM + (CW - lw) / 2, y);
+      doc.setFont('times', 'normal'); doc.setFontSize(FS);
+      const safe = p(line.trim());
+      const lw   = textWidth(safe);
+      doc.text(safe, LM + (CW - lw) / 2, y);
       y += LH * 0.85;
     });
   }
@@ -1663,9 +1880,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const yearEl = document.getElementById('rd-year');
   if (yearEl) yearEl.value = autoAcademicYear();
   initRadioHandlers();
+  toggleDegreeSection();
   // Spell checker: load dictionaries and wire up fields
   loadDictionaries();
   initSpellCheck();
+
+  // Close faculty modal on overlay click
+  const modal = document.getElementById('faculty-email-modal');
+  if (modal) modal.addEventListener('click', e => { if (e.target === modal) closeFacultyEmailModal(); });
 });
 
 // ════════════════════════════════════════════════════════════════
@@ -1806,9 +2028,23 @@ function populateRecitalDetailsForm() {
   setVal('rd-additional', recitalDetails.additionalPerformers);
   setSel('rd-prof-title', recitalDetails.profTitle);
   setVal('rd-prof-name', recitalDetails.profName);
-  setVal('rd-degree', recitalDetails.degree);
+  // Restore degree hybrid field
+  const deg = recitalDetails.degree || '';
+  const DEGREE_PREFIXES = [
+    "Doctor of Musical Arts in", "Master of Music in", "Bachelor of Music in",
+    "Artist's Certificate in", "Performer's Certificate in"
+  ];
+  let restoredPrefix = '', restoredInstrument = deg;
+  for (const p of DEGREE_PREFIXES) {
+    if (deg.startsWith(p)) { restoredPrefix = p; restoredInstrument = deg.slice(p.length).trim(); break; }
+  }
+  setSel('rd-degree-prefix', restoredPrefix);
+  setVal('rd-degree-instrument', restoredInstrument);
+  const wrap = document.getElementById('rd-degree-instrument-wrap');
+  if (wrap) wrap.style.display = restoredPrefix ? 'block' : 'none';
   setVal('rd-lecture', recitalDetails.lectureTitle);
   toggleLectureTitle();
+  toggleDegreeSection();
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1864,7 +2100,7 @@ async function loadDictionaries() {
 
 // Fields to check
 const SPELL_TEXTAREA_IDS = ['movements-input', 'rd-additional', 'performers-input'];
-const SPELL_INPUT_IDS    = ['rd-degree', 'rd-lecture', 'lyricist-input'];
+const SPELL_INPUT_IDS    = ['rd-degree-instrument', 'rd-lecture', 'lyricist-input'];
 
 // Words and patterns that should never be flagged
 const SPELL_SKIP_WORDS = new Set([

@@ -293,6 +293,25 @@ header h1   { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
 }
 .btn-back:hover { color: var(--green); }
 
+.btn-link {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  width: 100%;
+  margin-top: 0.5rem;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.btn-link:hover {
+  background: #f8e8e8;
+  border-color: #b33;
+  color: #b33;
+}
+
 .btn-row {
   display: flex;
   gap: 0.6rem;
@@ -840,6 +859,42 @@ footer {
   text-decoration: underline;
 }
 .footer-clear-btn:hover { color: rgba(255,255,255,0.8); }
+
+/* ── Faculty email modal ──────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1.5rem;
+}
+.modal-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  padding: 1.75rem;
+  width: 100%;
+  max-width: 440px;
+}
+.modal-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 0.75rem;
+}
+.modal-note {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: #6b4100;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
 
 /* ── Print ────────────────────────────────────────────────── */
 @media print {
