@@ -1748,9 +1748,22 @@ function dismissRestore() {
   hideRestoreBanner();
 }
 
+function buildEntryFromState(entryState) {
+  const prev = state;
+  state = entryState;
+  const entry = buildEntry();
+  state = prev;
+  return entry;
+}
+
 function restoreSession(saved) {
   recitalDetails = saved.recitalDetails || {};
-  programEntries = saved.programEntries || [];
+  // Rebuild HTML from entryState rather than trusting the stored HTML string
+  programEntries = (saved.programEntries || []).map(e => {
+    if (e.type !== 'entry') return e;
+    const rebuilt = buildEntryFromState(e.entryState || {});
+    return { ...e, html: rebuilt ? rebuilt.html : e.html, text: rebuilt ? rebuilt.text : e.text };
+  });
   state = saved.wizardState || {};
   navHistory = saved.navHistory || [];
   isFinalized = false;
@@ -1937,7 +1950,7 @@ function spellTokenize(text) {
 }
 
 function escSC(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;');
 }
 
 // ── Textarea backdrop ──────────────────────────────────────────
