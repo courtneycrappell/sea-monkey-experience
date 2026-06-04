@@ -45,8 +45,11 @@ const selectStyle = 'color:#AD4C21; border:1px solid #b8a898; background:#F0EBE7
       const editorLine = (a.editors || [])
         .filter(e => e.role === 'Editor' || e.role === 'Author')
         .map(e => e.name).join(', ');
-      const cover = a.coverImage && !a.coverImage.includes('blankcoverart')
-        ? `<img src="${a.coverImage}" alt="${a.title} cover"
+      const coverSrc = a.coverImage && !a.coverImage.includes('blankcoverart')
+        ? base + '/images/' + a.coverImage.replace(/.*\/images\//, '')
+        : null;
+      const cover = coverSrc
+        ? `<img src="${coverSrc}" alt="${a.title} cover"
                style="width:100%; height:100px; object-fit:contain; background:#fff; display:block;"
                onerror="this.style.display='none'" />`
         : `<div style="width:100%; height:60px; background:#e8ddd6; display:flex; align-items:center; justify-content:center;">

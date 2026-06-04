@@ -11,6 +11,10 @@ const anthology = anthologies.find(a => String(a.id) === id)!;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const editors = (anthology.editors ?? []).filter(e => e.role === 'Editor' || e.role === 'Author');
+
+const coverSrc = anthology.coverImage && !anthology.coverImage.includes('blankcoverart')
+  ? `${base}/images/${anthology.coverImage.replace(/.*\/images\//, '')}`
+  : null;
 const sortedWorks = [...(anthology.works ?? [])].sort((a, b) =>
   (a.composer ?? '').localeCompare(b.composer ?? '') ||
   (a.title ?? '').localeCompare(b.title ?? '')
@@ -60,10 +64,10 @@ const sortedWorks = [...(anthology.works ?? [])].sort((a, b) =>
     <!-- Sidebar -->
     <div style="width:160px; flex-shrink:0;">
 
-      {anthology.coverImage && !anthology.coverImage.includes('blankcoverart') && (
+      {coverSrc && (
         <div class="panel">
           <div style="padding:6px; background:#F0EBE7; text-align:center;">
-            <img src={anthology.coverImage} alt={`${anthology.title} cover`}
+            <img src={coverSrc} alt={`${anthology.title} cover`}
                  style="max-width:100%; max-height:180px; object-fit:contain;"
                  onerror="this.closest('.panel').style.display='none'" />
           </div>
