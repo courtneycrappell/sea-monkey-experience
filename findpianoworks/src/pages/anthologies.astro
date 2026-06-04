@@ -29,7 +29,12 @@ const selectStyle = 'color:#AD4C21; border:1px solid #b8a898; background:#F0EBE7
         <span id="rh" style="font-size:11px; color:#888;"></span>
       </div>
 
-      <div id="grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:8px;"></div>
+      <div id="grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:8px;">
+        <p style="grid-column:1/-1; color:#888; font-style:italic; margin:0;">
+          Type a title or choose a publisher above, or
+          <a href="#" id="showAllLink" style="font-style:normal;">show all {anthologies.length} anthologies</a>.
+        </p>
+      </div>
 
     </div>
   </div>
@@ -72,18 +77,32 @@ const selectStyle = 'color:#AD4C21; border:1px solid #b8a898; background:#F0EBE7
     }).join('');
   }
 
+  const sorted = [...anthologies].sort((a, b) => (a.title ?? '').localeCompare(b.title ?? ''));
+
+  function showEmpty() {
+    document.getElementById('rh').textContent = '';
+    document.getElementById('grid').innerHTML =
+      '<p style="grid-column:1/-1; color:#888; font-style:italic; margin:0;">' +
+      'Type a title or choose a publisher above, or ' +
+      '<a href="#" id="showAllLink" style="font-style:normal;">show all ' + anthologies.length + ' anthologies</a>.' +
+      '</p>';
+    document.getElementById('showAllLink').addEventListener('click', e => { e.preventDefault(); render(sorted); });
+  }
+
   function doFilter() {
     const q   = n(document.getElementById('q').value);
     const pub = n(document.getElementById('pub').value);
-    const res = anthologies.filter(a => {
+    if (!q && !pub) { showEmpty(); return; }
+    const res = sorted.filter(a => {
       if (q && !n(a.title).includes(q)) return false;
       if (pub && n(a.publisher) !== pub) return false;
       return true;
-    }).sort((a, b) => (a.title ?? '').localeCompare(b.title ?? ''));
+    });
     render(res);
   }
 
-  render([...anthologies].sort((a, b) => (a.title ?? '').localeCompare(b.title ?? '')));
+  // Start empty
+  document.getElementById('showAllLink').addEventListener('click', e => { e.preventDefault(); render(sorted); });
   document.getElementById('q').addEventListener('input', doFilter);
   document.getElementById('pub').addEventListener('change', doFilter);
 </script>
