@@ -542,7 +542,7 @@ function buildTitleHTML() {
   const date  = formatDateStr(state.workDate);
 
   if (state.titleType === 'genre') {
-    const nick = state.nickname.trim();
+    const nick = state.nickname.trim().replace(/^["'"'"']+|["'"'"']+$/g, '');
     const nickPart = nick ? ', &quot;' + esc(nick) + '&quot;' : '';
     return esc(title) + nickPart + esc(cat) + esc(date);
   }
@@ -661,14 +661,17 @@ function buildEntry() {
 
       if (!pieceHTML && !parentRef) return null;
 
-      // Row 1: "Aria Title" ........ Composer
+      // American style: comma inside closing quote when “from *Work*” follows on next line
+      const pieceDisplay = (pieceHTML && parentRef) ? pieceHTML.replace(/”$/, ',”') : pieceHTML;
+
+      // Row 1: “Aria Title,” ........ Composer
       htmlLines.push(
-        '<div class="entry-row">' +
-        '<span class="entry-title">' + (pieceHTML || '&mdash;') + '</span>' +
-        (composerName ? '<span class="entry-composer">' + esc(composerName) + '</span>' : '') +
+        '<div class=”entry-row”>' +
+        '<span class=”entry-title”>' + (pieceDisplay || '&mdash;') + '</span>' +
+        (composerName ? '<span class=”entry-composer”>' + esc(composerName) + '</span>' : '') +
         '</div>'
       );
-      textLines.push((state.excerptOnePiece ? '“' + state.excerptOnePiece + '”' : '—') +
+      textLines.push((state.excerptOnePiece ? '”' + state.excerptOnePiece + (parentRef ? ',' : '') + '”' : '—') +
         (composerName ? '    ' + composerName : ''));
 
       // Row 2: from *Parent Work*, Catalog (Year)     (dates)
@@ -703,41 +706,40 @@ function buildEntry() {
         (state.parentDate ? ' (' + state.parentDate + ')' : '') +
         (composerName ? '    ' + composerName : ''));
 
-      // Row 2: Composer dates
-      if (composerDates) {
-        htmlLines.push('<div class="entry-row"><span></span><span class="entry-right">' + esc(composerDates) + '</span></div>');
-        textLines.push('                                          ' + composerDates);
-      }
+      // Pair right-side metadata (dates, then arrangers) alongside songs so they
+      // appear on the same rows rather than stacking above the song list.
+      const rightMeta = [];
+      if (composerDates) rightMeta.push(composerDates);
+      if (arrangerLine) arrangerLine.split('\n').filter(al => al.trim()).forEach(al => rightMeta.push(al));
 
-      // Entry-level arrangement appears before song list (matches PDF order)
-      if (arrangerLine) {
-        const arrLines = arrangerLine.split('\n');
-        arrLines.forEach(al => {
-          htmlLines.push('<div class="entry-row"><span></span><span class="entry-arranger">' + esc(al) + '</span></div>');
-          textLines.push('                                          ' + al);
-        });
-      }
-
-      // Individual piece titles — support per-song arranger via " | " separator
+      let rightIdx = 0;
       if (state.excerptMultiple.trim()) {
         const pieces = state.excerptMultiple.split('\n').map(l => l.trim()).filter(l => l);
         pieces.forEach(rawLine => {
-          const sepIdx   = rawLine.indexOf(' | ');
+          const sepIdx    = rawLine.indexOf(' | ');
           const songTitle = sepIdx >= 0 ? rawLine.slice(0, sepIdx).trim() : rawLine;
           const songArr   = sepIdx >= 0 ? rawLine.slice(sepIdx + 3).trim() : '';
-          if (songArr) {
+          // Per-song arranger takes the right slot; otherwise consume next metadata item
+          const rightText = songArr || (rightIdx < rightMeta.length ? rightMeta[rightIdx++] : '');
+          if (rightText) {
             htmlLines.push(
               '<div class="entry-indent-right">' +
               '<span>' + esc(songTitle) + '</span>' +
-              '<span class="entry-arranger" style="font-size:0.8rem">' + esc(songArr) + '</span>' +
+              '<span class="entry-arranger" style="font-size:0.8rem">' + esc(rightText) + '</span>' +
               '</div>'
             );
-            textLines.push('    ' + songTitle + '    ' + songArr);
+            textLines.push('    ' + songTitle + '    ' + rightText);
           } else {
             htmlLines.push('<div class="entry-indent">' + esc(songTitle) + '</div>');
             textLines.push('    ' + songTitle);
           }
         });
+      }
+      // Any metadata that didn't pair with a song renders below the list
+      while (rightIdx < rightMeta.length) {
+        htmlLines.push('<div class="entry-row"><span></span><span class="entry-right">' + esc(rightMeta[rightIdx]) + '</span></div>');
+        textLines.push('                                          ' + rightMeta[rightIdx]);
+        rightIdx++;
       }
     }
 
@@ -1485,10 +1487,10 @@ async function generatePDF(mode = 'save') {
 
   // ── PAGE 1: Outside (fold closed) ─────────────────────────
   // RIGHT PANEL = Front Cover
-  doc.setFont('helvetica', 'normal'); // keep Helvetica for institutional label only
+  doc.setFont('times', 'bold');
   doc.setFontSize(8);
   doc.text('UMKC CONSERVATORY', pc('R'), 14, { align: 'center' });
-  doc.setFont('times', 'normal');
+  doc.setFont('times', 'bold');
   doc.setFontSize(7);
   doc.text(academicYear, pc('R'), 20, { align: 'center' });
 
@@ -1611,7 +1613,7 @@ async function generatePDF(mode = 'save') {
   }
 
   // Header
-  cText(getHeaderText(rd.recitalType || ''), y, { font: 'helvetica', style: 'bold', size: 10 });
+  cText(getHeaderText(rd.recitalType || ''), y, { font: 'times', style: 'bold', size: 10 });
   y += LH + 1;
 
   if (rd.performerName) {
@@ -1631,7 +1633,7 @@ async function generatePDF(mode = 'save') {
   }
 
   y += LH * 1.5;
-  cText('PROGRAM', y, { font: 'helvetica', style: 'bold', size: 10 });
+  cText('PROGRAM', y, { font: 'times', style: 'bold', size: 10 });
   y += LH * 2;
 
   // Entries
@@ -1705,7 +1707,7 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
   const arrName       = p(s.arrangementName || '');
   const lyricist      = p(s.lyricist || '');
   const premiereType  = p(s.premiereType || '');
-  const nickname      = p(s.nickname || '');
+  const nickname      = p(s.nickname || '').replace(/^["'"'"']+|["'"'"']+$/g, '');
 
   // ── Build title parts [{text, italic}] ──
   const catStr = (s.catalogType && s.catalogNumber)
@@ -1725,7 +1727,8 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
       titleParts = [{ t: workTitle, i: true }, { t: catStr + dateStr, i: false }];
     }
   } else if (s.excerptCount === 'one') {
-    titleParts = [{ t: '”' + excerptOne + '”', i: false }];
+    const trailingComma = s.parentTitle ? ',' : '';
+    titleParts = [{ t: '”' + excerptOne + trailingComma + '”', i: false }];
   } else {
     const pCat = s.parentCatalogType ? ', ' + p(s.parentCatalogType) + ' ' + p(s.parentCatalogNumber) : '';
     const pDate = s.parentDate ? ' (' + p(s.parentDate) + ')' : '';
@@ -1761,12 +1764,25 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
     doc.text(pt.t, cx, y);
     cx += textWidth(pt.t, 'times', pt.i ? 'italic' : 'normal', FS);
   });
-  if (dots)    { doc.setFont('times', 'normal'); doc.text(dots, dotsX, y); }
-  if (compName){ doc.setFont('times', 'normal'); doc.text(compName, compX, y); }
-  y += LH;
+  if (tw + compW + 4 <= CW) {
+    // Fits: draw dot leaders and composer on same line
+    if (dots)    { doc.setFont('times', 'normal'); doc.text(dots, dotsX, y); }
+    if (compName){ doc.setFont('times', 'normal'); doc.text(compName, compX, y); }
+    y += LH;
+  } else {
+    // Title too long: composer wraps to its own right-aligned line
+    y += LH;
+    if (compName) {
+      checkPage();
+      doc.setFont('times', 'normal'); doc.setFontSize(FS); doc.setTextColor(...DARK);
+      doc.text(compName, RM - compW, y);
+      y += LH * 0.65;
+    }
+  }
 
-  // Composer dates — skip for excerpt-one (rendered on the indented “from” line below)
-  if (compDates && !(s.workType === 'excerpt' && s.excerptCount === 'one')) {
+  // Composer dates — skip for all excerpt types (excerpt-one renders on “from” line;
+  // excerpt-multiple pairs dates alongside songs below)
+  if (compDates && s.workType !== 'excerpt') {
     checkPage();
     doc.setFont('times', 'normal'); doc.setFontSize(FS);
     doc.setTextColor(...MUTED);
@@ -1775,8 +1791,8 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
     y += LH * 0.65;
   }
 
-  // Arrangement (entry-level — applies to whole work, not per-song)
-  if (arrName) {
+  // Arrangement (entry-level — skip for excerpt-multiple; paired alongside songs below)
+  if (arrName && !(s.workType === 'excerpt' && s.excerptCount === 'multiple')) {
     checkPage();
     const arrStr  = (s.arrangementRole || 'arr.') + ' ' + arrName;
     const arrDates = s.arrangementLiving === false && s.arrangementBorn
@@ -1828,26 +1844,53 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
   const movRaw = s.workSize === 'multi' ? (s.movements || '')
     : (s.workType === 'excerpt' && s.excerptCount === 'multiple' ? (s.excerptMultiple || '') : '');
   if (movRaw.trim()) {
+    const isExcerptMultiple = s.workType === 'excerpt' && s.excerptCount === 'multiple';
+    // For excerpt-multiple, build right-side metadata to pair alongside songs
+    const pdfRightMeta = [];
+    if (isExcerptMultiple) {
+      if (compDates) pdfRightMeta.push(compDates);
+      if (arrName) {
+        pdfRightMeta.push((s.arrangementRole || 'arr.') + ' ' + arrName);
+        if (s.arrangementLiving === false && s.arrangementBorn) {
+          pdfRightMeta.push(formatComposerDates(s.arrangementBorn, s.arrangementDied, false));
+        }
+      }
+    }
+    let pdfRightIdx = 0;
+
     movRaw.split('\n').filter(l => l.trim()).forEach((rawLine, idx) => {
       checkPage();
-      const sepIdx  = rawLine.indexOf(' | ');
+      const sepIdx    = rawLine.indexOf(' | ');
       const lineTitle = p(sepIdx >= 0 ? rawLine.slice(0, sepIdx).trim() : rawLine.trim());
       const lineArr   = sepIdx >= 0 ? p(rawLine.slice(sepIdx + 3).trim()) : '';
       doc.setFont('times', 'normal'); doc.setFontSize(FS);
       doc.setTextColor(...DARK);
       doc.text(lineTitle, LM + 12, y);
-      if (lineArr) {
+
+      let rightStr = lineArr;
+      if (!rightStr && isExcerptMultiple && pdfRightIdx < pdfRightMeta.length) {
+        rightStr = pdfRightMeta[pdfRightIdx++];
+      } else if (!rightStr && !isExcerptMultiple && idx === 0 && lyricist) {
+        rightStr = 'lyr. ' + lyricist;
+      }
+      if (rightStr) {
         doc.setTextColor(...MUTED);
-        doc.text(lineArr, RM - textWidth(lineArr), y);
-        doc.setTextColor(...DARK);
-      } else if (idx === 0 && lyricist) {
-        const lyrStr = 'lyr. ' + lyricist;
-        doc.setTextColor(...MUTED);
-        doc.text(lyrStr, RM - textWidth(lyrStr), y);
+        doc.text(rightStr, RM - textWidth(rightStr), y);
         doc.setTextColor(...DARK);
       }
       y += LH * 0.85;
     });
+
+    // Render any right-side metadata that didn't pair with a song
+    while (pdfRightIdx < pdfRightMeta.length) {
+      checkPage();
+      doc.setFont('times', 'normal'); doc.setFontSize(FS);
+      doc.setTextColor(...MUTED);
+      doc.text(pdfRightMeta[pdfRightIdx], RM - textWidth(pdfRightMeta[pdfRightIdx]), y);
+      doc.setTextColor(...DARK);
+      y += LH * 0.65;
+      pdfRightIdx++;
+    }
   }
 
   // Per-piece performers (centered)
