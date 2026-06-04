@@ -1,6 +1,0 @@
-[build]
-  publish = "."
-  # No build command — this is a static site
-
-[build.environment]
-  NODE_VERSION = "20"
