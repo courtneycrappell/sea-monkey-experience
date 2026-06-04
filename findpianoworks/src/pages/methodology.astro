@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import techniques from '../data/lookup/techniques.json';
+import techniqueExamples from '../data/technique-examples.json';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const families: Record<string, string[]> = {};
@@ -11,6 +12,17 @@ for (const t of techniques) {
   (families[family] ??= []).push(specific);
 }
 const familyNames = Object.keys(families).sort();
+
+function exampleHref(family: string, specific: string): string {
+  // Techniques without a ' - ' separator land in family='Other'; their label IS the specific
+  const label = family === 'Other' ? specific : `${family} - ${specific}`;
+  const workId = (techniqueExamples as Record<string, number | null>)[label];
+  if (workId != null) {
+    return `${base}/works/${workId}`;
+  }
+  // fallback to search for techniques with no example work in database
+  return `${base}/repertoire?technique=${encodeURIComponent(label)}`;
+}
 ---
 <Base title="Methodology">
   <div style="display:flex; gap:12px; align-items:flex-start;">
@@ -58,7 +70,7 @@ const familyNames = Object.keys(families).sort();
               <p>
                 {families[f].map((t, i) => (
                   <>
-                    <a href={`${base}/repertoire?technique=${encodeURIComponent(f + ' - ' + t)}`}>{f} — {t}</a>
+                    <a href={exampleHref(f, t)}>{f} — {t}</a>
                     {i < families[f].length - 1 && <br />}
                   </>
                 ))}
