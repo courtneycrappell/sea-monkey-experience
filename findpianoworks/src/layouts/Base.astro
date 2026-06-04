@@ -1,4 +1,5 @@
 ---
+import '../styles/global.css';
 export interface Props {
   title?: string;
 }
@@ -21,7 +22,7 @@ function active(href: string) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="A searchable database of piano teaching repertoire and anthologies." />
   <title>{title === 'findpianoworks.com' ? title : `${title} — findpianoworks.com`}</title>
-  <link rel="stylesheet" href={`${base}/_astro/global.css`} />
+
 </head>
 <body>
 
