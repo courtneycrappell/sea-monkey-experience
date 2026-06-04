@@ -115,7 +115,12 @@ const selectStyle = 'width:100%; color:#AD4C21; border:1px solid #b8a898; backgr
       <div class="panel">
         <div class="panel-head" id="rh">Search Results</div>
         <div class="panel-body" style="padding:0;">
-          <div id="rl"></div>
+          <div id="rl">
+            <p style="padding:12px 15px; color:#888; font-style:italic;">
+              Use the filters on the left to search, or
+              <a href="#" id="showAllLink" style="font-style:normal;">show all 576 works</a>.
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -126,7 +131,10 @@ const selectStyle = 'width:100%; color:#AD4C21; border:1px solid #b8a898; backgr
 <script define:vars={{ works, base }}>
   function n(s) { return (s ?? '').toLowerCase(); }
 
-  function render(ws) {
+  let showingAll = false;
+
+  function render(ws, isAll) {
+    showingAll = !!isAll;
     document.getElementById('rh').textContent =
       ws.length + ' work' + (ws.length !== 1 ? 's' : '') + ' found';
     if (!ws.length) {
@@ -190,20 +198,38 @@ const selectStyle = 'width:100%; color:#AD4C21; border:1px solid #b8a898; backgr
     render(res);
   }
 
-  render(works);
+  function isFiltered() {
+    return ['q','composerId','levelMin','levelMax','period','techFamily',
+            'technique','mood','occasion','genre','keySig','instrumentation']
+      .some(id => document.getElementById(id).value !== '');
+  }
+
+  // Start empty — no results until the user acts
   document.getElementById('sf').addEventListener('submit', e => { e.preventDefault(); doFilter(); });
-  document.getElementById('sf').addEventListener('change', doFilter);
+  document.getElementById('sf').addEventListener('change', () => { if (isFiltered()) doFilter(); });
   document.getElementById('clearBtn').addEventListener('click', () => {
     document.getElementById('sf').reset();
-    doFilter();
+    // Reset to empty state
+    document.getElementById('rh').textContent = 'Search Results';
+    document.getElementById('rl').innerHTML =
+      '<p style="padding:12px 15px; color:#888; font-style:italic;">' +
+      'Use the filters on the left to search, or ' +
+      '<a href="#" id="showAllLink" style="font-style:normal;">show all ' + works.length + ' works</a>.' +
+      '</p>';
+    document.getElementById('showAllLink').addEventListener('click', e => { e.preventDefault(); render(works, true); });
   });
 
-  const qp = new URLSearchParams(location.search).get('q');
+  document.getElementById('showAllLink').addEventListener('click', e => {
+    e.preventDefault();
+    render(works, true);
+  });
+
+  // Handle URL params (arriving from home search or methodology links)
+  const params = new URLSearchParams(location.search);
+  const qp = params.get('q');
+  const tp = params.get('technique');
+  const cp = params.get('composerId');
   if (qp) { document.getElementById('q').value = qp; doFilter(); }
-
-  const tp = new URLSearchParams(location.search).get('technique');
-  if (tp) { document.getElementById('technique').value = tp; doFilter(); }
-
-  const cp = new URLSearchParams(location.search).get('composerId');
-  if (cp) { document.getElementById('composerId').value = cp; doFilter(); }
+  else if (tp) { document.getElementById('technique').value = tp; doFilter(); }
+  else if (cp) { document.getElementById('composerId').value = cp; doFilter(); }
 </script>
