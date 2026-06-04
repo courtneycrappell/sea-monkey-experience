@@ -3,14 +3,16 @@ export interface Props {
   title?: string;
 }
 const { title = 'findpianoworks.com' } = Astro.props;
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const nav = [
-  { href: `${base}/`,             label: 'Home' },
-  { href: `${base}/repertoire`,   label: 'Repertoire' },
-  { href: `${base}/anthologies`,  label: 'Anthologies' },
-  { href: `${base}/about`,        label: 'About' },
+  { href: `${base}/`,            label: 'Home' },
+  { href: `${base}/repertoire`,  label: 'Repertoire' },
+  { href: `${base}/anthologies`, label: 'Anthologies' },
 ];
-const currentPath = Astro.url.pathname;
+const path = Astro.url.pathname;
+function active(href: string) {
+  return path === href || (href !== `${base}/` && path.startsWith(href));
+}
 ---
 <!doctype html>
 <html lang="en">
@@ -19,48 +21,57 @@ const currentPath = Astro.url.pathname;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="A searchable database of piano teaching repertoire and anthologies." />
   <title>{title === 'findpianoworks.com' ? title : `${title} — findpianoworks.com`}</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href={`${base}/_astro/global.css`} />
 </head>
-<body class="min-h-screen flex flex-col">
-  <!-- Header -->
-  <header class="bg-fpw-darkblue text-white shadow-md">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href={`${base}/`} class="text-xl font-bold tracking-tight text-white hover:no-underline hover:text-fpw-lightblue">
-        findpianoworks.com
-      </a>
-      <nav>
-        <ul class="flex gap-1">
+<body>
+
+  <!-- ═══ HEADER ═══════════════════════════════════════════════════ -->
+  <div style="background:#5a4a3a; border-bottom:3px solid #3a2e24;">
+    <div style="max-width:760px; margin:0 auto; padding:0; display:flex; align-items:stretch; justify-content:space-between;">
+
+      <!-- Site title -->
+      <div style="padding:28px 0 0 24px; font-size:28px; color:#F0EBE7; font-weight:bold; font-family:'Trebuchet MS',Verdana,sans-serif; letter-spacing:-0.5px;">
+        <a href={`${base}/`} style="color:#F0EBE7; text-decoration:none; border:none;">findpianoworks.com</a>
+      </div>
+
+      <!-- Nav -->
+      <nav style="display:flex; align-items:flex-end; padding:0 16px 0 0;">
+        <ul style="margin:0; padding:0; list-style:none; display:flex; gap:2px;">
           {nav.map(n => (
             <li>
               <a
                 href={n.href}
-                class={`px-3 py-1.5 rounded text-sm font-medium transition-colors
-                  ${currentPath === n.href || currentPath.startsWith(n.href + '/')
-                    ? 'bg-white text-fpw-darkblue'
-                    : 'text-white hover:bg-fpw-blue'}`}
-              >
-                {n.label}
-              </a>
+                style={`display:block; padding:6px 14px; font-size:12px; font-weight:bold;
+                        font-family:'Trebuchet MS',Verdana,sans-serif;
+                        text-decoration:none; border:none;
+                        color:${active(n.href) ? '#D96B11' : '#F0EBE7'};
+                        background:${active(n.href) ? '#F0EBE7' : 'transparent'};
+                        border-bottom:${active(n.href) ? '2px solid #D96B11' : '2px solid transparent'};`}
+              >{n.label}</a>
             </li>
           ))}
         </ul>
       </nav>
+
     </div>
-  </header>
+  </div>
 
-  <!-- Main content -->
-  <main class="flex-1 max-w-5xl mx-auto px-4 py-6 w-full">
+  <!-- ═══ BODY ══════════════════════════════════════════════════════ -->
+  <div style="max-width:760px; margin:0 auto; padding:14px 10px 20px;">
     <slot />
-  </main>
+  </div>
 
-  <!-- Footer -->
-  <footer class="border-t border-fpw-border bg-white text-center text-xs text-gray-500 py-3">
+  <!-- ═══ FOOTER ════════════════════════════════════════════════════ -->
+  <div style="max-width:760px; margin:0 auto; padding:8px 10px 16px; text-align:center; color:#B05128; font-weight:bold; font-size:11px; border-top:1px dashed #c7b8a4;">
     &copy; Copyright
-    <a href="mailto:courtneycrappell@yahoo.com">Courtney Crappell &amp; Kimberly Dreisbach</a>
-    &nbsp;·&nbsp;
-    <a href={`${base}/about`}>About</a> &nbsp;·&nbsp;
-    <a href={`${base}/methodology`}>Methodology</a> &nbsp;·&nbsp;
-    <a href={`${base}/acknowledgements`}>Acknowledgements</a>
-  </footer>
+    <a href="mailto:courtneycrappell@yahoo.com" style="color:#B05128;">Courtney Crappell &amp; Kimberly Dreisbach</a>
+    &nbsp;&middot;&nbsp;
+    <a href={`${base}/about`} style="color:#B05128;">About</a>
+    &nbsp;&middot;&nbsp;
+    <a href={`${base}/methodology`} style="color:#B05128;">Methodology</a>
+    &nbsp;&middot;&nbsp;
+    <a href={`${base}/acknowledgements`} style="color:#B05128;">Acknowledgements</a>
+  </div>
+
 </body>
 </html>

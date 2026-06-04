@@ -3,31 +3,36 @@ import Base from '../layouts/Base.astro';
 import anthologies from '../data/anthologies.json';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-
-// Unique publishers for filter
 const publishers = [...new Set(
   anthologies.map(a => a.publisher).filter(Boolean)
 )].sort();
+
+const selectStyle = 'color:#AD4C21; border:1px solid #b8a898; background:#F0EBE7; padding:2px 4px; font-family:inherit; font-size:11px;';
 ---
 <Base title="Anthologies">
-  <h1>Browse Anthologies</h1>
+  <div class="panel">
+    <div class="panel-head">Browse Anthologies</div>
+    <div class="panel-body">
 
-  <div class="flex gap-4 mb-4 flex-wrap">
-    <div class="flex-1 min-w-48">
-      <label class="label block mb-1">Search by title</label>
-      <input type="search" id="q" placeholder="Anthology name…" />
-    </div>
-    <div>
-      <label class="label block mb-1">Publisher</label>
-      <select id="pub">
-        <option value="">— All —</option>
-        {publishers.map(p => <option value={p}>{p}</option>)}
-      </select>
+      <div style="display:flex; gap:12px; align-items:flex-end; margin-bottom:10px; flex-wrap:wrap;">
+        <div>
+          <label style="display:block; font-size:11px; color:#555; margin-bottom:2px;">Search by title</label>
+          <input type="search" id="q" placeholder="Anthology name…" style={`${selectStyle} width:200px;`} />
+        </div>
+        <div>
+          <label style="display:block; font-size:11px; color:#555; margin-bottom:2px;">Publisher</label>
+          <select id="pub" style={selectStyle}>
+            <option value="">— All —</option>
+            {publishers.map(p => <option value={p}>{p}</option>)}
+          </select>
+        </div>
+        <span id="rh" style="font-size:11px; color:#888;"></span>
+      </div>
+
+      <div id="grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:8px;"></div>
+
     </div>
   </div>
-
-  <p id="rh" class="text-sm text-gray-500 mb-3"></p>
-  <div id="grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 </Base>
 
 <script define:vars={{ anthologies, base }}>
@@ -35,24 +40,30 @@ const publishers = [...new Set(
 
   function render(items) {
     document.getElementById('rh').textContent =
-      `${items.length} antholog${items.length !== 1 ? 'ies' : 'y'}`;
+      items.length + ' antholog' + (items.length !== 1 ? 'ies' : 'y');
     document.getElementById('grid').innerHTML = items.map(a => {
       const editorLine = (a.editors || [])
         .filter(e => e.role === 'Editor' || e.role === 'Author')
         .map(e => e.name).join(', ');
       const cover = a.coverImage && !a.coverImage.includes('blankcoverart')
         ? `<img src="${a.coverImage}" alt="${a.title} cover"
-               class="w-full h-32 object-contain mb-2 bg-gray-50 rounded"
+               style="width:100%; height:100px; object-fit:contain; background:#fff; display:block;"
                onerror="this.style.display='none'" />`
-        : '';
+        : `<div style="width:100%; height:60px; background:#e8ddd6; display:flex; align-items:center; justify-content:center;">
+             <span style="font-size:10px; color:#888;">No cover</span></div>`;
       return `
         <a href="${base}/anthology/${a.id}"
-           class="card block hover:border-fpw-blue transition-colors no-underline">
+           style="display:block; background:#F0EBE7; border:1px solid #c7b8a4; border-top:3px solid #a0907e;
+                  text-decoration:none; color:inherit; transition:border-color 0.15s;"
+           onmouseover="this.style.borderColor='#AD4C21'"
+           onmouseout="this.style.borderColor='#c7b8a4'; this.style.borderTopColor='#a0907e'">
           ${cover}
-          <div class="font-semibold text-fpw-darkblue text-sm leading-snug">${a.title ?? ''}</div>
-          ${editorLine ? `<div class="text-xs text-gray-500 mt-0.5">${editorLine}</div>` : ''}
-          ${a.publisher ? `<div class="text-xs text-gray-400">${a.publisher}</div>` : ''}
-          <div class="text-xs text-fpw-blue mt-1">${(a.works || []).length} works</div>
+          <div style="padding:5px 7px;">
+            <div style="font-weight:bold; font-size:11px; color:#D96B11; line-height:1.3;">${a.title ?? ''}</div>
+            ${editorLine ? `<div style="font-size:10px; color:#666; margin-top:1px;">${editorLine}</div>` : ''}
+            ${a.publisher ? `<div style="font-size:10px; color:#999;">${a.publisher}</div>` : ''}
+            <div style="font-size:10px; color:#AD4C21; margin-top:3px;">${(a.works || []).length} works</div>
+          </div>
         </a>
       `;
     }).join('');

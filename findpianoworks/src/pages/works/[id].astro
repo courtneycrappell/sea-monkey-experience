@@ -10,7 +10,6 @@ const { id } = Astro.params;
 const work = works.find(w => String(w.id) === id)!;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-// Convert absolute incipit URL to local path: http://findpianoworks.com/images/mc3/foo.jpg → /findpianoworks/images/mc3/foo.jpg
 const incipitSrc = work.incipit && !work.incipit.includes('blankincipit')
   ? `${base}/images/${work.incipit.replace(/.*\/images\//, '')}`
   : null;
@@ -20,7 +19,7 @@ function field(label: string, value: string | null | undefined) {
   return { label, value };
 }
 const fields = [
-  field('Level', work.level ? `${work.level}` : null),
+  field('Level', work.level ?? null),
   field('Period', work.period),
   field('Key', work.keySig),
   field('Meter', work.meter),
@@ -37,50 +36,50 @@ const fields = [
 ].filter(Boolean) as { label: string; value: string }[];
 ---
 <Base title={work.title ?? 'Work'}>
-  <div class="mb-3">
-    <a href={`${base}/repertoire`} class="text-sm text-fpw-blue">&larr; Back to search</a>
-  </div>
+  <p style="margin-bottom:8px; font-size:11px;">
+    <a href={`${base}/repertoire`}>&larr; Back to search</a>
+  </p>
 
-  <div class="grid md:grid-cols-3 gap-6">
-    <!-- Main detail -->
-    <div class="md:col-span-2 space-y-4">
-      <div class="card">
-        <h1 class="!mb-1">{work.title}</h1>
-        <p class="text-gray-600 text-sm mb-4">
-          <a href={`${base}/repertoire?composerId=${work.composerId}`} class="font-medium">
-            {work.composer}
-          </a>
-          {work.birthDate && work.deathDate && (
-            <span class="text-gray-400"> ({work.birthDate}–{work.deathDate})</span>
-          )}
-        </p>
+  <div style="display:flex; gap:12px; align-items:flex-start;">
 
-        <!-- Core attributes grid -->
-        <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-          {fields.map(f => (
-            <>
-              <dt class="label">{f.label}</dt>
-              <dd>{f.value}</dd>
-            </>
-          ))}
-        </dl>
+    <!-- Main detail panel -->
+    <div style="flex:1; min-width:0;">
+      <div class="panel">
+        <div class="panel-body">
+          <h1>{work.title}</h1>
+          <p style="margin-bottom:10px;">
+            <a href={`${base}/repertoire?composerId=${work.composerId}`} style="font-weight:bold;">
+              {work.composer}
+            </a>
+            {work.birthDate && work.deathDate && (
+              <span style="color:#888;"> ({work.birthDate}–{work.deathDate})</span>
+            )}
+          </p>
+
+          <table style="border-collapse:collapse; width:100%; font-size:12px;">
+            {fields.map(f => (
+              <tr style="border-bottom:1px solid #e4ddd6;">
+                <td style="font-weight:bold; color:#AD4C21; padding:3px 10px 3px 0; width:130px; vertical-align:top;">{f.label}</td>
+                <td style="padding:3px 0; color:#333;">{f.value}</td>
+              </tr>
+            ))}
+          </table>
+        </div>
       </div>
 
-      <!-- Techniques -->
       {work.techniques && work.techniques.length > 0 && (
-        <div class="card">
-          <h3 class="!mt-0">Techniques</h3>
-          <div class="flex flex-wrap">
+        <div class="panel">
+          <div class="panel-head">Techniques</div>
+          <div class="panel-body" style="padding-top:8px;">
             {work.techniques.map(t => <span class="tag">{t}</span>)}
           </div>
         </div>
       )}
 
-      <!-- Rhythms -->
       {work.rhythms && work.rhythms.length > 0 && (
-        <div class="card">
-          <h3 class="!mt-0">Rhythmic Elements</h3>
-          <div class="flex flex-wrap">
+        <div class="panel">
+          <div class="panel-head">Rhythmic Elements</div>
+          <div class="panel-body" style="padding-top:8px;">
             {work.rhythms.map(r => <span class="tag">{r}</span>)}
           </div>
         </div>
@@ -88,39 +87,43 @@ const fields = [
     </div>
 
     <!-- Sidebar -->
-    <div class="space-y-4">
-      <!-- Incipit (score excerpt) -->
+    <div style="width:160px; flex-shrink:0;">
+
       {incipitSrc && (
-        <div class="card p-2 text-center">
-          <img
-            src={incipitSrc}
-            alt={`Score excerpt: ${work.title}`}
-            class="w-full object-contain max-h-48 rounded"
-          />
-          <p class="text-xs text-gray-400 mt-1">Score excerpt</p>
+        <div class="panel">
+          <div class="panel-head">Score Excerpt</div>
+          <div style="padding:6px; text-align:center; background:#F0EBE7;">
+            <img src={incipitSrc} alt={`Score excerpt: ${work.title}`}
+                 style="max-width:100%; max-height:160px; object-fit:contain;" />
+          </div>
         </div>
       )}
 
-      <!-- Composer info -->
-      <div class="card text-sm">
-        <h3 class="!mt-0">Composer</h3>
-        <p class="font-medium">{work.composer}</p>
-        {work.birthDate && <p class="text-gray-500">b. {work.birthDate}{work.deathDate ? ` — d. ${work.deathDate}` : ''}</p>}
-        {work.period && <p class="text-gray-500">{work.period} · {work.country}</p>}
-        <a href={`${base}/repertoire?composerId=${work.composerId}`} class="block mt-2 text-xs">
-          All works by this composer →
-        </a>
+      <div class="panel">
+        <div class="panel-head">Composer</div>
+        <div class="panel-body" style="font-size:11px;">
+          <p style="font-weight:bold; margin-bottom:2px;">{work.composer}</p>
+          {work.birthDate && (
+            <p style="color:#666;">b. {work.birthDate}{work.deathDate ? ` — d. ${work.deathDate}` : ''}</p>
+          )}
+          {work.period && <p style="color:#666;">{work.period}{work.country ? ` · ${work.country}` : ''}</p>}
+          <a href={`${base}/repertoire?composerId=${work.composerId}`} style="font-size:11px; display:block; margin-top:6px;">
+            All works by this composer →
+          </a>
+        </div>
       </div>
 
-      <!-- Found in anthologies -->
       {work.sources && work.sources.length > 0 && (
-        <div class="card text-sm">
-          <h3 class="!mt-0">Found in</h3>
-          <ul class="space-y-1">
-            {work.sources.map(s => <li class="text-gray-700">{s}</li>)}
-          </ul>
+        <div class="panel">
+          <div class="panel-head">Found In</div>
+          <div>
+            {work.sources.map(s => (
+              <div style="font-size:11px; padding:3px 10px; border-bottom:1px solid #e4ddd6; color:#333;">{s}</div>
+            ))}
+          </div>
         </div>
       )}
     </div>
+
   </div>
 </Base>

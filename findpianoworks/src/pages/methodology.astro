@@ -3,7 +3,6 @@ import Base from '../layouts/Base.astro';
 import techniques from '../data/lookup/techniques.json';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-// Group techniques by family (the part before ' - ')
 const families: Record<string, string[]> = {};
 for (const t of techniques) {
   const dash = t.label.indexOf(' - ');
@@ -14,85 +13,84 @@ for (const t of techniques) {
 const familyNames = Object.keys(families).sort();
 ---
 <Base title="Methodology">
-  <div class="grid md:grid-cols-3 gap-6">
-    <div class="md:col-span-2 space-y-4">
-      <h1>Methodology</h1>
+  <div style="display:flex; gap:12px; align-items:flex-start;">
 
-      <div class="card">
-        <h2 class="!mt-0">Leveling</h2>
-        <p>
-          Difficulty levels for repertoire are indicated using numbers 1–10. This approach was
-          modeled after the system found in <em>The Pianist's Guide to Standard Teaching and
-          Performance Literature</em> by Jane Magrath.
-        </p>
-      </div>
+    <div style="flex:1; min-width:0;">
+      <div class="panel">
+        <div class="panel-body">
+          <h1>Methodology</h1>
 
-      <div class="card">
-        <h2 class="!mt-0">Techniques</h2>
-        <p class="mb-3">
-          In an effort to create the most intuitive list, individual techniques are found within
-          an umbrella category. For example, "staccato" is found under "Articulation" and
-          "left-hand melody" is found under "Voicing." A complete list of techniques appears below.
-        </p>
-        <p class="mb-4 text-sm text-gray-600">
-          Techniques are associated with a work if they are significant to the search for
-          repertoire — either because the technique is a new hurdle for the student, or because
-          it pervades the work.
-        </p>
+          <h2>Leveling</h2>
+          <p>
+            Difficulty levels for repertoire are indicated using numbers 1–10. This approach was
+            modeled after the system found in <em>The Pianist's Guide to Standard Teaching and
+            Performance Literature</em> by Jane Magrath.
+          </p>
 
-        <!-- Family TOC -->
-        <h3>Technique Families</h3>
-        <p class="text-sm">
-          {familyNames.map((f, i) => (
-            <>
-              <a href={`#${f.replace(/\s+/g, '-')}`}>{f}</a>
-              {i < familyNames.length - 1 && ' · '}
-            </>
+          <h2>Techniques</h2>
+          <p>
+            In an effort to create the most intuitive list, individual techniques are found within
+            an umbrella category. For example, the technique "staccato" is found under the umbrella
+            category "articulation." The technique "left-hand melody" is found under the category
+            "voicing." A complete list of techniques with links to examples appears below.
+          </p>
+          <p>
+            In our database, techniques are associated with a work if they are significant to the
+            search for repertoire. We determined that teachers would want to search by techniques for
+            two reasons: (1) the technique is a new hurdle for the student or (2) the technique
+            pervades a work.
+          </p>
+
+          <h2>Technique Families:</h2>
+          <p>
+            {familyNames.map((f, i) => (
+              <>
+                <a href={`#${f.replace(/\s+/g, '-')}`}>{f}</a>
+                {i < familyNames.length - 1 && <br />}
+              </>
+            ))}
+          </p>
+
+          <h2>Complete Technique List:</h2>
+          {familyNames.map(f => (
+            <div style="margin-bottom:12px;">
+              <h3 id={f.replace(/\s+/g, '-')}>{f}</h3>
+              <p>
+                {families[f].map((t, i) => (
+                  <>
+                    <a href={`${base}/repertoire?technique=${encodeURIComponent(f + ' - ' + t)}`}>{f} — {t}</a>
+                    {i < families[f].length - 1 && <br />}
+                  </>
+                ))}
+              </p>
+            </div>
           ))}
-        </p>
-
-        <!-- Per-family lists -->
-        {familyNames.map(f => (
-          <div class="mt-4">
-            <h3 id={f.replace(/\s+/g, '-')} class="!text-fpw-green">{f}</h3>
-            <ul class="grid sm:grid-cols-2 gap-x-4 gap-y-0.5 text-sm list-disc list-inside">
-              {families[f].map(t => (
-                <li>
-                  <a href={`${base}/repertoire?technique=${encodeURIComponent(f + ' - ' + t)}`}>
-                    {t}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        </div>
       </div>
     </div>
 
-    <div class="space-y-4">
-      <div class="card text-sm">
-        <h3>Information</h3>
-        <ul class="space-y-1">
-          <li><a href={`${base}/about`}>About</a></li>
-          <li><a href={`${base}/methodology`}>Methodology</a></li>
-          <li><a href={`${base}/acknowledgements`}>Acknowledgements</a></li>
-        </ul>
+    <div style="width:160px; flex-shrink:0;">
+      <div class="panel">
+        <div class="panel-head">Information</div>
+        <div>
+          <a href={`${base}/about`} class="sidebar-link">About</a>
+          <a href={`${base}/methodology`} class="sidebar-link">Methodology</a>
+          <a href={`${base}/acknowledgements`} class="sidebar-link">Acknowledgements</a>
+        </div>
       </div>
-      <div class="card text-sm">
-        <h3>Level Scale (Magrath)</h3>
-        <ol class="list-decimal list-inside space-y-0.5 text-gray-700">
-          <li>Primer / Early Elementary</li>
-          <li>Elementary</li>
-          <li>Late Elementary</li>
-          <li>Early Intermediate</li>
-          <li>Intermediate</li>
-          <li>Late Intermediate</li>
-          <li>Early Advanced</li>
-          <li>Advanced</li>
-          <li>Late Advanced</li>
-          <li>Concert / Collegiate</li>
-        </ol>
+      <div class="panel">
+        <div class="panel-head">Level Scale</div>
+        <div class="panel-body" style="padding-top:6px;">
+          {['Primer/Early Elem.','Elementary','Late Elementary','Early Intermediate',
+            'Intermediate','Late Intermediate','Early Advanced','Advanced',
+            'Late Advanced','Concert/Collegiate'].map((l, i) => (
+            <div style="font-size:11px; padding:2px 0; border-bottom:1px solid #ddd4c8;">
+              <strong style="color:#AD4C21;">{i+1}</strong> — {l}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
+
   </div>
 </Base>

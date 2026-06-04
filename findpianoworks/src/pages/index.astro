@@ -1,71 +1,54 @@
 ---
 import Base from '../layouts/Base.astro';
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <Base title="findpianoworks.com">
-  <div class="grid md:grid-cols-3 gap-6">
-    <!-- Main search box -->
-    <div class="md:col-span-2">
-      <div class="card">
-        <h1>Welcome to findpianoworks.com</h1>
-        <p class="mb-4 text-gray-600">
-          Search a curated database of piano teaching literature — 576 works from standard
-          leveled anthologies, searchable by composer, difficulty, period, technique, mood, and more.
-        </p>
-        <form action={`${base}/repertoire`} method="get" class="flex gap-2">
-          <input
-            type="search"
-            name="q"
-            placeholder="Search by composer, title, or keyword…"
-            class="flex-1"
-          />
-          <button type="submit" class="btn whitespace-nowrap">Find Works</button>
-        </form>
-        <p class="mt-3 text-xs text-gray-500">
-          Or use the <a href={`${base}/repertoire`}>Repertoire</a> tab for guided filtering,
-          or <a href={`${base}/anthologies`}>Anthologies</a> to browse by collection.
-        </p>
-      </div>
+  <div style="display:flex; gap:12px; align-items:flex-start;">
 
-      <!-- Quick-start cards -->
-      <div class="grid sm:grid-cols-2 gap-4 mt-6">
-        <a href={`${base}/repertoire`} class="card hover:border-fpw-blue transition-colors no-underline block">
-          <h3 class="!text-fpw-darkblue">Search Repertoire</h3>
-          <p class="text-gray-600 text-xs">Filter by composer, level, period, technique, mood, occasion, and more.</p>
-        </a>
-        <a href={`${base}/anthologies`} class="card hover:border-fpw-blue transition-colors no-underline block">
-          <h3 class="!text-fpw-darkblue">Browse Anthologies</h3>
-          <p class="text-gray-600 text-xs">See the contents of Masterwork Classics, Kjos, Celebration Series, and others.</p>
-        </a>
-        <a href={`${base}/methodology`} class="card hover:border-fpw-blue transition-colors no-underline block">
-          <h3 class="!text-fpw-darkblue">Methodology</h3>
-          <p class="text-gray-600 text-xs">Learn about the leveling system and complete technique taxonomy.</p>
-        </a>
-        <a href={`${base}/about`} class="card hover:border-fpw-blue transition-colors no-underline block">
-          <h3 class="!text-fpw-darkblue">About the Project</h3>
-          <p class="text-gray-600 text-xs">History and goals of findpianoworks.com.</p>
-        </a>
+    <!-- Left: main search panel -->
+    <div style="flex:1; min-width:0;">
+      <div class="panel">
+        <div class="panel-body">
+          <h1>Welcome!</h1>
+          <form action={`${base}/repertoire`} method="get" style="margin:10px 0 0;">
+            <p>
+              Type in partial information to search repertoire and anthologies.
+              For guided searches try the
+              <a href={`${base}/repertoire`}>Repertoire</a> or
+              <a href={`${base}/anthologies`}>Anthologies</a> tabs above.
+            </p>
+            <div style="margin-top:8px;">
+              <input type="search" name="q" size="32" placeholder="Composer, title, keyword…" />
+              &nbsp;
+              <button type="submit" class="btn">Find Works</button>
+              &nbsp;
+              <button type="reset" class="btn-secondary">Clear Form</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
-    <!-- Sidebar links -->
-    <div class="space-y-4">
-      <div class="card">
-        <h3>Information</h3>
-        <ul class="space-y-1 text-sm">
-          <li><a href={`${base}/about`}>About</a></li>
-          <li><a href={`${base}/methodology`}>Methodology</a></li>
-          <li><a href={`${base}/acknowledgements`}>Acknowledgements</a></li>
-        </ul>
+    <!-- Right sidebar -->
+    <div style="width:160px; flex-shrink:0;">
+      <div class="panel">
+        <div class="panel-head">Information</div>
+        <div>
+          <a href={`${base}/about`} class="sidebar-link">About</a>
+          <a href={`${base}/methodology`} class="sidebar-link">Methodology</a>
+          <a href={`${base}/acknowledgements`} class="sidebar-link">Acknowledgements</a>
+        </div>
       </div>
-      <div class="card">
-        <h3>External Links</h3>
-        <ul class="space-y-1 text-sm">
-          <li><a href="https://www.alfred.com" target="_blank" rel="noreferrer">Alfred Publishing</a></li>
-          <li><a href="https://www.kjos.com" target="_blank" rel="noreferrer">Neil A. Kjos Music</a></li>
-          <li><a href="https://www.frederickharris.com" target="_blank" rel="noreferrer">Frederick Harris Music</a></li>
-        </ul>
+
+      <div class="panel">
+        <div class="panel-head">Links</div>
+        <div>
+          <a href="https://www.alfred.com" target="_blank" class="sidebar-link">Alfred Publishing</a>
+          <a href="https://www.kjos.com" target="_blank" class="sidebar-link">Kjos Music</a>
+          <a href="https://www.frederickharris.com" target="_blank" class="sidebar-link">Frederick Harris</a>
+        </div>
       </div>
     </div>
+
   </div>
 </Base>

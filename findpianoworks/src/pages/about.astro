@@ -3,54 +3,55 @@ import Base from '../layouts/Base.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <Base title="About">
-  <div class="grid md:grid-cols-3 gap-6">
-    <div class="md:col-span-2 card space-y-4">
-      <h1>About findpianoworks.com</h1>
-      <section>
-        <h2>Introduction</h2>
-        <p>
-          Staying current with recent publications of new music, editions, and anthologies and the
-          existing body of repertoire is a time-consuming process. findpianoworks.com aims to
-          centralize this large body of information in a searchable online database. In addition to
-          searching for repertoire, you may search the contents of anthologies and cross-reference
-          findings among multiple composers and publishers. We hope that this website will expedite
-          your search process, saving you time and energy.
-        </p>
-      </section>
-      <section>
-        <h2>History</h2>
-        <p>
-          The database now available through this website was originally a personal project by the
-          authors that organized information on piano teaching literature. The goal was to make
-          existing notes easily searchable and accessible, but the process itself proved enlightening
-          and the project continued to grow. As we developed this cataloging system, we systematically
-          considered the selection process teachers follow when choosing new music for their students
-          and built the structure of the database accordingly. The result of these painstaking efforts
-          is findpianoworks.com. Now visitors can search through a large amount of literature, sorting
-          by specific criteria to find just the right piece.
-        </p>
-      </section>
-      <section>
-        <h2>The Current Catalog</h2>
-        <p>
-          The current catalog includes three series of leveled anthologies: <em>Masterwork Classics</em>
-          edited by Jane Magrath, the <em>Kjos Repertoire</em> series edited by Keith Snell, and the
-          <em>Celebration Series</em> by Frederick Harris. These anthologies were selected since they
-          include a variety of styles and techniques within the standard teaching repertoire. The catalog
-          is continually growing. The authors hope to eventually include all popular anthologies and
-          stay current with new releases.
-        </p>
-      </section>
-    </div>
-    <div class="space-y-4">
-      <div class="card text-sm">
-        <h3>Information</h3>
-        <ul class="space-y-1">
-          <li><a href={`${base}/about`}>About</a></li>
-          <li><a href={`${base}/methodology`}>Methodology</a></li>
-          <li><a href={`${base}/acknowledgements`}>Acknowledgements</a></li>
-        </ul>
+  <div style="display:flex; gap:12px; align-items:flex-start;">
+
+    <div style="flex:1; min-width:0;">
+      <div class="panel">
+        <div class="panel-body">
+          <h1>About findpianoworks.com</h1>
+          <h2>Introduction</h2>
+          <p>
+            Staying current with recent publications of new music, editions, and anthologies and the
+            existing body of repertoire is a time-consuming process. findpianoworks.com aims to
+            centralize this large body of information in a searchable online database. In addition to
+            searching for repertoire, you may search the contents of anthologies and cross-reference
+            findings among multiple composers and publishers. We hope that this website will expedite
+            your search process, saving you time and energy.
+          </p>
+          <h2>History</h2>
+          <p>
+            The database now available through this website was originally a personal project by the
+            authors that organized information on piano teaching literature. The goal was to make
+            existing notes easily searchable and accessible, but the process itself proved enlightening
+            and the project continued to grow. As we developed this cataloging system, we systematically
+            considered the selection process teachers follow when choosing new music for their students
+            and built the structure of the database accordingly. The result of these painstaking efforts
+            is findpianoworks.com. Now visitors can search through a large amount of literature, sorting
+            by specific criteria to find just the right piece.
+          </p>
+          <h2>The Current Catalog</h2>
+          <p>
+            The current catalog includes three series of leveled anthologies: <em>Masterwork Classics</em>
+            edited by Jane Magrath, the <em>Kjos Repertoire</em> series edited by Keith Snell, and the
+            <em>Celebration Series</em> by Frederick Harris. These anthologies were selected since they
+            include a variety of styles and techniques within the standard teaching repertoire. The catalog
+            is continually growing. The authors hope to eventually include all popular anthologies and
+            stay current with new releases.
+          </p>
+        </div>
       </div>
     </div>
+
+    <div style="width:160px; flex-shrink:0;">
+      <div class="panel">
+        <div class="panel-head">Information</div>
+        <div>
+          <a href={`${base}/about`} class="sidebar-link">About</a>
+          <a href={`${base}/methodology`} class="sidebar-link">Methodology</a>
+          <a href={`${base}/acknowledgements`} class="sidebar-link">Acknowledgements</a>
+        </div>
+      </div>
+    </div>
+
   </div>
 </Base>

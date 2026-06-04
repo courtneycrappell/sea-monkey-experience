@@ -17,34 +17,40 @@ const sortedWorks = [...(anthology.works ?? [])].sort((a, b) =>
 );
 ---
 <Base title={anthology.title ?? 'Anthology'}>
-  <div class="mb-3">
-    <a href={`${base}/anthologies`} class="text-sm text-fpw-blue">&larr; Back to anthologies</a>
-  </div>
+  <p style="margin-bottom:8px; font-size:11px;">
+    <a href={`${base}/anthologies`}>&larr; Back to anthologies</a>
+  </p>
 
-  <div class="grid md:grid-cols-3 gap-6">
-    <div class="md:col-span-2">
-      <h1>{anthology.title}</h1>
-      {editors.length > 0 && (
-        <p class="text-gray-600 text-sm mb-4">
-          Edited by {editors.map(e => e.name).join(', ')}
-        </p>
-      )}
+  <div style="display:flex; gap:12px; align-items:flex-start;">
 
-      <div class="card">
-        <h3 class="!mt-0">{sortedWorks.length} Works in this anthology</h3>
-        <div class="divide-y divide-gray-100">
+    <!-- Work list panel -->
+    <div style="flex:1; min-width:0;">
+      <div class="panel">
+        <div class="panel-head">
+          {anthology.title}
+          {editors.length > 0 && (
+            <span style="font-weight:normal; font-size:11px; color:#5a4a3a; margin-left:8px;">
+              ed. {editors.map(e => e.name).join(', ')}
+            </span>
+          )}
+        </div>
+        <div class="panel-body" style="padding:0;">
+          <div style="padding:6px 15px 4px; font-size:11px; color:#888; border-bottom:1px solid #e4ddd6;">
+            {sortedWorks.length} works
+          </div>
           {sortedWorks.map(w => (
-            <div class="py-2 flex items-center justify-between gap-4">
-              <div>
-                <span class="font-medium text-sm">{w.title}</span>
-                <span class="text-gray-500 text-xs ml-2">{w.composer}</span>
-                {w.catalogNumber && <span class="text-gray-400 text-xs ml-1">· {w.catalogNumber}</span>}
-                <div class="flex flex-wrap gap-1 mt-0.5">
+            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:8px;
+                        padding:5px 15px; border-bottom:1px solid #ece5de;">
+              <div style="flex:1; min-width:0;">
+                <span style="font-weight:bold; color:#D96B11; font-size:12px;">{w.title}</span>
+                <span style="color:#888; font-size:11px; margin-left:6px;">{w.composer}</span>
+                {w.catalogNumber && <span style="color:#bbb; font-size:11px;">, {w.catalogNumber}</span>}
+                <span style="display:inline-block; margin-left:4px;">
                   {w.level && <span class="tag">Level {w.level}</span>}
                   {w.period && <span class="tag">{w.period}</span>}
-                </div>
+                </span>
               </div>
-              <a href={`${base}/works/${w.id}`} class="text-fpw-blue text-xs shrink-0">View →</a>
+              <a href={`${base}/works/${w.id}`} style="font-size:11px; flex-shrink:0;">View →</a>
             </div>
           ))}
         </div>
@@ -52,25 +58,39 @@ const sortedWorks = [...(anthology.works ?? [])].sort((a, b) =>
     </div>
 
     <!-- Sidebar -->
-    <div class="space-y-4">
+    <div style="width:160px; flex-shrink:0;">
+
       {anthology.coverImage && !anthology.coverImage.includes('blankcoverart') && (
-        <div class="card p-2">
-          <img
-            src={anthology.coverImage}
-            alt={`${anthology.title} cover`}
-            class="w-full object-contain max-h-48"
-            onerror="this.closest('.card').style.display='none'"
-          />
+        <div class="panel">
+          <div style="padding:6px; background:#F0EBE7; text-align:center;">
+            <img src={anthology.coverImage} alt={`${anthology.title} cover`}
+                 style="max-width:100%; max-height:180px; object-fit:contain;"
+                 onerror="this.closest('.panel').style.display='none'" />
+          </div>
         </div>
       )}
-      <div class="card text-sm space-y-1">
-        <h3 class="!mt-0">Details</h3>
-        {anthology.publisher && <p><span class="label">Publisher: </span>{anthology.publisher}</p>}
-        {anthology.pubDateOrig && <p><span class="label">First published: </span>{anthology.pubDateOrig}</p>}
-        {anthology.bookType && <p><span class="label">Type: </span>{anthology.bookType}</p>}
-        {anthology.companionCD && <p class="text-fpw-green font-medium">Includes companion CD</p>}
-        {anthology.comments && <p class="text-gray-500 text-xs mt-2">{anthology.comments}</p>}
+
+      <div class="panel">
+        <div class="panel-head">Details</div>
+        <div class="panel-body" style="font-size:11px; padding-top:6px;">
+          {anthology.publisher && (
+            <p><span style="font-weight:bold; color:#AD4C21;">Publisher:</span><br />{anthology.publisher}</p>
+          )}
+          {anthology.pubDateOrig && (
+            <p><span style="font-weight:bold; color:#AD4C21;">First published:</span><br />{anthology.pubDateOrig}</p>
+          )}
+          {anthology.bookType && (
+            <p><span style="font-weight:bold; color:#AD4C21;">Type:</span> {anthology.bookType}</p>
+          )}
+          {anthology.companionCD && (
+            <p style="color:#4a7c59; font-weight:bold;">Includes companion CD</p>
+          )}
+          {anthology.comments && (
+            <p style="color:#666; margin-top:6px;">{anthology.comments}</p>
+          )}
+        </div>
       </div>
+
     </div>
   </div>
 </Base>

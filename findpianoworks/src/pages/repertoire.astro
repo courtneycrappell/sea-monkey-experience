@@ -15,107 +15,111 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const techniqueFamilies = [...new Set(
   techniques.map(t => t.label.split(' - ')[0])
 )].sort();
+
+const labelStyle = 'display:block; font-size:11px; color:#555; margin-bottom:2px; margin-top:6px;';
+const selectStyle = 'width:100%; color:#AD4C21; border:1px solid #b8a898; background:#F0EBE7; padding:2px 3px; font-family:inherit; font-size:11px;';
 ---
 <Base title="Repertoire Search">
-  <h1>Repertoire Search</h1>
-  <div class="grid md:grid-cols-4 gap-6">
-    <!-- Filter sidebar -->
-    <form id="sf" class="md:col-span-1 space-y-3 card self-start">
-      <h3 class="!mt-0">Filter</h3>
-      <div>
-        <label class="label block mb-1">Quick search</label>
-        <input type="search" id="q" placeholder="Title or composer…" />
-      </div>
-      <div>
-        <label class="label block mb-1">Composer</label>
-        <select id="composerId">
-          <option value="">— Any —</option>
-          {composers.map(c => <option value={String(c.id)}>{c.name}</option>)}
-        </select>
-      </div>
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="label block mb-1">Level min</label>
-          <select id="levelMin">
-            <option value="">—</option>
-            {levels.map(l => <option value={String(l.id)}>{l.label}</option>)}
-          </select>
-        </div>
-        <div>
-          <label class="label block mb-1">Level max</label>
-          <select id="levelMax">
-            <option value="">—</option>
-            {levels.map(l => <option value={String(l.id)}>{l.label}</option>)}
-          </select>
-        </div>
-      </div>
-      <div>
-        <label class="label block mb-1">Period</label>
-        <select id="period">
-          <option value="">— Any —</option>
-          {periods.map(p => <option value={p.label}>{p.label}</option>)}
-        </select>
-      </div>
-      <div>
-        <label class="label block mb-1">Technique family</label>
-        <select id="techFamily">
-          <option value="">— Any —</option>
-          {techniqueFamilies.map(f => <option value={f}>{f}</option>)}
-        </select>
-      </div>
-      <div>
-        <label class="label block mb-1">Specific technique</label>
-        <select id="technique">
-          <option value="">— Any —</option>
-          {techniques.map(t => <option value={t.label}>{t.label}</option>)}
-        </select>
-      </div>
-      <div>
-        <label class="label block mb-1">Mood</label>
-        <select id="mood">
-          <option value="">— Any —</option>
-          {moods.map(m => <option value={m.label}>{m.label}</option>)}
-        </select>
-      </div>
-      <div>
-        <label class="label block mb-1">Occasion</label>
-        <select id="occasion">
-          <option value="">— Any —</option>
-          {occasions.map(o => <option value={o.label}>{o.label}</option>)}
-        </select>
-      </div>
-      <div>
-        <label class="label block mb-1">Genre</label>
-        <select id="genre">
-          <option value="">— Any —</option>
-          {genres.map(g => <option value={g.label}>{g.label}</option>)}
-        </select>
-      </div>
-      <div>
-        <label class="label block mb-1">Key signature</label>
-        <select id="keySig">
-          <option value="">— Any —</option>
-          {keysigs.map(k => <option value={k.label}>{k.label}</option>)}
-        </select>
-      </div>
-      <div>
-        <label class="label block mb-1">Instrumentation</label>
-        <select id="instrumentation">
-          <option value="">— Any —</option>
-          {instrumentation.map(i => <option value={i.label}>{i.label}</option>)}
-        </select>
-      </div>
-      <div class="flex gap-2 pt-1">
-        <button type="submit" class="btn flex-1">Search</button>
-        <button type="button" id="clearBtn" class="btn-secondary">Clear</button>
-      </div>
-    </form>
+  <div style="display:flex; gap:12px; align-items:flex-start;">
 
-    <!-- Results -->
-    <div class="md:col-span-3">
-      <p id="rh" class="text-sm text-gray-500 mb-3"></p>
-      <div id="rl" class="space-y-2"></div>
+    <!-- Filter panel (left) -->
+    <div style="width:175px; flex-shrink:0;">
+      <form id="sf">
+        <div class="panel">
+          <div class="panel-head">Basic Search</div>
+          <div class="panel-body" style="padding-top:6px;">
+
+            <label style={labelStyle} for="q">Search</label>
+            <input type="search" id="q" placeholder="Title or composer…" style={selectStyle} />
+
+            <label style={labelStyle} for="composerId">Composer</label>
+            <select id="composerId" style={selectStyle}>
+              <option value="">— Select —</option>
+              {composers.map(c => <option value={String(c.id)}>{c.name}</option>)}
+            </select>
+
+            <label style={labelStyle}>Level range</label>
+            <div style="display:flex; gap:4px; align-items:center;">
+              <select id="levelMin" style={selectStyle}>
+                <option value="">—</option>
+                {levels.map(l => <option value={String(l.id)}>{l.label}</option>)}
+              </select>
+              <span style="font-size:11px; color:#888;">–</span>
+              <select id="levelMax" style={selectStyle}>
+                <option value="">—</option>
+                {levels.map(l => <option value={String(l.id)}>{l.label}</option>)}
+              </select>
+            </div>
+
+            <label style={labelStyle} for="period">Period</label>
+            <select id="period" style={selectStyle}>
+              <option value="">— Select —</option>
+              {periods.map(p => <option value={p.label}>{p.label}</option>)}
+            </select>
+
+            <hr style="margin:10px 0; border-bottom:1px dashed #c7b8a4;" />
+
+            <label style={labelStyle} for="techFamily">Technique family</label>
+            <select id="techFamily" style={selectStyle}>
+              <option value="">— Select —</option>
+              {techniqueFamilies.map(f => <option value={f}>{f}</option>)}
+            </select>
+
+            <label style={labelStyle} for="technique">Specific technique</label>
+            <select id="technique" style={selectStyle}>
+              <option value="">— Select —</option>
+              {techniques.map(t => <option value={t.label}>{t.label}</option>)}
+            </select>
+
+            <label style={labelStyle} for="mood">Mood</label>
+            <select id="mood" style={selectStyle}>
+              <option value="">— Select —</option>
+              {moods.map(m => <option value={m.label}>{m.label}</option>)}
+            </select>
+
+            <label style={labelStyle} for="occasion">Occasion</label>
+            <select id="occasion" style={selectStyle}>
+              <option value="">— Select —</option>
+              {occasions.map(o => <option value={o.label}>{o.label}</option>)}
+            </select>
+
+            <label style={labelStyle} for="genre">Genre</label>
+            <select id="genre" style={selectStyle}>
+              <option value="">— Select —</option>
+              {genres.map(g => <option value={g.label}>{g.label}</option>)}
+            </select>
+
+            <label style={labelStyle} for="keySig">Key signature</label>
+            <select id="keySig" style={selectStyle}>
+              <option value="">— Select —</option>
+              {keysigs.map(k => <option value={k.label}>{k.label}</option>)}
+            </select>
+
+            <label style={labelStyle} for="instrumentation">Instrumentation</label>
+            <select id="instrumentation" style={selectStyle}>
+              <option value="">— Select —</option>
+              {instrumentation.map(i => <option value={i.label}>{i.label}</option>)}
+            </select>
+
+            <div style="margin-top:10px; display:flex; gap:4px;">
+              <button type="submit" class="btn" style="flex:1;">Find Works</button>
+              <button type="button" id="clearBtn" class="btn-secondary">Clear</button>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
+
+    <!-- Results panel (right) -->
+    <div style="flex:1; min-width:0;">
+      <div class="panel">
+        <div class="panel-head" id="rh">Search Results</div>
+        <div class="panel-body" style="padding:0;">
+          <div id="rl"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </Base>
 
@@ -124,27 +128,26 @@ const techniqueFamilies = [...new Set(
 
   function render(ws) {
     document.getElementById('rh').textContent =
-      `${ws.length} work${ws.length !== 1 ? 's' : ''} found`;
+      ws.length + ' work' + (ws.length !== 1 ? 's' : '') + ' found';
     if (!ws.length) {
       document.getElementById('rl').innerHTML =
-        '<p class="text-gray-500 card">No results match your criteria.</p>';
+        '<p style="padding:12px 15px; color:#888;">No results match your criteria.</p>';
       return;
     }
     document.getElementById('rl').innerHTML = ws.map(w => `
-      <div class="card flex items-start justify-between gap-4">
-        <div class="flex-1 min-w-0">
-          <div class="font-semibold text-fpw-darkblue">${w.title ?? '(untitled)'}</div>
-          <div class="text-xs text-gray-600">
-            ${w.composer ?? ''}${w.catalogNumber ? ' · ' + w.catalogNumber : ''}
-          </div>
-          <div class="flex flex-wrap gap-1 mt-1">
+      <div class="result-row" style="padding:6px 15px; display:flex; align-items:baseline; gap:8px; border-bottom:1px solid #ddd4c8;">
+        <div style="flex:1; min-width:0;">
+          <span style="font-weight:bold; color:#D96B11;">${w.title ?? '(untitled)'}</span>
+          <span style="color:#888; font-size:11px; margin-left:6px;">${w.composer ?? ''}</span>
+          ${w.catalogNumber ? `<span style="color:#aaa; font-size:11px;">, ${w.catalogNumber}</span>` : ''}
+          <div style="margin-top:2px;">
             ${w.level ? `<span class="tag">Level ${w.level}</span>` : ''}
             ${w.period ? `<span class="tag">${w.period}</span>` : ''}
             ${w.keySig ? `<span class="tag">${w.keySig}</span>` : ''}
             ${(w.techniques || []).slice(0, 2).map(t => `<span class="tag">${t}</span>`).join('')}
           </div>
         </div>
-        <a href="${base}/works/${w.id}" class="btn whitespace-nowrap text-xs shrink-0">View</a>
+        <a href="${base}/works/${w.id}" class="btn btn-sm" style="flex-shrink:0;">View</a>
       </div>
     `).join('');
   }
@@ -171,7 +174,7 @@ const techniqueFamilies = [...new Set(
       if (lMin && (w.levelId || 0) < lMin) return false;
       if (lMax < 99 && (w.levelId || 0) > lMax) return false;
       if (period && n(w.period) !== period) return false;
-      if (tf && !(w.techniques || []).some(t => n(t).startsWith(tf))) return false;
+      if (tf && !(w.techniques || []).some(t => n(t).startsWith(tf.toLowerCase()))) return false;
       if (tech && !(w.techniques || []).some(t => n(t) === tech)) return false;
       if (mood && n(w.mood) !== mood) return false;
       if (occ && n(w.occasion) !== occ) return false;
@@ -187,7 +190,6 @@ const techniqueFamilies = [...new Set(
     render(res);
   }
 
-  // Init
   render(works);
   document.getElementById('sf').addEventListener('submit', e => { e.preventDefault(); doFilter(); });
   document.getElementById('sf').addEventListener('change', doFilter);
@@ -196,7 +198,12 @@ const techniqueFamilies = [...new Set(
     doFilter();
   });
 
-  // Handle ?q= from home search
   const qp = new URLSearchParams(location.search).get('q');
   if (qp) { document.getElementById('q').value = qp; doFilter(); }
+
+  const tp = new URLSearchParams(location.search).get('technique');
+  if (tp) { document.getElementById('technique').value = tp; doFilter(); }
+
+  const cp = new URLSearchParams(location.search).get('composerId');
+  if (cp) { document.getElementById('composerId').value = cp; doFilter(); }
 </script>

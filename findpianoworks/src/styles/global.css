@@ -4,32 +4,139 @@
 
 @layer base {
   body {
-    @apply bg-fpw-bg text-gray-800 font-sans text-sm;
+    background-color: #e4e4e4;
+    font-family: "Trebuchet MS", Verdana, sans-serif;
+    font-size: 12px;
+    color: #333;
+    margin: 0;
+    padding: 0;
   }
-  h1 { @apply text-2xl font-bold text-fpw-darkblue mb-3; }
-  h2 { @apply text-xl font-semibold text-fpw-blue mb-2 mt-4; }
-  h3 { @apply text-base font-semibold text-fpw-blue mb-1; }
-  a  { @apply text-fpw-blue hover:underline; }
+
+  h1 { color: #D96B11; font-size: 1.6em; font-weight: bold; margin: 0 0 8px; padding: 0; }
+  h2 { color: #333;    font-size: 1.3em; font-weight: bold; margin: 12px 0 5px; padding: 0; }
+  h3 { color: #76b7d7; font-size: 1.2em; font-weight: bold; margin: 0 0 5px; padding: 0; }
+  h4 { color: #333;    font-size: 1.1em; font-weight: bold; margin: 0 0 5px; padding: 0; }
+
+  a {
+    color: #AD4C21;
+    text-decoration: none;
+    border-bottom: 1px dashed currentColor;
+  }
+  a:hover { color: #000; }
+
+  dt { font-weight: bold; color: #AD4C21; }
+  dd { margin-left: 15px; margin-bottom: 2px; }
+
+  hr {
+    border: 0;
+    border-bottom: 1px dashed #c7b8a4;
+    height: 1px;
+    margin: 8px 0;
+  }
+
+  select, input[type="text"], input[type="search"] {
+    color: #AD4C21;
+    border: 1px solid #b8a898;
+    background: #F0EBE7;
+    padding: 2px 5px;
+    font-family: inherit;
+    font-size: 11px;
+  }
+  select:focus, input:focus { outline: 1px solid #D96B11; }
+
+  label { font-size: 11px; color: #555; }
+  p { margin: 0 0 8px; line-height: 1.5; }
 }
 
 @layer components {
-  .btn {
-    @apply inline-block px-4 py-1.5 bg-fpw-blue text-white rounded text-sm
-           hover:bg-fpw-darkblue transition-colors cursor-pointer border-0;
+  /* ── Panel: the main cream box with a tan top cap ─────────────── */
+  .panel {
+    background: #F0EBE7;
+    border: 1px solid #c7b8a4;
+    border-top: 4px solid #a0907e;
+    margin-bottom: 12px;
   }
-  .btn-secondary {
-    @apply inline-block px-4 py-1.5 bg-gray-200 text-gray-700 rounded text-sm
-           hover:bg-gray-300 transition-colors cursor-pointer border-0;
+  .panel > .panel-body {
+    padding: 10px 15px 14px;
   }
-  .card {
-    @apply bg-white border border-fpw-border rounded shadow-sm p-4;
+  /* Heading strip inside a panel (dark tan bar) */
+  .panel-head {
+    background: #c7b8a4;
+    padding: 4px 15px;
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #3a2e24;
+    border-bottom: 1px solid #a0907e;
   }
-  .label { @apply text-gray-500 font-medium text-xs uppercase tracking-wide; }
+
+  /* ── Sidebar nav links ────────────────────────────────────────── */
+  .sidebar-link {
+    display: block;
+    background: #c7b8a4;
+    color: #000;
+    padding: 4px 4px 4px 10px;
+    font-size: 12px;
+    border-bottom: 1px solid #b0a090;
+    border-left: none; border-right: none; border-top: none;
+    text-decoration: none;
+  }
+  .sidebar-link:hover {
+    color: #fff !important;
+    background: #822C0F;
+    border-color: #822C0F;
+  }
+
+  /* ── Tags / chips ─────────────────────────────────────────────── */
   .tag {
-    @apply inline-block bg-fpw-lightblue text-fpw-darkblue text-xs px-2 py-0.5 rounded mr-1 mb-1;
+    display: inline-block;
+    background: #e8ddd6;
+    color: #5a4a3a;
+    font-size: 11px;
+    padding: 1px 6px;
+    margin: 1px 3px 1px 0;
+    border: 1px solid #c7b8a4;
   }
-  select, input[type="text"], input[type="search"] {
-    @apply border border-fpw-border rounded px-2 py-1 text-sm bg-white
-           focus:outline-none focus:border-fpw-blue w-full;
+
+  /* ── Buttons ──────────────────────────────────────────────────── */
+  .btn {
+    display: inline-block;
+    padding: 3px 14px;
+    background: #AD4C21;
+    color: #fff !important;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: bold;
+    border: 1px solid #822C0F;
+    cursor: pointer;
+    text-decoration: none;
   }
+  .btn:hover { background: #822C0F; }
+
+  .btn-sm {
+    padding: 2px 8px;
+    font-size: 11px;
+  }
+
+  .btn-secondary {
+    display: inline-block;
+    padding: 3px 12px;
+    background: #c7b8a4;
+    color: #333 !important;
+    font-family: inherit;
+    font-size: 12px;
+    border: 1px solid #a0907e;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn-secondary:hover { background: #b0a090; }
+
+  /* ── Result row in repertoire search ────────────────────────────*/
+  .result-row {
+    border-bottom: 1px solid #ddd4c8;
+    padding: 6px 0;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .result-row:last-child { border-bottom: none; }
 }

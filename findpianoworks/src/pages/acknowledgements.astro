@@ -3,26 +3,36 @@ import Base from '../layouts/Base.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <Base title="Acknowledgements">
-  <div class="grid md:grid-cols-3 gap-6">
-    <div class="md:col-span-2 card space-y-4">
-      <h1>Acknowledgements</h1>
-      <p>
-        findpianoworks.com was created by <strong>Courtney Crappell</strong> and
-        <strong>Kimberly Dreisbach</strong>. The authors wish to thank all those who contributed
-        to the development and data entry for this database over the years.
-      </p>
-      <p>
-        Special thanks to the publishers who produce the anthologies catalogued here:
-        Alfred Publishing Co., Inc.; Neil A. Kjos Music Company; and The Frederick Harris Music Co., Limited.
-      </p>
+  <div style="display:flex; gap:12px; align-items:flex-start;">
+
+    <div style="flex:1; min-width:0;">
+      <div class="panel">
+        <div class="panel-body">
+          <h1>Acknowledgements</h1>
+          <p>
+            findpianoworks.com was created by <strong>Courtney Crappell</strong> and
+            <strong>Kimberly Dreisbach</strong>. The authors wish to thank all those who contributed
+            to the development and data entry for this database over the years.
+          </p>
+          <p>
+            Special thanks to the publishers who produce the anthologies catalogued here:
+            Alfred Publishing Co., Inc.; Neil A. Kjos Music Company; and The Frederick Harris Music
+            Co., Limited.
+          </p>
+        </div>
+      </div>
     </div>
-    <div class="card text-sm">
-      <h3>Information</h3>
-      <ul class="space-y-1">
-        <li><a href={`${base}/about`}>About</a></li>
-        <li><a href={`${base}/methodology`}>Methodology</a></li>
-        <li><a href={`${base}/acknowledgements`}>Acknowledgements</a></li>
-      </ul>
+
+    <div style="width:160px; flex-shrink:0;">
+      <div class="panel">
+        <div class="panel-head">Information</div>
+        <div>
+          <a href={`${base}/about`} class="sidebar-link">About</a>
+          <a href={`${base}/methodology`} class="sidebar-link">Methodology</a>
+          <a href={`${base}/acknowledgements`} class="sidebar-link">Acknowledgements</a>
+        </div>
+      </div>
     </div>
+
   </div>
 </Base>
