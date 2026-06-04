@@ -138,19 +138,27 @@ body{
   z-index: 45;
 }
 
-.flightEasterEgg{
+.iconRow{
   position: absolute;
-  left: 80px;
   bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 0 18px 40px;
+  z-index: 80;
+  overflow: visible;
+}
 
-  transform: translateY(-40px);   /* pulls plane upward */
-
+.flightEasterEgg{
+  position: relative;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
   pointer-events: auto;
-  z-index: 80;
 }
 
 .planeTrigger{
@@ -179,7 +187,7 @@ body{
 
 .planeSvg path{
   fill: rgba(220,245,255,0.02);
-  stroke: rgba(220,245,255,0.18);
+  stroke: rgba(220,245,255,0.55);
   stroke-width: 4.5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -189,10 +197,13 @@ body{
 .planeTrigger:hover .planeSvg path,
 .flightEasterEgg.open .planeSvg path{
   fill: rgba(220,245,255,0.05);
-  stroke: rgba(220,245,255,0.36);
+  stroke: rgba(220,245,255,0.76);
 }
 
 .flightPanel{
+  position: absolute;
+  bottom: 100%;
+  left: 0;
   width: min(440px, calc(92vw - 40px));
   max-height: 0;
   overflow: hidden;
@@ -468,16 +479,13 @@ body.flight-mode .heartEasterEgg {
 /* ── Bulb Easter Egg ─────────────────────────────────── */
 
 .bulbEasterEgg{
-  position: absolute;
-  left: 152px;
-  bottom: 0;
-  transform: translateY(-40px);
+  position: relative;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
   pointer-events: auto;
-  z-index: 80;
 }
 
 .bulbTrigger{
@@ -507,7 +515,7 @@ body.flight-mode .heartEasterEgg {
 .bulbSvg path,
 .bulbSvg line{
   fill: none;
-  stroke: rgba(220,245,255,0.18);
+  stroke: rgba(220,245,255,0.55);
   stroke-width: 4.5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -523,10 +531,13 @@ body.flight-mode .heartEasterEgg {
 .bulbEasterEgg.open .bulbSvg path,
 .bulbEasterEgg.open .bulbSvg line{
   fill: rgba(220,245,255,0.05);
-  stroke: rgba(220,245,255,0.36);
+  stroke: rgba(220,245,255,0.76);
 }
 
 .bulbPanel{
+  position: absolute;
+  bottom: 100%;
+  left: 0;
   width: min(500px, calc(92vw - 40px));
   max-height: 0;
   overflow: hidden;
@@ -695,16 +706,13 @@ body.bulb-mode .bulbEasterEgg {
 /* ── Heart Easter Egg ────────────────────────────────── */
 
 .heartEasterEgg{
-  position: absolute;
-  left: 214px;
-  bottom: 0;
-  transform: translateY(-40px);
+  position: relative;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
   pointer-events: auto;
-  z-index: 80;
 }
 
 .heartTrigger{
@@ -733,7 +741,7 @@ body.bulb-mode .bulbEasterEgg {
 
 .heartSvg path{
   fill: rgba(220,245,255,0.02);
-  stroke: rgba(220,245,255,0.18);
+  stroke: rgba(220,245,255,0.55);
   stroke-width: 4.5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -743,10 +751,13 @@ body.bulb-mode .bulbEasterEgg {
 .heartTrigger:hover .heartSvg path,
 .heartEasterEgg.open .heartSvg path{
   fill: rgba(220,245,255,0.05);
-  stroke: rgba(220,245,255,0.36);
+  stroke: rgba(220,245,255,0.76);
 }
 
 .heartPanel{
+  position: absolute;
+  bottom: 100%;
+  left: 0;
   width: min(500px, calc(92vw - 40px));
   max-height: 0;
   overflow: hidden;
@@ -913,16 +924,13 @@ body.heart-mode .heartEasterEgg {
 /* ── Sea Easter Egg ──────────────────────────────────── */
 
 .seaEasterEgg{
-  position: absolute;
-  left: 18px;
-  bottom: 0;
-  transform: translateY(-40px);
+  position: relative;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
   pointer-events: auto;
-  z-index: 80;
 }
 
 .seaTrigger{
@@ -951,7 +959,7 @@ body.heart-mode .heartEasterEgg {
 
 .seaSvg path{
   fill: none;
-  stroke: rgba(220,245,255,0.18);
+  stroke: rgba(220,245,255,0.55);
   stroke-width: 20;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -960,7 +968,7 @@ body.heart-mode .heartEasterEgg {
 
 .seaSvg line{
   fill: none;
-  stroke: rgba(220,245,255,0.18);
+  stroke: rgba(220,245,255,0.55);
   stroke-width: 5;
   stroke-linecap: round;
   filter: drop-shadow(0 1px 0 rgba(255,255,255,0.08)) drop-shadow(0 -1px 0 rgba(0,0,0,0.6));
@@ -968,15 +976,18 @@ body.heart-mode .heartEasterEgg {
 
 .seaTrigger:hover .seaSvg path,
 .seaEasterEgg.open .seaSvg path{
-  stroke: rgba(220,245,255,0.36);
+  stroke: rgba(220,245,255,0.76);
 }
 
 .seaTrigger:hover .seaSvg line,
 .seaEasterEgg.open .seaSvg line{
-  stroke: rgba(220,245,255,0.36);
+  stroke: rgba(220,245,255,0.76);
 }
 
 .seaPanel{
+  position: absolute;
+  bottom: 100%;
+  left: 0;
   width: min(440px, calc(92vw - 40px));
   max-height: 0;
   overflow: hidden;
@@ -1103,4 +1114,49 @@ body.sea-mode .seaPanelInner,
 body.sea-mode .seaEasterEgg {
   opacity: 1 !important;
   filter: none !important;
+}
+
+/* ── Piano Link ──────────────────────────────────────── */
+
+.pianoLink{
+  display: block;
+  text-decoration: none;
+  padding: 4px 10px 2px;
+  cursor: none;
+  opacity: 0.68;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.45));
+  transition: transform 500ms ease, opacity 500ms ease, filter 500ms ease;
+}
+
+.pianoLink:hover{
+  opacity: 0.96;
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 8px rgba(205,235,245,0.12));
+}
+
+.pianoSvg{
+  width: 50px;
+  height: auto;
+  display: block;
+}
+
+.pianoSvg path{
+  fill: rgba(220,245,255,0.02);
+  stroke: rgba(220,245,255,0.55);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.08)) drop-shadow(0 -1px 0 rgba(0,0,0,0.6));
+}
+
+.pianoSvg line{
+  stroke: rgba(220,245,255,0.55);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+}
+
+.pianoLink:hover .pianoSvg path,
+.pianoLink:hover .pianoSvg line{
+  fill: rgba(220,245,255,0.05);
+  stroke: rgba(220,245,255,0.76);
 }
