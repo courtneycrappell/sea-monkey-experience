@@ -12,17 +12,8 @@ for (const t of techniques) {
   (families[family] ??= []).push(specific);
 }
 const familyNames = Object.keys(families).sort();
+const exampleMap = techniqueExamples as Record<string, number | null>;
 
-function exampleHref(family: string, specific: string): string {
-  // Techniques without a ' - ' separator land in family='Other'; their label IS the specific
-  const label = family === 'Other' ? specific : `${family} - ${specific}`;
-  const workId = (techniqueExamples as Record<string, number | null>)[label];
-  if (workId != null) {
-    return `${base}/works/${workId}`;
-  }
-  // fallback to search for techniques with no example work in database
-  return `${base}/repertoire?technique=${encodeURIComponent(label)}`;
-}
 ---
 <Base title="Methodology">
   <div style="display:flex; gap:12px; align-items:flex-start;">
@@ -68,12 +59,19 @@ function exampleHref(family: string, specific: string): string {
             <div style="margin-bottom:12px;">
               <h3 id={f.replace(/\s+/g, '-')}>{f}</h3>
               <p>
-                {families[f].map((t, i) => (
-                  <>
-                    <a href={exampleHref(f, t)}>{f} — {t}</a>
-                    {i < families[f].length - 1 && <br />}
-                  </>
-                ))}
+                {families[f].map((t, i) => {
+                  const label = f === 'Other' ? t : `${f} - ${t}`;
+                  const workId = exampleMap[label];
+                  return (
+                    <>
+                      {workId != null
+                        ? <a href={`${base}/works/${workId}`}>{f} — {t}</a>
+                        : <span>{f} — {t} <em style="color:#999; font-size:11px;">(no example available)</em></span>
+                      }
+                      {i < families[f].length - 1 && <br />}
+                    </>
+                  );
+                })}
               </p>
             </div>
           ))}
