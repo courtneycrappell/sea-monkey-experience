@@ -10,6 +10,23 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <div class="panel">
         <div class="panel-body">
           <h1>Welcome!</h1>
+
+          <p style="font-style:italic; color:#666; border-left:3px solid #c7b8a4; padding-left:10px; margin-bottom:14px; line-height:1.6;">
+            This site is shared here as an archive — and mostly for sentimental reasons. Around 2005,
+            Kimberly Dreisbach and I had a conversation that went something like: <em>"Wouldn't it be
+            nice if there was a website that could catalog all piano music and be searchable by level,
+            technique, mood, and all sorts of other criteria? We should just build that this
+            weekend!"</em> It was a wonderfully naïve thought. With the technology and resources
+            available at the time, what we were imagining was nearly impossible to build well — and
+            certainly too expensive to sustain. We did build it anyway, over many years and with a lot
+            of help, and we're proud of what it became. But the world has moved on, and so have we.
+            <br /><br />
+            If you are a piano teacher looking for an actively maintained repertoire database, we
+            warmly recommend visiting{' '}
+            <a href="https://pianomusicdatabase.com/" target="_blank">pianomusicdatabase.com</a>.
+            We wish that project all the best.
+          </p>
+
           <form action={`${base}/repertoire`} method="get" style="margin:10px 0 0;">
             <p>
               Type in partial information to search repertoire and anthologies.
