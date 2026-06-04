@@ -1233,6 +1233,8 @@ function loadJsPDF() {
   jspdfLoadPromise = new Promise((resolve, reject) => {
     const s = document.createElement('script');
     s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s.integrity = 'sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk';
+    s.crossOrigin = 'anonymous';
     s.onload = resolve;
     s.onerror = () => reject(new Error('Failed to load jsPDF'));
     document.head.appendChild(s);
