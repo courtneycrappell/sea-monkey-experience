@@ -56,6 +56,13 @@ const fields = [
             )}
           </p>
 
+          {incipitSrc && (
+            <div style="margin-bottom:14px; text-align:center;">
+              <img src={incipitSrc} alt={`Score excerpt: ${work.title}`}
+                   style="max-width:100%; border:1px solid #c7b8a4; background:#fff;" />
+            </div>
+          )}
+
           <table style="border-collapse:collapse; width:100%; font-size:12px;">
             {fields.map(f => (
               <tr style="border-bottom:1px solid #e4ddd6;">
@@ -88,16 +95,6 @@ const fields = [
 
     <!-- Sidebar -->
     <div style="width:160px; flex-shrink:0;">
-
-      {incipitSrc && (
-        <div class="panel">
-          <div class="panel-head">Score Excerpt</div>
-          <div style="padding:6px; text-align:center; background:#F0EBE7;">
-            <img src={incipitSrc} alt={`Score excerpt: ${work.title}`}
-                 style="max-width:100%; max-height:160px; object-fit:contain;" />
-          </div>
-        </div>
-      )}
 
       <div class="panel">
         <div class="panel-head">Composer</div>
