@@ -1,0 +1,22 @@
+[
+  {
+    "id": 4,
+    "label": "Fast"
+  },
+  {
+    "id": 3,
+    "label": "Moderate"
+  },
+  {
+    "id": 2,
+    "label": "Slow"
+  },
+  {
+    "id": 5,
+    "label": "Very Fast"
+  },
+  {
+    "id": 1,
+    "label": "Very Slow"
+  }
+]

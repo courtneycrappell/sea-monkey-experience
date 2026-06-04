@@ -1,0 +1,238 @@
+[
+  {
+    "id": 33,
+    "label": "12 Tone"
+  },
+  {
+    "id": 22,
+    "label": "A Major"
+  },
+  {
+    "id": 23,
+    "label": "A Minor"
+  },
+  {
+    "id": 39,
+    "label": "A Tonal Center"
+  },
+  {
+    "id": 20,
+    "label": "A-flat Major"
+  },
+  {
+    "id": 21,
+    "label": "A-flat Minor"
+  },
+  {
+    "id": 57,
+    "label": "A-flat Tonal Center"
+  },
+  {
+    "id": 24,
+    "label": "A-sharp Minor"
+  },
+  {
+    "id": 40,
+    "label": "A-sharp Tonal Center"
+  },
+  {
+    "id": 35,
+    "label": "Aleatoric"
+  },
+  {
+    "id": 32,
+    "label": "Atonal"
+  },
+  {
+    "id": 27,
+    "label": "B Major"
+  },
+  {
+    "id": 28,
+    "label": "B Minor"
+  },
+  {
+    "id": 42,
+    "label": "B Tonal Center"
+  },
+  {
+    "id": 25,
+    "label": "B-flat Major"
+  },
+  {
+    "id": 26,
+    "label": "B-flat Minor"
+  },
+  {
+    "id": 41,
+    "label": "B-flat Tonal Center"
+  },
+  {
+    "id": 59,
+    "label": "Bitonal"
+  },
+  {
+    "id": 1,
+    "label": "C Major"
+  },
+  {
+    "id": 2,
+    "label": "C Minor"
+  },
+  {
+    "id": 43,
+    "label": "C Tonal Center"
+  },
+  {
+    "id": 29,
+    "label": "C-flat Major"
+  },
+  {
+    "id": 47,
+    "label": "C-flat Tonal Center"
+  },
+  {
+    "id": 3,
+    "label": "C-sharp Major"
+  },
+  {
+    "id": 4,
+    "label": "C-sharp Minor"
+  },
+  {
+    "id": 44,
+    "label": "C-sharp Tonal Center"
+  },
+  {
+    "id": 6,
+    "label": "D Major"
+  },
+  {
+    "id": 7,
+    "label": "D Minor"
+  },
+  {
+    "id": 46,
+    "label": "D Tonal Center"
+  },
+  {
+    "id": 5,
+    "label": "D-flat Major"
+  },
+  {
+    "id": 45,
+    "label": "D-flat Tonal Center"
+  },
+  {
+    "id": 8,
+    "label": "D-sharp Minor"
+  },
+  {
+    "id": 48,
+    "label": "D-sharp Tonal Center"
+  },
+  {
+    "id": 11,
+    "label": "E Major"
+  },
+  {
+    "id": 12,
+    "label": "E Minor"
+  },
+  {
+    "id": 50,
+    "label": "E Tonal Center"
+  },
+  {
+    "id": 9,
+    "label": "E-flat Major"
+  },
+  {
+    "id": 10,
+    "label": "E-flat Minor"
+  },
+  {
+    "id": 49,
+    "label": "E-flat Tonal Center"
+  },
+  {
+    "id": 58,
+    "label": "E-sharp Tonal Center"
+  },
+  {
+    "id": 13,
+    "label": "F Major"
+  },
+  {
+    "id": 14,
+    "label": "F Minor"
+  },
+  {
+    "id": 52,
+    "label": "F Tonal Center"
+  },
+  {
+    "id": 51,
+    "label": "F-flat Tonal Center"
+  },
+  {
+    "id": 15,
+    "label": "F-sharp Major"
+  },
+  {
+    "id": 16,
+    "label": "F-sharp Minor"
+  },
+  {
+    "id": 53,
+    "label": "F-sharp Tonal Center"
+  },
+  {
+    "id": 38,
+    "label": "G Major"
+  },
+  {
+    "id": 18,
+    "label": "G Minor"
+  },
+  {
+    "id": 55,
+    "label": "G Tonal Center"
+  },
+  {
+    "id": 17,
+    "label": "G-flat Major"
+  },
+  {
+    "id": 54,
+    "label": "G-flat Tonal Center"
+  },
+  {
+    "id": 19,
+    "label": "G-sharp Minor"
+  },
+  {
+    "id": 56,
+    "label": "G-sharp Tonal Center"
+  },
+  {
+    "id": 34,
+    "label": "Modal"
+  },
+  {
+    "id": 36,
+    "label": "Non-standard"
+  },
+  {
+    "id": 31,
+    "label": "Octatonic"
+  },
+  {
+    "id": 30,
+    "label": "Pentatonic"
+  },
+  {
+    "id": 61,
+    "label": "Whole-tone"
+  }
+]

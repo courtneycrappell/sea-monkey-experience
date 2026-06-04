@@ -1,0 +1,4 @@
+findpianoworks/node_modules/
+findpianoworks/dist/
+findpianoworks/.astro/
+.DS_Store

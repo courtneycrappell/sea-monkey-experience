@@ -1,0 +1,58 @@
+[
+  {
+    "id": 6,
+    "label": "Austria"
+  },
+  {
+    "id": 13,
+    "label": "Bohemia"
+  },
+  {
+    "id": 10,
+    "label": "Denmark"
+  },
+  {
+    "id": 3,
+    "label": "England"
+  },
+  {
+    "id": 8,
+    "label": "France"
+  },
+  {
+    "id": 2,
+    "label": "Germany"
+  },
+  {
+    "id": 12,
+    "label": "Hungary"
+  },
+  {
+    "id": 14,
+    "label": "Italy"
+  },
+  {
+    "id": 15,
+    "label": "Norway"
+  },
+  {
+    "id": 4,
+    "label": "Poland"
+  },
+  {
+    "id": 9,
+    "label": "Russia"
+  },
+  {
+    "id": 16,
+    "label": "Sweden"
+  },
+  {
+    "id": 11,
+    "label": "Switzerland"
+  },
+  {
+    "id": 1,
+    "label": "United States"
+  }
+]

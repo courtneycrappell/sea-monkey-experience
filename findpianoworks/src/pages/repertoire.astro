@@ -1,0 +1,202 @@
+---
+import Base from '../layouts/Base.astro';
+import composers from '../data/composers.json';
+import levels from '../data/lookup/levels.json';
+import periods from '../data/lookup/periods.json';
+import techniques from '../data/lookup/techniques.json';
+import moods from '../data/lookup/moods.json';
+import occasions from '../data/lookup/occasions.json';
+import genres from '../data/lookup/genres.json';
+import keysigs from '../data/lookup/keysigs.json';
+import instrumentation from '../data/lookup/instrumentation.json';
+import works from '../data/works.json';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const techniqueFamilies = [...new Set(
+  techniques.map(t => t.label.split(' - ')[0])
+)].sort();
+---
+<Base title="Repertoire Search">
+  <h1>Repertoire Search</h1>
+  <div class="grid md:grid-cols-4 gap-6">
+    <!-- Filter sidebar -->
+    <form id="sf" class="md:col-span-1 space-y-3 card self-start">
+      <h3 class="!mt-0">Filter</h3>
+      <div>
+        <label class="label block mb-1">Quick search</label>
+        <input type="search" id="q" placeholder="Title or composer…" />
+      </div>
+      <div>
+        <label class="label block mb-1">Composer</label>
+        <select id="composerId">
+          <option value="">— Any —</option>
+          {composers.map(c => <option value={String(c.id)}>{c.name}</option>)}
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="label block mb-1">Level min</label>
+          <select id="levelMin">
+            <option value="">—</option>
+            {levels.map(l => <option value={String(l.id)}>{l.label}</option>)}
+          </select>
+        </div>
+        <div>
+          <label class="label block mb-1">Level max</label>
+          <select id="levelMax">
+            <option value="">—</option>
+            {levels.map(l => <option value={String(l.id)}>{l.label}</option>)}
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="label block mb-1">Period</label>
+        <select id="period">
+          <option value="">— Any —</option>
+          {periods.map(p => <option value={p.label}>{p.label}</option>)}
+        </select>
+      </div>
+      <div>
+        <label class="label block mb-1">Technique family</label>
+        <select id="techFamily">
+          <option value="">— Any —</option>
+          {techniqueFamilies.map(f => <option value={f}>{f}</option>)}
+        </select>
+      </div>
+      <div>
+        <label class="label block mb-1">Specific technique</label>
+        <select id="technique">
+          <option value="">— Any —</option>
+          {techniques.map(t => <option value={t.label}>{t.label}</option>)}
+        </select>
+      </div>
+      <div>
+        <label class="label block mb-1">Mood</label>
+        <select id="mood">
+          <option value="">— Any —</option>
+          {moods.map(m => <option value={m.label}>{m.label}</option>)}
+        </select>
+      </div>
+      <div>
+        <label class="label block mb-1">Occasion</label>
+        <select id="occasion">
+          <option value="">— Any —</option>
+          {occasions.map(o => <option value={o.label}>{o.label}</option>)}
+        </select>
+      </div>
+      <div>
+        <label class="label block mb-1">Genre</label>
+        <select id="genre">
+          <option value="">— Any —</option>
+          {genres.map(g => <option value={g.label}>{g.label}</option>)}
+        </select>
+      </div>
+      <div>
+        <label class="label block mb-1">Key signature</label>
+        <select id="keySig">
+          <option value="">— Any —</option>
+          {keysigs.map(k => <option value={k.label}>{k.label}</option>)}
+        </select>
+      </div>
+      <div>
+        <label class="label block mb-1">Instrumentation</label>
+        <select id="instrumentation">
+          <option value="">— Any —</option>
+          {instrumentation.map(i => <option value={i.label}>{i.label}</option>)}
+        </select>
+      </div>
+      <div class="flex gap-2 pt-1">
+        <button type="submit" class="btn flex-1">Search</button>
+        <button type="button" id="clearBtn" class="btn-secondary">Clear</button>
+      </div>
+    </form>
+
+    <!-- Results -->
+    <div class="md:col-span-3">
+      <p id="rh" class="text-sm text-gray-500 mb-3"></p>
+      <div id="rl" class="space-y-2"></div>
+    </div>
+  </div>
+</Base>
+
+<script define:vars={{ works, base }}>
+  function n(s) { return (s ?? '').toLowerCase(); }
+
+  function render(ws) {
+    document.getElementById('rh').textContent =
+      `${ws.length} work${ws.length !== 1 ? 's' : ''} found`;
+    if (!ws.length) {
+      document.getElementById('rl').innerHTML =
+        '<p class="text-gray-500 card">No results match your criteria.</p>';
+      return;
+    }
+    document.getElementById('rl').innerHTML = ws.map(w => `
+      <div class="card flex items-start justify-between gap-4">
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-fpw-darkblue">${w.title ?? '(untitled)'}</div>
+          <div class="text-xs text-gray-600">
+            ${w.composer ?? ''}${w.catalogNumber ? ' · ' + w.catalogNumber : ''}
+          </div>
+          <div class="flex flex-wrap gap-1 mt-1">
+            ${w.level ? `<span class="tag">Level ${w.level}</span>` : ''}
+            ${w.period ? `<span class="tag">${w.period}</span>` : ''}
+            ${w.keySig ? `<span class="tag">${w.keySig}</span>` : ''}
+            ${(w.techniques || []).slice(0, 2).map(t => `<span class="tag">${t}</span>`).join('')}
+          </div>
+        </div>
+        <a href="${base}/works/${w.id}" class="btn whitespace-nowrap text-xs shrink-0">View</a>
+      </div>
+    `).join('');
+  }
+
+  function getVal(id) { return document.getElementById(id).value; }
+
+  function doFilter() {
+    const q          = n(getVal('q'));
+    const composerId = getVal('composerId');
+    const lMin       = parseInt(getVal('levelMin')) || 0;
+    const lMax       = parseInt(getVal('levelMax')) || 99;
+    const period     = n(getVal('period'));
+    const tf         = n(getVal('techFamily'));
+    const tech       = n(getVal('technique'));
+    const mood       = n(getVal('mood'));
+    const occ        = n(getVal('occasion'));
+    const genre      = n(getVal('genre'));
+    const key        = n(getVal('keySig'));
+    const instr      = n(getVal('instrumentation'));
+
+    const res = works.filter(w => {
+      if (q && !n(w.title).includes(q) && !n(w.composer).includes(q) && !n(w.catalogNumber).includes(q)) return false;
+      if (composerId && String(w.composerId) !== composerId) return false;
+      if (lMin && (w.levelId || 0) < lMin) return false;
+      if (lMax < 99 && (w.levelId || 0) > lMax) return false;
+      if (period && n(w.period) !== period) return false;
+      if (tf && !(w.techniques || []).some(t => n(t).startsWith(tf))) return false;
+      if (tech && !(w.techniques || []).some(t => n(t) === tech)) return false;
+      if (mood && n(w.mood) !== mood) return false;
+      if (occ && n(w.occasion) !== occ) return false;
+      if (genre && n(w.genre) !== genre) return false;
+      if (key && n(w.keySig) !== key) return false;
+      if (instr && n(w.instrumentation) !== instr) return false;
+      return true;
+    }).sort((a, b) => {
+      const c = (a.composer || '').localeCompare(b.composer || '');
+      return c || (a.title || '').localeCompare(b.title || '');
+    });
+
+    render(res);
+  }
+
+  // Init
+  render(works);
+  document.getElementById('sf').addEventListener('submit', e => { e.preventDefault(); doFilter(); });
+  document.getElementById('sf').addEventListener('change', doFilter);
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    document.getElementById('sf').reset();
+    doFilter();
+  });
+
+  // Handle ?q= from home search
+  const qp = new URLSearchParams(location.search).get('q');
+  if (qp) { document.getElementById('q').value = qp; doFilter(); }
+</script>

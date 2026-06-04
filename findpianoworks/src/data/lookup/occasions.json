@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "label": "Christmas/Hanukah"
+  },
+  {
+    "id": 2,
+    "label": "Halloween"
+  },
+  {
+    "id": 3,
+    "label": "Other Holidays"
+  },
+  {
+    "id": 4,
+    "label": "Patriotic"
+  },
+  {
+    "id": 5,
+    "label": "Sacred"
+  },
+  {
+    "id": 7,
+    "label": "Wedding"
+  }
+]

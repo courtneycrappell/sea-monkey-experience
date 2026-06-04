@@ -1,0 +1,54 @@
+[
+  {
+    "id": 1,
+    "label": "Agitated"
+  },
+  {
+    "id": 2,
+    "label": "Boisterous"
+  },
+  {
+    "id": 3,
+    "label": "Dancelike"
+  },
+  {
+    "id": 4,
+    "label": "Graceful"
+  },
+  {
+    "id": 5,
+    "label": "Lyric"
+  },
+  {
+    "id": 6,
+    "label": "Majestic"
+  },
+  {
+    "id": 7,
+    "label": "March-like"
+  },
+  {
+    "id": 8,
+    "label": "Playful"
+  },
+  {
+    "id": 9,
+    "label": "Sad"
+  },
+  {
+    "id": 10,
+    "label": "Sentimental"
+  },
+  {
+    "id": 11,
+    "label": "Sparkling"
+  },
+  {
+    "id": 12,
+    "label": "Tranquil"
+  },
+  {
+    "id": 13,
+    "label": "Virtuosic"
+  }
+]

@@ -1,0 +1,130 @@
+[
+  {
+    "id": 13,
+    "label": "Dotted Eighth Sixteenth"
+  },
+  {
+    "id": 18,
+    "label": "Dotted Eighth Sixteenth Eighth"
+  },
+  {
+    "id": 2,
+    "label": "Dotted Half"
+  },
+  {
+    "id": 4,
+    "label": "Dotted Quarter Eighth"
+  },
+  {
+    "id": 31,
+    "label": "Dotted Sixteenth Thirty-second"
+  },
+  {
+    "id": 32,
+    "label": "Double Dotted quarter sixteenth"
+  },
+  {
+    "id": 9,
+    "label": "Eighth"
+  },
+  {
+    "id": 7,
+    "label": "Eighth Dotted Quarter"
+  },
+  {
+    "id": 19,
+    "label": "Eighth Eighth Sixteenth Sixteenth"
+  },
+  {
+    "id": 8,
+    "label": "Eighth Quarter Eighth"
+  },
+  {
+    "id": 12,
+    "label": "Eighth Rest"
+  },
+  {
+    "id": 11,
+    "label": "Eighth Rest Eighth"
+  },
+  {
+    "id": 33,
+    "label": "Eighth Sixteenth Rest Sixteenth Eighth"
+  },
+  {
+    "id": 14,
+    "label": "Eighth Sixteenth Sixteenth"
+  },
+  {
+    "id": 21,
+    "label": "Eighth Sixteenth Sixteenth Eighth"
+  },
+  {
+    "id": 10,
+    "label": "Eighth Triplet"
+  },
+  {
+    "id": 29,
+    "label": "Free Polyrhythms"
+  },
+  {
+    "id": 3,
+    "label": "Half"
+  },
+  {
+    "id": 5,
+    "label": "Quarter"
+  },
+  {
+    "id": 6,
+    "label": "Quarter Rest"
+  },
+  {
+    "id": 26,
+    "label": "Sixteenth"
+  },
+  {
+    "id": 34,
+    "label": "Sixteenth Eighth Sixteenth"
+  },
+  {
+    "id": 16,
+    "label": "Sixteenth Rest Sixteenth Sixteenth Sixteenth"
+  },
+  {
+    "id": 15,
+    "label": "Sixteenth Sixteenth Eighth"
+  },
+  {
+    "id": 20,
+    "label": "Sixteenth Sixteenth Eighth Eighth"
+  },
+  {
+    "id": 17,
+    "label": "Sixteenth Triplet"
+  },
+  {
+    "id": 30,
+    "label": "Tempo changes"
+  },
+  {
+    "id": 22,
+    "label": "Thirty-Second"
+  },
+  {
+    "id": 24,
+    "label": "Three Against Four"
+  },
+  {
+    "id": 28,
+    "label": "Triple Juxtaposed with Duple"
+  },
+  {
+    "id": 23,
+    "label": "Two Against Three"
+  },
+  {
+    "id": 1,
+    "label": "Whole"
+  }
+]

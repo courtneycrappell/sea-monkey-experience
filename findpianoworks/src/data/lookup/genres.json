@@ -1,0 +1,166 @@
+[
+  {
+    "id": 1,
+    "label": "Allemande"
+  },
+  {
+    "id": 34,
+    "label": "Bouree"
+  },
+  {
+    "id": 29,
+    "label": "Country Dance"
+  },
+  {
+    "id": 2,
+    "label": "Courante"
+  },
+  {
+    "id": 3,
+    "label": "Ecossaise"
+  },
+  {
+    "id": 4,
+    "label": "Etude"
+  },
+  {
+    "id": 5,
+    "label": "Fantasy"
+  },
+  {
+    "id": 6,
+    "label": "Fugue"
+  },
+  {
+    "id": 7,
+    "label": "Gavotte"
+  },
+  {
+    "id": 28,
+    "label": "German Dance"
+  },
+  {
+    "id": 8,
+    "label": "Gigue"
+  },
+  {
+    "id": 9,
+    "label": "Invention"
+  },
+  {
+    "id": 30,
+    "label": "March"
+  },
+  {
+    "id": 31,
+    "label": "Mazurka"
+  },
+  {
+    "id": 10,
+    "label": "Minuet"
+  },
+  {
+    "id": 11,
+    "label": "Minuet-Trio"
+  },
+  {
+    "id": 44,
+    "label": "Nocturne"
+  },
+  {
+    "id": 12,
+    "label": "Passacaglia"
+  },
+  {
+    "id": 27,
+    "label": "Passepied"
+  },
+  {
+    "id": 13,
+    "label": "Polonaise"
+  },
+  {
+    "id": 14,
+    "label": "Prelude"
+  },
+  {
+    "id": 32,
+    "label": "Ragtime"
+  },
+  {
+    "id": 15,
+    "label": "Rondo"
+  },
+  {
+    "id": 16,
+    "label": "Sarabande"
+  },
+  {
+    "id": 17,
+    "label": "Scherzo"
+  },
+  {
+    "id": 18,
+    "label": "Scherzo-Trio"
+  },
+  {
+    "id": 19,
+    "label": "Sinfonia"
+  },
+  {
+    "id": 20,
+    "label": "Sonata"
+  },
+  {
+    "id": 21,
+    "label": "Sonata Allegro"
+  },
+  {
+    "id": 22,
+    "label": "Sonatina"
+  },
+  {
+    "id": 33,
+    "label": "Tango"
+  },
+  {
+    "id": 23,
+    "label": "Theme and Variation"
+  },
+  {
+    "id": 24,
+    "label": "Toccata"
+  },
+  {
+    "id": 25,
+    "label": "Waltz"
+  },
+  {
+    "id": 37,
+    "label": "World: Asia"
+  },
+  {
+    "id": 43,
+    "label": "World: Caribbean"
+  },
+  {
+    "id": 41,
+    "label": "World: Middle East"
+  },
+  {
+    "id": 36,
+    "label": "World: Native/North America"
+  },
+  {
+    "id": 35,
+    "label": "World: Oceania"
+  },
+  {
+    "id": 40,
+    "label": "World: Spain/Latin America"
+  },
+  {
+    "id": 38,
+    "label": "World: Sub-Saharan Africa"
+  }
+]

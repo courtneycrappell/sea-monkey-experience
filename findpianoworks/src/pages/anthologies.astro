@@ -1,0 +1,75 @@
+---
+import Base from '../layouts/Base.astro';
+import anthologies from '../data/anthologies.json';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// Unique publishers for filter
+const publishers = [...new Set(
+  anthologies.map(a => a.publisher).filter(Boolean)
+)].sort();
+---
+<Base title="Anthologies">
+  <h1>Browse Anthologies</h1>
+
+  <div class="flex gap-4 mb-4 flex-wrap">
+    <div class="flex-1 min-w-48">
+      <label class="label block mb-1">Search by title</label>
+      <input type="search" id="q" placeholder="Anthology name…" />
+    </div>
+    <div>
+      <label class="label block mb-1">Publisher</label>
+      <select id="pub">
+        <option value="">— All —</option>
+        {publishers.map(p => <option value={p}>{p}</option>)}
+      </select>
+    </div>
+  </div>
+
+  <p id="rh" class="text-sm text-gray-500 mb-3"></p>
+  <div id="grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+</Base>
+
+<script define:vars={{ anthologies, base }}>
+  function n(s) { return (s ?? '').toLowerCase(); }
+
+  function render(items) {
+    document.getElementById('rh').textContent =
+      `${items.length} antholog${items.length !== 1 ? 'ies' : 'y'}`;
+    document.getElementById('grid').innerHTML = items.map(a => {
+      const editorLine = (a.editors || [])
+        .filter(e => e.role === 'Editor' || e.role === 'Author')
+        .map(e => e.name).join(', ');
+      const cover = a.coverImage && !a.coverImage.includes('blankcoverart')
+        ? `<img src="${a.coverImage}" alt="${a.title} cover"
+               class="w-full h-32 object-contain mb-2 bg-gray-50 rounded"
+               onerror="this.style.display='none'" />`
+        : '';
+      return `
+        <a href="${base}/anthology/${a.id}"
+           class="card block hover:border-fpw-blue transition-colors no-underline">
+          ${cover}
+          <div class="font-semibold text-fpw-darkblue text-sm leading-snug">${a.title ?? ''}</div>
+          ${editorLine ? `<div class="text-xs text-gray-500 mt-0.5">${editorLine}</div>` : ''}
+          ${a.publisher ? `<div class="text-xs text-gray-400">${a.publisher}</div>` : ''}
+          <div class="text-xs text-fpw-blue mt-1">${(a.works || []).length} works</div>
+        </a>
+      `;
+    }).join('');
+  }
+
+  function doFilter() {
+    const q   = n(document.getElementById('q').value);
+    const pub = n(document.getElementById('pub').value);
+    const res = anthologies.filter(a => {
+      if (q && !n(a.title).includes(q)) return false;
+      if (pub && n(a.publisher) !== pub) return false;
+      return true;
+    }).sort((a, b) => (a.title ?? '').localeCompare(b.title ?? ''));
+    render(res);
+  }
+
+  render([...anthologies].sort((a, b) => (a.title ?? '').localeCompare(b.title ?? '')));
+  document.getElementById('q').addEventListener('input', doFilter);
+  document.getElementById('pub').addEventListener('change', doFilter);
+</script>

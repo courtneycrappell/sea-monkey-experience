@@ -1,0 +1,76 @@
+---
+import Base from '../../layouts/Base.astro';
+import anthologies from '../../data/anthologies.json';
+
+export function getStaticPaths() {
+  return anthologies.map(a => ({ params: { id: String(a.id) } }));
+}
+
+const { id } = Astro.params;
+const anthology = anthologies.find(a => String(a.id) === id)!;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const editors = (anthology.editors ?? []).filter(e => e.role === 'Editor' || e.role === 'Author');
+const sortedWorks = [...(anthology.works ?? [])].sort((a, b) =>
+  (a.composer ?? '').localeCompare(b.composer ?? '') ||
+  (a.title ?? '').localeCompare(b.title ?? '')
+);
+---
+<Base title={anthology.title ?? 'Anthology'}>
+  <div class="mb-3">
+    <a href={`${base}/anthologies`} class="text-sm text-fpw-blue">&larr; Back to anthologies</a>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="md:col-span-2">
+      <h1>{anthology.title}</h1>
+      {editors.length > 0 && (
+        <p class="text-gray-600 text-sm mb-4">
+          Edited by {editors.map(e => e.name).join(', ')}
+        </p>
+      )}
+
+      <div class="card">
+        <h3 class="!mt-0">{sortedWorks.length} Works in this anthology</h3>
+        <div class="divide-y divide-gray-100">
+          {sortedWorks.map(w => (
+            <div class="py-2 flex items-center justify-between gap-4">
+              <div>
+                <span class="font-medium text-sm">{w.title}</span>
+                <span class="text-gray-500 text-xs ml-2">{w.composer}</span>
+                {w.catalogNumber && <span class="text-gray-400 text-xs ml-1">· {w.catalogNumber}</span>}
+                <div class="flex flex-wrap gap-1 mt-0.5">
+                  {w.level && <span class="tag">Level {w.level}</span>}
+                  {w.period && <span class="tag">{w.period}</span>}
+                </div>
+              </div>
+              <a href={`${base}/works/${w.id}`} class="text-fpw-blue text-xs shrink-0">View →</a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-4">
+      {anthology.coverImage && !anthology.coverImage.includes('blankcoverart') && (
+        <div class="card p-2">
+          <img
+            src={anthology.coverImage}
+            alt={`${anthology.title} cover`}
+            class="w-full object-contain max-h-48"
+            onerror="this.closest('.card').style.display='none'"
+          />
+        </div>
+      )}
+      <div class="card text-sm space-y-1">
+        <h3 class="!mt-0">Details</h3>
+        {anthology.publisher && <p><span class="label">Publisher: </span>{anthology.publisher}</p>}
+        {anthology.pubDateOrig && <p><span class="label">First published: </span>{anthology.pubDateOrig}</p>}
+        {anthology.bookType && <p><span class="label">Type: </span>{anthology.bookType}</p>}
+        {anthology.companionCD && <p class="text-fpw-green font-medium">Includes companion CD</p>}
+        {anthology.comments && <p class="text-gray-500 text-xs mt-2">{anthology.comments}</p>}
+      </div>
+    </div>
+  </div>
+</Base>

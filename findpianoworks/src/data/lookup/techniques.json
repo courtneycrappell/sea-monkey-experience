@@ -1,0 +1,330 @@
+[
+  {
+    "id": 76,
+    "label": "20th Century Techniques - Aleatoric"
+  },
+  {
+    "id": 80,
+    "label": "20th Century Techniques - Contemporary Notation"
+  },
+  {
+    "id": 77,
+    "label": "20th Century Techniques - Free Rhythm"
+  },
+  {
+    "id": 86,
+    "label": "20th Century Techniques - Indeterminate"
+  },
+  {
+    "id": 78,
+    "label": "20th Century Techniques - No Bar Lines"
+  },
+  {
+    "id": 84,
+    "label": "20th Century Techniques - Non-keyboard Sounds"
+  },
+  {
+    "id": 82,
+    "label": "20th Century Techniques - Playing Inside Piano"
+  },
+  {
+    "id": 81,
+    "label": "20th Century Techniques - Prepared Piano"
+  },
+  {
+    "id": 83,
+    "label": "20th Century Techniques - Tone Clusters"
+  },
+  {
+    "id": 87,
+    "label": "Accompaniment - Alberti/Rotation"
+  },
+  {
+    "id": 1,
+    "label": "Accompaniment - Arpeggiated Between Hands"
+  },
+  {
+    "id": 2,
+    "label": "Accompaniment - Arpeggiated with Finger Cross"
+  },
+  {
+    "id": 4,
+    "label": "Accompaniment - Broken Chord/Circular"
+  },
+  {
+    "id": 3,
+    "label": "Accompaniment - Chordal"
+  },
+  {
+    "id": 5,
+    "label": "Accompaniment - Jump Bass/Oom-Pah"
+  },
+  {
+    "id": 85,
+    "label": "Accompaniment - Ostinato"
+  },
+  {
+    "id": 6,
+    "label": "Accompaniment - Waltz"
+  },
+  {
+    "id": 8,
+    "label": "Articulation - 2-note Slurs"
+  },
+  {
+    "id": 9,
+    "label": "Articulation - 3-note Slurs"
+  },
+  {
+    "id": 7,
+    "label": "Articulation - Accents"
+  },
+  {
+    "id": 10,
+    "label": "Articulation - Legato"
+  },
+  {
+    "id": 11,
+    "label": "Articulation - Mixed Legato/Staccato"
+  },
+  {
+    "id": 12,
+    "label": "Articulation - Non-legato"
+  },
+  {
+    "id": 13,
+    "label": "Articulation - Staccato"
+  },
+  {
+    "id": 14,
+    "label": "Chords - Chorale"
+  },
+  {
+    "id": 15,
+    "label": "Chords - Clusters"
+  },
+  {
+    "id": 16,
+    "label": "Chords - Dyads"
+  },
+  {
+    "id": 26,
+    "label": "Chords - First Inversion Triads"
+  },
+  {
+    "id": 27,
+    "label": "Chords - Full Triads"
+  },
+  {
+    "id": 17,
+    "label": "Chords - Holding in Hand"
+  },
+  {
+    "id": 18,
+    "label": "Chords - Intervals 2nds"
+  },
+  {
+    "id": 19,
+    "label": "Chords - Intervals 3rds"
+  },
+  {
+    "id": 20,
+    "label": "Chords - Intervals 4ths"
+  },
+  {
+    "id": 21,
+    "label": "Chords - Intervals 5ths"
+  },
+  {
+    "id": 22,
+    "label": "Chords - Intervals 6ths"
+  },
+  {
+    "id": 23,
+    "label": "Chords - Intervals 7ths"
+  },
+  {
+    "id": 24,
+    "label": "Chords - Intervals 8ves"
+  },
+  {
+    "id": 90,
+    "label": "Chords - Large/Thick Chords"
+  },
+  {
+    "id": 25,
+    "label": "Chords - Rolled Chords"
+  },
+  {
+    "id": 28,
+    "label": "Coordination - Alternating Hands"
+  },
+  {
+    "id": 31,
+    "label": "Coordination - Close/Interlocked Hands"
+  },
+  {
+    "id": 75,
+    "label": "Coordination - Contrary Motion"
+  },
+  {
+    "id": 29,
+    "label": "Coordination - Hand Crossing"
+  },
+  {
+    "id": 30,
+    "label": "Coordination - Parallel Motion"
+  },
+  {
+    "id": 32,
+    "label": "Coordination - Syncopation"
+  },
+  {
+    "id": 33,
+    "label": "Counterpoint - 2-Voice"
+  },
+  {
+    "id": 34,
+    "label": "Counterpoint - 3-Voice"
+  },
+  {
+    "id": 35,
+    "label": "Counterpoint - 4-Voice"
+  },
+  {
+    "id": 36,
+    "label": "Counterpoint - 5+-Voice"
+  },
+  {
+    "id": 91,
+    "label": "Handspan < 8ve"
+  },
+  {
+    "id": 92,
+    "label": "Handspan = 8ve"
+  },
+  {
+    "id": 93,
+    "label": "Handspan > 8ve"
+  },
+  {
+    "id": 40,
+    "label": "Musicality - Accelarando/Rubato/Ritard"
+  },
+  {
+    "id": 37,
+    "label": "Musicality - Dynamic Contrasts"
+  },
+  {
+    "id": 59,
+    "label": "Musicality - Mixed Meter"
+  },
+  {
+    "id": 39,
+    "label": "Musicality - Non-overlapping Pedal"
+  },
+  {
+    "id": 38,
+    "label": "Musicality - Overlapping Pedal"
+  },
+  {
+    "id": 96,
+    "label": "Musicality - Sostenuto"
+  },
+  {
+    "id": 95,
+    "label": "Musicality - Una corda"
+  },
+  {
+    "id": 45,
+    "label": "Ornaments - Glissandos"
+  },
+  {
+    "id": 41,
+    "label": "Ornaments - Grace Notes/Appoggiatura"
+  },
+  {
+    "id": 42,
+    "label": "Ornaments - Long Trills"
+  },
+  {
+    "id": 44,
+    "label": "Ornaments - Tremolos"
+  },
+  {
+    "id": 43,
+    "label": "Ornaments - Trills/Turns/Mordents/Etc."
+  },
+  {
+    "id": 47,
+    "label": "Runs and Figurations - 5-Finger Patterns"
+  },
+  {
+    "id": 89,
+    "label": "Runs and Figurations - Arpeggiated Chords"
+  },
+  {
+    "id": 97,
+    "label": "Runs and Figurations - Cadenza"
+  },
+  {
+    "id": 46,
+    "label": "Runs and Figurations - Double Notes"
+  },
+  {
+    "id": 94,
+    "label": "Runs and Figurations - Fioratura"
+  },
+  {
+    "id": 88,
+    "label": "Runs and Figurations - Repeated Chords"
+  },
+  {
+    "id": 48,
+    "label": "Runs and Figurations - Repeated Notes"
+  },
+  {
+    "id": 49,
+    "label": "Runs and Figurations - Scalar"
+  },
+  {
+    "id": 51,
+    "label": "Shifts - 5-Finger Positions"
+  },
+  {
+    "id": 50,
+    "label": "Shifts - Contraction/Expansion"
+  },
+  {
+    "id": 52,
+    "label": "Shifts - Leaps"
+  },
+  {
+    "id": 58,
+    "label": "Voicing - Cantabile Melody"
+  },
+  {
+    "id": 73,
+    "label": "Voicing - Holding in Hand"
+  },
+  {
+    "id": 57,
+    "label": "Voicing - Inner Melody"
+  },
+  {
+    "id": 54,
+    "label": "Voicing - Left-hand Melody"
+  },
+  {
+    "id": 55,
+    "label": "Voicing - Melody Between Hands"
+  },
+  {
+    "id": 53,
+    "label": "Voicing - Right-hand Melody"
+  },
+  {
+    "id": 56,
+    "label": "Voicing - Top Note in Chords"
+  }
+]

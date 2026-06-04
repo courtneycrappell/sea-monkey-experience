@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "label": "Solo Piano"
+  },
+  {
+    "id": 3,
+    "label": "Student/Student Duet Piano"
+  },
+  {
+    "id": 5,
+    "label": "Student/Student Duo Piano"
+  },
+  {
+    "id": 2,
+    "label": "Student/Teacher Duet Piano"
+  },
+  {
+    "id": 4,
+    "label": "Student/Teacher Duo Piano"
+  }
+]

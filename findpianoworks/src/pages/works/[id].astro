@@ -1,0 +1,126 @@
+---
+import Base from '../../layouts/Base.astro';
+import works from '../../data/works.json';
+
+export function getStaticPaths() {
+  return works.map(w => ({ params: { id: String(w.id) } }));
+}
+
+const { id } = Astro.params;
+const work = works.find(w => String(w.id) === id)!;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// Convert absolute incipit URL to local path: http://findpianoworks.com/images/mc3/foo.jpg → /findpianoworks/images/mc3/foo.jpg
+const incipitSrc = work.incipit && !work.incipit.includes('blankincipit')
+  ? `${base}/images/${work.incipit.replace(/.*\/images\//, '')}`
+  : null;
+
+function field(label: string, value: string | null | undefined) {
+  if (!value) return null;
+  return { label, value };
+}
+const fields = [
+  field('Level', work.level ? `${work.level}` : null),
+  field('Period', work.period),
+  field('Key', work.keySig),
+  field('Meter', work.meter),
+  field('Genre', work.genre),
+  field('Instrumentation', work.instrumentation),
+  field('Tempo', work.tempo),
+  field('Marked Tempo', work.markedTempo),
+  field('Mood', work.mood),
+  field('Occasion', work.occasion),
+  field('Length (mm)', work.length),
+  field('Collection', work.collection),
+  field('Catalog Number', work.catalogNumber),
+  field('Comments', work.comments),
+].filter(Boolean) as { label: string; value: string }[];
+---
+<Base title={work.title ?? 'Work'}>
+  <div class="mb-3">
+    <a href={`${base}/repertoire`} class="text-sm text-fpw-blue">&larr; Back to search</a>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6">
+    <!-- Main detail -->
+    <div class="md:col-span-2 space-y-4">
+      <div class="card">
+        <h1 class="!mb-1">{work.title}</h1>
+        <p class="text-gray-600 text-sm mb-4">
+          <a href={`${base}/repertoire?composerId=${work.composerId}`} class="font-medium">
+            {work.composer}
+          </a>
+          {work.birthDate && work.deathDate && (
+            <span class="text-gray-400"> ({work.birthDate}–{work.deathDate})</span>
+          )}
+        </p>
+
+        <!-- Core attributes grid -->
+        <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+          {fields.map(f => (
+            <>
+              <dt class="label">{f.label}</dt>
+              <dd>{f.value}</dd>
+            </>
+          ))}
+        </dl>
+      </div>
+
+      <!-- Techniques -->
+      {work.techniques && work.techniques.length > 0 && (
+        <div class="card">
+          <h3 class="!mt-0">Techniques</h3>
+          <div class="flex flex-wrap">
+            {work.techniques.map(t => <span class="tag">{t}</span>)}
+          </div>
+        </div>
+      )}
+
+      <!-- Rhythms -->
+      {work.rhythms && work.rhythms.length > 0 && (
+        <div class="card">
+          <h3 class="!mt-0">Rhythmic Elements</h3>
+          <div class="flex flex-wrap">
+            {work.rhythms.map(r => <span class="tag">{r}</span>)}
+          </div>
+        </div>
+      )}
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-4">
+      <!-- Incipit (score excerpt) -->
+      {incipitSrc && (
+        <div class="card p-2 text-center">
+          <img
+            src={incipitSrc}
+            alt={`Score excerpt: ${work.title}`}
+            class="w-full object-contain max-h-48 rounded"
+          />
+          <p class="text-xs text-gray-400 mt-1">Score excerpt</p>
+        </div>
+      )}
+
+      <!-- Composer info -->
+      <div class="card text-sm">
+        <h3 class="!mt-0">Composer</h3>
+        <p class="font-medium">{work.composer}</p>
+        {work.birthDate && <p class="text-gray-500">b. {work.birthDate}{work.deathDate ? ` — d. ${work.deathDate}` : ''}</p>}
+        {work.period && <p class="text-gray-500">{work.period} · {work.country}</p>}
+        <a href={`${base}/repertoire?composerId=${work.composerId}`} class="block mt-2 text-xs">
+          All works by this composer →
+        </a>
+      </div>
+
+      <!-- Found in anthologies -->
+      {work.sources && work.sources.length > 0 && (
+        <div class="card text-sm">
+          <h3 class="!mt-0">Found in</h3>
+          <ul class="space-y-1">
+            {work.sources.map(s => <li class="text-gray-700">{s}</li>)}
+          </ul>
+        </div>
+      )}
+    </div>
+  </div>
+</Base>

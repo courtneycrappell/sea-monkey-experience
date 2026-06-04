@@ -1,0 +1,26 @@
+[
+  {
+    "id": 3,
+    "label": "Baroque"
+  },
+  {
+    "id": 4,
+    "label": "Classical"
+  },
+  {
+    "id": 6,
+    "label": "Contemporary"
+  },
+  {
+    "id": 8,
+    "label": "Educational"
+  },
+  {
+    "id": 2,
+    "label": "Renaissance"
+  },
+  {
+    "id": 5,
+    "label": "Romantic"
+  }
+]
