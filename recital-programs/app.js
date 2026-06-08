@@ -1266,30 +1266,29 @@ async function submitToFaculty() {
   if (valEl) valEl.style.display = 'none';
   closeFacultyEmailModal();
 
-  // Download the PDF first
-  await generatePDF('save');
+  // Fire mailto synchronously while still inside the user-gesture context.
+  // Browsers block mailto when called from async callbacks (await / setTimeout).
+  const rd = recitalDetails;
+  const subject = encodeURIComponent(
+    'Recital Program for Review' +
+    (rd.performerName ? ' — ' + rd.performerName : '') +
+    (rd.recitalDate   ? ', ' + rd.recitalDate    : '')
+  );
+  const body = encodeURIComponent(
+    'Dear ' + (rd.profTitle || 'Professor') + ' ' + (rd.profName || '') + ',\n\n' +
+    'Please find my recital program attached for your review and approval.\n\n' +
+    'The PDF has been downloaded to your computer — please attach it to this email before sending, ' +
+    'or reply to confirm you have reviewed it.\n\n' +
+    'Thank you,\n' + (rd.performerName || 'Your student')
+  );
+  const mailLink = document.createElement('a');
+  mailLink.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body;
+  document.body.appendChild(mailLink);
+  mailLink.click();
+  document.body.removeChild(mailLink);
 
-  // Build mailto: URL (400ms delay to let download begin)
-  setTimeout(() => {
-    const rd = recitalDetails;
-    const subject = encodeURIComponent(
-      'Recital Program for Review' +
-      (rd.performerName ? ' — ' + rd.performerName : '') +
-      (rd.recitalDate   ? ', ' + rd.recitalDate    : '')
-    );
-    const body = encodeURIComponent(
-      'Dear ' + (rd.profTitle || 'Professor') + ' ' + (rd.profName || '') + ',\n\n' +
-      'Please find my recital program attached for your review and approval.\n\n' +
-      'The PDF has been downloaded to your computer — please attach it to this email before sending, ' +
-      'or reply to confirm you have reviewed it.\n\n' +
-      'Thank you,\n' + (rd.performerName || 'Your student')
-    );
-    const mailLink = document.createElement('a');
-    mailLink.href = 'mailto:' + encodeURIComponent(email) + '?subject=' + subject + '&body=' + body;
-    document.body.appendChild(mailLink);
-    mailLink.click();
-    document.body.removeChild(mailLink);
-  }, 400);
+  // Download PDF after mailto fires (blob download doesn't navigate away)
+  await generatePDF('save');
 }
 
 // ════════════════════════════════════════════════════════════════
