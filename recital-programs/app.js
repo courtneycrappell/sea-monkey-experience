@@ -1200,9 +1200,11 @@ function generateDoc() {
   Review with your faculty member before submitting for printing.
 </div>
 <h1>${rd.recitalType ? rd.recitalType.toUpperCase() : 'RECITAL'}</h1>
+${rd.academicYear ? '<p class="info" style="font-size:9pt;color:#555">' + rd.academicYear + '</p>' : ''}
 ${rd.performerName ? '<p class="subtitle">' + [rd.performerName, rd.instrument].filter(Boolean).join(', ') + '</p>' : ''}
 ${rd.accompanist ? '<p class="info">' + rd.accompanist + ', piano</p>' : ''}
 ${(rd.additionalPerformers || '').split('\n').filter(l => l.trim()).map(l => '<p class="info">' + l.trim() + '</p>').join('')}
+${rd.lectureTitle && rd.recitalType === 'Doctoral Lecture Recital' ? '<p class="info" style="font-style:italic">&ldquo;' + rd.lectureTitle + '&rdquo;</p>' : ''}
 ${rd.recitalDate ? '<p class="info">' + rd.recitalDate + '</p>' : ''}
 ${rd.recitalTime || rd.venue ? '<p class="info">' + [rd.recitalTime, rd.venue].filter(Boolean).join(' · ') + '</p>' : ''}
 <hr>
@@ -1211,6 +1213,7 @@ ${rd.recitalTime || rd.venue ? '<p class="info">' + [rd.recitalTime, rd.venue].f
 ${programHtml}
 ${footerHtml}
 ${degreeHtml}
+<p style="text-align:center;font-size:8pt;color:#888;margin-top:8pt">UMKC Conservatory recitals are recorded. Thank you for helping us maintain a silence in the hall that is conducive to music-making. Be sure to turn off all electronic devices.</p>
 <div class="approval">
   <p><strong>Faculty Review &amp; Approval</strong></p>
   <p>Reviewed and approved by: ________________________________&nbsp;&nbsp;&nbsp;Date: ______________</p>
@@ -1281,7 +1284,11 @@ async function submitToFaculty() {
       'or reply to confirm you have reviewed it.\n\n' +
       'Thank you,\n' + (rd.performerName || 'Your student')
     );
-    window.location.href = 'mailto:' + encodeURIComponent(email) + '?subject=' + subject + '&body=' + body;
+    const mailLink = document.createElement('a');
+    mailLink.href = 'mailto:' + encodeURIComponent(email) + '?subject=' + subject + '&body=' + body;
+    document.body.appendChild(mailLink);
+    mailLink.click();
+    document.body.removeChild(mailLink);
   }, 400);
 }
 
