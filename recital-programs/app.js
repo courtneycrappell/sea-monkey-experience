@@ -348,8 +348,6 @@ function updateWorkDetailsQuestion() {
 //  Advance handlers (form screens)
 // ════════════════════════════════════════════════════════════════
 function advanceFromParentWork() {
-  if (!state.parentTitle.trim()) return;
-
   // Set up excerpt-titles screen based on count
   const q = document.getElementById('excerpt-titles-question');
   const fields = document.getElementById('excerpt-titles-fields');
@@ -542,7 +540,7 @@ function buildTitleHTML() {
   const date  = formatDateStr(state.workDate);
 
   if (state.titleType === 'genre') {
-    const nick = state.nickname.trim().replace(/^["'"'"']+|["'"'"']+$/g, '');
+    const nick = state.nickname.trim().replace(/^["“”'‘’]+|["“”'‘’]+$/g, '');
     const nickPart = nick ? ', &quot;' + esc(nick) + '&quot;' : '';
     return esc(title) + nickPart + esc(cat) + esc(date);
   }
@@ -1707,7 +1705,7 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
   const arrName       = p(s.arrangementName || '');
   const lyricist      = p(s.lyricist || '');
   const premiereType  = p(s.premiereType || '');
-  const nickname      = p(s.nickname || '').replace(/^["'"'"']+|["'"'"']+$/g, '');
+  const nickname      = p((s.nickname || '').replace(/^["“”'‘’]+|["“”'‘’]+$/g, ''));
 
   // ── Build title parts [{text, italic}] ──
   const catStr = (s.catalogType && s.catalogNumber)
@@ -1819,24 +1817,26 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
 
   // Excerpt-one: indented “from *Parent*” line with composer dates on the right
   if (s.workType === 'excerpt' && s.excerptCount === 'one') {
-    checkPage();
     const pCat    = s.parentCatalogType ? ', ' + p(s.parentCatalogType) + ' ' + p(s.parentCatalogNumber) : '';
     const pDate   = s.parentDate ? ' (' + p(s.parentDate) + ')' : '';
-    const fromStr = 'from ';
-    doc.setFont('times', 'normal'); doc.setFontSize(FS);
-    doc.text(fromStr, LM + 12, y);
-    const fromW = textWidth(fromStr);
-    doc.setFont('times', 'italic');
-    doc.text(parentTitle, LM + 12 + fromW, y);
-    const ptW = textWidth(parentTitle, 'times', 'italic');
-    doc.setFont('times', 'normal');
-    doc.text(pCat + pDate, LM + 12 + fromW + ptW, y);
-    if (compDates) {
-      doc.setTextColor(...MUTED);
-      doc.text(compDates, RM - textWidth(compDates), y);
-      doc.setTextColor(...DARK);
+    if (parentTitle || pCat || pDate) {
+      checkPage();
+      const fromStr = 'from ';
+      doc.setFont('times', 'normal'); doc.setFontSize(FS);
+      doc.text(fromStr, LM + 12, y);
+      const fromW = textWidth(fromStr);
+      doc.setFont('times', 'italic');
+      doc.text(parentTitle, LM + 12 + fromW, y);
+      const ptW = textWidth(parentTitle, 'times', 'italic');
+      doc.setFont('times', 'normal');
+      doc.text(pCat + pDate, LM + 12 + fromW + ptW, y);
+      if (compDates) {
+        doc.setTextColor(...MUTED);
+        doc.text(compDates, RM - textWidth(compDates), y);
+        doc.setTextColor(...DARK);
+      }
+      y += LH;
     }
-    y += LH;
   }
 
   // Movements / songs
