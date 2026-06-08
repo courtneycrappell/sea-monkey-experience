@@ -685,6 +685,15 @@ function buildEntry() {
           (state.parentCatalogType ? ', ' + state.parentCatalogType + ' ' + state.parentCatalogNumber : '') +
           (state.parentDate ? ' (' + state.parentDate + ')' : '') +
           (composerDates ? '    ' + composerDates : ''));
+      } else if (composerDates) {
+        // No parent work — render dates on their own right-aligned row
+        htmlLines.push(
+          '<div class="entry-indent-right">' +
+          '<span></span>' +
+          '<span class="entry-right">' + esc(composerDates) + '</span>' +
+          '</div>'
+        );
+        textLines.push('    ' + composerDates);
       }
 
     } else {
@@ -1836,6 +1845,14 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
         doc.setTextColor(...DARK);
       }
       y += LH;
+    } else if (compDates) {
+      // No parent work — render dates on their own right-aligned row
+      checkPage();
+      doc.setFont('times', 'normal'); doc.setFontSize(FS);
+      doc.setTextColor(...MUTED);
+      doc.text(compDates, RM - textWidth(compDates), y);
+      doc.setTextColor(...DARK);
+      y += LH * 0.65;
     }
   }
 
