@@ -1281,11 +1281,7 @@ async function submitToFaculty() {
     'or reply to confirm you have reviewed it.\n\n' +
     'Thank you,\n' + (rd.performerName || 'Your student')
   );
-  const mailLink = document.createElement('a');
-  mailLink.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body;
-  document.body.appendChild(mailLink);
-  mailLink.click();
-  document.body.removeChild(mailLink);
+  window.location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body;
 
   // Download PDF after mailto fires (blob download doesn't navigate away)
   await generatePDF('save');
