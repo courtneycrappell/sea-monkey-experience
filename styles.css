@@ -1088,6 +1088,10 @@ body.heart-mode .heartEasterEgg {
     max-height: 75dvh;
     transform: none;
   }
+  .pianoLink{
+    position: relative;
+    bottom: 40px;
+  }
 }
 
 body.sea-mode {
