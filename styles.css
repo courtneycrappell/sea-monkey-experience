@@ -487,7 +487,8 @@ body.flight-mode .flightEasterEgg {
 
 body.flight-mode .seaEasterEgg,
 body.flight-mode .bulbEasterEgg,
-body.flight-mode .heartEasterEgg {
+body.flight-mode .heartEasterEgg,
+body.flight-mode .pianoLink {
   opacity: 0.04 !important;
   pointer-events: none;
 }
@@ -705,7 +706,8 @@ body.bulb-mode .tank {
 
 body.bulb-mode .seaEasterEgg,
 body.bulb-mode .flightEasterEgg,
-body.bulb-mode .heartEasterEgg {
+body.bulb-mode .heartEasterEgg,
+body.bulb-mode .pianoLink {
   opacity: 0.04 !important;
   pointer-events: none;
 }
@@ -922,7 +924,8 @@ body.heart-mode .tank {
 
 body.heart-mode .seaEasterEgg,
 body.heart-mode .flightEasterEgg,
-body.heart-mode .bulbEasterEgg {
+body.heart-mode .bulbEasterEgg,
+body.heart-mode .pianoLink {
   opacity: 0.04 !important;
   pointer-events: none;
 }
@@ -1120,7 +1123,8 @@ body.sea-mode .tank {
 
 body.sea-mode .flightEasterEgg,
 body.sea-mode .bulbEasterEgg,
-body.sea-mode .heartEasterEgg {
+body.sea-mode .heartEasterEgg,
+body.sea-mode .pianoLink {
   opacity: 0.04 !important;
   pointer-events: none;
 }
