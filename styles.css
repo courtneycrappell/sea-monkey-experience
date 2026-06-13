@@ -142,6 +142,7 @@ body{
   position: absolute;
   bottom: 0;
   left: 0;
+  right: 0;
   display: flex;
   flex-direction: row;
   align-items: flex-end;
@@ -149,6 +150,14 @@ body{
   padding: 0 18px 40px;
   z-index: 80;
   overflow: visible;
+}
+
+@media (max-width: 480px){
+  .iconRow{
+    gap: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
 }
 
 .flightEasterEgg{
@@ -952,15 +961,15 @@ body.heart-mode .heartEasterEgg {
 }
 
 .seaSvg{
-  width: 32px;
-  height: 30px;
+  width: 40px;
+  height: auto;
   display: block;
 }
 
 .seaSvg path{
-  fill: none;
+  fill: rgba(220,245,255,0.02);
   stroke: rgba(220,245,255,0.55);
-  stroke-width: 20;
+  stroke-width: 4.5;
   stroke-linecap: round;
   stroke-linejoin: round;
   filter: drop-shadow(0 1px 0 rgba(255,255,255,0.08)) drop-shadow(0 -1px 0 rgba(0,0,0,0.6));
@@ -969,7 +978,7 @@ body.heart-mode .heartEasterEgg {
 .seaSvg line{
   fill: none;
   stroke: rgba(220,245,255,0.55);
-  stroke-width: 5;
+  stroke-width: 4.5;
   stroke-linecap: round;
   filter: drop-shadow(0 1px 0 rgba(255,255,255,0.08)) drop-shadow(0 -1px 0 rgba(0,0,0,0.6));
 }
@@ -1053,7 +1062,7 @@ body.heart-mode .heartEasterEgg {
 }
 
 @media (max-width: 720px){
-  .seaSvg{ width: 56px; height: 64px; }
+  .seaSvg{ width: 56px; }
   .seaTrigger{ padding-bottom: 2px; }
   .seaPanel{ width: min(360px, calc(100vw - 34px)); }
 }
