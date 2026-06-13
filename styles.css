@@ -197,7 +197,7 @@ body{
 }
 
 .planeSvg{
-  width: 50px;
+  width: min(9vw, 50px);
   height: auto;
   display: block;
 }
@@ -429,7 +429,6 @@ canvas{
 }
 
 @media (max-width: 720px){
-  .planeSvg{ width: 64px; }
   .flightPanel{ width: min(360px, calc(100vw - 34px)); }
   .flightTrackIndicator{ min-width: 110px; letter-spacing: 0.12em; }
 }
@@ -524,7 +523,7 @@ body.flight-mode .heartEasterEgg {
 }
 
 .bulbSvg{
-  width: 40px;
+  width: min(9vw, 40px);
   height: auto;
   display: block;
 }
@@ -657,7 +656,6 @@ body.flight-mode .heartEasterEgg {
 .bulbAboutText em{ color: rgba(220,245,255,0.86); }
 
 @media (max-width: 720px){
-  .bulbSvg{ width: 56px; }
   .bulbPanel{ width: min(380px, calc(100vw - 34px)); }
 }
 
@@ -751,7 +749,7 @@ body.bulb-mode .bulbEasterEgg {
 }
 
 .heartSvg{
-  width: 40px;
+  width: min(9vw, 40px);
   height: auto;
   display: block;
 }
@@ -875,7 +873,6 @@ body.bulb-mode .bulbEasterEgg {
 }
 
 @media (max-width: 720px){
-  .heartSvg{ width: 56px; }
   .heartPanel{ width: min(380px, calc(100vw - 34px)); }
 }
 
@@ -969,7 +966,7 @@ body.heart-mode .heartEasterEgg {
 }
 
 .seaSvg{
-  width: 40px;
+  width: min(9vw, 40px);
   height: auto;
   display: block;
 }
@@ -1070,7 +1067,6 @@ body.heart-mode .heartEasterEgg {
 }
 
 @media (max-width: 720px){
-  .seaSvg{ width: 56px; }
   .seaTrigger{ padding-bottom: 2px; }
   .seaPanel{ width: min(360px, calc(100vw - 34px)); }
 }
@@ -1152,7 +1148,7 @@ body.sea-mode .seaEasterEgg {
 }
 
 .pianoSvg{
-  width: 50px;
+  width: min(9vw, 50px);
   height: auto;
   display: block;
 }
