@@ -145,7 +145,7 @@ body{
   right: 0;
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: center;
   gap: 4px;
   padding: 0 18px 40px;
   z-index: 80;
@@ -182,7 +182,7 @@ body{
   appearance: none;
   border: 0;
   background: transparent;
-  padding: 4px 10px 2px;
+  padding: 4px 10px;
   cursor: none;
   opacity: 0.68;
   filter: drop-shadow(0 1px 1px rgba(0,0,0,0.45));
@@ -509,7 +509,7 @@ body.flight-mode .pianoLink {
   appearance: none;
   border: 0;
   background: transparent;
-  padding: 4px 10px 12px;
+  padding: 4px 10px;
   cursor: none;
   opacity: 0.68;
   filter: drop-shadow(0 1px 1px rgba(0,0,0,0.45));
@@ -736,7 +736,7 @@ body.bulb-mode .bulbEasterEgg {
   appearance: none;
   border: 0;
   background: transparent;
-  padding: 4px 10px 12px;
+  padding: 4px 10px;
   cursor: none;
   opacity: 0.68;
   filter: drop-shadow(0 1px 1px rgba(0,0,0,0.45));
@@ -954,7 +954,7 @@ body.heart-mode .heartEasterEgg {
   appearance: none;
   border: 0;
   background: transparent;
-  padding: 4px 10px 13px;
+  padding: 4px 10px;
   cursor: none;
   opacity: 0.68;
   filter: drop-shadow(0 1px 1px rgba(0,0,0,0.45));
@@ -1070,7 +1070,6 @@ body.heart-mode .heartEasterEgg {
 }
 
 @media (max-width: 720px){
-  .seaTrigger{ padding-bottom: 2px; }
   .seaPanel{ width: min(360px, calc(100vw - 34px)); }
 }
 
@@ -1142,7 +1141,7 @@ body.sea-mode .seaEasterEgg {
 .pianoLink{
   display: block;
   text-decoration: none;
-  padding: 4px 10px 2px;
+  padding: 4px 10px;
   cursor: none;
   opacity: 0.68;
   filter: drop-shadow(0 1px 1px rgba(0,0,0,0.45));
