@@ -1948,16 +1948,13 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
       doc.setFont('times', 'normal'); doc.setFontSize(FS);
       doc.setTextColor(...DARK);
       if (isExcerptMultiple) {
-        // Remaining songs at main level with dot leaders
-        const songW2  = textWidth(lineTitle);
-        const rightW2 = rightStr ? textWidth(rightStr) : 0;
-        const dotsX2  = LM + songW2 + 1;
-        const compX2  = RM - rightW2;
-        const same2   = rightStr && (CW - songW2 - rightW2) >= MIN_LEADER;
-        const dots2   = same2 ? '.'.repeat(Math.max(0, Math.floor((compX2 - dotsX2 - 1) / dotW))) : '';
+        // Remaining songs at main level — no dot leaders (avoids uneven leader lengths)
         doc.text(lineTitle, LM, y);
-        if (dots2)    { doc.text(dots2, dotsX2, y); }
-        if (rightStr) { doc.setTextColor(...MUTED); doc.text(rightStr, compX2, y); doc.setTextColor(...DARK); }
+        if (rightStr) {
+          doc.setTextColor(...MUTED);
+          doc.text(rightStr, RM - textWidth(rightStr), y);
+          doc.setTextColor(...DARK);
+        }
         y += LH;
       } else {
         doc.text(lineTitle, LM + 12, y);
