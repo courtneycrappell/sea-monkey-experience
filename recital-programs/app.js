@@ -571,9 +571,9 @@ function buildTitleHTML() {
   if (state.workSize === 'single') {
     // American style: comma inside closing quotation mark
     if (cat.startsWith(', ')) {
-      return '”' + esc(title) + ',”' + esc(cat.slice(1)) + esc(date);
+      return '&quot;' + esc(title) + ',&quot;' + esc(cat.slice(1)) + esc(date);
     }
-    return '”' + esc(title) + '”' + esc(cat) + esc(date);
+    return '&quot;' + esc(title) + '&quot;' + esc(cat) + esc(date);
   }
   // multi
   return '<em>' + esc(title) + '</em>' + esc(cat) + esc(date);
@@ -1782,7 +1782,7 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
     } else if (s.workSize === 'single') {
       const leadComma = catStr.startsWith(', ') ? ',' : '';
       const catRest   = leadComma ? catStr.slice(1) : catStr;
-      titleParts = [{ t: '”' + workTitle + '”' + leadComma + catRest + dateStr, i: false }];
+      titleParts = [{ t: '"' + workTitle + leadComma + '"' + catRest + dateStr, i: false }];
     } else {
       titleParts = [{ t: workTitle, i: true }, { t: catStr + dateStr, i: false }];
     }
