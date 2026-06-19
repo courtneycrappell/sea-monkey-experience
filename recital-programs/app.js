@@ -118,6 +118,7 @@ function goToScreen(id) {
   updateEntryIndicator();
   const rdBack = document.getElementById('btn-rd-back');
   if (rdBack) rdBack.style.display = (id === 'recital-details' && navHistory.length) ? '' : 'none';
+  if (id === 'recital-details' && recitalDetails.performerName) populateRecitalDetailsForm();
   autoSave();
 }
 
@@ -490,15 +491,17 @@ function esc(str) {
 // characters above U+00FF (e.g. ō, ā, ş) are decomposed to their ASCII base.
 // This preserves é, ü, ä, ç, ñ while fixing garbled rendering of ō in "Tōru".
 function normalizePdfText(str) {
-  if (!str) return '';
+  if (!str) return ‘’;
   return String(str)
-    .replace(/[“”„‟]/g, '"')   // curly double quotes → straight
-    .replace(/[‘’‚‛]/g, "'")    // curly single quotes → straight
-    .split('').map(ch => {
+    .replace(/[“”„‟]/g, ‘”’)   // curly double quotes → straight
+    .replace(/[‘’‚‛]/g, “’”)    // curly single quotes → straight
+    .split(‘’).map(ch => {
       if (ch.charCodeAt(0) <= 255) return ch;
-      const base = ch.normalize('NFD').replace(/[̀-ͯ]/g, '');
-      return (base && base.charCodeAt(0) <= 127) ? base : '?';
-    }).join('');
+      // en-dash and em-dash are in WinAnsi encoding — jsPDF renders them correctly
+      if (ch === ‘–‘ || ch === ‘—‘) return ch;
+      const base = ch.normalize(‘NFD’).replace(/[̀-ͯ]/g, ‘’);
+      return (base && base.charCodeAt(0) <= 127) ? base : ‘?’;
+    }).join(‘’);
 }
 
 function formatCatalogStr(type, number) {
