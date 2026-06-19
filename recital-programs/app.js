@@ -562,9 +562,11 @@ function buildTitleHTML() {
   const date  = formatDateStr(state.workDate);
 
   if (state.titleType === 'genre') {
-    const nick = state.nickname.trim().replace(/^["“”'‘’]+|["“”'‘’]+$/g, '');
-    const nickPart = nick ? ', &quot;' + esc(nick) + '&quot;' : '';
-    return esc(title) + nickPart + esc(cat) + esc(date);
+    const nick = state.nickname.trim().replace(/^[“””’’’]+|[“””’’’]+$/g, '');
+    // American style: comma inside closing quote when catalog follows
+    const nickPart = nick ? (cat ? ', &quot;' + esc(nick) + ',&quot;' : ', &quot;' + esc(nick) + '&quot;') : '';
+    const catPart  = nick && cat ? esc(cat.slice(1)) : esc(cat);
+    return esc(title) + nickPart + catPart + esc(date);
   }
   if (state.workSize === 'single') {
     // American style: comma inside closing quotation mark
@@ -1773,8 +1775,10 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
 
   if (s.workType === 'complete') {
     if (s.titleType === 'genre') {
-      const nick = nickname ? ', “' + nickname + '”' : '';
-      titleParts = [{ t: workTitle + nick + catStr + dateStr, i: false }];
+      // American style: comma inside closing quote when catalog follows
+      const nick    = nickname ? (catStr ? ', "' + nickname + ',"' : ', "' + nickname + '"') : '';
+      const catPart = nickname && catStr ? catStr.slice(1) : catStr;
+      titleParts = [{ t: workTitle + nick + catPart + dateStr, i: false }];
     } else if (s.workSize === 'single') {
       const leadComma = catStr.startsWith(', ') ? ',' : '';
       const catRest   = leadComma ? catStr.slice(1) : catStr;
