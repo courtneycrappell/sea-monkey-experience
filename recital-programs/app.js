@@ -32,7 +32,7 @@ function autoAcademicYear() {
   const year = now.getFullYear();
   const month = now.getMonth(); // 0-based; new academic year displayed starting August
   const startYear = month >= 7 ? year : year - 1;
-  return `${startYear}-${String(startYear + 1).slice(-2)}`;
+  return startYear + '\u2013' + String(startYear + 1).slice(-2);
 }
 
 function resetState() {
@@ -721,27 +721,14 @@ function buildEntry() {
       }
 
     } else {
-      // Multiple: cycle first
+      // Multiple: individual songs first at main level, then "from Work" below
       const parentRef = buildParentWorkRef();
-      if (!parentRef) return null;
+      if (!parentRef && !state.excerptMultiple.trim()) return null;
 
-      // Row 1: from *Parent Work*, Cat (Year) ........ Composer
-      htmlLines.push(
-        '<div class="entry-row">' +
-        '<span class="entry-title">from ' + parentRef + '</span>' +
-        (composerName ? '<span class="entry-composer">' + esc(composerName) + '</span>' : '') +
-        '</div>'
-      );
-      textLines.push('from ' + state.parentTitle +
-        (state.parentCatalogType ? ', ' + state.parentCatalogType + ' ' + state.parentCatalogNumber : '') +
-        (state.parentDate ? ' (' + state.parentDate + ')' : '') +
-        (composerName ? '    ' + composerName : ''));
-
-      // Pair right-side metadata (dates, then arrangers) alongside songs so they
-      // appear on the same rows rather than stacking above the song list.
-      const rightMeta = [];
-      if (composerDates) rightMeta.push(composerDates);
-      if (arrangerLine) arrangerLine.split('\n').filter(al => al.trim()).forEach(al => rightMeta.push(al));
+      const rightMetaHTML = [];
+      if (composerName)  rightMetaHTML.push({ cls: 'entry-composer', text: composerName });
+      if (composerDates) rightMetaHTML.push({ cls: 'entry-right',    text: composerDates });
+      if (arrangerLine)  arrangerLine.split('\n').filter(al => al.trim()).forEach(al => rightMetaHTML.push({ cls: 'entry-arranger', text: al }));
 
       let rightIdx = 0;
       if (state.excerptMultiple.trim()) {
@@ -750,27 +737,46 @@ function buildEntry() {
           const sepIdx    = rawLine.indexOf(' | ');
           const songTitle = sepIdx >= 0 ? rawLine.slice(0, sepIdx).trim() : rawLine;
           const songArr   = sepIdx >= 0 ? rawLine.slice(sepIdx + 3).trim() : '';
-          // Per-song arranger takes the right slot; otherwise consume next metadata item
-          const rightText = songArr || (rightIdx < rightMeta.length ? rightMeta[rightIdx++] : '');
-          if (rightText) {
+          if (songArr) {
             htmlLines.push(
-              '<div class="entry-indent-right">' +
-              '<span>' + esc(songTitle) + '</span>' +
-              '<span class="entry-arranger" style="font-size:0.8rem">' + esc(rightText) + '</span>' +
+              '<div class="entry-row">' +
+              '<span class="entry-title">' + esc(songTitle) + '</span>' +
+              '<span class="entry-arranger" style="font-size:0.8rem">' + esc(songArr) + '</span>' +
               '</div>'
             );
-            textLines.push('    ' + songTitle + '    ' + rightText);
+            textLines.push(songTitle + '    ' + songArr);
+          } else if (rightIdx < rightMetaHTML.length) {
+            const rm = rightMetaHTML[rightIdx++];
+            htmlLines.push(
+              '<div class="entry-row">' +
+              '<span class="entry-title">' + esc(songTitle) + '</span>' +
+              '<span class="' + rm.cls + '">' + esc(rm.text) + '</span>' +
+              '</div>'
+            );
+            textLines.push(songTitle + '    ' + rm.text);
           } else {
-            htmlLines.push('<div class="entry-indent">' + esc(songTitle) + '</div>');
-            textLines.push('    ' + songTitle);
+            htmlLines.push(
+              '<div class="entry-row">' +
+              '<span class="entry-title">' + esc(songTitle) + '</span>' +
+              '<span></span>' +
+              '</div>'
+            );
+            textLines.push(songTitle);
           }
         });
       }
-      // Any metadata that didn't pair with a song renders below the list
-      while (rightIdx < rightMeta.length) {
-        htmlLines.push('<div class="entry-row"><span></span><span class="entry-right">' + esc(rightMeta[rightIdx]) + '</span></div>');
-        textLines.push('                                          ' + rightMeta[rightIdx]);
-        rightIdx++;
+      // Any remaining right-side metadata
+      while (rightIdx < rightMetaHTML.length) {
+        const rm = rightMetaHTML[rightIdx++];
+        htmlLines.push('<div class="entry-row"><span></span><span class="' + rm.cls + '">' + esc(rm.text) + '</span></div>');
+        textLines.push('                                          ' + rm.text);
+      }
+      // "from Work" at the bottom, indented
+      if (parentRef) {
+        htmlLines.push('<div class="entry-indent">from ' + parentRef + '</div>');
+        textLines.push('    from ' + state.parentTitle +
+          (state.parentCatalogType ? ', ' + state.parentCatalogType + ' ' + state.parentCatalogNumber : '') +
+          (state.parentDate ? ' (' + state.parentDate + ')' : ''));
       }
     }
 
@@ -1790,9 +1796,16 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
     const trailingComma = s.parentTitle ? ',' : '';
     titleParts = [{ t: '”' + excerptOne + trailingComma + '”', i: false }];
   } else {
-    const pCat = s.parentCatalogType ? ', ' + p(s.parentCatalogType) + ' ' + p(s.parentCatalogNumber) : '';
-    const pDate = s.parentDate ? ' (' + p(s.parentDate) + ')' : '';
-    titleParts = [{ t: 'from ', i: false }, { t: parentTitle, i: true }, { t: pCat + pDate, i: false }];
+    // Excerpt-multiple: use first song as main title entry; "from Work" drawn after songs
+    const songs0 = (s.excerptMultiple || '').split('\n').map(l => l.trim()).filter(l => l);
+    const firstSong0 = songs0.length > 0 ? p(songs0[0].replace(/ \| .*$/, '').trim()) : '';
+    const pCat0 = s.parentCatalogType ? ', ' + p(s.parentCatalogType) + ' ' + p(s.parentCatalogNumber) : '';
+    const pDate0 = s.parentDate ? ' (' + p(s.parentDate) + ')' : '';
+    if (firstSong0) {
+      titleParts = [{ t: firstSong0, i: false }];
+    } else {
+      titleParts = [{ t: 'from ', i: false }, { t: parentTitle, i: true }, { t: pCat0 + pDate0, i: false }];
+    }
   }
 
   // Measure title width
@@ -1918,13 +1931,12 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
     let pdfRightIdx = 0;
 
     movRaw.split('\n').filter(l => l.trim()).forEach((rawLine, idx) => {
+      // For excerpt-multiple, song[0] is already drawn via titleParts — skip it
+      if (isExcerptMultiple && idx === 0) return;
       checkPage();
       const sepIdx    = rawLine.indexOf(' | ');
       const lineTitle = p(sepIdx >= 0 ? rawLine.slice(0, sepIdx).trim() : rawLine.trim());
       const lineArr   = sepIdx >= 0 ? p(rawLine.slice(sepIdx + 3).trim()) : '';
-      doc.setFont('times', 'normal'); doc.setFontSize(FS);
-      doc.setTextColor(...DARK);
-      doc.text(lineTitle, LM + 12, y);
 
       let rightStr = lineArr;
       if (!rightStr && isExcerptMultiple && pdfRightIdx < pdfRightMeta.length) {
@@ -1932,12 +1944,30 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
       } else if (!rightStr && !isExcerptMultiple && idx === 0 && lyricist) {
         rightStr = 'lyr. ' + lyricist;
       }
-      if (rightStr) {
-        doc.setTextColor(...MUTED);
-        doc.text(rightStr, RM - textWidth(rightStr), y);
-        doc.setTextColor(...DARK);
+
+      doc.setFont('times', 'normal'); doc.setFontSize(FS);
+      doc.setTextColor(...DARK);
+      if (isExcerptMultiple) {
+        // Remaining songs at main level with dot leaders
+        const songW2  = textWidth(lineTitle);
+        const rightW2 = rightStr ? textWidth(rightStr) : 0;
+        const dotsX2  = LM + songW2 + 1;
+        const compX2  = RM - rightW2;
+        const same2   = rightStr && (CW - songW2 - rightW2) >= MIN_LEADER;
+        const dots2   = same2 ? '.'.repeat(Math.max(0, Math.floor((compX2 - dotsX2 - 1) / dotW))) : '';
+        doc.text(lineTitle, LM, y);
+        if (dots2)    { doc.text(dots2, dotsX2, y); }
+        if (rightStr) { doc.setTextColor(...MUTED); doc.text(rightStr, compX2, y); doc.setTextColor(...DARK); }
+        y += LH;
+      } else {
+        doc.text(lineTitle, LM + 12, y);
+        if (rightStr) {
+          doc.setTextColor(...MUTED);
+          doc.text(rightStr, RM - textWidth(rightStr), y);
+          doc.setTextColor(...DARK);
+        }
+        y += LH * 0.85;
       }
-      y += LH * 0.85;
     });
 
     // Render any right-side metadata that didn't pair with a song
@@ -1949,6 +1979,22 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
       doc.setTextColor(...DARK);
       y += LH * 0.65;
       pdfRightIdx++;
+    }
+    // Excerpt-multiple: draw "from Work" indented below the song list
+    if (isExcerptMultiple && parentTitle) {
+      checkPage();
+      const fromStr2 = 'from ';
+      doc.setFont('times', 'normal'); doc.setFontSize(FS); doc.setTextColor(...DARK);
+      doc.text(fromStr2, LM + 12, y);
+      const fromW2 = textWidth(fromStr2);
+      doc.setFont('times', 'italic');
+      doc.text(parentTitle, LM + 12 + fromW2, y);
+      const ptW2 = textWidth(parentTitle, 'times', 'italic');
+      doc.setFont('times', 'normal');
+      const pCat2  = s.parentCatalogType ? ', ' + p(s.parentCatalogType) + ' ' + p(s.parentCatalogNumber) : '';
+      const pDate2 = s.parentDate ? ' (' + p(s.parentDate) + ')' : '';
+      doc.text(pCat2 + pDate2, LM + 12 + fromW2 + ptW2, y);
+      y += LH * 0.85;
     }
   }
 
