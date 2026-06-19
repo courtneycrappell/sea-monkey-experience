@@ -15,6 +15,7 @@ function resetRecitalDetails() {
     performerName:       '',
     instrument:          '',
     recitalDate:         '',
+    recitalDateISO:      '',
     recitalTime:         '',
     venue:               '',
     accompanist:         '',
@@ -29,8 +30,9 @@ function resetRecitalDetails() {
 function autoAcademicYear() {
   const now = new Date();
   const year = now.getFullYear();
-  const month = now.getMonth(); // 0-based; academic year starts ~Aug
-  return month >= 7 ? `${year}-${year + 1}` : `${year - 1}-${year}`;
+  const month = now.getMonth(); // 0-based; new academic year displayed starting August
+  const startYear = month >= 7 ? year : year - 1;
+  return `${startYear}-${String(startYear + 1).slice(-2)}`;
 }
 
 function resetState() {
@@ -70,9 +72,6 @@ function resetState() {
     // Credits
     arrangementRole:    'arr.',
     arrangementName:    '',
-    arrangementLiving:  null,
-    arrangementBorn:    '',
-    arrangementDied:    '',
     performers:         '',
     premiereType:       '',
   };
@@ -117,6 +116,8 @@ function goToScreen(id) {
   renderProgressFor(id);
   renderPreview();
   updateEntryIndicator();
+  const rdBack = document.getElementById('btn-rd-back');
+  if (rdBack) rdBack.style.display = (id === 'recital-details' && navHistory.length) ? '' : 'none';
   autoSave();
 }
 
@@ -304,8 +305,8 @@ function initRadioHandlers() {
       // Update work-details question hint
       updateWorkDetailsQuestion();
       setTimeout(() => {
-        if (r.value === 'distinctive') goToScreen('work-size');
-        else goToScreen('work-details');
+        updateWorkSizeScreen();
+        goToScreen('work-size');
       }, 180);
     });
   });
@@ -344,6 +345,32 @@ function updateWorkDetailsQuestion() {
   }
 }
 
+function updateWorkSizeScreen() {
+  const isGenre = state.titleType === 'genre';
+  const q    = document.getElementById('ws-question');
+  const qsub = document.getElementById('ws-question-sub');
+  const mLbl = document.getElementById('ws-multi-label');
+  const mSub = document.getElementById('ws-multi-sub');
+  const sLbl = document.getElementById('ws-single-label');
+  const sSub = document.getElementById('ws-single-sub');
+  if (!q) return;
+  if (isGenre) {
+    q.childNodes[0].textContent = 'Does this work have multiple movements?';
+    if (qsub) qsub.textContent = 'If yes, you\'ll enter the movement names on the next screen.';
+    if (mLbl) mLbl.innerHTML = 'Yes — multi-movement work';
+    if (mSub) mSub.textContent = 'Sonata, symphony, suite, concerto, string quartet, etc. — you\'ll list the movements.';
+    if (sLbl) sLbl.innerHTML = 'No — single movement or short piece';
+    if (sSub) sSub.textContent = 'Nocturne, impromptu, étude, prelude, single piece from a set, etc.';
+  } else {
+    q.childNodes[0].textContent = 'Is this a larger work, or a single short piece?';
+    if (qsub) qsub.textContent = 'Larger works get italics. Single short pieces get quotation marks.';
+    if (mLbl) mLbl.innerHTML = 'Larger / multi-movement work → <em>italics</em>';
+    if (mSub) mSub.textContent = 'Song cycles, operas, oratorios, cantatas, multi-movement instrumental works — e.g., Dichterliebe, Six Elizabethan Songs, Three Irish Legends';
+    if (sLbl) sLbl.innerHTML = 'Single short piece → “quotation marks”';
+    if (sSub) sSub.textContent = 'One song, one aria, one short instrumental — e.g., Beau soir, A Dream, Turning Point';
+  }
+}
+
 // ════════════════════════════════════════════════════════════════
 //  Advance handlers (form screens)
 // ════════════════════════════════════════════════════════════════
@@ -352,7 +379,7 @@ function advanceFromParentWork() {
   const q = document.getElementById('excerpt-titles-question');
   const fields = document.getElementById('excerpt-titles-fields');
   if (state.excerptCount === 'one') {
-    q.textContent = 'What aria or song are you performing?';
+    q.textContent = 'What aria, song, or movement are you performing?';
     fields.innerHTML = `
       <div class="field">
         <label for="excerpt-one-title">Aria / song title</label>
@@ -434,12 +461,6 @@ function updateCatalogType(val) {
 // ════════════════════════════════════════════════════════════════
 //  Arrangement status handler
 // ════════════════════════════════════════════════════════════════
-function updateArrStatus(val) {
-  state.arrangementLiving = (val === 'living');
-  document.getElementById('arr-deceased-fields').classList.toggle('visible', val === 'deceased');
-  document.getElementById('arr-living-fields').classList.toggle('visible', val === 'living');
-  renderPreview();
-}
 
 // ════════════════════════════════════════════════════════════════
 //  Credits accordion
@@ -470,11 +491,14 @@ function esc(str) {
 // This preserves é, ü, ä, ç, ñ while fixing garbled rendering of ō in "Tōru".
 function normalizePdfText(str) {
   if (!str) return '';
-  return String(str).split('').map(ch => {
-    if (ch.charCodeAt(0) <= 255) return ch;
-    const base = ch.normalize('NFD').replace(/[̀-ͯ]/g, '');
-    return (base && base.charCodeAt(0) <= 127) ? base : '?';
-  }).join('');
+  return String(str)
+    .replace(/[“”„‟]/g, '"')   // curly double quotes → straight
+    .replace(/[‘’‚‛]/g, "'")    // curly single quotes → straight
+    .split('').map(ch => {
+      if (ch.charCodeAt(0) <= 255) return ch;
+      const base = ch.normalize('NFD').replace(/[̀-ͯ]/g, '');
+      return (base && base.charCodeAt(0) <= 127) ? base : '?';
+    }).join('');
 }
 
 function formatCatalogStr(type, number) {
@@ -509,12 +533,7 @@ function formatComposerName() {
 function formatArrangerLine() {
   if (!state.arrangementName.trim()) return '';
   const role = state.arrangementRole || 'arr.';
-  let line = role + ' ' + state.arrangementName.trim();
-  if (state.arrangementLiving === false && state.arrangementBorn) {
-    const dates = formatComposerDates(state.arrangementBorn, state.arrangementDied, false);
-    if (dates) line += '\n' + dates;
-  }
-  return line;
+  return role + ' ' + state.arrangementName.trim();
 }
 
 function formatMovementList(movementsStr, lyricist) {
@@ -1052,16 +1071,6 @@ function populateFormFromState(s) {
     document.getElementById('deceased-fields')?.classList.add('visible');
   }
 
-  // Arrangement status
-  if (s.arrangementName) {
-    if (s.arrangementLiving === true) {
-      setRadio('arrStatus', 'living');
-      document.getElementById('arr-living-fields')?.classList.add('visible');
-    } else if (s.arrangementLiving === false) {
-      setRadio('arrStatus', 'deceased');
-      document.getElementById('arr-deceased-fields')?.classList.add('visible');
-    }
-  }
 
   // Text inputs
   function setVal(id, val) { const el = document.getElementById(id); if (el && val) el.value = val; }
@@ -1077,9 +1086,6 @@ function populateFormFromState(s) {
   setVal('movements-input', s.movements);
   setVal('lyricist-input', s.lyricist);
   setVal('arr-name', s.arrangementName);
-  setVal('arr-born', s.arrangementBorn);
-  setVal('arr-born-living', s.arrangementBorn);
-  setVal('arr-died', s.arrangementDied);
   setVal('performers-input', s.performers);
   setVal('premiere-input', s.premiereType);
   setVal('parent-title', s.parentTitle);
@@ -1108,6 +1114,7 @@ function populateFormFromState(s) {
   }
 
   updateWorkDetailsQuestion();
+  updateWorkSizeScreen();
   renderPreview();
 }
 
@@ -1297,6 +1304,43 @@ function updateRD(key, value) {
     toggleLectureTitle();
   }
   autoSave();
+}
+
+function onDatePick(isoVal) {
+  recitalDetails.recitalDateISO = isoVal;
+  if (isoVal) {
+    const d = new Date(isoVal + 'T00:00:00');
+    recitalDetails.recitalDate = d.toLocaleDateString('en-US', {
+      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+    });
+  } else {
+    recitalDetails.recitalDate = '';
+  }
+  autoSave();
+}
+
+function onVenueSelect(val) {
+  const customEl = document.getElementById('rd-venue-other');
+  if (val === 'other') {
+    customEl.style.display = '';
+    customEl.focus();
+    updateRD('venue', customEl.value);
+  } else {
+    customEl.style.display = 'none';
+    updateRD('venue', val);
+  }
+}
+
+function onTimeSelect(val) {
+  const customEl = document.getElementById('rd-time-other');
+  if (val === 'other') {
+    customEl.style.display = '';
+    customEl.focus();
+    updateRD('recitalTime', customEl.value);
+  } else {
+    customEl.style.display = 'none';
+    updateRD('recitalTime', val);
+  }
 }
 
 function toggleLectureTitle() {
@@ -1753,14 +1797,16 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
   const compW     = compName ? textWidth(compName, 'times', 'normal', FS) : 0;
   const compDates = formatComposerDates(s.composerBorn, s.composerDied, s.composerLiving);
 
-  // Dot leaders
+  // Dot leaders — require MIN_LEADER mm gap so leaders are always readable
+  const MIN_LEADER = 12;
   doc.setFont('times', 'normal');
   doc.setFontSize(FS);
-  const dotW  = doc.getTextWidth('.');
-  const dotsX = LM + tw + 1;
-  const compX = RM - compW;
-  const numDots = compName && compX > dotsX + 2 ? Math.floor((compX - dotsX - 1) / dotW) : 0;
-  const dots  = '.'.repeat(Math.max(0, numDots));
+  const dotW   = doc.getTextWidth('.');
+  const dotsX  = LM + tw + 1;
+  const compX  = RM - compW;
+  const sameLine = compName && (CW - tw - compW) >= MIN_LEADER;
+  const numDots  = sameLine ? Math.max(0, Math.floor((compX - dotsX - 1) / dotW)) : 0;
+  const dots     = '.'.repeat(numDots);
 
   checkPage();
 
@@ -1773,8 +1819,8 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
     doc.text(pt.t, cx, y);
     cx += textWidth(pt.t, 'times', pt.i ? 'italic' : 'normal', FS);
   });
-  if (tw + compW + 4 <= CW) {
-    // Fits: draw dot leaders and composer on same line
+  if (sameLine) {
+    // Fits with readable leaders: draw dots and composer on same line
     if (dots)    { doc.setFont('times', 'normal'); doc.text(dots, dotsX, y); }
     if (compName){ doc.setFont('times', 'normal'); doc.text(compName, compX, y); }
     y += LH;
@@ -1789,9 +1835,9 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
     }
   }
 
-  // Composer dates — skip for all excerpt types (excerpt-one renders on “from” line;
-  // excerpt-multiple pairs dates alongside songs below)
-  if (compDates && s.workType !== 'excerpt') {
+  // Composer dates — draw here for complete works and excerpt-one;
+  // excerpt-multiple pairs dates alongside songs below
+  if (compDates && !(s.workType === 'excerpt' && s.excerptCount === 'multiple')) {
     checkPage();
     doc.setFont('times', 'normal'); doc.setFontSize(FS);
     doc.setTextColor(...MUTED);
@@ -1804,16 +1850,10 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
   if (arrName && !(s.workType === 'excerpt' && s.excerptCount === 'multiple')) {
     checkPage();
     const arrStr  = (s.arrangementRole || 'arr.') + ' ' + arrName;
-    const arrDates = s.arrangementLiving === false && s.arrangementBorn
-      ? formatComposerDates(s.arrangementBorn, s.arrangementDied, false) : '';
     doc.setFont('times', 'normal'); doc.setFontSize(FS);
     doc.setTextColor(...MUTED);
     doc.text(arrStr, RM - textWidth(arrStr), y);
     y += LH * 0.65;
-    if (arrDates) {
-      doc.text(arrDates, RM - textWidth(arrDates), y);
-      y += LH * 0.65;
-    }
     doc.setTextColor(...DARK);
   }
 
@@ -1841,20 +1881,7 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
       const ptW = textWidth(parentTitle, 'times', 'italic');
       doc.setFont('times', 'normal');
       doc.text(pCat + pDate, LM + 12 + fromW + ptW, y);
-      if (compDates) {
-        doc.setTextColor(...MUTED);
-        doc.text(compDates, RM - textWidth(compDates), y);
-        doc.setTextColor(...DARK);
-      }
       y += LH;
-    } else if (compDates) {
-      // No parent work — render dates on their own right-aligned row
-      checkPage();
-      doc.setFont('times', 'normal'); doc.setFontSize(FS);
-      doc.setTextColor(...MUTED);
-      doc.text(compDates, RM - textWidth(compDates), y);
-      doc.setTextColor(...DARK);
-      y += LH * 0.65;
     }
   }
 
@@ -1864,15 +1891,21 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
     : (s.workType === 'excerpt' && s.excerptCount === 'multiple' ? (s.excerptMultiple || '') : '');
   if (movRaw.trim()) {
     const isExcerptMultiple = s.workType === 'excerpt' && s.excerptCount === 'multiple';
+
+    // Keep movements together: if block won't fit on remaining page but fits on a fresh one, break now
+    const movLines = movRaw.trim().split('\n').filter(l => l.trim());
+    const movBlockH = movLines.length * LH * 0.85;
+    const freshPageH = BM - 36 - 14; // usable height on a new page
+    if (movBlockH <= freshPageH && y + movBlockH > BM - 36) {
+      doc.addPage();
+      y = 14;
+    }
     // For excerpt-multiple, build right-side metadata to pair alongside songs
     const pdfRightMeta = [];
     if (isExcerptMultiple) {
       if (compDates) pdfRightMeta.push(compDates);
       if (arrName) {
         pdfRightMeta.push((s.arrangementRole || 'arr.') + ' ' + arrName);
-        if (s.arrangementLiving === false && s.arrangementBorn) {
-          pdfRightMeta.push(formatComposerDates(s.arrangementBorn, s.arrangementDied, false));
-        }
       }
     }
     let pdfRightIdx = 0;
@@ -2081,9 +2114,31 @@ function populateRecitalDetailsForm() {
   setVal('rd-type', recitalDetails.recitalType);
   setSel('rd-type', recitalDetails.recitalType);
   setVal('rd-year', recitalDetails.academicYear);
-  setVal('rd-time', recitalDetails.recitalTime);
-  setVal('rd-date', recitalDetails.recitalDate);
-  setVal('rd-venue', recitalDetails.venue);
+  const presetTimes = ['12:00 p.m.', '2:30 p.m.', '5:00 p.m.', '7:30 p.m.'];
+  const savedTime = recitalDetails.recitalTime;
+  if (savedTime) {
+    if (presetTimes.includes(savedTime)) {
+      setSel('rd-time', savedTime);
+    } else {
+      setSel('rd-time', 'other');
+      setVal('rd-time-other', savedTime);
+      const customEl = document.getElementById('rd-time-other');
+      if (customEl) customEl.style.display = '';
+    }
+  }
+  setVal('rd-date', recitalDetails.recitalDateISO);
+  const presetVenues = ['Grant Recital Hall', 'White Recital Hall', "Diastole Scholars' Center"];
+  const savedVenue = recitalDetails.venue;
+  if (savedVenue) {
+    if (presetVenues.includes(savedVenue)) {
+      setSel('rd-venue', savedVenue);
+    } else {
+      setSel('rd-venue', 'other');
+      setVal('rd-venue-other', savedVenue);
+      const customEl = document.getElementById('rd-venue-other');
+      if (customEl) customEl.style.display = '';
+    }
+  }
   setVal('rd-name', recitalDetails.performerName);
   setVal('rd-instrument', recitalDetails.instrument);
   setVal('rd-accompanist', recitalDetails.accompanist);

@@ -72,16 +72,12 @@
                 <option>Doctoral Lecture Recital</option>
                 <option>Master's Recital</option>
                 <option>Bachelor's Recital</option>
-                <option>Senior Undergraduate Recital</option>
-                <option>Junior Undergraduate Recital</option>
                 <option>Artist's Certificate Recital</option>
                 <option>Performer's Certificate Recital</option>
                 <option>Non-Credit Graduate Recital</option>
                 <option>Non-Credit Undergraduate Recital</option>
               </optgroup>
-              <optgroup label="Non-Degree">
-                <option>Student Chamber Music Recital</option>
-              </optgroup>
+
             </select>
           </div>
           <div class="field" id="rd-lecture-field" style="display:none">
@@ -92,23 +88,38 @@
           <div class="field-row">
             <div class="field">
               <label for="rd-year">Academic year</label>
-              <input type="text" spellcheck="false" id="rd-year" placeholder="e.g. 2025-2026"
-                     oninput="updateRD('academicYear', this.value)">
+              <input type="text" spellcheck="false" id="rd-year" readonly>
             </div>
             <div class="field">
               <label for="rd-time">Time</label>
-              <input type="text" spellcheck="false" id="rd-time" placeholder="e.g. 7:30 p.m."
+              <select id="rd-time" onchange="onTimeSelect(this.value)">
+                <option value="">Select a time…</option>
+                <option>12:00 p.m.</option>
+                <option>2:30 p.m.</option>
+                <option>5:00 p.m.</option>
+                <option>7:30 p.m.</option>
+                <option value="other">Other</option>
+              </select>
+              <input type="text" spellcheck="false" id="rd-time-other"
+                     placeholder="e.g. 6:00 p.m." style="display:none; margin-top:0.5rem"
                      oninput="updateRD('recitalTime', this.value)">
             </div>
           </div>
           <div class="field">
             <label for="rd-date">Date</label>
-            <input type="text" spellcheck="false" id="rd-date" placeholder="e.g. Monday, April 27, 2026"
-                   oninput="updateRD('recitalDate', this.value)">
+            <input type="date" id="rd-date" onchange="onDatePick(this.value)">
           </div>
           <div class="field">
             <label for="rd-venue">Venue</label>
-            <input type="text" spellcheck="true" id="rd-venue" placeholder="e.g. Grant Recital Hall"
+            <select id="rd-venue" onchange="onVenueSelect(this.value)">
+              <option value="">Select a venue…</option>
+              <option>Grant Recital Hall</option>
+              <option>White Recital Hall</option>
+              <option>Diastole Scholars' Center</option>
+              <option value="other">Other</option>
+            </select>
+            <input type="text" spellcheck="true" id="rd-venue-other"
+                   placeholder="Enter venue name" style="display:none; margin-top:0.5rem"
                    oninput="updateRD('venue', this.value)">
           </div>
         </div>
@@ -173,7 +184,10 @@
         </div>
 
         <div class="validation-msg" id="rd-validation" style="display:none"></div>
-        <button class="btn-primary" onclick="advanceFromRecitalDetails()">Continue to Program →</button>
+        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap">
+          <button class="btn-back" id="btn-rd-back" style="display:none" onclick="goBack()">← Back</button>
+          <button class="btn-primary" onclick="advanceFromRecitalDetails()">Continue to Program →</button>
+        </div>
       </div>
     </section>
 
@@ -188,7 +202,7 @@
           <div class="option-item">
             <input type="radio" name="relationship" value="complete" id="rel-complete">
             <label for="rel-complete">A complete work or standalone piece
-              <span class="option-sub">I'm listing the entire work — a sonata, song cycle, single song, aria, etc.</span>
+              <span class="option-sub">I'm performing the entire work — a sonata, symphony, song cycle, single song, aria, etc. Choose this even if the work has multiple movements.</span>
             </label>
           </div>
           <div class="option-item">
@@ -228,27 +242,27 @@
       </div>
     </section>
 
-    <!-- ── Screen 3A-2: Work size (distinctive name) ─────── -->
+    <!-- ── Screen 3A-2: Work size ───────────────────────── -->
     <section id="screen-work-size" class="screen" aria-label="Step: Work size">
       <button class="btn-back" onclick="goBack()">← Back</button>
       <div class="progress" aria-label="Progress">
         <div class="progress-steps" id="progress-work-size"></div>
       </div>
       <div class="card">
-        <p class="question">Is this a larger work, or a single short piece?
-          <span class="question-sub">Larger works get italics. Single short pieces get quotation marks.</span>
+        <p class="question" id="ws-question">Is this a larger work, or a single short piece?
+          <span class="question-sub" id="ws-question-sub">Larger works get italics. Single short pieces get quotation marks.</span>
         </p>
         <div class="option-list" role="radiogroup" aria-label="Work size">
           <div class="option-item">
             <input type="radio" name="workSize" value="multi" id="ws-multi">
-            <label for="ws-multi">Larger / multi-movement work → <em>italics</em>
-              <span class="option-sub">Song cycles, operas, oratorios, cantatas, multi-movement instrumental works — e.g., <em>Dichterliebe</em>, <em>Six Elizabethan Songs</em>, <em>Three Irish Legends</em></span>
+            <label for="ws-multi"><span id="ws-multi-label">Larger / multi-movement work → <em>italics</em></span>
+              <span class="option-sub" id="ws-multi-sub">Song cycles, operas, oratorios, cantatas, multi-movement instrumental works — e.g., <em>Dichterliebe</em>, <em>Six Elizabethan Songs</em>, <em>Three Irish Legends</em></span>
             </label>
           </div>
           <div class="option-item">
             <input type="radio" name="workSize" value="single" id="ws-single">
-            <label for="ws-single">Single short piece → "quotation marks"
-              <span class="option-sub">One song, one aria, one short instrumental — e.g., "Beau soir", "A Dream", "Turning Point"</span>
+            <label for="ws-single"><span id="ws-single-label">Single short piece → "quotation marks"</span>
+              <span class="option-sub" id="ws-single-sub">One song, one aria, one short instrumental — e.g., "Beau soir", "A Dream", "Turning Point"</span>
             </label>
           </div>
         </div>
@@ -320,7 +334,7 @@
             </div>
           </div>
           <div class="field">
-            <label for="parent-date">Year or date</label>
+            <label for="parent-date">Composition year</label>
             <input type="text" spellcheck="true" id="parent-date" placeholder="e.g. 1846, 1901–03, ca. 1719, pub. 1922"
                    oninput="updateState('parentDate', this.value)">
           </div>
@@ -388,7 +402,7 @@
                    oninput="updateState('catalogType', this.value)">
           </div>
           <div class="field">
-            <label for="work-date">Year or date of composition</label>
+            <label for="work-date">Composition year</label>
             <input type="text" spellcheck="true" id="work-date" placeholder="e.g. 1841, 1796–98, ca. 1719, pub. 1922"
                    oninput="updateState('workDate', this.value)">
           </div>
@@ -534,39 +548,6 @@
                          oninput="updateState('arrangementName', this.value)">
                 </div>
               </div>
-              <div class="option-list" role="radiogroup" aria-label="Arranger status" style="margin-bottom:0.5rem">
-                <div class="option-item">
-                  <input type="radio" name="arrStatus" value="deceased" id="as-deceased"
-                         onchange="updateArrStatus('deceased')">
-                  <label for="as-deceased">Arranger is deceased</label>
-                </div>
-                <div class="option-item">
-                  <input type="radio" name="arrStatus" value="living" id="as-living"
-                         onchange="updateArrStatus('living')">
-                  <label for="as-living">Arranger is living</label>
-                </div>
-              </div>
-              <div class="sub-fields" id="arr-deceased-fields">
-                <div class="field-row">
-                  <div class="field">
-                    <label for="arr-born">Birth year</label>
-                    <input type="text" spellcheck="false" id="arr-born" placeholder="e.g. 1900"
-                           oninput="updateState('arrangementBorn', this.value)">
-                  </div>
-                  <div class="field">
-                    <label for="arr-died">Death year</label>
-                    <input type="text" spellcheck="false" id="arr-died" placeholder="e.g. 1985"
-                           oninput="updateState('arrangementDied', this.value)">
-                  </div>
-                </div>
-              </div>
-              <div class="sub-fields" id="arr-living-fields">
-                <div class="field">
-                  <label for="arr-born-living">Birth year (optional)</label>
-                  <input type="text" spellcheck="false" id="arr-born-living" placeholder="e.g. 1970"
-                         oninput="updateState('arrangementBorn', this.value)">
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -665,6 +646,7 @@ Your formatted entry will appear here as you fill in the wizard.
         <span class="program-panel-label">PROGRAM <span id="entry-count"></span></span>
         <button class="btn-secondary-sm" onclick="clearProgram()">Clear all</button>
       </div>
+      <button class="btn-secondary-sm" style="width:100%;margin-bottom:0.5rem" onclick="goToScreen('recital-details')">✎ Edit Recital Details</button>
       <div id="program-list"></div>
       <div class="program-footer">
         <button class="btn-primary btn-download" onclick="generatePDF()">⬇ Download PDF</button>
