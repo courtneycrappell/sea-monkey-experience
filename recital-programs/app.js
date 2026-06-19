@@ -491,17 +491,17 @@ function esc(str) {
 // characters above U+00FF (e.g. ō, ā, ş) are decomposed to their ASCII base.
 // This preserves é, ü, ä, ç, ñ while fixing garbled rendering of ō in "Tōru".
 function normalizePdfText(str) {
-  if (!str) return ‘’;
+  if (!str) return '';
   return String(str)
-    .replace(/[“”„‟]/g, ‘”’)   // curly double quotes → straight
-    .replace(/[‘’‚‛]/g, “’”)    // curly single quotes → straight
-    .split(‘’).map(ch => {
+    .replace(/[\u201c\u201d\u201e\u201f]/g, '"')  // curly double quotes \u2192 straight
+    .replace(/[\u2018\u2019\u201a\u201b]/g, "'")  // curly single quotes \u2192 straight
+    .split('').map(ch => {
       if (ch.charCodeAt(0) <= 255) return ch;
-      // en-dash and em-dash are in WinAnsi encoding — jsPDF renders them correctly
-      if (ch === ‘–‘ || ch === ‘—‘) return ch;
-      const base = ch.normalize(‘NFD’).replace(/[̀-ͯ]/g, ‘’);
-      return (base && base.charCodeAt(0) <= 127) ? base : ‘?’;
-    }).join(‘’);
+      // en-dash (\u2013) and em-dash (\u2014) are in WinAnsi -- jsPDF renders them correctly
+      if (ch === '\u2013' || ch === '\u2014') return ch;
+      const base = ch.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      return (base && base.charCodeAt(0) <= 127) ? base : '?';
+    }).join('');
 }
 
 function formatCatalogStr(type, number) {
