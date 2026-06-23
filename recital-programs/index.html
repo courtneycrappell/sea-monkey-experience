@@ -149,18 +149,61 @@
                       placeholder="One per line: Name, instrument&#10;e.g. Wai Tung Choi, piano"
                       oninput="updateRD('additionalPerformers', this.value)"></textarea>
           </div>
-          <div class="field-row">
-            <div class="field">
-              <label for="rd-prof-title">Professor title</label>
-              <select id="rd-prof-title" onchange="updateRD('profTitle', this.value)">
-                <option value="Professor">Professor</option>
-                <option value="Dr.">Dr.</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="rd-prof-name">Applied professor name</label>
-              <input type="text" spellcheck="true" id="rd-prof-name" placeholder="e.g. Alberto Suarez"
-                     oninput="updateRD('profName', this.value)">
+          <div class="field">
+            <label for="rd-prof-select">Applied professor</label>
+            <select id="rd-prof-select" onchange="updateProfessor(this.value)">
+              <option value="">— Select your applied professor —</option>
+              <option value="Professor|||Carl Allen">Professor Carl Allen</option>
+              <option value="Dr.|||Jane Carl">Dr. Jane Carl</option>
+              <option value="Dr.|||Lauren Casey-Clyde">Dr. Lauren Casey-Clyde</option>
+              <option value="Professor|||Sean Chen">Professor Sean Chen</option>
+              <option value="Dr.|||Chen Yi">Dr. Chen Yi</option>
+              <option value="Dr.|||Raymond Feener">Dr. Raymond Feener</option>
+              <option value="Professor|||Joseph Genualdi">Professor Joseph Genualdi</option>
+              <option value="Professor|||Celeste Johnson">Professor Celeste Johnson</option>
+              <option value="Dr.|||Maria Kanyova">Dr. Maria Kanyova</option>
+              <option value="Professor|||Benny Kim">Professor Benny Kim</option>
+              <option value="Professor|||Scott Lee">Professor Scott Lee</option>
+              <option value="Professor|||Marcus Lewis">Professor Marcus Lewis</option>
+              <option value="Dr.|||Christopher Madden">Dr. Christopher Madden</option>
+              <option value="Professor|||Stephen Martin">Professor Stephen Martin</option>
+              <option value="Professor|||Jarrett McCourt">Professor Jarrett McCourt</option>
+              <option value="Professor|||Michael Mermagen">Professor Michael Mermagen</option>
+              <option value="Professor|||Dale Morehouse">Professor Dale Morehouse</option>
+              <option value="Dr.|||Leigh Muñoz">Dr. Leigh Muñoz</option>
+              <option value="Professor|||Nathan Nall">Professor Nathan Nall</option>
+              <option value="Dr.|||Seokho Park">Dr. Seokho Park</option>
+              <option value="Dr.|||Paul Rudy">Dr. Paul Rudy</option>
+              <option value="Dr.|||Terri Sánchez">Dr. Terri Sánchez</option>
+              <option value="Dr.|||Jeffrey Savage">Dr. Jeffrey Savage</option>
+              <option value="Dr.|||Karen Savage">Dr. Karen Savage</option>
+              <option value="Professor|||Peter Schlamb">Professor Peter Schlamb</option>
+              <option value="Professor|||Adam Schlozman">Professor Adam Schlozman</option>
+              <option value="Dr.|||Bill Shaltis">Dr. Bill Shaltis</option>
+              <option value="Professor|||Zachary Shemon">Professor Zachary Shemon</option>
+              <option value="Dr.|||Aidan Soder">Dr. Aidan Soder</option>
+              <option value="Professor|||Alberto Suarez">Professor Alberto Suarez</option>
+              <option value="Dr.|||Matthew Vangjel">Dr. Matthew Vangjel</option>
+              <option value="Professor|||Roger Wilder">Professor Roger Wilder</option>
+              <option value="Professor|||Keith Wymer">Professor Keith Wymer</option>
+              <option value="Dr.|||Zhou Long">Dr. Zhou Long</option>
+              <option value="other">Other / not listed…</option>
+            </select>
+            <div id="rd-prof-other-wrap" style="display:none;margin-top:0.5rem">
+              <div class="field-row">
+                <div class="field">
+                  <label for="rd-prof-title">Title</label>
+                  <select id="rd-prof-title" onchange="updateRD('profTitle', this.value)">
+                    <option value="Professor">Professor</option>
+                    <option value="Dr.">Dr.</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="rd-prof-name">Professor name</label>
+                  <input type="text" spellcheck="true" id="rd-prof-name" placeholder="e.g. Alberto Suarez"
+                         oninput="updateRD('profName', this.value)">
+                </div>
+              </div>
             </div>
           </div>
           <div class="field" id="rd-degree-section">

@@ -1317,6 +1317,30 @@ function updateRD(key, value) {
   autoSave();
 }
 
+// Applied-professor dropdown: each option value is "Title|||Name" (e.g. "Dr.|||Carl Allen").
+// Selecting "other" reveals a free-text title + name for faculty not on the list.
+function updateProfessor(val) {
+  const otherWrap = document.getElementById('rd-prof-other-wrap');
+  if (val === 'other') {
+    if (otherWrap) otherWrap.style.display = 'block';
+    const t = document.getElementById('rd-prof-title');
+    const n = document.getElementById('rd-prof-name');
+    recitalDetails.profTitle = (t && t.value) || 'Professor';
+    recitalDetails.profName = (n && n.value) || '';
+  } else {
+    if (otherWrap) otherWrap.style.display = 'none';
+    const sep = val.indexOf('|||');
+    if (sep === -1) {
+      recitalDetails.profTitle = 'Professor';
+      recitalDetails.profName = '';
+    } else {
+      recitalDetails.profTitle = val.slice(0, sep);
+      recitalDetails.profName = val.slice(sep + 3);
+    }
+  }
+  autoSave();
+}
+
 function onDatePick(isoVal) {
   recitalDetails.recitalDateISO = isoVal;
   if (isoVal) {
@@ -2193,8 +2217,26 @@ function populateRecitalDetailsForm() {
   setVal('rd-instrument', recitalDetails.instrument);
   setVal('rd-accompanist', recitalDetails.accompanist);
   setVal('rd-additional', recitalDetails.additionalPerformers);
-  setSel('rd-prof-title', recitalDetails.profTitle);
-  setVal('rd-prof-name', recitalDetails.profName);
+  // Applied professor: match saved title+name to a dropdown option, else fall back to "Other"
+  const profSel = document.getElementById('rd-prof-select');
+  const profOtherWrap = document.getElementById('rd-prof-other-wrap');
+  if (profSel) {
+    const wantVal = (recitalDetails.profTitle || '') + '|||' + (recitalDetails.profName || '');
+    const hasOption = recitalDetails.profName &&
+      Array.from(profSel.options).some(o => o.value === wantVal);
+    if (hasOption) {
+      profSel.value = wantVal;
+      if (profOtherWrap) profOtherWrap.style.display = 'none';
+    } else if (recitalDetails.profName) {
+      profSel.value = 'other';
+      if (profOtherWrap) profOtherWrap.style.display = 'block';
+      setSel('rd-prof-title', recitalDetails.profTitle);
+      setVal('rd-prof-name', recitalDetails.profName);
+    } else {
+      profSel.value = '';
+      if (profOtherWrap) profOtherWrap.style.display = 'none';
+    }
+  }
   // Restore degree hybrid field
   const deg = recitalDetails.degree || '';
   const DEGREE_PREFIXES = [
