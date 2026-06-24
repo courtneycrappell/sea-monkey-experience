@@ -149,6 +149,21 @@
                       placeholder="One per line: Name, instrument&#10;e.g. Wai Tung Choi, piano"
                       oninput="updateRD('additionalPerformers', this.value)"></textarea>
           </div>
+
+          <!-- ── Web Program (Beta) extras — optional, only used by the web program ── -->
+          <div class="field">
+            <label for="rd-program-notes">Program notes <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional — for the Web Program)</span></label>
+            <textarea spellcheck="true" id="rd-program-notes" rows="4"
+                      placeholder="Notes about the program or individual works. Leave blank to omit. (Used only in the downloadable Web Program — not on the PDF or Word doc.)"
+                      oninput="updateRD('programNotes', this.value)"></textarea>
+          </div>
+          <div class="field">
+            <label for="rd-performer-bio">Performer bio <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional — for the Web Program)</span></label>
+            <textarea spellcheck="true" id="rd-performer-bio" rows="4"
+                      placeholder="A short bio of the performer. Leave blank to omit. (Used only in the downloadable Web Program — not on the PDF or Word doc.)"
+                      oninput="updateRD('performerBio', this.value)"></textarea>
+          </div>
+
           <div class="field">
             <label for="rd-prof-select">Applied professor</label>
             <select id="rd-prof-select" onchange="updateProfessor(this.value)">
@@ -695,6 +710,7 @@ Your formatted entry will appear here as you fill in the wizard.
         <button class="btn-primary btn-download" onclick="generatePDF()">⬇ Download PDF</button>
         <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="previewPDF()">Preview PDF →</button>
         <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="generateDoc()">⬇ Download Word Doc (.doc)</button>
+        <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="generateWebProgram()">⬇ Download Web Program (.html) <span style="font-size:0.72em;font-weight:700;letter-spacing:0.04em;color:#a6892b">BETA</span></button>
         <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="openFacultyEmailModal()">✉ Submit to Faculty for Review →</button>
       </div>
     </div>

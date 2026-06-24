@@ -24,6 +24,8 @@ function resetRecitalDetails() {
     profName:            '',
     degree:              '',
     lectureTitle:        '',
+    programNotes:        '',   // Web Program (Beta) — optional
+    performerBio:        '',   // Web Program (Beta) — optional
   };
 }
 
@@ -1252,6 +1254,186 @@ ${degreeHtml}
 }
 
 // ════════════════════════════════════════════════════════════════
+//  Web Program (.html) download — screen-first, dark-mode default (BETA)
+//  Self-contained single file. Reuses each entry's formatted HTML so all
+//  Chicago-style repertoire formatting carries over unchanged.
+// ════════════════════════════════════════════════════════════════
+function generateWebProgram() {
+  const entries = programEntries.filter(e => e.type === 'entry');
+  if (entries.length === 0) {
+    alert('Add at least one program entry before downloading.');
+    return;
+  }
+  const rd = recitalDetails;
+
+  // Free-text block -> escaped HTML paragraphs (blank line = new paragraph)
+  function textToParas(txt) {
+    return String(txt || '')
+      .split(/\n{2,}/)
+      .map(p => p.trim())
+      .filter(Boolean)
+      .map(p => '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>')
+      .join('');
+  }
+
+  // ── Program body: reuse each entry's formatted HTML, restyled for screen ──
+  let programHtml = '';
+  programEntries.forEach(item => {
+    if (item.type === 'intermission') {
+      programHtml += '<div class="interm">— Intermission —</div>';
+    } else if (item.html) {
+      programHtml += '<div class="work">' + item.html + '</div>';
+    }
+  });
+
+  // ── Hero ──
+  const kicker = [rd.recitalType || 'Recital', rd.academicYear].filter(Boolean).join(' · ');
+  const h1 = [rd.performerName, rd.instrument].filter(Boolean).join(', ') || (rd.recitalType || 'Recital');
+  let heroSub = '';
+  if (rd.accompanist) heroSub += '<p class="performer">' + esc(rd.accompanist) + ', piano</p>';
+  (rd.additionalPerformers || '').split('\n').map(l => l.trim()).filter(Boolean)
+    .forEach(l => { heroSub += '<p class="performer">' + esc(l) + '</p>'; });
+  if (rd.lectureTitle && rd.recitalType === 'Doctoral Lecture Recital') {
+    heroSub += '<p class="lecture">“' + esc(rd.lectureTitle) + '”</p>';
+  }
+  let heroMeta = '';
+  if (rd.recitalDate) heroMeta += '<div>' + esc(rd.recitalDate) + '</div>';
+  const tv = [rd.recitalTime, rd.venue].filter(Boolean).join(' · ');
+  if (tv) heroMeta += '<div>' + esc(tv) + '</div>';
+
+  // ── Optional collapsible sections ──
+  const notesHtml = (rd.programNotes && rd.programNotes.trim())
+    ? '<section id="notes"><h2>Program Notes</h2>' +
+      '<details><summary>Program Notes <span class="chev">›</span></summary>' +
+      '<div class="acc-body">' + textToParas(rd.programNotes) + '</div></details></section>'
+    : '';
+  const bioName = [rd.performerName, rd.instrument].filter(Boolean).join(', ') || 'Performer';
+  const bioHtml = (rd.performerBio && rd.performerBio.trim())
+    ? '<section id="bio"><h2>About the Performer</h2>' +
+      '<details open><summary>' + esc(bioName) + ' <span class="chev">›</span></summary>' +
+      '<div class="acc-body">' + textToParas(rd.performerBio) + '</div></details></section>'
+    : '';
+
+  // ── Footer fine print ──
+  let fine = '';
+  if (rd.profName && rd.performerName) {
+    fine += '<p><em>' + esc(rd.performerName) + ' is a student of ' +
+            esc(rd.profTitle || 'Professor') + ' ' + esc(rd.profName) + '.</em></p>';
+  }
+  if (hasDegreeFooter(rd.recitalType) && rd.degree) {
+    fine += '<p>This recital is presented in partial fulfillment of the requirements for the degree of ' +
+            esc(rd.degree) + '.</p>';
+  }
+  fine += '<p>UMKC Conservatory recitals are recorded. Please silence all electronic devices and ' +
+          'help us maintain a hall conducive to music-making.</p>';
+
+  // ── Nav: only link to sections that exist ──
+  let nav = '<a href="#program">Program</a>';
+  if (notesHtml) nav += '<a href="#notes">Notes</a>';
+  if (bioHtml)   nav += '<a href="#bio">Bio</a>';
+  nav += '<a href="#support">Support</a>';
+
+  const titleTag = esc([h1, 'UMKC Conservatory'].join(' · '));
+
+  const html = '<!DOCTYPE html>\n' +
+'<html lang="en" data-theme="dark">\n' +
+'<head>\n' +
+'<meta charset="utf-8">\n' +
+'<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+'<title>' + titleTag + '</title>\n' +
+'<style>\n' +
+':root{--bg:#fff;--surface:#f6f5f2;--ink:#1a1a1a;--muted:#6b6b6b;--line:#e3e1dc;--brand:#13294b;--accent:#a6892b;--brand-ink:#13294b;--maxw:640px}\n' +
+'html[data-theme="dark"]{--bg:#15171c;--surface:#1e2128;--ink:#e9e7e2;--muted:#a3a39d;--line:#2c2f37;--brand:#cdd6e6;--accent:#d9b85a;--brand-ink:#e9e7e2}\n' +
+'*{box-sizing:border-box}\n' +
+'body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,"Times New Roman",serif;line-height:1.55;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}\n' +
+'header{position:sticky;top:0;z-index:10;background:var(--brand);color:#fff;border-bottom:3px solid var(--accent)}\n' +
+'html[data-theme="dark"] header{background:var(--surface)}\n' +
+'.bar{max-width:var(--maxw);margin:0 auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}\n' +
+'.bar .school{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#fff}\n' +
+'html[data-theme="dark"] .bar .school{color:var(--brand)}\n' +
+'.toggle{appearance:none;border:1px solid rgba(255,255,255,.5);background:transparent;color:inherit;font-size:13px;padding:7px 12px;border-radius:999px;cursor:pointer;min-height:36px;font-family:Arial,sans-serif}\n' +
+'html[data-theme="dark"] .toggle{border-color:var(--line)}\n' +
+'nav{max-width:var(--maxw);margin:0 auto;padding:0 8px 8px;display:flex;gap:4px;overflow-x:auto}\n' +
+'nav a{flex:0 0 auto;color:#fff;opacity:.85;text-decoration:none;font-family:Arial,sans-serif;font-size:13px;padding:6px 12px;border-radius:6px;min-height:32px;display:flex;align-items:center}\n' +
+'html[data-theme="dark"] nav a{color:var(--brand)}\n' +
+'nav a:hover{opacity:1;background:rgba(255,255,255,.12)}\n' +
+'main{max-width:var(--maxw);margin:0 auto;padding:0 20px 64px}\n' +
+'section{padding:28px 0;border-bottom:1px solid var(--line)}\n' +
+'section:last-child{border-bottom:none}\n' +
+'.hero{text-align:center;padding-top:34px}\n' +
+'.hero .kicker{font-family:Arial,sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 6px}\n' +
+'.hero h1{font-size:30px;line-height:1.15;margin:0 0 4px;color:var(--brand-ink)}\n' +
+'.hero .performer{font-size:20px;margin:8px 0 2px;font-style:italic}\n' +
+'.hero .lecture{font-size:18px;font-style:italic;margin:8px 0 2px;color:var(--muted)}\n' +
+'.hero .meta{color:var(--muted);font-size:16px;margin:14px 0 0}\n' +
+'.hero .meta div{margin:3px 0}\n' +
+'h2{font-family:Arial,sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0 0 18px}\n' +
+'.work{margin:0 0 24px}\n' +
+'.entry-row{display:flex;justify-content:space-between;gap:14px;align-items:baseline}\n' +
+'.entry-title{font-weight:700;font-size:18px;color:var(--brand-ink)}\n' +
+'.entry-composer{color:var(--muted);font-size:16px;text-align:right;flex:0 0 auto}\n' +
+'.entry-right,.entry-arranger{color:var(--muted);font-size:15px;text-align:right}\n' +
+'.entry-indent{padding-left:18px;font-size:16px;margin-top:2px}\n' +
+'.entry-indent-right{display:flex;justify-content:space-between;gap:14px;padding-left:18px;font-size:16px;margin-top:2px}\n' +
+'.interm{text-align:center;font-family:Arial,sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:26px 0;font-weight:700}\n' +
+'details{border:1px solid var(--line);border-radius:10px;margin:0 0 12px;background:var(--surface);overflow:hidden}\n' +
+'summary{cursor:pointer;list-style:none;padding:16px 18px;min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:700;font-size:17px;color:var(--brand-ink)}\n' +
+'summary::-webkit-details-marker{display:none}\n' +
+'summary .chev{transition:transform .2s;color:var(--accent);font-size:18px;flex:0 0 auto}\n' +
+'details[open] summary .chev{transform:rotate(90deg)}\n' +
+'.acc-body{padding:0 18px 18px;font-size:16px}\n' +
+'.acc-body p{margin:0 0 12px}\n' +
+'.acc-body p:last-child{margin-bottom:0}\n' +
+'.btn{display:block;text-align:center;text-decoration:none;font-family:Arial,sans-serif;font-weight:700;font-size:16px;padding:15px 16px;border-radius:10px;margin:0 0 12px;min-height:52px}\n' +
+'.btn-primary{background:var(--accent);color:#1a1a1a}\n' +
+'.btn-outline{border:1.5px solid var(--line);color:var(--brand-ink)}\n' +
+'.support p{font-size:15px;color:var(--muted)}\n' +
+'.fine{font-size:14px;color:var(--muted);text-align:center}\n' +
+'.fine p{margin:8px 0}\n' +
+'footer{text-align:center;padding:30px 20px 50px;color:var(--muted);font-size:13px}\n' +
+'footer .crest{font-family:Arial,sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-ink);font-size:13px}\n' +
+'</style>\n</head>\n<body>\n' +
+'<header><div class="bar"><span class="school">UMKC Conservatory</span>' +
+'<button class="toggle" id="themeBtn" aria-label="Toggle dark mode">☀️ Light</button></div>' +
+'<nav>' + nav + '</nav></header>\n' +
+'<main>\n' +
+'<div class="hero" id="top"><p class="kicker">' + esc(kicker) + '</p>' +
+'<h1>' + esc(h1) + '</h1>' + heroSub +
+'<div class="meta">' + heroMeta + '</div></div>\n' +
+'<section id="program"><h2>Program</h2>' + programHtml + '</section>\n' +
+notesHtml + bioHtml +
+'<section id="support" class="support"><h2>Support the Conservatory</h2>' +
+'<p>The UMKC Conservatory relies on philanthropic support to provide the highest-quality educational experiences for our students and exceptional performances for the community.</p>' +
+'<a class="btn btn-primary" href="https://go.umkc.edu/donate-to-conservatory">Make a Gift</a>' +
+'<a class="btn btn-outline" href="https://conservatory.umkc.edu">Upcoming Events</a></section>\n' +
+'<section class="fine">' + fine + '</section>\n' +
+'</main>\n' +
+'<footer><p class="crest">UMKC Conservatory</p>' +
+'<p>4949 Cherry Street · Kansas City, MO · conservatory.umkc.edu</p></footer>\n' +
+'<script>\n' +
+'(function(){var root=document.documentElement;var btn=document.getElementById("themeBtn");var saved=null;' +
+'try{saved=localStorage.getItem("umkc-theme");}catch(e){}' +
+'function setTheme(t){if(t==="dark"){root.setAttribute("data-theme","dark");btn.textContent="☀️ Light";}' +
+'else{root.removeAttribute("data-theme");btn.textContent="🌙 Dark";}try{localStorage.setItem("umkc-theme",t);}catch(e){}}' +
+'setTheme(saved==="light"?"light":"dark");' +
+'btn.addEventListener("click",function(){setTheme(root.getAttribute("data-theme")==="dark"?"light":"dark");});' +
+'document.querySelectorAll("nav a").forEach(function(a){a.addEventListener("click",function(e){' +
+'var el=document.querySelector(a.getAttribute("href"));if(el){e.preventDefault();el.scrollIntoView({behavior:"smooth"});}});});' +
+'})();\n' +
+'<\/script>\n</body>\n</html>';
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = (rd.performerName ? rd.performerName.replace(/\s+/g, '_') : 'Recital') + '_Recital_Program.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ════════════════════════════════════════════════════════════════
 //  Faculty Email Modal
 // ════════════════════════════════════════════════════════════════
 function openFacultyEmailModal() {
@@ -2217,6 +2399,8 @@ function populateRecitalDetailsForm() {
   setVal('rd-instrument', recitalDetails.instrument);
   setVal('rd-accompanist', recitalDetails.accompanist);
   setVal('rd-additional', recitalDetails.additionalPerformers);
+  setVal('rd-program-notes', recitalDetails.programNotes);
+  setVal('rd-performer-bio', recitalDetails.performerBio);
   // Applied professor: match saved title+name to a dropdown option, else fall back to "Other"
   const profSel = document.getElementById('rd-prof-select');
   const profOtherWrap = document.getElementById('rd-prof-other-wrap');
