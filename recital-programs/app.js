@@ -2352,18 +2352,24 @@ function loadDraftFromFile(inputEl) {
   reader.onload = function (e) {
     const parsed = extractSnapshotFromText(String(e.target.result || ''));
     if (!parsed || typeof parsed !== 'object' || (!parsed.recitalDetails && !parsed.programEntries)) {
-      alert('This file doesn’t contain reloadable program data.\n\n' +
-        'If you opened the program file in Word and re-saved it, Word may have removed the hidden ' +
-        'data. Open the program file you downloaded from this tool instead (the one you have not ' +
-        're-saved in Word). A .json draft from this tool also works.');
+      alert('This file can’t be reloaded — it has no hidden program data.\n\n' +
+        'Most likely cause: it was opened in Word (or Google Docs) and re-saved, which removes the ' +
+        'hidden data.\n\n' +
+        'Fix: re-open the program file you downloaded straight from this tool — the copy you did NOT ' +
+        'edit or re-save in Word. (That untouched copy is your reload file; the marked-up copy from ' +
+        'faculty is only for reading their edits.)');
       return;
     }
     const entryCount = (parsed.programEntries || []).filter(x => x && x.type === 'entry').length;
+    const savedStr = parsed.savedAt ? new Date(parsed.savedAt).toLocaleString() : null;
     const summary =
       (parsed.recitalDetails && parsed.recitalDetails.performerName ? 'Performer: ' + parsed.recitalDetails.performerName + '\n' : '') +
       entryCount + ' program ' + (entryCount === 1 ? 'entry' : 'entries') +
-      (parsed.savedAt ? '\nSaved: ' + new Date(parsed.savedAt).toLocaleString() : '');
-    if (!confirm('Continue from this file? It will replace anything currently in the tool.\n\n' + summary)) return;
+      (savedStr ? '\nSaved: ' + savedStr : '');
+    const wordWarning =
+      '\n\nThis loads your program as it was when this file was saved' + (savedStr ? ' (' + savedStr + ')' : '') + '.\n' +
+      'Anything typed directly into Word after that is NOT imported — re-apply faculty’s edits here in the tool.';
+    if (!confirm('Continue from this file? It will replace anything currently in the tool.\n\n' + summary + wordWarning)) return;
     restoreSession(parsed);
     autoSave(); // also persist the loaded program to this browser
   };
