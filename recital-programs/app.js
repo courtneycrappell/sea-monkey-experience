@@ -118,9 +118,11 @@ function goToScreen(id) {
   renderProgressFor(id);
   renderPreview();
   updateEntryIndicator();
-  // Hide the Live Preview column on the welcome screen — nothing to preview yet
+  // Hide the Live Preview column on the welcome screen — nothing to preview yet,
+  // and let the welcome content use the full width (body.on-welcome)
   const previewCol = document.getElementById('preview-col');
   if (previewCol) previewCol.style.display = (id === 'welcome') ? 'none' : '';
+  document.body.classList.toggle('on-welcome', id === 'welcome');
   const rdBack = document.getElementById('btn-rd-back');
   if (rdBack) rdBack.style.display = (id === 'recital-details' && navHistory.length) ? '' : 'none';
   if (id === 'recital-details' && recitalDetails.performerName) populateRecitalDetailsForm();
