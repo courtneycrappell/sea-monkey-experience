@@ -160,6 +160,10 @@ function goBack() {
   }
   renderProgressFor(prev);
   renderPreview();
+  // Keep the welcome-screen layout in sync when navigating back to it
+  const previewCol = document.getElementById('preview-col');
+  if (previewCol) previewCol.style.display = (prev === 'welcome') ? 'none' : '';
+  document.body.classList.toggle('on-welcome', prev === 'welcome');
 }
 
 function finalizeEntry() {
