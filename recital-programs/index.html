@@ -42,6 +42,7 @@
         <p class="welcome-title">UMKC Conservatory Recital Program Generator</p>
         <p class="welcome-body">Enter your recital details and repertoire. The tool applies Chicago-style formatting — title treatment, catalog numbers, composer dates, and movement listings — and produces a modern <strong>web program</strong> your audience opens right on their phones. No printing, no folding — just a clean, shareable link to the program.</p>
         <button class="btn-primary" id="btn-start" onclick="goToScreen('recital-details')">Get Started →</button>
+        <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="triggerLoadDraft()">📂 Continue a saved draft (.json)</button>
         <hr class="welcome-divider">
         <div class="how-it-works">
           <strong>How it works</strong>
@@ -724,9 +725,17 @@ Your formatted entry will appear here as you fill in the wizard.
         <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="generateDoc()">⬇ Download Word Doc (.doc)</button>
         <button class="btn-primary btn-download" onclick="generateWebProgram()">⬇ Download Web Program (.html) <span style="font-size:0.72em;font-weight:700;letter-spacing:0.04em;color:#d9b85a">BETA</span></button>
         <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="openFacultyEmailModal()">✉ Send to Faculty for Review (.doc) →</button>
+        <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
+          <button class="btn-secondary" style="margin-top:0;flex:1" onclick="saveDraftToFile()" title="Download a draft file you can reopen on any device">💾 Save Draft</button>
+          <button class="btn-secondary" style="margin-top:0;flex:1" onclick="triggerLoadDraft()" title="Reopen a draft file saved earlier">📂 Load Draft</button>
+        </div>
+        <p style="font-size:0.78rem;color:var(--muted);text-align:center;margin:0.5rem 0 0;line-height:1.5">Save a draft to back up your work or continue on another computer. Use after faculty edits: load your draft, apply the changes, re-download.</p>
       </div>
     </div>
   </div>
+
+  <!-- Hidden file input for Load Draft -->
+  <input type="file" id="load-draft-input" accept=".json,application/json" style="display:none" onchange="loadDraftFromFile(this)">
 
 </div><!-- /app-body -->
 

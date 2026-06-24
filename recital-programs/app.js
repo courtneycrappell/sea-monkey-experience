@@ -2266,25 +2266,83 @@ document.addEventListener('DOMContentLoaded', () => {
 // ════════════════════════════════════════════════════════════════
 let autoSaveTimer = null;
 
+// Build a portable snapshot of the whole session (used by autosave AND Save Draft file)
+function buildSnapshot() {
+  const currentScreen = ALL_SCREENS.find(s => {
+    const el = document.getElementById('screen-' + s);
+    return el && el.classList.contains('active');
+  }) || 'welcome';
+  return {
+    version: 1,
+    savedAt: new Date().toISOString(),
+    recitalDetails: JSON.parse(JSON.stringify(recitalDetails)),
+    programEntries: JSON.parse(JSON.stringify(programEntries)),
+    currentScreen,
+    wizardState: JSON.parse(JSON.stringify(state)),
+    navHistory: [...navHistory],
+  };
+}
+
 function autoSave() {
   clearTimeout(autoSaveTimer);
   autoSaveTimer = setTimeout(() => {
-    const currentScreen = ALL_SCREENS.find(s => {
-      const el = document.getElementById('screen-' + s);
-      return el && el.classList.contains('active');
-    }) || 'welcome';
-    const snapshot = {
-      version: 1,
-      savedAt: new Date().toISOString(),
-      recitalDetails: JSON.parse(JSON.stringify(recitalDetails)),
-      programEntries: JSON.parse(JSON.stringify(programEntries)),
-      currentScreen,
-      wizardState: JSON.parse(JSON.stringify(state)),
-      navHistory: [...navHistory],
-    };
-    try { localStorage.setItem('umkc-recital-draft', JSON.stringify(snapshot)); }
+    try { localStorage.setItem('umkc-recital-draft', JSON.stringify(buildSnapshot())); }
     catch (e) { /* silent — storage full or disabled */ }
   }, 800);
+}
+
+// ── Save Draft to a portable .json file (move between devices / back up) ──
+function saveDraftToFile() {
+  const snapshot = buildSnapshot();
+  const hasContent = (snapshot.programEntries || []).length > 0 ||
+    (snapshot.recitalDetails.performerName || '').trim() ||
+    (snapshot.wizardState.workTitle || '').trim();
+  if (!hasContent) {
+    alert('Enter some recital details or add a program entry before saving a draft.');
+    return;
+  }
+  const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = (snapshot.recitalDetails.performerName || 'Recital').replace(/\s+/g, '_') + '_Recital_Draft.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ── Load Draft from a .json file (e.g. to continue on another device) ──
+function triggerLoadDraft() {
+  const input = document.getElementById('load-draft-input');
+  if (input) { input.value = ''; input.click(); }
+}
+
+function loadDraftFromFile(inputEl) {
+  const file = inputEl.files && inputEl.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    let parsed;
+    try { parsed = JSON.parse(e.target.result); }
+    catch (err) {
+      alert('That file could not be read. Please choose a .json draft saved by this tool.');
+      return;
+    }
+    if (!parsed || typeof parsed !== 'object' || (!parsed.recitalDetails && !parsed.programEntries)) {
+      alert('That doesn’t look like a recital draft file. Please choose a .json draft saved by this tool.');
+      return;
+    }
+    const entryCount = (parsed.programEntries || []).filter(x => x && x.type === 'entry').length;
+    const summary =
+      (parsed.recitalDetails && parsed.recitalDetails.performerName ? 'Performer: ' + parsed.recitalDetails.performerName + '\n' : '') +
+      entryCount + ' program ' + (entryCount === 1 ? 'entry' : 'entries') +
+      (parsed.savedAt ? '\nSaved: ' + new Date(parsed.savedAt).toLocaleString() : '');
+    if (!confirm('Load this draft? It will replace anything currently in the tool.\n\n' + summary)) return;
+    restoreSession(parsed);
+    autoSave(); // also persist the loaded draft to this browser
+  };
+  reader.readAsText(file);
 }
 
 function loadSavedSession() {
