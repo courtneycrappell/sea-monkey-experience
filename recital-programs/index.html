@@ -723,7 +723,7 @@ Your formatted entry will appear here as you fill in the wizard.
         <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="previewPDF()">Preview PDF →</button>
         <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="generateDoc()">⬇ Download Word Doc (.doc)</button>
         <button class="btn-primary btn-download" onclick="generateWebProgram()">⬇ Download Web Program (.html) <span style="font-size:0.72em;font-weight:700;letter-spacing:0.04em;color:#d9b85a">BETA</span></button>
-        <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="openFacultyEmailModal()">✉ Submit to Faculty for Review →</button>
+        <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="openFacultyEmailModal()">✉ Send to Faculty for Review (.doc) →</button>
       </div>
     </div>
   </div>
@@ -738,14 +738,15 @@ Your formatted entry will appear here as you fill in the wizard.
 <!-- ── Faculty Email Modal ──────────────────────────────────── -->
 <div id="faculty-email-modal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="faculty-modal-title">
   <div class="modal-card">
-    <h2 class="modal-title" id="faculty-modal-title">Submit to Faculty for Review</h2>
+    <h2 class="modal-title" id="faculty-modal-title">Send to Faculty for Review</h2>
     <div class="modal-note">
       <strong>What happens when you click the button:</strong>
       <ol style="margin:0.5rem 0 0 1.1rem;padding:0;line-height:1.7">
-        <li>Your PDF program downloads to your computer.</li>
+        <li>A Word document (.doc) review copy downloads to your computer.</li>
         <li>Your email client opens, pre-addressed to your faculty member.</li>
-        <li><strong>You must attach the downloaded PDF to the email before sending.</strong></li>
+        <li><strong>You must attach the downloaded Word document to the email before sending.</strong></li>
       </ol>
+      <p style="margin:0.6rem 0 0;font-size:0.85rem;color:var(--muted)">The Word copy is for proofing the text — your faculty member reviews the wording and approves it. The published program is the web (.html) version.</p>
     </div>
     <div class="field" style="margin-bottom:1rem">
       <label for="faculty-email-input">Faculty email address</label>
@@ -755,7 +756,7 @@ Your formatted entry will appear here as you fill in the wizard.
     </div>
     <div class="btn-row" style="margin-top:0">
       <button class="btn-secondary" onclick="closeFacultyEmailModal()">Cancel</button>
-      <button class="btn-primary" style="margin-top:0;width:auto;flex:1" onclick="submitToFaculty()">Download PDF &amp; Open Email</button>
+      <button class="btn-primary" style="margin-top:0;width:auto;flex:1" onclick="submitToFaculty()">Download .doc &amp; Open Email</button>
     </div>
   </div>
 </div>

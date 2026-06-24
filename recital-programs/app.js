@@ -1189,6 +1189,22 @@ function generateDoc() {
       'This recital is being presented in partial fulfillment of the requirements for the degree of ' + rd.degree + '.</p>'
     : '';
 
+  // Free-text block -> escaped Word paragraphs (blank line = new paragraph)
+  function docParas(txt) {
+    return String(txt || '')
+      .split(/\n{2,}/).map(p => p.trim()).filter(Boolean)
+      .map(p => '<p style="font-size:11pt;text-align:left">' + esc(p).replace(/\n/g, '<br>') + '</p>')
+      .join('');
+  }
+  const notesDocHtml = (rd.programNotes && rd.programNotes.trim())
+    ? '<div class="program-head" style="margin-top:20pt">PROGRAM NOTES</div>' + docParas(rd.programNotes)
+    : '';
+  const bioName = [rd.performerName, rd.instrument].filter(Boolean).join(', ');
+  const bioDocHtml = (rd.performerBio && rd.performerBio.trim())
+    ? '<div class="program-head" style="margin-top:20pt">ABOUT THE PERFORMER' +
+      (bioName ? ' — ' + esc(bioName) : '') + '</div>' + docParas(rd.performerBio)
+    : '';
+
   const html = `<!DOCTYPE html>
 <html xmlns:o="urn:schemas-microsoft-com:office:office"
       xmlns:w="urn:schemas-microsoft-com:office:word"
@@ -1216,8 +1232,8 @@ function generateDoc() {
 </head>
 <body>
 <div class="disclaimer">
-  ⚠ FOR EDITING AND PROOFING ONLY — Spacing in this document will not be correct for distribution.
-  Review with your faculty member before submitting for printing.
+  ⚠ CONTENT PROOF — Review the text for accuracy: names, titles, dates, repertoire, program notes, and bio.
+  The published program is the web (.html) version; this Word copy is for proofing the copy and capturing faculty approval.
 </div>
 <h1>${rd.recitalType ? rd.recitalType.toUpperCase() : 'RECITAL'}</h1>
 ${rd.academicYear ? '<p class="info" style="font-size:9pt;color:#555">' + rd.academicYear + '</p>' : ''}
@@ -1234,10 +1250,12 @@ ${programHtml}
 ${footerHtml}
 ${degreeHtml}
 <p style="text-align:center;font-size:8pt;color:#888;margin-top:8pt">UMKC Conservatory recitals are recorded. Thank you for helping us maintain a silence in the hall that is conducive to music-making. Be sure to turn off all electronic devices.</p>
+${notesDocHtml}
+${bioDocHtml}
 <div class="approval">
   <p><strong>Faculty Review &amp; Approval</strong></p>
   <p>Reviewed and approved by: ________________________________&nbsp;&nbsp;&nbsp;Date: ______________</p>
-  <p style="margin-top:8pt;font-size:9pt;color:#555">Professor signature confirms this program has been reviewed for accuracy and formatting.</p>
+  <p style="margin-top:8pt;font-size:9pt;color:#555">Professor signature confirms the program text has been reviewed for accuracy and approved for publishing.</p>
 </div>
 </body>
 </html>`;
@@ -1476,15 +1494,17 @@ async function submitToFaculty() {
   );
   const body = encodeURIComponent(
     'Dear ' + (rd.profTitle || 'Professor') + ' ' + (rd.profName || '') + ',\n\n' +
-    'Please find my recital program attached for your review and approval.\n\n' +
-    'The PDF has been downloaded to your computer — please attach it to this email before sending, ' +
-    'or reply to confirm you have reviewed it.\n\n' +
+    'Please find my recital program attached for your review and approval. It is a Word ' +
+    'document — please review the text for accuracy (you can use Track Changes or comments) ' +
+    'and reply to confirm approval.\n\n' +
+    'The Word document (.doc) has been downloaded to your computer — please attach it to this ' +
+    'email before sending.\n\n' +
     'Thank you,\n' + (rd.performerName || 'Your student')
   );
   window.location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body;
 
-  // Download PDF after mailto fires (blob download doesn't navigate away)
-  await generatePDF('save');
+  // Download the Word review copy after mailto fires (blob download doesn't navigate away)
+  generateDoc();
 }
 
 // ════════════════════════════════════════════════════════════════
