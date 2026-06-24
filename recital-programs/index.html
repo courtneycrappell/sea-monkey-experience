@@ -71,7 +71,6 @@
             <li>📖 <span class="lead">Room for full program notes &amp; bios</span> — readers tap to expand them, so you’re never limited by paper space or printing costs</li>
             <li>🌙 <span class="lead">Easy to read in a dark hall</span> — it opens in dark mode for dimmed concert lighting, with a one-tap switch to light</li>
             <li>🔗 <span class="lead">Live, tappable links</span> — your audience can give to the Conservatory or see upcoming events right from the program</li>
-            <li>✏️ <span class="lead">Fix mistakes anytime</span> — caught a typo or a last-minute change? Update it instantly, with no reprinting</li>
           </ul>
         </div>
       </div>
@@ -703,7 +702,7 @@
   </div><!-- /wizard-col -->
 
   <!-- ── Preview / Program column ──────────────────────────── -->
-  <div id="preview-col">
+  <div id="preview-col" style="display:none"><!-- hidden on the welcome screen; shown once the wizard starts -->
     <!-- Live preview (shown until first entry added) -->
     <div class="preview-card" id="preview-card">
       <div class="preview-label">
@@ -736,7 +735,7 @@ Your formatted entry will appear here as you fill in the wizard.
         <button class="btn-primary btn-download" style="display:none" onclick="generatePDF()">⬇ Download PDF</button>
         <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="previewPDF()">Preview PDF →</button>
         <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="generateDoc()">⬇ Download Word Doc (.doc)</button>
-        <button class="btn-primary btn-download" onclick="generateWebProgram()">⬇ Download Web Program (.html) <span style="font-size:0.72em;font-weight:700;letter-spacing:0.04em;color:#d9b85a">BETA</span></button>
+        <button class="btn-primary btn-download" onclick="generateWebProgram()">⬇ Download Digital Program (.html) <span style="font-size:0.72em;font-weight:700;letter-spacing:0.04em;color:#d9b85a">BETA</span></button>
 
         <!-- The program file (.doc) is one file that does double duty: faculty review it,
              and "Continue from a File" reloads your work from it on any computer. -->

@@ -118,6 +118,9 @@ function goToScreen(id) {
   renderProgressFor(id);
   renderPreview();
   updateEntryIndicator();
+  // Hide the Live Preview column on the welcome screen — nothing to preview yet
+  const previewCol = document.getElementById('preview-col');
+  if (previewCol) previewCol.style.display = (id === 'welcome') ? 'none' : '';
   const rdBack = document.getElementById('btn-rd-back');
   if (rdBack) rdBack.style.display = (id === 'recital-details' && navHistory.length) ? '' : 'none';
   if (id === 'recital-details' && recitalDetails.performerName) populateRecitalDetailsForm();
