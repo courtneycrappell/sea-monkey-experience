@@ -1159,6 +1159,29 @@ function previewPDF() {
 // ════════════════════════════════════════════════════════════════
 //  Word Doc (.doc) download — HTML blob, opens in Word
 // ════════════════════════════════════════════════════════════════
+// UTF-8-safe base64 (used to embed reload data inside the program file .doc)
+function b64EncodeUtf8(str) { return btoa(unescape(encodeURIComponent(str))); }
+function b64DecodeUtf8(b64) { return decodeURIComponent(escape(atob(b64))); }
+
+// Marker wrapping the hidden snapshot inside the program file
+const PROGRAM_DATA_MARKER = 'UMKC-RECITAL-DATA:';
+
+// Pull a session snapshot out of an uploaded file's text:
+//  1) the hidden marker embedded in a downloaded program file (.doc), or
+//  2) a raw .json draft (back-compat).
+// Returns null if neither is present (e.g. Word re-saved the file and stripped the marker).
+function extractSnapshotFromText(text) {
+  const m = text.match(/UMKC-RECITAL-DATA:([A-Za-z0-9+/=]+)/);
+  if (m) {
+    try { return JSON.parse(b64DecodeUtf8(m[1])); } catch (e) { return null; }
+  }
+  try {
+    const p = JSON.parse(text);
+    if (p && typeof p === 'object') return p;
+  } catch (e) { /* not raw json */ }
+  return null;
+}
+
 function generateDoc() {
   const entries = programEntries.filter(e => e.type === 'entry');
   if (entries.length === 0) {
@@ -1166,6 +1189,9 @@ function generateDoc() {
     return;
   }
   const rd = recitalDetails;
+
+  // Hidden reload data — lets this same .doc be re-opened in the tool later
+  const programDataB64 = b64EncodeUtf8(JSON.stringify(buildSnapshot()));
 
   function entryToDocHtml(e) {
     return e.html || '';
@@ -1231,6 +1257,7 @@ function generateDoc() {
 </style>
 </head>
 <body>
+<!--${PROGRAM_DATA_MARKER}${programDataB64}-->
 <div class="disclaimer">
   ⚠ CONTENT PROOF — Review the text for accuracy: names, titles, dates, repertoire, program notes, and bio.
   The published program is the web (.html) version; this Word copy is for proofing the copy and capturing faculty approval.
@@ -1264,7 +1291,7 @@ ${bioDocHtml}
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = (rd.performerName ? rd.performerName.replace(/\s+/g, '_') : 'Recital') + '_Program_DRAFT.doc';
+  a.download = (rd.performerName ? rd.performerName.replace(/\s+/g, '_') : 'Recital') + '_Recital_Program.doc';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -2323,14 +2350,12 @@ function loadDraftFromFile(inputEl) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = function (e) {
-    let parsed;
-    try { parsed = JSON.parse(e.target.result); }
-    catch (err) {
-      alert('That file could not be read. Please choose a .json draft saved by this tool.');
-      return;
-    }
+    const parsed = extractSnapshotFromText(String(e.target.result || ''));
     if (!parsed || typeof parsed !== 'object' || (!parsed.recitalDetails && !parsed.programEntries)) {
-      alert('That doesn’t look like a recital draft file. Please choose a .json draft saved by this tool.');
+      alert('This file doesn’t contain reloadable program data.\n\n' +
+        'If you opened the program file in Word and re-saved it, Word may have removed the hidden ' +
+        'data. Open the program file you downloaded from this tool instead (the one you have not ' +
+        're-saved in Word). A .json draft from this tool also works.');
       return;
     }
     const entryCount = (parsed.programEntries || []).filter(x => x && x.type === 'entry').length;
@@ -2338,9 +2363,9 @@ function loadDraftFromFile(inputEl) {
       (parsed.recitalDetails && parsed.recitalDetails.performerName ? 'Performer: ' + parsed.recitalDetails.performerName + '\n' : '') +
       entryCount + ' program ' + (entryCount === 1 ? 'entry' : 'entries') +
       (parsed.savedAt ? '\nSaved: ' + new Date(parsed.savedAt).toLocaleString() : '');
-    if (!confirm('Load this draft? It will replace anything currently in the tool.\n\n' + summary)) return;
+    if (!confirm('Continue from this file? It will replace anything currently in the tool.\n\n' + summary)) return;
     restoreSession(parsed);
-    autoSave(); // also persist the loaded draft to this browser
+    autoSave(); // also persist the loaded program to this browser
   };
   reader.readAsText(file);
 }
@@ -2373,10 +2398,10 @@ function showRestoreBanner(saved) {
   const dateStr = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   const timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 
-  if (title) title.textContent = 'Saved session found — ' + dateStr;
+  if (title) title.textContent = 'Continue where you left off on this computer — ' + dateStr;
   if (detail) detail.textContent =
     (entryCount > 0 ? entryCount + ' program ' + (entryCount === 1 ? 'entry' : 'entries') : 'Recital details filled in') +
-    ' · Last saved ' + timeStr;
+    ' · Auto-saved ' + timeStr + ' in this browser';
 
   banner.style.display = 'flex';
   banner._savedData = saved; // store for restore

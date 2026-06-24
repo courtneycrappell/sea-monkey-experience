@@ -42,7 +42,7 @@
         <p class="welcome-title">UMKC Conservatory Recital Program Generator</p>
         <p class="welcome-body">Enter your recital details and repertoire. The tool applies Chicago-style formatting — title treatment, catalog numbers, composer dates, and movement listings — and produces a modern <strong>web program</strong> your audience opens right on their phones. No printing, no folding — just a clean, shareable link to the program.</p>
         <button class="btn-primary" id="btn-start" onclick="goToScreen('recital-details')">Get Started →</button>
-        <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="triggerLoadDraft()">📂 Continue a saved draft (.json)</button>
+        <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="triggerLoadDraft()">📂 Continue from a saved file</button>
         <hr class="welcome-divider">
         <div class="how-it-works">
           <strong>How it works</strong>
@@ -59,6 +59,13 @@
             <li>📖 <span class="lead">Expandable program notes &amp; bios</span> — tucked behind a tap, so the repertoire stays clean and scannable</li>
             <li>🔗 <span class="lead">Tappable links</span> — give to the Conservatory or browse upcoming events, right from the program</li>
             <li>📱 <span class="lead">Looks great on any phone</span> — single-column, no pinch-to-zoom, reads the same online or in the hall</li>
+          </ul>
+        </div>
+        <div class="how-it-works">
+          <strong>💾 How your work is saved</strong>
+          <ul>
+            <li><span class="lead">Automatically, in this browser.</span> Step away and come back on the <strong>same computer and browser</strong>, and you can pick up right where you left off.</li>
+            <li><span class="lead">As a file you download.</span> Switching computers, want a backup, or sending it for faculty review? <strong>Download your program file</strong> — then reload it here anytime, on <strong>any machine</strong>, to continue and make changes.</li>
           </ul>
         </div>
       </div>
@@ -724,18 +731,25 @@ Your formatted entry will appear here as you fill in the wizard.
         <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="previewPDF()">Preview PDF →</button>
         <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="generateDoc()">⬇ Download Word Doc (.doc)</button>
         <button class="btn-primary btn-download" onclick="generateWebProgram()">⬇ Download Web Program (.html) <span style="font-size:0.72em;font-weight:700;letter-spacing:0.04em;color:#d9b85a">BETA</span></button>
-        <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="openFacultyEmailModal()">✉ Send to Faculty for Review (.doc) →</button>
-        <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
-          <button class="btn-secondary" style="margin-top:0;flex:1" onclick="saveDraftToFile()" title="Download a draft file you can reopen on any device">💾 Save Draft</button>
-          <button class="btn-secondary" style="margin-top:0;flex:1" onclick="triggerLoadDraft()" title="Reopen a draft file saved earlier">📂 Load Draft</button>
+
+        <!-- The program file (.doc) is one file that does double duty: faculty review it,
+             and "Continue from a File" reloads your work from it on any computer. -->
+        <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="generateDoc()" title="One file: faculty review it, and you can reload your work from it later">💾 Download Program File (.doc)</button>
+        <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
+          <button class="btn-secondary" style="margin-top:0;flex:1" onclick="openFacultyEmailModal()" title="Email the program file to your faculty member for review">✉ Send to Faculty</button>
+          <button class="btn-secondary" style="margin-top:0;flex:1" onclick="triggerLoadDraft()" title="Reload your work from a program file you downloaded earlier">📂 Continue from a File</button>
         </div>
-        <p style="font-size:0.78rem;color:var(--muted);text-align:center;margin:0.5rem 0 0;line-height:1.5">Save a draft to back up your work or continue on another computer. Use after faculty edits: load your draft, apply the changes, re-download.</p>
+        <p style="font-size:0.78rem;color:var(--muted);margin:0.6rem 0 0;line-height:1.55">
+          <strong>Your work auto-saves in this browser</strong> — return on the same computer to pick up where you left off.
+          To switch computers, keep a backup, or send it for review, <strong>download your program file</strong>, then use
+          <em>Continue from a File</em> to reload it anywhere. It’s also the file faculty review.
+        </p>
       </div>
     </div>
   </div>
 
-  <!-- Hidden file input for Load Draft -->
-  <input type="file" id="load-draft-input" accept=".json,application/json" style="display:none" onchange="loadDraftFromFile(this)">
+  <!-- Hidden file input for "Continue from a File" — program file (.doc) or .json draft -->
+  <input type="file" id="load-draft-input" accept=".doc,.docx,.json,application/msword,application/json" style="display:none" onchange="loadDraftFromFile(this)">
 
 </div><!-- /app-body -->
 
