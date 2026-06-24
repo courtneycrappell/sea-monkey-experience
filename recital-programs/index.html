@@ -707,11 +707,14 @@ Your formatted entry will appear here as you fill in the wizard.
       <button class="btn-secondary-sm" style="width:100%;margin-bottom:0.5rem" onclick="goToScreen('recital-details')">✎ Edit Recital Details</button>
       <div id="program-list"></div>
       <div class="program-footer">
-        <button class="btn-primary btn-download" onclick="generatePDF()">⬇ Download PDF</button>
-        <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="previewPDF()">Preview PDF →</button>
-        <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="generateDoc()">⬇ Download Word Doc (.doc)</button>
-        <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="generateWebProgram()">⬇ Download Web Program (.html) <span style="font-size:0.72em;font-weight:700;letter-spacing:0.04em;color:#a6892b">BETA</span></button>
-        <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="openFacultyEmailModal()">✉ Submit to Faculty for Review →</button>
+        <!-- PDF, Preview PDF, Word Doc, and Submit-to-Faculty are hidden for now while the
+             Web Program (.html) is the active output. Functionality is fully retained on the
+             back end — remove the inline display:none to restore any of these buttons. -->
+        <button class="btn-primary btn-download" style="display:none" onclick="generatePDF()">⬇ Download PDF</button>
+        <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="previewPDF()">Preview PDF →</button>
+        <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="generateDoc()">⬇ Download Word Doc (.doc)</button>
+        <button class="btn-primary btn-download" onclick="generateWebProgram()">⬇ Download Web Program (.html) <span style="font-size:0.72em;font-weight:700;letter-spacing:0.04em;color:#d9b85a">BETA</span></button>
+        <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="openFacultyEmailModal()">✉ Submit to Faculty for Review →</button>
       </div>
     </div>
   </div>
