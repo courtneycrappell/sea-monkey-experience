@@ -167,6 +167,7 @@ function goBack() {
   }
   renderProgressFor(prev);
   renderPreview();
+  updateEntryIndicator(); // hide the "Program Entry N" breadcrumb when back on welcome
   // Keep the welcome-screen layout in sync when navigating back to it
   const previewCol = document.getElementById('preview-col');
   if (previewCol) previewCol.style.display = (prev === 'welcome') ? 'none' : '';
