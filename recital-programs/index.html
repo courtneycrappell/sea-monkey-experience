@@ -735,19 +735,25 @@ Your formatted entry will appear here as you fill in the wizard.
         <button class="btn-primary btn-download" style="display:none" onclick="generatePDF()">⬇ Download PDF</button>
         <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="previewPDF()">Preview PDF →</button>
         <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="generateDoc()">⬇ Download Word Doc (.doc)</button>
-        <button class="btn-primary btn-download" onclick="generateWebProgram()">⬇ Download Digital Program (.html) <span style="font-size:0.72em;font-weight:700;letter-spacing:0.04em;color:#d9b85a">BETA</span></button>
-
-        <!-- The program file (.doc) is one file that does double duty: faculty review it,
-             and "Continue from a saved file" (on the start screen) reloads your work from it. -->
-        <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="generateDoc()" title="One file: faculty review it, and you can reload your work from it later">💾 Download Program File (.doc)</button>
+        <!-- WORKING COPY (draft for faculty review / saving) — earlier in the workflow -->
+        <!-- The program file (.doc) does double duty: faculty review it, and
+             "Continue from a saved file" (on the start screen) reloads your work from it. -->
+        <button class="btn-secondary" style="width:100%" onclick="generateDoc()" title="One file: faculty review it, and you can reload your work from it later">💾 Download Program File (.doc)</button>
+        <p class="footer-hint">
+          <strong>Your working copy.</strong> Send it to faculty for review, keep a backup, or continue on another computer
+          (reload it later via <em>Continue from a saved file</em> on the start screen). Your work also auto-saves in this browser.
+        </p>
         <!-- Send to Faculty button hidden for now — functionality (openFacultyEmailModal / submitToFaculty / modal) retained; remove display:none to restore. -->
         <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="openFacultyEmailModal()" title="Email the program file to your faculty member for review">✉ Send to Faculty</button>
-        <p style="font-size:0.78rem;color:var(--muted);margin:0.6rem 0 0;line-height:1.55">
-          <strong>Your work auto-saves in this browser</strong> — return on the same computer to pick up where you left off.
-          To switch computers, keep a backup, or send it for review, <strong>download your program file</strong>. To reload it
-          later, open the tool’s start screen and choose <em>Continue from a saved file</em>. It’s also the file faculty review.
-        </p>
-        <p style="font-size:0.78rem;color:var(--green);margin:0.4rem 0 0;line-height:1.55;font-weight:600">
+
+        <!-- FINAL STEP — the production version your audience sees -->
+        <div class="finalize-block">
+          <p class="finalize-head">Ready to finalize your program?</p>
+          <button class="btn-primary btn-download" onclick="generateWebProgram()">⬇ Download Digital Program (.html) <span style="font-size:0.72em;font-weight:700;letter-spacing:0.04em;color:#d9b85a">BETA</span></button>
+          <p class="footer-hint">This is the <strong>final version your audience views</strong> — share it by link or QR code at your recital. Make all edits in the tool first; this is the production copy.</p>
+        </div>
+
+        <p class="footer-hint footer-hint-accent">
           ✎ Edit your program here in the tool — not in Word. Word is for faculty to mark up; you apply their changes here, then reload your own downloaded program file.
         </p>
       </div>

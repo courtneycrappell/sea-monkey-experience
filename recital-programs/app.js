@@ -1258,18 +1258,18 @@ function generateDoc() {
      This document is for proofing the TEXT; the formatted program is the web (.html) version. */
   body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.4; margin: 1in; }
   .disclaimer { background: #FFF3CD; border: 1px solid #E0A800; padding: 8pt 12pt; margin-bottom: 16pt;
-                font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.4; }
-  h1 { font-size: 14pt; font-family: Arial, sans-serif; margin: 0 0 8pt; }
+                font-size: 11pt; line-height: 1.4; }
+  h1 { font-size: 14pt; margin: 0 0 8pt; }
   .detail { margin: 1pt 0; }
-  .section, .program-head { font-family: Arial, sans-serif; font-weight: bold; font-size: 12pt; margin: 18pt 0 6pt; }
+  .section, .program-head { font-weight: bold; font-size: 12pt; margin: 18pt 0 6pt; }
   .entry { margin: 0 0 10pt; }
   .entry-row { display: block; margin: 0; }
   .entry-title { font-weight: bold; }
   .entry-composer, .entry-right, .entry-arranger { display: block; }
   .entry-indent, .entry-indent-right { display: block; padding-left: 24pt; }
-  .footnote { font-size: 10pt; margin: 4pt 0; }
+  .footnote { font-size: 11pt; margin: 4pt 0; }
   em { font-style: italic; }
-  .approval { margin-top: 28pt; border-top: 1px solid #999; padding-top: 12pt; font-family: Arial, sans-serif; font-size: 10pt; }
+  .approval { margin-top: 28pt; border-top: 1px solid #999; padding-top: 12pt; font-size: 11pt; }
 </style>
 </head>
 <body>
