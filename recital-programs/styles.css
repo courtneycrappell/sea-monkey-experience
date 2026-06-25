@@ -201,6 +201,8 @@ header h1   { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
 }
 .field input[type="text"],
 .field input[type="number"],
+.field input[type="date"],
+.field input[type="email"],
 .field select,
 .field textarea {
   border: 2px solid var(--border);
@@ -212,6 +214,12 @@ header h1   { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
   background: #fff;
   transition: border-color 0.15s;
   width: 100%;
+}
+/* Date input value text doesn't inherit the form font on its own */
+.field input[type="date"]::-webkit-datetime-edit,
+.field input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+  font-family: inherit;
+  font-size: 0.95rem;
 }
 .field input:focus, .field select:focus, .field textarea:focus {
   border-color: var(--green);
