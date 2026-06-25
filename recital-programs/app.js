@@ -1216,19 +1216,19 @@ function generateDoc() {
   let programHtml = '';
   programEntries.forEach(item => {
     if (item.type === 'intermission') {
-      programHtml += '<p style="text-align:center;font-weight:bold;border-top:1px solid #999;border-bottom:1px solid #999;padding:4pt 0;margin:10pt 0">— INTERMISSION —</p>';
+      programHtml += '<p class="entry" style="font-weight:bold">— Intermission —</p>';
     } else {
-      programHtml += '<div style="margin-bottom:14pt;font-family:\'Times New Roman\',serif;font-size:11pt">' + entryToDocHtml(item) + '</div>';
+      programHtml += '<div class="entry">' + entryToDocHtml(item) + '</div>';
     }
   });
 
   const footerHtml = rd.profName && rd.performerName
-    ? '<p style="text-align:center;font-style:italic;font-size:9pt;margin-top:18pt">' +
-      rd.performerName + ' is a student of ' + (rd.profTitle || 'Professor') + ' ' + rd.profName + '</p>'
+    ? '<p class="footnote"><em>' + esc(rd.performerName) + ' is a student of ' +
+      esc(rd.profTitle || 'Professor') + ' ' + esc(rd.profName) + '.</em></p>'
     : '';
   const degreeHtml = hasDegreeFooter(rd.recitalType) && rd.degree
-    ? '<p style="text-align:center;font-size:8pt;color:#555;margin-top:4pt">' +
-      'This recital is being presented in partial fulfillment of the requirements for the degree of ' + rd.degree + '.</p>'
+    ? '<p class="footnote">This recital is being presented in partial fulfillment of the requirements for the degree of ' +
+      esc(rd.degree) + '.</p>'
     : '';
 
   // Free-text block -> escaped Word paragraphs (blank line = new paragraph)
@@ -1254,22 +1254,22 @@ function generateDoc() {
 <head>
 <meta charset="utf-8">
 <style>
-  body { font-family: 'Times New Roman', serif; font-size: 11pt; margin: 1in; }
-  .disclaimer { background: #FFF3CD; border: 2px solid #FFC107; padding: 10pt 14pt; margin-bottom: 18pt;
-                font-family: Arial, sans-serif; font-size: 10pt; font-weight: bold; line-height: 1.5; }
-  h1 { font-size: 13pt; text-align: center; font-family: Arial, sans-serif; margin-bottom: 4pt; }
-  .subtitle { text-align: center; font-style: italic; font-size: 11pt; margin-bottom: 2pt; }
-  .info { text-align: center; font-size: 10pt; margin-bottom: 2pt; }
-  hr { border: none; border-top: 1px solid #333; margin: 12pt 0; }
-  .program-head { text-align: center; font-family: Arial, sans-serif; font-weight: bold;
-                  font-size: 12pt; letter-spacing: .08em; margin: 14pt 0; }
-  .entry-row { display: flex; justify-content: space-between; }
-  .entry-indent { padding-left: 1.5em; display: block; }
-  .entry-indent-right { display: flex; justify-content: space-between; padding-left: 1.5em; }
-  .entry-arranger { color: #555; }
-  .entry-right { color: #555; }
+  /* Plain content proof — left-aligned, no program-style formatting.
+     This document is for proofing the TEXT; the formatted program is the web (.html) version. */
+  body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.4; margin: 1in; }
+  .disclaimer { background: #FFF3CD; border: 1px solid #E0A800; padding: 8pt 12pt; margin-bottom: 16pt;
+                font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.4; }
+  h1 { font-size: 14pt; font-family: Arial, sans-serif; margin: 0 0 8pt; }
+  .detail { margin: 1pt 0; }
+  .section, .program-head { font-family: Arial, sans-serif; font-weight: bold; font-size: 12pt; margin: 18pt 0 6pt; }
+  .entry { margin: 0 0 10pt; }
+  .entry-row { display: block; margin: 0; }
+  .entry-title { font-weight: bold; }
+  .entry-composer, .entry-right, .entry-arranger { display: block; }
+  .entry-indent, .entry-indent-right { display: block; padding-left: 24pt; }
+  .footnote { font-size: 10pt; margin: 4pt 0; }
   em { font-style: italic; }
-  .approval { margin-top: 36pt; border-top: 1px solid #ccc; padding-top: 14pt; font-family: Arial, sans-serif; font-size: 10pt; }
+  .approval { margin-top: 28pt; border-top: 1px solid #999; padding-top: 12pt; font-family: Arial, sans-serif; font-size: 10pt; }
 </style>
 </head>
 <body>
@@ -1278,21 +1278,19 @@ function generateDoc() {
   ⚠ CONTENT PROOF — Review the text for accuracy: names, titles, dates, repertoire, program notes, and bio.
   The published program is the web (.html) version; this Word copy is for proofing the copy and capturing faculty approval.
 </div>
-<h1>${rd.recitalType ? rd.recitalType.toUpperCase() : 'RECITAL'}</h1>
-${rd.academicYear ? '<p class="info" style="font-size:9pt;color:#555">' + rd.academicYear + '</p>' : ''}
-${rd.performerName ? '<p class="subtitle">' + [rd.performerName, rd.instrument].filter(Boolean).join(', ') + '</p>' : ''}
-${rd.accompanist ? '<p class="info">' + rd.accompanist + ', piano</p>' : ''}
-${(rd.additionalPerformers || '').split('\n').filter(l => l.trim()).map(l => '<p class="info">' + l.trim() + '</p>').join('')}
-${rd.lectureTitle && rd.recitalType === 'Doctoral Lecture Recital' ? '<p class="info" style="font-style:italic">&ldquo;' + rd.lectureTitle + '&rdquo;</p>' : ''}
-${rd.recitalDate ? '<p class="info">' + rd.recitalDate + '</p>' : ''}
-${rd.recitalTime || rd.venue ? '<p class="info">' + [rd.recitalTime, rd.venue].filter(Boolean).join(' · ') + '</p>' : ''}
-<hr>
-<div class="program-head">PROGRAM</div>
-<hr>
+<h1>${rd.recitalType ? esc(rd.recitalType) : 'Recital'}</h1>
+${rd.performerName ? '<p class="detail"><strong>' + esc([rd.performerName, rd.instrument].filter(Boolean).join(', ')) + '</strong></p>' : ''}
+${rd.accompanist ? '<p class="detail">' + esc(rd.accompanist) + ', piano</p>' : ''}
+${(rd.additionalPerformers || '').split('\n').filter(l => l.trim()).map(l => '<p class="detail">' + esc(l.trim()) + '</p>').join('')}
+${rd.lectureTitle && rd.recitalType === 'Doctoral Lecture Recital' ? '<p class="detail"><em>&ldquo;' + esc(rd.lectureTitle) + '&rdquo;</em></p>' : ''}
+${rd.recitalDate ? '<p class="detail">' + esc(rd.recitalDate) + '</p>' : ''}
+${rd.recitalTime || rd.venue ? '<p class="detail">' + esc([rd.recitalTime, rd.venue].filter(Boolean).join(' · ')) + '</p>' : ''}
+${rd.academicYear ? '<p class="detail">' + esc(rd.academicYear) + '</p>' : ''}
+<div class="section">PROGRAM</div>
 ${programHtml}
 ${footerHtml}
 ${degreeHtml}
-<p style="text-align:center;font-size:8pt;color:#888;margin-top:8pt">UMKC Conservatory recitals are recorded. Thank you for helping us maintain a silence in the hall that is conducive to music-making. Be sure to turn off all electronic devices.</p>
+<p class="footnote">UMKC Conservatory recitals are recorded. Thank you for helping us maintain a silence in the hall that is conducive to music-making. Be sure to turn off all electronic devices.</p>
 ${notesDocHtml}
 ${bioDocHtml}
 <div class="approval">
