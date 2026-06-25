@@ -37,8 +37,11 @@ function autoAcademicYear() {
   return startYear + '\u2013' + String(startYear + 1).slice(-2);
 }
 
-function resetState() {
-  state = {
+// The full wizard-state shape with safe defaults. Reused so that any restored
+// entryState is merged onto a complete object — buildEntry() accesses fields like
+// premiereType/performers/lyricist with .trim() and would throw on missing fields.
+function defaultWizardState() {
+  return {
     // Path decisions
     workType:           null,   // 'complete' | 'excerpt'
     titleType:          null,   // 'distinctive' | 'genre'
@@ -77,6 +80,10 @@ function resetState() {
     performers:         '',
     premiereType:       '',
   };
+}
+
+function resetState() {
+  state = defaultWizardState();
   navHistory = [];
 }
 
@@ -2379,8 +2386,15 @@ function loadDraftFromFile(inputEl) {
       '\n\nThis loads your program as it was when this file was saved' + (savedStr ? ' (' + savedStr + ')' : '') + '.\n' +
       'Anything typed directly into Word after that is NOT imported — re-apply faculty’s edits here in the tool.';
     if (!confirm('Continue from this file? It will replace anything currently in the tool.\n\n' + summary + wordWarning)) return;
-    restoreSession(parsed);
-    autoSave(); // also persist the loaded program to this browser
+    try {
+      restoreSession(parsed);
+      autoSave(); // also persist the loaded program to this browser
+    } catch (err) {
+      console.error('Could not load program file:', err);
+      alert('Sorry — this file’s saved data could not be loaded; it may be incomplete or from an ' +
+        'incompatible version. If you edited the file in Word, open the original copy you downloaded ' +
+        'from this tool instead, or rebuild the program.');
+    }
   };
   reader.readAsText(file);
 }
@@ -2452,10 +2466,11 @@ function restoreSession(saved) {
   // Rebuild HTML from entryState rather than trusting the stored HTML string
   programEntries = (saved.programEntries || []).map(e => {
     if (e.type !== 'entry') return e;
-    const rebuilt = buildEntryFromState(e.entryState || {});
+    // Merge onto full defaults so incomplete/older entryState can't crash buildEntry()
+    const rebuilt = buildEntryFromState({ ...defaultWizardState(), ...(e.entryState || {}) });
     return { ...e, html: rebuilt ? rebuilt.html : e.html, text: rebuilt ? rebuilt.text : e.text };
   });
-  state = saved.wizardState || {};
+  state = { ...defaultWizardState(), ...(saved.wizardState || {}) };
   navHistory = saved.navHistory || [];
   isFinalized = false;
   editingIndex = null;
