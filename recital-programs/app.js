@@ -581,7 +581,7 @@ function buildTitleHTML() {
   const date  = formatDateStr(state.workDate);
 
   if (state.titleType === 'genre') {
-    const nick = state.nickname.trim().replace(/^[“””’’’]+|[“””’’’]+$/g, '');
+    const nick = state.nickname.trim().replace(/^["“”'‘’]+|["“”'‘’]+$/g, '');
     // American style: comma inside closing quote when catalog follows
     const nickPart = nick ? (cat ? ', &quot;' + esc(nick) + ',&quot;' : ', &quot;' + esc(nick) + '&quot;') : '';
     const catPart  = nick && cat ? esc(cat.slice(1)) : esc(cat);
