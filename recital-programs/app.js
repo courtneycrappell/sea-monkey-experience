@@ -2645,7 +2645,7 @@ async function loadDictionaries() {
 }
 
 // Fields to check
-const SPELL_TEXTAREA_IDS = ['movements-input', 'rd-additional', 'performers-input'];
+const SPELL_TEXTAREA_IDS = ['movements-input', 'rd-additional', 'performers-input', 'rd-program-notes', 'rd-performer-bio'];
 const SPELL_INPUT_IDS    = ['rd-degree-instrument', 'rd-lecture', 'lyricist-input'];
 
 // Words and patterns that should never be flagged

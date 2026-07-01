@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recital Program Generator — UMKC Conservatory</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=e6b075b2">
 </head>
 <body class="on-welcome">
 
@@ -167,7 +167,7 @@
           </div>
           <div class="field">
             <label for="rd-additional">Additional performers <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
-            <textarea spellcheck="true" id="rd-additional" rows="3"
+            <textarea spellcheck="false" id="rd-additional" rows="3"
                       placeholder="One per line: Name, instrument&#10;e.g. Wai Tung Choi, piano"
                       oninput="updateRD('additionalPerformers', this.value)"></textarea>
           </div>
@@ -175,13 +175,13 @@
           <!-- ── Web Program (Beta) extras — optional, only used by the web program ── -->
           <div class="field">
             <label for="rd-program-notes">Program notes <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional — for the Web Program)</span></label>
-            <textarea spellcheck="true" id="rd-program-notes" rows="4"
+            <textarea spellcheck="false" id="rd-program-notes" rows="4"
                       placeholder="Notes about the program or individual works. Leave blank to omit. (Used only in the downloadable Web Program — not on the PDF or Word doc.)"
                       oninput="updateRD('programNotes', this.value)"></textarea>
           </div>
           <div class="field">
             <label for="rd-performer-bio">Performer bio <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional — for the Web Program)</span></label>
-            <textarea spellcheck="true" id="rd-performer-bio" rows="4"
+            <textarea spellcheck="false" id="rd-performer-bio" rows="4"
                       placeholder="A short bio of the performer. Leave blank to omit. (Used only in the downloadable Web Program — not on the PDF or Word doc.)"
                       oninput="updateRD('performerBio', this.value)"></textarea>
           </div>
@@ -573,7 +573,7 @@
         <div class="field-group">
           <div class="field">
             <label for="movements-input">Movements / songs</label>
-            <textarea spellcheck="true" id="movements-input" rows="6"
+            <textarea spellcheck="false" id="movements-input" rows="6"
                       placeholder="I. Allegro&#10;II. Andante&#10;III. Presto"
                       oninput="updateState('movements', this.value)"></textarea>
             <span class="field-hint">For partial performance: list only the movements you are performing. Keep their original Roman numerals.</span>
@@ -642,7 +642,7 @@
             <div class="field-group" style="margin-bottom:0">
               <div class="field">
                 <label for="performers-input">Performers</label>
-                <textarea spellcheck="true" id="performers-input" rows="3"
+                <textarea spellcheck="false" id="performers-input" rows="3"
                           placeholder="JJ Jamison, alto saxophone&#10;Dan Velicer, piano"
                           oninput="updateState('performers', this.value)"></textarea>
                 <span class="field-hint">One per line. Format: Name, instrument — e.g. "Dan Velicer, piano"</span>
@@ -797,7 +797,7 @@ Your formatted entry will appear here as you fill in the wizard.
 </div>
 
 <script src="typo.js"></script>
-<script src="app.js"></script>
+<script src="app.js?v=89e52444"></script>
 
 </body>
 </html>
