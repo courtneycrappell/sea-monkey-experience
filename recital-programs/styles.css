@@ -409,6 +409,13 @@ header h1   { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
 }
 #preview-output .entry-title   { flex: 1; }
 #preview-output .entry-composer { white-space: nowrap; text-align: right; }
+#preview-output .entry-composer-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: 0 0 auto;
+  text-align: right;
+}
 #preview-output .entry-right {
   text-align: right;
   color: var(--muted);
@@ -492,6 +499,13 @@ header h1   { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
 }
 #result-output .entry-title   { flex: 1; }
 #result-output .entry-composer { white-space: nowrap; }
+#result-output .entry-composer-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: 0 0 auto;
+  text-align: right;
+}
 #result-output .entry-right { text-align: right; color: var(--muted); }
 #result-output .entry-indent { padding-left: 1.5rem; display: block; margin: 0; line-height: 1.35; }
 #result-output .entry-indent-right {
@@ -719,6 +733,13 @@ header h1   { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
 }
 .program-entry-content .entry-title   { flex: 1; }
 .program-entry-content .entry-composer { white-space: nowrap; }
+.program-entry-content .entry-composer-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: 0 0 auto;
+  text-align: right;
+}
 .program-entry-content .entry-right { text-align: right; color: var(--muted); font-size: 0.85rem; }
 .program-entry-content .entry-indent { padding-left: 1.5rem; display: block; margin: 0; line-height: 1.3; }
 .program-entry-content .entry-indent-right {

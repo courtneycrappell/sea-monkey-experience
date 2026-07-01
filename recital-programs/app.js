@@ -618,6 +618,21 @@ function buildParentWorkRef() {
   return '<em>' + esc(title) + '</em>' + esc(cat) + esc(date);
 }
 
+// Right-side block: composer name on top, dates (and any arrangement)
+// on the line(s) directly below — kept together as one column so the
+// dates stay under the name even when the title wraps to a second line.
+function buildComposerBlockHTML(name, dates, arranger) {
+  let blk = '';
+  if (name)  blk += '<span class="entry-composer">' + esc(name) + '</span>';
+  if (dates) blk += '<span class="entry-right">' + esc(dates) + '</span>';
+  if (arranger) {
+    arranger.split('\n').filter(a => a.trim()).forEach(al => {
+      blk += '<span class="entry-arranger">' + esc(al) + '</span>';
+    });
+  }
+  return blk ? '<span class="entry-composer-block">' + blk + '</span>' : '';
+}
+
 // ════════════════════════════════════════════════════════════════
 //  Entry builder — returns { html, text }
 // ════════════════════════════════════════════════════════════════
@@ -636,26 +651,23 @@ function buildEntry() {
     const titleHTML = buildTitleHTML();
     if (!titleHTML && !composerName) return null;
 
-    // Row 1: Title ........ Composer
+    // Row 1: Title ........ Composer block (name over dates/arrangement,
+    // kept together so the dates stay under the name even if the title wraps)
     htmlLines.push(
       '<div class="entry-row">' +
       '<span class="entry-title">' + (titleHTML || '&mdash;') + '</span>' +
-      (composerName ? '<span class="entry-composer">' + esc(composerName) + '</span>' : '') +
+      buildComposerBlockHTML(composerName, composerDates, arrangerLine) +
       '</div>'
     );
     textLines.push((state.workTitle || '—') + (composerName ? '    ' + composerName : ''));
 
-    // Row 2: Composer dates (right-aligned)
+    // Composer dates + arrangement render inside the Row 1 block above;
+    // keep them on their own lines in the plain-text output.
     if (composerDates) {
-      htmlLines.push('<div class="entry-row"><span></span><span class="entry-right">' + esc(composerDates) + '</span></div>');
       textLines.push('                                          ' + composerDates);
     }
-
-    // Arrangement (right-aligned, below dates)
     if (arrangerLine) {
-      const arrLines = arrangerLine.split('\n');
-      arrLines.forEach(al => {
-        htmlLines.push('<div class="entry-row"><span></span><span class="entry-arranger">' + esc(al) + '</span></div>');
+      arrangerLine.split('\n').forEach(al => {
         textLines.push('                                          ' + al);
       });
     }
@@ -707,9 +719,9 @@ function buildEntry() {
 
       // Row 1: “Aria Title,” ........ Composer
       htmlLines.push(
-        '<div class=”entry-row”>' +
-        '<span class=”entry-title”>' + (pieceDisplay || '&mdash;') + '</span>' +
-        (composerName ? '<span class=”entry-composer”>' + esc(composerName) + '</span>' : '') +
+        '<div class="entry-row">' +
+        '<span class="entry-title">' + (pieceDisplay || '&mdash;') + '</span>' +
+        (composerName ? '<span class="entry-composer">' + esc(composerName) + '</span>' : '') +
         '</div>'
       );
       textLines.push((state.excerptOnePiece ? '”' + state.excerptOnePiece + (parentRef ? ',' : '') + '”' : '—') +
@@ -1267,6 +1279,7 @@ function generateDoc() {
   .entry-row { display: block; margin: 0; }
   .entry-title { font-weight: bold; }
   .entry-composer, .entry-right, .entry-arranger { display: block; }
+  .entry-composer-block { display: block; }
   .entry-indent, .entry-indent-right { display: block; padding-left: 24pt; }
   .footnote { font-size: 11pt; margin: 4pt 0; }
   em { font-style: italic; }
@@ -1432,6 +1445,7 @@ function generateWebProgram() {
 '.entry-row{display:flex;justify-content:space-between;gap:14px;align-items:baseline}\n' +
 '.entry-title{font-weight:700;font-size:18px;color:var(--brand-ink)}\n' +
 '.entry-composer{color:var(--muted);font-size:16px;text-align:right;flex:0 0 auto}\n' +
+'.entry-composer-block{display:flex;flex-direction:column;align-items:flex-end;flex:0 0 auto;text-align:right}\n' +
 '.entry-right,.entry-arranger{color:var(--muted);font-size:15px;text-align:right}\n' +
 '.entry-indent{padding-left:18px;font-size:16px;margin-top:2px}\n' +
 '.entry-indent-right{display:flex;justify-content:space-between;gap:14px;padding-left:18px;font-size:16px;margin-top:2px}\n' +
@@ -2615,12 +2629,19 @@ async function loadDictForLang(code) {
 
 async function loadDictionaries() {
   if (typeof Typo === 'undefined') return;
-  // Load English only at startup; other languages load on-demand
+  // Load English first so checking starts immediately…
   await loadDictForLang('en_US');
   if (dictsReady) SPELL_TEXTAREA_IDS.concat(SPELL_INPUT_IDS).forEach(id => {
     const el = document.getElementById(id);
     if (el && el.value?.trim()) runSpellCheck(id);
   });
+  // …then load German, French, and Italian in the background. These three are
+  // always-on (not accent-triggered) so their terms never get flagged as
+  // misspellings, even without accents (e.g. "Lieder", "Sonate", "Valse").
+  // Each finishing load re-checks active fields via loadDictForLang().
+  loadDictForLang('de_DE');
+  loadDictForLang('fr_FR');
+  loadDictForLang('it_IT');
 }
 
 // Fields to check
@@ -2650,26 +2671,23 @@ function spellSkip(word) {
 }
 
 function getContextDicts(text) {
-  const hasGerman  = /[äöüÄÖÜß]/.test(text);
-  const hasFrench  = /[àâçéèêëîïôùûœæÀÂÇÉÈÊËÎÏÔÙÛŒÆ]/.test(text);
   const hasItPt    = /[àèìòùÀÈÌÒÙãõÃÕ]/.test(text);
   const hasSpanish = /[ñÑ]/.test(text);
 
-  // Trigger lazy loading for any needed language not yet fetched (fire and forget)
-  if (hasGerman  && !DICT_CACHE['de_DE']) loadDictForLang('de_DE');
-  if (hasFrench  && !DICT_CACHE['fr_FR']) loadDictForLang('fr_FR');
-  if (hasItPt    && !DICT_CACHE['it_IT']) loadDictForLang('it_IT');
+  // German, French, and Italian are always consulted (loaded at startup), so
+  // terms in those languages never trigger a spelling-error prompt — including
+  // ones without accents. Ensure they're loaded even if startup is still in flight.
+  if (!DICT_CACHE['de_DE']) loadDictForLang('de_DE');
+  if (!DICT_CACHE['fr_FR']) loadDictForLang('fr_FR');
+  if (!DICT_CACHE['it_IT']) loadDictForLang('it_IT');
+  // Spanish/Portuguese remain accent-triggered (loaded on demand).
   if (hasItPt    && !DICT_CACHE['pt_PT']) loadDictForLang('pt_PT');
   if (hasSpanish && !DICT_CACHE['es_ES']) loadDictForLang('es_ES');
 
-  // Return whichever relevant dicts are currently loaded
-  const codes = ['en_US'];
-  if (hasGerman)  codes.push('de_DE');
-  if (hasFrench)  codes.push('fr_FR');
-  if (hasItPt)    codes.push('it_IT', 'pt_PT');
+  const codes = ['en_US', 'de_DE', 'fr_FR', 'it_IT'];
+  if (hasItPt)    codes.push('pt_PT');
   if (hasSpanish) codes.push('es_ES');
 
-  if (codes.length === 1) return loadedDicts; // no special chars → use all loaded
   const active = loadedDicts.filter(d => codes.includes(d.dictionary));
   return active.length > 0 ? active : loadedDicts;
 }
