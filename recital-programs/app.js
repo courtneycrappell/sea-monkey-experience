@@ -8,8 +8,10 @@ let programEntries = []; // [{type:'entry', html, text, entryState} | {type:'int
 let editingIndex = null; // null = new entry; number = editing existing
 let recitalDetails = {};
 
-function resetRecitalDetails() {
-  recitalDetails = {
+// Full recitalDetails shape with safe defaults. restoreSession() merges saved
+// snapshots onto this so fields added later are never undefined after a restore.
+function defaultRecitalDetails() {
+  return {
     academicYear:        autoAcademicYear(),
     recitalType:         '',
     performerName:       '',
@@ -27,6 +29,10 @@ function resetRecitalDetails() {
     programNotes:        '',   // Web Program (Beta) — optional
     performerBio:        '',   // Web Program (Beta) — optional
   };
+}
+
+function resetRecitalDetails() {
+  recitalDetails = defaultRecitalDetails();
 }
 
 function autoAcademicYear() {
@@ -176,6 +182,7 @@ function goBack() {
 
 function finalizeEntry() {
   isFinalized = true;
+  resetResultEditMode(); // arrive at the result screen in a clean, non-editing state
   document.getElementById('preview-card')?.classList.add('finalized');
   const status = document.getElementById('preview-status');
   if (status) status.textContent = 'Entry finalized';
@@ -204,6 +211,7 @@ function finalizeEntry() {
 
 function returnToEditing() {
   isFinalized = false;
+  resetResultEditMode(); // manual text edits are regenerated from the wizard fields
   document.getElementById('preview-card')?.classList.remove('finalized');
   const status = document.getElementById('preview-status');
   if (status) status.textContent = 'Updates as you fill in the wizard';
@@ -227,9 +235,9 @@ function startOver() {
   programEntries = [];
   clearSavedSession();
   resetRecitalDetails();
+  resetResultEditMode();
+  resetPreviewEditMode();
   document.getElementById('preview-card')?.classList.remove('finalized');
-  const hint = document.getElementById('preview-edit-hint');
-  if (hint) hint.style.display = 'none';
   const status = document.getElementById('preview-status');
   if (status) status.textContent = 'Start answering questions →';
   const actions = document.getElementById('preview-actions');
@@ -237,19 +245,63 @@ function startOver() {
   updateRightColumn();
   resetState();
   clearFormInputs();
+  clearRecitalDetailsInputs();
   goToScreen('welcome');
   navHistory = [];
   updatePreviewPlaceholder();
 }
 
+// Screens that make up the per-entry wizard (everything except welcome and
+// recital-details). clearFormInputs() is scoped to these so resetting between
+// entries never touches the recital-details form.
+const ENTRY_SCREENS = [
+  'relationship', 'title-type', 'work-size', 'excerpt-count', 'parent-work',
+  'excerpt-titles', 'work-details', 'composer', 'movements', 'credits', 'result'
+];
+
+// Clear the spell-checker backdrop and status line for fields whose values
+// were just cleared programmatically (no input event fires for those)
+function clearSpellArtifacts(ids) {
+  ids.forEach(id => {
+    const info = spellBackdrops[id];
+    if (info) info.bd.innerHTML = '';
+    const status = document.getElementById('spell-status-' + id);
+    if (status) status.innerHTML = '';
+  });
+}
+
 function clearFormInputs() {
-  document.querySelectorAll('input[type="text"], textarea').forEach(el => el.value = '');
-  document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
-  document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
-  document.querySelectorAll('.sub-fields').forEach(el => el.classList.remove('visible'));
-  document.getElementById('cat-num-field').style.display = 'none';
-  document.getElementById('cat-other-field').style.display = 'none';
-  document.getElementById('nickname-field').style.display = 'none';
+  ENTRY_SCREENS.forEach(id => {
+    const scr = document.getElementById('screen-' + id);
+    if (!scr) return;
+    scr.querySelectorAll('input[type="text"], textarea').forEach(el => el.value = '');
+    scr.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+    scr.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+    scr.querySelectorAll('.sub-fields').forEach(el => el.classList.remove('visible'));
+  });
+  document.querySelectorAll('.edit-entry-banner').forEach(b => b.remove());
+  const hide = id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; };
+  hide('cat-num-field');
+  hide('cat-other-field');
+  hide('nickname-field');
+  hide('parent-cat-other-field');
+  clearSpellArtifacts(['movements-input', 'performers-input', 'lyricist-input']);
+}
+
+function clearRecitalDetailsInputs() {
+  const scr = document.getElementById('screen-recital-details');
+  if (!scr) return;
+  scr.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => el.value = '');
+  scr.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  const yearEl = document.getElementById('rd-year');
+  if (yearEl) yearEl.value = autoAcademicYear();
+  const hide = id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; };
+  hide('rd-time-other');
+  hide('rd-venue-other');
+  hide('rd-prof-other-wrap');
+  hide('rd-degree-instrument-wrap');
+  hide('rd-lecture-field');
+  clearSpellArtifacts(['rd-additional', 'rd-program-notes', 'rd-performer-bio', 'rd-degree-instrument', 'rd-lecture']);
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -268,8 +320,8 @@ function getStepList() {
 }
 
 function getCurrentStepIndex(screenId) {
-  const complete = state.workType === 'excerpt';
-  if (!complete) {
+  const isExcerpt = state.workType === 'excerpt';
+  if (!isExcerpt) {
     // Complete work path
     const map = {
       'relationship': 0, 'title-type': 1, 'work-size': 2,
@@ -303,49 +355,59 @@ function renderProgressFor(screenId) {
 // ════════════════════════════════════════════════════════════════
 //  Auto-advance handlers (radio screens)
 // ════════════════════════════════════════════════════════════════
+// Auto-advance radios listen for BOTH change and click: re-clicking an
+// already-selected option fires no change event (which used to leave the user
+// stuck after navigating Back), while keyboard arrows fire change but no click.
+// A short guard swallows the duplicate when a fresh selection fires both.
+let lastRadioAdvance = 0;
+function bindAutoAdvance(name, apply) {
+  document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+    const go = () => {
+      const now = Date.now();
+      if (now - lastRadioAdvance < 350) return;
+      lastRadioAdvance = now;
+      apply(r.value);
+    };
+    r.addEventListener('change', go);
+    r.addEventListener('click', go);
+  });
+}
+
 function initRadioHandlers() {
   // Relationship
-  document.querySelectorAll('input[name="relationship"]').forEach(r => {
-    r.addEventListener('change', () => {
-      state.workType = r.value;
-      setTimeout(() => {
-        if (r.value === 'complete') goToScreen('title-type');
-        else goToScreen('excerpt-count');
-      }, 180);
-    });
+  bindAutoAdvance('relationship', value => {
+    state.workType = value;
+    setTimeout(() => {
+      if (value === 'complete') goToScreen('title-type');
+      else goToScreen('excerpt-count');
+    }, 180);
   });
 
   // Title type
-  document.querySelectorAll('input[name="titleType"]').forEach(r => {
-    r.addEventListener('change', () => {
-      state.titleType = r.value;
-      // Show/hide nickname field on work-details screen
-      const nf = document.getElementById('nickname-field');
-      if (nf) nf.style.display = r.value === 'genre' ? 'flex' : 'none';
-      // Update work-details question hint
-      updateWorkDetailsQuestion();
-      setTimeout(() => {
-        updateWorkSizeScreen();
-        goToScreen('work-size');
-      }, 180);
-    });
+  bindAutoAdvance('titleType', value => {
+    state.titleType = value;
+    // Show/hide nickname field on work-details screen
+    const nf = document.getElementById('nickname-field');
+    if (nf) nf.style.display = value === 'genre' ? 'flex' : 'none';
+    // Update work-details question hint
+    updateWorkDetailsQuestion();
+    setTimeout(() => {
+      updateWorkSizeScreen();
+      goToScreen('work-size');
+    }, 180);
   });
 
   // Work size
-  document.querySelectorAll('input[name="workSize"]').forEach(r => {
-    r.addEventListener('change', () => {
-      state.workSize = r.value;
-      updateWorkDetailsQuestion();
-      setTimeout(() => goToScreen('work-details'), 180);
-    });
+  bindAutoAdvance('workSize', value => {
+    state.workSize = value;
+    updateWorkDetailsQuestion();
+    setTimeout(() => goToScreen('work-details'), 180);
   });
 
   // Excerpt count
-  document.querySelectorAll('input[name="excerptCount"]').forEach(r => {
-    r.addEventListener('change', () => {
-      state.excerptCount = r.value;
-      setTimeout(() => goToScreen('parent-work'), 180);
-    });
+  bindAutoAdvance('excerptCount', value => {
+    state.excerptCount = value;
+    setTimeout(() => goToScreen('parent-work'), 180);
   });
 }
 
@@ -457,6 +519,11 @@ function advanceFromMovements() {
 // ════════════════════════════════════════════════════════════════
 function updateComposerStatus(val) {
   state.composerLiving = (val === 'living');
+  // Both birth-year inputs share state.composerBorn — sync the one being shown
+  // so switching living/deceased never displays an empty field while the
+  // preview still shows a year typed in the other input
+  const bornEl = document.getElementById(val === 'living' ? 'composer-born-living' : 'composer-born');
+  if (bornEl) bornEl.value = state.composerBorn || '';
   document.getElementById('deceased-fields').classList.toggle('visible', val === 'deceased');
   document.getElementById('living-fields').classList.toggle('visible', val === 'living');
   renderPreview();
@@ -470,12 +537,28 @@ function updateCatalogType(val) {
   const numField   = document.getElementById('cat-num-field');
   const otherField = document.getElementById('cat-other-field');
   // Show number field for known catalogs; show both fields for 'other'
-  numField.style.display   = (val && val !== '') ? 'flex' : 'none';
-  otherField.style.display = (val === 'other') ? 'flex' : 'none';
+  if (numField)   numField.style.display   = val ? 'flex' : 'none';
+  if (otherField) otherField.style.display = (val === 'other') ? 'flex' : 'none';
   if (val !== 'other') {
-    document.getElementById('cat-num-field').style.display = val ? 'flex' : 'none';
+    const otherInput = document.getElementById('cat-other-label');
+    if (otherInput) otherInput.value = '';
   }
   renderPreview();
+  autoSave();
+}
+
+// Parent-work catalog select — same "Other" handling as the main catalog select,
+// so choosing Other reveals a custom-prefix input instead of printing "other".
+function updateParentCatalogType(val) {
+  state.parentCatalogType = (val === 'other') ? '' : val;
+  const otherField = document.getElementById('parent-cat-other-field');
+  if (otherField) otherField.style.display = (val === 'other') ? 'flex' : 'none';
+  if (val !== 'other') {
+    const otherInput = document.getElementById('parent-cat-other-label');
+    if (otherInput) otherInput.value = '';
+  }
+  renderPreview();
+  autoSave();
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -558,21 +641,6 @@ function formatArrangerLine() {
   return role + ' ' + state.arrangementName.trim();
 }
 
-function formatMovementList(movementsStr, lyricist) {
-  if (!movementsStr.trim()) return '';
-  const lines = movementsStr.split('\n').map(l => l.trim()).filter(l => l);
-  return lines.map((line, i) => {
-    const lyrPart = (i === 0 && lyricist) ? '    lyr. ' + lyricist : '';
-    return '    ' + line + lyrPart;
-  }).join('\n');
-}
-
-function formatPerformerList(performersStr) {
-  if (!performersStr.trim()) return '';
-  const lines = performersStr.split('\n').map(l => l.trim()).filter(l => l);
-  return lines.map(l => '          ' + l).join('\n');
-}
-
 // Build the title HTML string (with <em> or quotes)
 function buildTitleHTML() {
   const title = state.workTitle.trim();
@@ -583,16 +651,16 @@ function buildTitleHTML() {
   if (state.titleType === 'genre') {
     const nick = state.nickname.trim().replace(/^["“”'‘’]+|["“”'‘’]+$/g, '');
     // American style: comma inside closing quote when catalog follows
-    const nickPart = nick ? (cat ? ', &quot;' + esc(nick) + ',&quot;' : ', &quot;' + esc(nick) + '&quot;') : '';
+    const nickPart = nick ? (cat ? ', “' + esc(nick) + ',”' : ', “' + esc(nick) + '”') : '';
     const catPart  = nick && cat ? esc(cat.slice(1)) : esc(cat);
     return esc(title) + nickPart + catPart + esc(date);
   }
   if (state.workSize === 'single') {
     // American style: comma inside closing quotation mark
     if (cat.startsWith(', ')) {
-      return '&quot;' + esc(title) + ',&quot;' + esc(cat.slice(1)) + esc(date);
+      return '“' + esc(title) + ',”' + esc(cat.slice(1)) + esc(date);
     }
-    return '&quot;' + esc(title) + '&quot;' + esc(cat) + esc(date);
+    return '“' + esc(title) + '”' + esc(cat) + esc(date);
   }
   // multi
   return '<em>' + esc(title) + '</em>' + esc(cat) + esc(date);
@@ -605,7 +673,7 @@ function buildExcerptTitleHTML() {
     if (!piece) return '';
     // American style: comma inside closing quotation mark if catalog follows
     // (excerpts typically have no catalog, but apply consistently)
-    return '”' + esc(piece) + '”';
+    return '“' + esc(piece) + '”';
   }
   return '';
 }
@@ -641,7 +709,6 @@ function buildEntry() {
   const composerName  = formatComposerName();
   const composerDates = formatComposerDates(state.composerBorn, state.composerDied, state.composerLiving);
   const arrangerLine  = formatArrangerLine();
-  const performers    = formatPerformerList(state.performers);
   const premiere      = state.premiereType.trim();
 
   let htmlLines = [];
@@ -687,7 +754,7 @@ function buildEntry() {
           htmlLines.push(
             '<div class="entry-indent-right">' +
             '<span>' + esc(line) + '</span>' +
-            '<span style="font-size:0.8rem;color:var(--muted)">' + esc(lyr.trim()) + '</span>' +
+            '<span class="entry-lyr">' + esc(lyr.trim()) + '</span>' +
             '</div>'
           );
         } else {
@@ -701,7 +768,7 @@ function buildEntry() {
     if (state.performers.trim()) {
       const perfLines = state.performers.split('\n').map(l => l.trim()).filter(l => l);
       perfLines.forEach(pl => {
-        htmlLines.push('<div style="text-align:center;font-size:0.85rem;margin-top:0.2rem">' + esc(pl) + '</div>');
+        htmlLines.push('<div class="entry-perf">' + esc(pl) + '</div>');
         textLines.push('          ' + pl);
       });
     }
@@ -724,7 +791,7 @@ function buildEntry() {
         (composerName ? '<span class="entry-composer">' + esc(composerName) + '</span>' : '') +
         '</div>'
       );
-      textLines.push((state.excerptOnePiece ? '”' + state.excerptOnePiece + (parentRef ? ',' : '') + '”' : '—') +
+      textLines.push((state.excerptOnePiece ? '“' + state.excerptOnePiece + (parentRef ? ',' : '') + '”' : '—') +
         (composerName ? '    ' + composerName : ''));
 
       // Row 2: from *Parent Work*, Catalog (Year)     (dates)
@@ -832,7 +899,7 @@ function buildEntry() {
     if (state.performers.trim()) {
       const perfLines = state.performers.split('\n').map(l => l.trim()).filter(l => l);
       perfLines.forEach(pl => {
-        htmlLines.push('<div style="text-align:center;font-size:0.85rem;margin-top:0.2rem">' + esc(pl) + '</div>');
+        htmlLines.push('<div class="entry-perf">' + esc(pl) + '</div>');
         textLines.push('          ' + pl);
       });
     }
@@ -940,6 +1007,8 @@ function showCopyConfirm(id) {
 }
 
 let editMode = false;
+let resultEdited = false; // set when the user actually types in the result box
+
 function toggleEdit() {
   const el = document.getElementById('result-output');
   if (!el) return;
@@ -949,6 +1018,54 @@ function toggleEdit() {
   const btns = document.querySelectorAll('#new-entry-buttons .btn-secondary, #save-changes-row .btn-secondary');
   btns.forEach(b => { if (b.textContent.includes('Edit') || b.textContent.includes('Done')) b.textContent = editMode ? 'Done editing' : 'Edit text'; });
   if (editMode) el.focus();
+}
+
+// Leave result-screen edit mode cleanly: contenteditable off, button label reset.
+// Called whenever an entry is added/saved/cancelled so the next entry's result
+// screen doesn't arrive already-editable with a stale "Done editing" label.
+function resetResultEditMode() {
+  editMode = false;
+  resultEdited = false;
+  const el = document.getElementById('result-output');
+  if (el) el.setAttribute('contenteditable', 'false');
+  const btns = document.querySelectorAll('#new-entry-buttons .btn-secondary, #save-changes-row .btn-secondary');
+  btns.forEach(b => { if (b.textContent.includes('Done')) b.textContent = 'Edit text'; });
+}
+
+function resetPreviewEditMode() {
+  const el = document.getElementById('preview-output');
+  if (el) { el.setAttribute('contenteditable', 'false'); el.classList.remove('editable'); }
+  const hint = document.getElementById('preview-edit-hint');
+  if (hint) hint.style.display = 'none';
+}
+
+// Sanitize contenteditable HTML before storing it (paste can bring in markup):
+// drop active/embedding elements and event-handler or javascript: attributes.
+function sanitizeEntryHtml(html) {
+  const tmpl = document.createElement('template');
+  tmpl.innerHTML = html;
+  tmpl.content.querySelectorAll('script,style,iframe,object,embed,link,meta,form').forEach(n => n.remove());
+  tmpl.content.querySelectorAll('*').forEach(el => {
+    Array.from(el.attributes).forEach(a => {
+      const n = a.name.toLowerCase();
+      if (n.startsWith('on') || ((n === 'href' || n === 'src') && /^\s*javascript:/i.test(a.value))) {
+        el.removeAttribute(a.name);
+      }
+    });
+  });
+  return tmpl.innerHTML;
+}
+
+// Current result entry: rebuilt from wizard state, unless the user manually
+// edited the text on the result screen — then keep exactly what they typed.
+function captureResultEntry() {
+  const entry = buildEntry();
+  if (!entry) return null;
+  const out = document.getElementById('result-output');
+  if (resultEdited && out && (out.innerText || '').trim()) {
+    return { html: sanitizeEntryHtml(out.innerHTML), text: (out.innerText || '').trim(), edited: true };
+  }
+  return { html: entry.html, text: entry.text, edited: false };
 }
 
 function editPreview() {
@@ -970,20 +1087,17 @@ function renderResultScreen() {
   if (el && entry) el.innerHTML = entry.html;
 }
 
-// Override goToScreen for result to trigger result render
-const _goToScreen = goToScreen;
-// goToScreen already calls renderPreview which updates result-output if visible
-
 // ════════════════════════════════════════════════════════════════
 //  Program List — Add / Edit / Remove / Clear
 // ════════════════════════════════════════════════════════════════
 function addToProgram() {
-  const entry = buildEntry();
+  const entry = captureResultEntry();
   if (!entry) return;
   programEntries.push({
     type: 'entry',
     html: entry.html,
     text: entry.text,
+    edited: entry.edited,
     entryState: JSON.parse(JSON.stringify(state))
   });
   renderProgramList();
@@ -993,7 +1107,8 @@ function addToProgram() {
   // Reset for next entry
   isFinalized = false;
   editingIndex = null;
-  editMode = false;
+  resetResultEditMode();
+  resetPreviewEditMode();
   navHistory = [];
   resetState();
   clearFormInputs();
@@ -1005,19 +1120,21 @@ function addToProgram() {
 }
 
 function saveProgramEntry() {
-  const entry = buildEntry();
+  const entry = captureResultEntry();
   if (!entry || editingIndex === null) return;
   programEntries[editingIndex] = {
     type: 'entry',
     html: entry.html,
     text: entry.text,
+    edited: entry.edited,
     entryState: JSON.parse(JSON.stringify(state))
   };
   renderProgramList();
   autoSave();
 
   editingIndex = null;
-  editMode = false;
+  resetResultEditMode();
+  resetPreviewEditMode();
   isFinalized = false;
   navHistory = [];
   resetState();
@@ -1027,7 +1144,8 @@ function saveProgramEntry() {
 
 function cancelEditEntry() {
   editingIndex = null;
-  editMode = false;
+  resetResultEditMode();
+  resetPreviewEditMode();
   isFinalized = false;
   navHistory = [];
   resetState();
@@ -1083,6 +1201,9 @@ function showEditBanner(screenId) {
   const banner = document.createElement('div');
   banner.className = 'edit-entry-banner';
   banner.textContent = `Editing entry ${editingIndex + 1}. Update any details below. Use Back to change the work type.`;
+  if (programEntries[editingIndex]?.edited) {
+    banner.textContent += ' Note: this entry’s text was manually edited — saving regenerates it from the fields below unless you edit the text again on the result screen.';
+  }
   // Insert after the Back button (first element in screen)
   const backBtn = screen.querySelector('.btn-back');
   if (backBtn) backBtn.after(banner);
@@ -1136,17 +1257,32 @@ function populateFormFromState(s) {
 
   // Selects
   function setSel(id, val) { const el = document.getElementById(id); if (el && val) el.value = val; }
-  setSel('cat-type', s.catalogType || '');
-  setSel('parent-cat-type', s.parentCatalogType || '');
   setSel('arr-role', s.arrangementRole || 'arr.');
+
+  // Catalog selects — a custom prefix (entered via "Other") isn't a preset option,
+  // so select "Other" and restore the prefix into the custom input instead
+  function setCatalogSel(selId, otherFieldId, otherInputId, value) {
+    const sel = document.getElementById(selId);
+    if (!sel || !value) return;
+    const isPreset = Array.from(sel.options).some(o => o.value === value && value !== 'other');
+    const otherField = document.getElementById(otherFieldId);
+    if (isPreset) {
+      sel.value = value;
+      if (otherField) otherField.style.display = 'none';
+    } else {
+      sel.value = 'other';
+      if (otherField) otherField.style.display = 'flex';
+      const inp = document.getElementById(otherInputId);
+      if (inp) inp.value = value;
+    }
+  }
+  setCatalogSel('cat-type', 'cat-other-field', 'cat-other-label', s.catalogType);
+  setCatalogSel('parent-cat-type', 'parent-cat-other-field', 'parent-cat-other-label', s.parentCatalogType);
 
   // Show/hide catalog number field
   if (s.catalogType) {
     const numField = document.getElementById('cat-num-field');
     if (numField) numField.style.display = 'flex';
-  }
-  if (s.parentCatalogType) {
-    // parent catalog field shown in parent-work screen
   }
 
   // Show nickname field if genre path
@@ -1188,6 +1324,13 @@ function previewPDF() {
 // ════════════════════════════════════════════════════════════════
 //  Word Doc (.doc) download — HTML blob, opens in Word
 // ════════════════════════════════════════════════════════════════
+// Make a name safe for download filenames: strip characters that are illegal
+// on Windows/macOS, then collapse whitespace to underscores.
+function safeFilename(name, fallback) {
+  const s = String(name || '').replace(/[\/\\:*?"<>|]+/g, ' ').trim().replace(/\s+/g, '_');
+  return s || fallback;
+}
+
 // UTF-8-safe base64 (used to embed reload data inside the program file .doc)
 function b64EncodeUtf8(str) { return btoa(unescape(encodeURIComponent(str))); }
 function b64DecodeUtf8(b64) { return decodeURIComponent(escape(atob(b64))); }
@@ -1281,6 +1424,8 @@ function generateDoc() {
   .entry-composer, .entry-right, .entry-arranger { display: block; }
   .entry-composer-block { display: block; }
   .entry-indent, .entry-indent-right { display: block; padding-left: 24pt; }
+  .entry-lyr { font-size: 10pt; color: #555555; }
+  .entry-perf { text-align: center; font-size: 11pt; }
   .footnote { font-size: 11pt; margin: 4pt 0; }
   em { font-style: italic; }
   .approval { margin-top: 28pt; border-top: 1px solid #999; padding-top: 12pt; font-size: 11pt; }
@@ -1319,7 +1464,7 @@ ${bioDocHtml}
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = (rd.performerName ? rd.performerName.replace(/\s+/g, '_') : 'Recital') + '_Recital_Program.doc';
+  a.download = safeFilename(rd.performerName, 'Recital') + '_Recital_Program.doc';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -1449,6 +1594,8 @@ function generateWebProgram() {
 '.entry-right,.entry-arranger{color:var(--muted);font-size:15px;text-align:right}\n' +
 '.entry-indent{padding-left:18px;font-size:16px;margin-top:2px}\n' +
 '.entry-indent-right{display:flex;justify-content:space-between;gap:14px;padding-left:18px;font-size:16px;margin-top:2px}\n' +
+'.entry-lyr{font-size:13px;color:var(--muted)}\n' +
+'.entry-perf{text-align:center;font-size:15px;margin-top:4px}\n' +
 '.interm{text-align:center;font-family:Arial,sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:26px 0;font-weight:700}\n' +
 'details{border:1px solid var(--line);border-radius:10px;margin:0 0 12px;background:var(--surface);overflow:hidden}\n' +
 'summary{cursor:pointer;list-style:none;padding:16px 18px;min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:700;font-size:17px;color:var(--brand-ink)}\n' +
@@ -1500,7 +1647,7 @@ notesHtml + bioHtml +
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = (rd.performerName ? rd.performerName.replace(/\s+/g, '_') : 'Recital') + '_Recital_Program.html';
+  a.download = safeFilename(rd.performerName, 'Recital') + '_Recital_Program.html';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -1750,6 +1897,9 @@ function renderProgramList() {
 //  Recital type → interior header text
 // ════════════════════════════════════════════════════════════════
 function getHeaderText(recitalType) {
+  // Includes legacy types no longer offered in the dropdown (e.g. Senior/Junior
+  // Undergraduate, Student Chamber Music) so old saved sessions and reloaded
+  // program files still render correctly — keep them.
   const map = {
     "Doctoral Recital":             "DOCTORAL RECITAL",
     "Doctoral Lecture Recital":     "DOCTORAL LECTURE RECITAL",
@@ -1974,7 +2124,7 @@ async function generatePDF(mode = 'save') {
   }
   if (rd.lectureTitle && rd.recitalType === 'Doctoral Lecture Recital') {
     y += SH;
-    cText('”' + rd.lectureTitle + '”', y, { style: 'italic', size: FS });
+    cText('"' + rd.lectureTitle + '"', y, { style: 'italic', size: FS });
     y += LH;
   }
 
@@ -2014,7 +2164,7 @@ async function generatePDF(mode = 'save') {
 
   // ── Output ─────────────────────────────────────────────────
   const filename = rd.performerName
-    ? rd.performerName.replace(/\s+/g, '_') + '_Program.pdf'
+    ? safeFilename(rd.performerName, 'UMKC_Recital') + '_Program.pdf'
     : 'UMKC_Recital_Program.pdf';
 
   if (mode === 'preview') {
@@ -2076,7 +2226,8 @@ function renderEntryToPDF(doc, s, LM, RM, y, PH, BM, FS, LH, SH, DARK, MUTED) {
     }
   } else if (s.excerptCount === 'one') {
     const trailingComma = s.parentTitle ? ',' : '';
-    titleParts = [{ t: '”' + excerptOne + trailingComma + '”', i: false }];
+    // Straight quotes here — jsPDF text is normalized to WinAnsi-safe characters
+    titleParts = [{ t: '"' + excerptOne + trailingComma + '"', i: false }];
   } else {
     // Excerpt-multiple: use first song as main title entry; "from Work" drawn after songs
     const songs0 = (s.excerptMultiple || '').split('\n').map(l => l.trim()).filter(l => l);
@@ -2315,6 +2466,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Close faculty modal on overlay click
   const modal = document.getElementById('faculty-email-modal');
   if (modal) modal.addEventListener('click', e => { if (e.target === modal) closeFacultyEmailModal(); });
+
+  // Track manual edits on the result screen so Add to program / Save keeps them
+  const resultOut = document.getElementById('result-output');
+  if (resultOut) resultOut.addEventListener('input', () => { resultEdited = true; });
 });
 
 // ════════════════════════════════════════════════════════════════
@@ -2361,7 +2516,7 @@ function saveDraftToFile() {
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = (snapshot.recitalDetails.performerName || 'Recital').replace(/\s+/g, '_') + '_Recital_Draft.json';
+  a.download = safeFilename(snapshot.recitalDetails.performerName, 'Recital') + '_Recital_Draft.json';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -2475,10 +2630,14 @@ function buildEntryFromState(entryState) {
 }
 
 function restoreSession(saved) {
-  recitalDetails = saved.recitalDetails || {};
-  // Rebuild HTML from entryState rather than trusting the stored HTML string
+  // Merge onto full defaults so newer recitalDetails fields are never undefined
+  // after restoring an older snapshot (same pattern as wizardState below)
+  recitalDetails = { ...defaultRecitalDetails(), ...(saved.recitalDetails || {}) };
+  // Rebuild HTML from entryState rather than trusting the stored HTML string —
+  // except manually-edited entries, whose text exists only in the stored HTML
   programEntries = (saved.programEntries || []).map(e => {
     if (e.type !== 'entry') return e;
+    if (e.edited) return { ...e, html: sanitizeEntryHtml(e.html || '') };
     // Merge onto full defaults so incomplete/older entryState can't crash buildEntry()
     const rebuilt = buildEntryFromState({ ...defaultWizardState(), ...(e.entryState || {}) });
     return { ...e, html: rebuilt ? rebuilt.html : e.html, text: rebuilt ? rebuilt.text : e.text };
@@ -2886,8 +3045,12 @@ function hideSpellSuggestions() {
 function applySpellSuggestion(original, replacement, fieldId) {
   const el = document.getElementById(fieldId);
   if (!el) return;
-  // Replace only the first occurrence to be safe
-  el.value = el.value.replace(original, replacement);
+  // Replace only the first whole-word occurrence — a plain substring replace
+  // could corrupt a longer word that happens to contain the flagged one
+  const escaped = original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const WORD_CH = 'a-zA-ZÀ-ÿĀ-ɏḀ-ỿ';
+  const re = new RegExp('(^|[^' + WORD_CH + '])(' + escaped + ')(?![' + WORD_CH + '])');
+  el.value = el.value.replace(re, (m, before) => before + replacement);
   // Trigger state update
   el.dispatchEvent(new Event('input', { bubbles: true }));
   runSpellCheck(fieldId);

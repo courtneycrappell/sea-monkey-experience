@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recital Program Generator — UMKC Conservatory</title>
-  <link rel="stylesheet" href="styles.css?v=e6b075b2">
+  <link rel="stylesheet" href="styles.css?v=5af79e24">
 </head>
 <body class="on-welcome">
 
@@ -391,7 +391,7 @@
           <div class="field-row">
             <div class="field">
               <label for="parent-cat-type">Catalog type</label>
-              <select id="parent-cat-type" onchange="updateState('parentCatalogType', this.value)">
+              <select id="parent-cat-type" onchange="updateParentCatalogType(this.value)">
                 <option value="">None</option>
                 <option value="Op.">Op. (Opus)</option>
                 <option value="K.">K. (Köchel — Mozart)</option>
@@ -412,6 +412,11 @@
               <input type="text" spellcheck="false" id="parent-cat-num" placeholder="e.g. 70, 244, 339"
                      oninput="updateState('parentCatalogNumber', this.value)">
             </div>
+          </div>
+          <div class="field" id="parent-cat-other-field" style="display:none">
+            <label for="parent-cat-other-label">Custom catalog prefix</label>
+            <input type="text" spellcheck="false" id="parent-cat-other-label" placeholder="e.g. H."
+                   oninput="updateState('parentCatalogType', this.value)">
           </div>
           <div class="field">
             <label for="parent-date">Composition year</label>
@@ -797,7 +802,7 @@ Your formatted entry will appear here as you fill in the wizard.
 </div>
 
 <script src="typo.js"></script>
-<script src="app.js?v=89e52444"></script>
+<script src="app.js?v=5295a34f"></script>
 
 </body>
 </html>
