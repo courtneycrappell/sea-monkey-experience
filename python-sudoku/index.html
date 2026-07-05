@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Build a Sudoku Game in Python</title>
+  <style>
+    :root {
+      --bg:       #0f1218;
+      --panel:    #171b23;
+      --panel-2:  #1c212b;
+      --border:   #262c38;
+      --border-2: #333c4c;
+      --text:     #d7dce6;
+      --muted:    #8b93a5;
+      --faint:    #626b7e;
+      --accent:   #6cb0ff;
+      --green:    #56c88a;
+      --red:      #e0655f;
+      --amber:    #e2b04a;
+      --mono:     "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      --sans:     system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* top progress bar */
+    #progress-wrap {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(15,18,24,0.86);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    #progress-inner {
+      max-width: 860px; margin: 0 auto; padding: 0.7rem 1.25rem;
+      display: flex; align-items: center; gap: 0.9rem;
+    }
+    #progress-track {
+      flex: 1; height: 8px; background: var(--panel-2);
+      border-radius: 99px; overflow: hidden;
+    }
+    #progress-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--green));
+      transition: width 0.35s ease;
+    }
+    #progress-label { font-size: 0.8rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+    .wrap { max-width: 860px; margin: 0 auto; padding: 0 1.25rem; }
+
+    /* hero */
+    header.hero { padding: 3.2rem 0 1.5rem; }
+    .kicker {
+      font-size: 0.78rem; letter-spacing: 0.24em; text-transform: uppercase;
+      color: var(--accent); font-weight: 700; margin-bottom: 0.9rem;
+    }
+    h1 {
+      font-size: clamp(2rem, 6vw, 3.1rem); line-height: 1.08; margin: 0 0 0.8rem;
+      letter-spacing: -0.02em; font-weight: 800;
+    }
+    .lede { font-size: 1.12rem; color: var(--muted); max-width: 44em; margin: 0 0 1.6rem; }
+
+    .shots {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem;
+      margin: 1.8rem 0 0.5rem;
+    }
+    .shots figure { margin: 0; }
+    .shots img {
+      width: 100%; height: auto; border-radius: 10px;
+      border: 1px solid var(--border); display: block;
+    }
+    .shots figcaption { font-size: 0.74rem; color: var(--faint); text-align: center; margin-top: 0.45rem; }
+    @media (max-width: 620px) { .shots { grid-template-columns: 1fr; } }
+
+    /* generic section cards */
+    section.block {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.5rem 1.6rem; margin: 1.1rem 0;
+    }
+    section.intro { border-left: 3px solid var(--accent); }
+    h2 { font-size: 1.5rem; margin: 0 0 0.6rem; letter-spacing: -0.01em; }
+    h3 { font-size: 1.02rem; margin: 1.3rem 0 0.4rem; color: var(--text); }
+    p { margin: 0.6rem 0; }
+    ul, ol { margin: 0.5rem 0; padding-left: 1.3rem; }
+    li { margin: 0.3rem 0; }
+    strong { color: #eef1f7; }
+    .note {
+      background: var(--panel-2); border: 1px solid var(--border);
+      border-left: 3px solid var(--amber);
+      border-radius: 8px; padding: 0.7rem 1rem; margin: 1rem 0;
+      font-size: 0.95rem; color: var(--muted);
+    }
+    .note strong { color: var(--amber); }
+
+    /* challenge cards */
+    .challenge {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 14px; margin: 1.4rem 0; overflow: hidden;
+      scroll-margin-top: 70px;
+    }
+    .challenge.done { border-color: rgba(86,200,138,0.5); }
+    .ch-head {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: 1.3rem 1.6rem 0.4rem;
+    }
+    .ch-badge {
+      flex: none; width: 40px; height: 40px; border-radius: 10px;
+      background: var(--panel-2); border: 1px solid var(--border-2);
+      display: grid; place-items: center; font-weight: 800; color: var(--accent);
+      font-size: 1.05rem;
+    }
+    .challenge.done .ch-badge { background: rgba(86,200,138,0.14); border-color: var(--green); color: var(--green); }
+    .ch-title { flex: 1; }
+    .ch-title h2 { font-size: 1.28rem; margin: 0.15rem 0 0.1rem; }
+    .ch-title .concept { font-size: 0.76rem; color: var(--faint); letter-spacing: 0.06em; text-transform: uppercase; }
+    .ch-body { padding: 0.4rem 1.6rem 1.5rem; }
+
+    .goal { font-size: 1.05rem; color: var(--text); }
+    .goal::before { content: "🎯 "; }
+
+    .subhead {
+      font-size: 0.74rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); font-weight: 700; margin: 1.3rem 0 0.3rem;
+    }
+
+    /* acceptance criteria */
+    ul.criteria { list-style: none; padding-left: 0; }
+    ul.criteria li { padding-left: 1.7rem; position: relative; }
+    ul.criteria li::before {
+      content: "✓"; position: absolute; left: 0; top: 0;
+      color: var(--green); font-weight: 800;
+    }
+    /* test cases */
+    ul.tests { list-style: none; padding-left: 0; }
+    ul.tests li { padding-left: 1.7rem; position: relative; }
+    ul.tests li::before {
+      content: "▸"; position: absolute; left: 0.2rem; top: 0; color: var(--amber);
+    }
+
+    /* code */
+    pre.code {
+      background: #0c0f15; border: 1px solid var(--border);
+      border-radius: 10px; padding: 0.95rem 1.1rem; overflow-x: auto;
+      font-family: var(--mono); font-size: 0.86rem; line-height: 1.55;
+      margin: 0.7rem 0; tab-size: 4;
+    }
+    pre.code code { white-space: pre; }
+    code.inline {
+      font-family: var(--mono); font-size: 0.86em;
+      background: var(--panel-2); border: 1px solid var(--border);
+      padding: 0.08em 0.4em; border-radius: 5px; color: #cbd3e1;
+    }
+    /* syntax colors */
+    .tk-k { color: #c792ea; }              /* keyword */
+    .tk-s { color: #9ece6a; }              /* string */
+    .tk-n { color: #ff9e64; }              /* number */
+    .tk-b { color: #7aa2f7; }              /* builtin/known name */
+    .tk-c { color: #5a6274; font-style: italic; } /* comment */
+
+    /* details / disclosure */
+    details {
+      border: 1px solid var(--border); border-radius: 10px;
+      margin: 0.7rem 0; background: var(--panel-2); overflow: hidden;
+    }
+    details > summary {
+      cursor: pointer; padding: 0.75rem 1rem; font-weight: 600;
+      list-style: none; user-select: none; display: flex; align-items: center; gap: 0.55rem;
+      font-size: 0.94rem;
+    }
+    details > summary::-webkit-details-marker { display: none; }
+    details > summary::before {
+      content: "▶"; font-size: 0.7rem; color: var(--muted);
+      transition: transform 0.15s ease;
+    }
+    details[open] > summary::before { transform: rotate(90deg); }
+    details.hint > summary { color: var(--amber); }
+    details.solution > summary { color: var(--accent); }
+    .details-body { padding: 0.2rem 1rem 1rem; }
+    .hint-lead { font-size: 0.84rem; color: var(--faint); font-style: italic; margin: 1.25rem 0 0.15rem; }
+    details.hint + details.hint { margin-top: 0.5rem; }
+
+    /* mark-complete control */
+    .ch-complete {
+      display: flex; align-items: center; gap: 0.6rem; margin-top: 1.4rem;
+      padding-top: 1.1rem; border-top: 1px dashed var(--border-2);
+    }
+    .ch-complete label { font-size: 0.92rem; color: var(--muted); cursor: pointer; user-select: none; }
+    .ch-complete input { width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; }
+
+    /* map / nav */
+    .roadmap { columns: 2; column-gap: 1.4rem; }
+    .roadmap a { display: block; padding: 0.15rem 0; font-size: 0.95rem; }
+    @media (max-width: 560px) { .roadmap { columns: 1; } }
+
+    /* resume / welcome-back banner */
+    #resume-banner {
+      display: none;
+      background: linear-gradient(180deg, rgba(86,200,138,0.10), rgba(86,200,138,0.04));
+      border: 1px solid rgba(86,200,138,0.45);
+      border-radius: 12px; padding: 1rem 1.2rem; margin: 1.4rem 0 0;
+      align-items: center; gap: 1rem; flex-wrap: wrap;
+    }
+    #resume-banner.show { display: flex; }
+    .resume-info { flex: 1; min-width: 240px; }
+    .resume-info strong { color: var(--green); display: block; font-size: 1rem; }
+    .resume-info span { color: var(--muted); font-size: 0.85rem; }
+    .resume-actions { display: flex; gap: 0.55rem; flex-wrap: wrap; }
+    .btn {
+      font-family: var(--sans); font-size: 0.9rem; font-weight: 600;
+      border-radius: 8px; padding: 0.55rem 1rem; cursor: pointer; border: 1px solid var(--border-2);
+      background: var(--panel-2); color: var(--text);
+    }
+    .btn:hover { border-color: var(--muted); }
+    .btn-go { background: var(--green); border-color: var(--green); color: #0c1a12; }
+    .btn-go:hover { filter: brightness(1.08); }
+
+    footer { color: var(--faint); font-size: 0.85rem; text-align: center; padding: 2.5rem 0 3.5rem; }
+    .divider { height: 1px; background: var(--border); margin: 2rem 0; border: 0; }
+    .pill { display: inline-block; font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--muted); background: var(--panel-2); border: 1px solid var(--border);
+      border-radius: 99px; padding: 0.15rem 0.6rem; }
+  </style>
+</head>
+<body>
+
+  <div id="progress-wrap">
+    <div id="progress-inner">
+      <span id="progress-label">0 / 12 challenges</span>
+      <div id="progress-track"><div id="progress-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- Welcome-back / resume banner (shown only if saved progress is found) -->
+    <div id="resume-banner" role="alert">
+      <div class="resume-info">
+        <strong id="resume-title">Welcome back!</strong>
+        <span id="resume-detail"></span>
+      </div>
+      <div class="resume-actions">
+        <button class="btn btn-go" id="resume-go">Jump back in →</button>
+        <button class="btn" id="resume-fresh">Start over</button>
+      </div>
+    </div>
+
+    <header class="hero">
+      <div class="kicker">Learn to Code · Project Build</div>
+      <h1>Build a Sudoku Game in Python</h1>
+      <p class="lede">
+        You already know Python basics. This isn't a copy-the-code tutorial — it's a series of
+        <strong>challenges</strong>. Each one gives you a goal, a way to <em>think it through</em>,
+        and a way to know when you've nailed it. You write the code. The hints and solutions are
+        there if you get stuck, but reach for them last.
+      </p>
+
+      <div class="shots">
+        <figure><img src="img/fresh.png" alt="A freshly generated Sudoku puzzle"><figcaption>A fresh puzzle</figcaption></figure>
+        <figure><img src="img/midplay.png" alt="Sudoku game mid-play with highlighting and a conflict shown in red"><figcaption>Playing, with live feedback</figcaption></figure>
+        <figure><img src="img/solved.png" alt="A solved Sudoku board with a green outline"><figcaption>Solved!</figcaption></figure>
+      </div>
+      <p class="pill">This is what you're going to build.</p>
+    </header>
+
+    <!-- ===================== INTRO ===================== -->
+    <section class="block intro">
+      <h2>How to think about a project this big</h2>
+      <p>
+        A finished game looks like a wall of code, and that's intimidating. The trick pros use is
+        simple: <strong>you never build the whole thing at once.</strong> You break it into pieces
+        small enough that each one is obvious, get each piece working on its own, then snap them together.
+      </p>
+      <p>The single most important idea in this whole project:</p>
+      <div class="note">
+        <strong>Separate the brain from the face.</strong> The <em>brain</em> is the pure Sudoku
+        logic — a grid of numbers and the rules about them. It doesn't know pygame exists. The
+        <em>face</em> is the pygame window that draws the brain and takes clicks. Build and test the
+        brain first, in the plain terminal, where bugs are easy to see. Only then put a face on it.
+      </p>
+      <p>
+        Why does that matter? Because if your solver is broken, you want to discover that by
+        <code class="inline">print()</code>-ing a grid — not by squinting at pixels. Every challenge
+        below respects that split: challenges 1–5 are pure brain (no window at all), and 6 onward
+        add the face.
+      </p>
+
+      <h3>Your toolbox for getting unstuck</h3>
+      <ul>
+        <li><strong>Read the goal, then look away.</strong> Try to picture the steps before you write anything.</li>
+        <li><strong>Test the smallest thing.</strong> Wrote a function? Call it once with a known input and print the result <em>before</em> moving on.</li>
+        <li><strong>Only open a hint when you're truly stuck</strong> — and open the "Reference solution" only to <em>check</em> yourself, not to copy.</li>
+      </ul>
+
+      <h3>The roadmap</h3>
+      <div class="roadmap">
+        <a href="#c0">0 · Setup &amp; a blank window</a>
+        <a href="#c1">1 · Represent the board</a>
+        <a href="#c2">2 · The rules (is this move legal?)</a>
+        <a href="#c3">3 · Solve it with backtracking</a>
+        <a href="#c4">4 · Generate a full grid</a>
+        <a href="#c5">5 · Turn it into a puzzle</a>
+        <a href="#c6">6 · Draw the board</a>
+        <a href="#c7">7 · Select a cell</a>
+        <a href="#c8">8 · Type in numbers</a>
+        <a href="#c9">9 · Show mistakes</a>
+        <a href="#c10">10 · Detect a win</a>
+        <a href="#c11">11 · Buttons &amp; a timer</a>
+      </div>
+    </section>
+
+    <!-- ===================== CHALLENGE 0 ===================== -->
+    <div class="challenge" id="c0" data-id="0">
+      <div class="ch-head">
+        <div class="ch-badge">0</div>
+        <div class="ch-title">
+          <div class="concept">Setup · pygame · the game loop</div>
+          <h2>Setup &amp; a blank window</h2>
+        </div>
+      </div>
+      <div class="ch-body">
+        <p class="goal">Get Python and pygame installed, and open an empty window that stays open until you close it.</p>
+
+        <div class="subhead">Think it through</div>
+        <p>
+          Before any Sudoku logic, you need proof your tools work. Installing a library and opening a
+          window is the "hello world" of game programming. A pygame program has a shape you'll reuse all
+          project long: set up once, then loop forever — check for events, draw, repeat — until the user quits.
+        </p>
+        <ol>
+          <li>Confirm Python 3 runs from your terminal (<code class="inline">python3 --version</code>).</li>
+          <li>Install pygame with pip. If you're not sure of the command, that's a great thing to look up.</li>
+          <li>Open a window. Then ask: why does a game need a <em>loop</em>? What would happen without one?</li>
+        </ol>
+
+        <div class="subhead">Acceptance criteria</div>
+        <ul class="criteria">
+          <li>Running your file opens a window (any size) that doesn't instantly vanish.</li>
+          <li>Clicking the window's close button actually closes it and ends the program cleanly.</li>
+          <li>You can explain, in your own words, what the "game loop" is doing every frame.</li>
+        </ul>
+
+        <div class="subhead">Test it</div>
+        <ul class="tests">
+          <li>Run it. Window appears? Good. Close it — does the terminal return to a prompt without an error?</li>
+          <li>Temporarily delete the event loop. Run again. What happens now? (Then put it back.)</li>
+        </ul>
+
+        <p class="hint-lead">Stuck? Open these one at a time — challenge yourself to use as few as you can.</p>
+        <details class="hint">
+          <summary>Hint 1 — where to look</summary>
+          <div class="details-body">
+            <p>Two separate jobs here: <strong>install</strong> the library, then <strong>run</strong> a
+            minimal program. To install a Python package you use <em>pip</em> from the terminal (not from
+            inside Python). To keep a window open, remember that a program ends the instant it runs out of
+            lines — so you need something that keeps it going.</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 2 — the approach</summary>
+          <div class="details-body">
+            <p>Install once from the terminal: <code class="inline">pip install pygame</code> (or <code class="inline">pip3</code>).</p>
+            <p>Every pygame program needs these moves: <code class="inline">pygame.init()</code>, then
+            <code class="inline">pygame.display.set_mode((width, height))</code> to make the window. A
+            <code class="inline">while</code> loop keeps it alive: each pass, read events with
+            <code class="inline">pygame.event.get()</code>; when you see an event of type
+            <code class="inline">pygame.QUIT</code>, stop the loop and call <code class="inline">pygame.quit()</code>.
+            After drawing each frame, <code class="inline">pygame.display.flip()</code> shows it.</p>
+          </div>
+        </details>
+
+        <details class="solution">
+          <summary>Reference solution — check yourself</summary>
+          <div class="details-body">
+<pre class="code"><code class="python">import pygame
+
+pygame.init()
+screen = pygame.display.set_mode((540, 540))
+pygame.display.set_caption("Sudoku")
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    screen.fill((24, 27, 34))   # dark background
+    pygame.display.flip()       # show what we drew
+
+pygame.quit()</code></pre>
+            <p class="note"><strong>Why the loop?</strong> Without it, the program reaches the end and exits
+            instantly — the window flashes and disappears. The loop keeps the program alive and, every pass,
+            re-checks "did anything happen?" and re-draws the screen.</p>
+          </div>
+        </details>
+
+        <div class="ch-complete"><input type="checkbox" id="done-0"><label for="done-0">I finished this challenge</label></div>
+      </div>
+    </div>
+
+    <!-- ===================== CHALLENGE 1 ===================== -->
+    <div class="challenge" id="c1" data-id="1">
+      <div class="ch-head">
+        <div class="ch-badge">1</div>
+        <div class="ch-title">
+          <div class="concept">Data structures · lists of lists</div>
+          <h2>Represent the board</h2>
+        </div>
+      </div>
+      <div class="ch-body">
+        <p class="goal">Decide how a Sudoku grid lives in memory, and print one to the terminal so you can read it.</p>
+
+        <div class="subhead">Think it through</div>
+        <p>
+          This is a design decision, and it shapes everything after it. A Sudoku board is 9 rows of 9
+          numbers. What Python structure naturally holds "rows of things"? How will you represent an
+          <em>empty</em> cell — a number you'll never confuse with a real answer is ideal.
+        </p>
+        <p>
+          Once you've picked a structure, ask: to read the value in row 3, column 5, what would you type?
+          If that's awkward, your structure is wrong. Get this right and the rest of the project gets easier.
+        </p>
+
+        <div class="subhead">Acceptance criteria</div>
+        <ul class="criteria">
+          <li>A board is stored in one variable you can pass around.</li>
+          <li>You can read and change a single cell by its row and column.</li>
+          <li>You can print the board so a human can read it as a 9×9 grid (empty cells shown as a dot or space).</li>
+        </ul>
+
+        <div class="subhead">Test it</div>
+        <ul class="tests">
+          <li>Print a hand-typed board. Do the rows line up as a 9×9 grid?</li>
+          <li>Set row 0, column 0 to the number 5, print again. Did exactly one cell change?</li>
+        </ul>
+
+        <p class="hint-lead">Stuck? Open these one at a time — challenge yourself to use as few as you can.</p>
+        <details class="hint">
+          <summary>Hint 1 — where to look</summary>
+          <div class="details-body">
+            <p>You want a container that holds "rows of things," where each row is itself a container of 9
+            numbers. Python has a type that nests inside itself perfectly for this. And for "empty," pick a
+            value that can never be confused with a real answer (1–9).</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 2 — the approach</summary>
+          <div class="details-body">
+            <p>A <strong>list of lists</strong> is the natural fit: the outer list is the rows, each inner
+            list is 9 numbers. Use <code class="inline">0</code> for an empty cell — real answers are 1–9, so
+            0 can never be mistaken for one.</p>
+            <p>Then <code class="inline">board[row][col]</code> reads or sets any cell. To print nicely, loop
+            over the rows and build a string for each; swap 0 for a <code class="inline">.</code> so gaps are visible.</p>
+          </div>
+        </details>
+
+        <details class="solution">
+          <summary>Reference solution — check yourself</summary>
+          <div class="details-body">
+<pre class="code"><code class="python"># 0 means "empty". Real answers are 1-9.
+board = [
+    [5, 3, 0,  0, 7, 0,  0, 0, 0],
+    [6, 0, 0,  1, 9, 5,  0, 0, 0],
+    [0, 9, 8,  0, 0, 0,  0, 6, 0],
+    [8, 0, 0,  0, 6, 0,  0, 0, 3],
+    [4, 0, 0,  8, 0, 3,  0, 0, 1],
+    [7, 0, 0,  0, 2, 0,  0, 0, 6],
+    [0, 6, 0,  0, 0, 0,  2, 8, 0],
+    [0, 0, 0,  4, 1, 9,  0, 0, 5],
+    [0, 0, 0,  0, 8, 0,  0, 7, 9],
+]
+
+def print_board(board):
+    for row in board:
+        line = ""
+        for num in row:
+            line += (str(num) if num != 0 else ".") + " "
+        print(line)
+
+print_board(board)
+print(board[0][0])   # -> 5
+board[0][2] = 4      # fill one empty cell
+</code></pre>
+            <p class="note"><strong>An empty grid</strong> is handy too:
+            <code class="inline">[[0] * 9 for _ in range(9)]</code> builds nine separate rows of nine zeros.
+            (Watch out: <code class="inline">[[0]*9]*9</code> looks the same but reuses one row — a classic trap.)</p>
+          </div>
+        </details>
+
+        <div class="ch-complete"><input type="checkbox" id="done-1"><label for="done-1">I finished this challenge</label></div>
+      </div>
+    </div>
+
+    <!-- ===================== CHALLENGE 2 ===================== -->
+    <div class="challenge" id="c2" data-id="2">
+      <div class="ch-head">
+        <div class="ch-badge">2</div>
+        <div class="ch-title">
+          <div class="concept">Logic · the three Sudoku rules</div>
+          <h2>The rules: is this move legal?</h2>
+        </div>
+      </div>
+      <div class="ch-body">
+        <p class="goal">Write a function that answers one question: can number <code class="inline">n</code> go in a given cell without breaking Sudoku's rules?</p>
+
+        <div class="subhead">Think it through</div>
+        <p>
+          This one function is the heart of the entire game — the solver, the generator, and the
+          mistake-checker all lean on it. Sudoku has exactly three rules. A number is allowed only if it does
+          <strong>not</strong> already appear in:
+        </p>
+        <ol>
+          <li>its <strong>row</strong>,</li>
+          <li>its <strong>column</strong>, and</li>
+          <li>its <strong>3×3 box</strong>.</li>
+        </ol>
+        <p>
+          Rows and columns are easy to loop over. The 3×3 box is the tricky part: given a cell at
+          <code class="inline">(row, col)</code>, which box is it in, and where does that box start? Play with
+          the numbers on paper: cell (4, 7) — what are the top-left coordinates of its box? See if a pattern
+          with <code class="inline">// 3</code> (integer division) falls out.
+        </p>
+
+        <div class="subhead">Acceptance criteria</div>
+        <ul class="criteria">
+          <li><code class="inline">is_valid(board, row, col, num)</code> returns <code class="inline">True</code> or <code class="inline">False</code>.</li>
+          <li>It correctly rejects a number that repeats in the same row, column, <em>or</em> box.</li>
+          <li>It checks a cell that is currently empty (you're asking "could this go here?").</li>
+        </ul>
+
+        <div class="subhead">Test it</div>
+        <ul class="tests">
+          <li>On the board from Challenge 1, <code class="inline">is_valid(board, 0, 2, 5)</code> → should be <code class="inline">False</code> (5 is already in row 0).</li>
+          <li><code class="inline">is_valid(board, 0, 2, 4)</code> → should be <code class="inline">True</code>.</li>
+          <li>Find a number blocked only by the 3×3 box (not its row or column) and confirm it's rejected.</li>
+        </ul>
+
+        <p class="hint-lead">Stuck? Open these one at a time — challenge yourself to use as few as you can.</p>
+        <details class="hint">
+          <summary>Hint 1 — where to look</summary>
+          <div class="details-body">
+            <p>There are three independent checks — row, column, box — and the number is only legal if it
+            passes all three. The row and column are easy loops. Put your energy into the box: given a cell,
+            can you figure out <em>which</em> 3×3 box it belongs to, and where that box starts?</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 2 — the approach</summary>
+          <div class="details-body">
+            <p>Row and column: loop <code class="inline">i</code> from 0 to 8 and check
+            <code class="inline">board[row][i]</code> (the row) and <code class="inline">board[i][col]</code> (the column).</p>
+            <p>The box: the top-left corner is <code class="inline">3 * (row // 3)</code>,
+            <code class="inline">3 * (col // 3)</code>. For (4, 7): <code class="inline">3*(4//3)=3</code> and
+            <code class="inline">3*(7//3)=6</code> — so the box runs rows 3–5, columns 6–8.</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 3 — step by step</summary>
+          <div class="details-body">
+            <ol>
+              <li>Loop <code class="inline">i</code> 0→8: if <code class="inline">board[row][i] == num</code> or
+                <code class="inline">board[i][col] == num</code>, return <code class="inline">False</code>.</li>
+              <li>Compute <code class="inline">box_row = 3 * (row // 3)</code> and <code class="inline">box_col = 3 * (col // 3)</code>.</li>
+              <li>Loop <code class="inline">r</code> over <code class="inline">box_row .. box_row+2</code> and
+                <code class="inline">c</code> over <code class="inline">box_col .. box_col+2</code>: if any
+                <code class="inline">board[r][c] == num</code>, return <code class="inline">False</code>.</li>
+              <li>If nothing matched, return <code class="inline">True</code>.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="solution">
+          <summary>Reference solution — check yourself</summary>
+          <div class="details-body">
+<pre class="code"><code class="python">def is_valid(board, row, col, num):
+    # rule 1 &amp; 2: not already in this row or this column
+    for i in range(9):
+        if board[row][i] == num or board[i][col] == num:
+            return False
+
+    # rule 3: not already in this 3x3 box
+    box_row = 3 * (row // 3)
+    box_col = 3 * (col // 3)
+    for r in range(box_row, box_row + 3):
+        for c in range(box_col, box_col + 3):
+            if board[r][c] == num:
+                return False
+
+    return True   # passed all three rules</code></pre>
+            <p class="note"><strong>Why <code class="inline">// 3</code> then <code class="inline">* 3</code>?</strong>
+            Integer-dividing by 3 collapses 0,1,2 → 0 and 3,4,5 → 1 (which box you're in). Multiplying back by 3
+            gives the box's starting row/column. It's a rounding-down-to-the-nearest-3 trick.</p>
+          </div>
+        </details>
+
+        <div class="ch-complete"><input type="checkbox" id="done-2"><label for="done-2">I finished this challenge</label></div>
+      </div>
+    </div>
+
+    <!-- ===================== CHALLENGE 3 ===================== -->
+    <div class="challenge" id="c3" data-id="3">
+      <div class="ch-head">
+        <div class="ch-badge">3</div>
+        <div class="ch-title">
+          <div class="concept">Recursion · backtracking</div>
+          <h2>Solve it with backtracking</h2>
+        </div>
+      </div>
+      <div class="ch-body">
+        <p class="goal">Write a function that solves <em>any</em> solvable board by filling it in completely.</p>
+
+        <div class="subhead">Think it through</div>
+        <p>
+          This is the big-idea challenge. You can't "calculate" a Sudoku answer with a formula — you have to
+          <strong>search</strong>. The technique is called <em>backtracking</em>, and once it clicks, you'll
+          see it everywhere (mazes, puzzles, AI). The idea:
+        </p>
+        <ol>
+          <li>Find the first empty cell. If there are none, the board is solved — success!</li>
+          <li>Try putting 1 there. Is it valid (Challenge 2)? If yes, <em>assume it's right</em> and solve the rest of the board the same way.</li>
+          <li>If that assumption leads to a dead end, <strong>undo it</strong> (set the cell back to 0) and try 2, then 3…</li>
+          <li>If none of 1–9 work, this whole branch is impossible — go back and let the <em>previous</em> cell try its next number.</li>
+        </ol>
+        <p>
+          Notice step 2 says "solve the rest the same way" — a function that calls <em>itself</em>. That's
+          recursion. The hard part isn't the code (it's short); it's trusting that the same function will handle
+          "the rest of the board." Draw it out for a 2-cell example if you need to.
+        </p>
+
+        <div class="subhead">Acceptance criteria</div>
+        <ul class="criteria">
+          <li><code class="inline">solve(board)</code> fills the board in place and returns <code class="inline">True</code> when solved.</li>
+          <li>It returns <code class="inline">False</code> for a board that has no solution.</li>
+          <li>Crucially: when a guess fails, the cell is reset to 0 (no leftover wrong numbers).</li>
+        </ul>
+
+        <div class="subhead">Test it</div>
+        <ul class="tests">
+          <li>Solve the Challenge 1 board, then print it. Every cell 1–9, no zeros left?</li>
+          <li>Spot-check: does every row contain 1 through 9 exactly once? (A quick loop can verify.)</li>
+          <li>Feed it an impossible board (put two 5s in one row). Does it return <code class="inline">False</code> instead of hanging?</li>
+        </ul>
+
+        <p class="hint-lead">Stuck? Open these one at a time — challenge yourself to use as few as you can.</p>
+        <details class="hint">
+          <summary>Hint 1 — where to look</summary>
+          <div class="details-body">
+            <p>Two ingredients. First, a tiny helper that finds the <em>next</em> empty cell (or reports there
+            are none). Second, the solver calls <strong>itself</strong> to handle "the rest of the board." The
+            mental hurdle isn't the code — it's trusting recursion. Try tracing it on a board with just two
+            empty cells, on paper, until you believe it works.</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 2 — the approach</summary>
+          <div class="details-body">
+            <p>Write a helper <code class="inline">find_empty(board)</code> that returns the
+            <code class="inline">(row, col)</code> of the first 0, or <code class="inline">None</code> if the board is full.</p>
+            <p>Then <code class="inline">solve</code> follows the four steps: if <code class="inline">find_empty</code>
+            returns <code class="inline">None</code>, you're done. Otherwise try each <code class="inline">num</code> 1–9;
+            when it's valid, place it and recurse; if the recursion fails, undo it and try the next number.</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 3 — step by step</summary>
+          <div class="details-body">
+            <ol>
+              <li><code class="inline">spot = find_empty(board)</code>. If it's <code class="inline">None</code>, <code class="inline">return True</code>.</li>
+              <li>Unpack <code class="inline">row, col = spot</code>.</li>
+              <li>For <code class="inline">num</code> in 1–9: if <code class="inline">is_valid(board, row, col, num)</code>:
+                <ul>
+                  <li>set <code class="inline">board[row][col] = num</code></li>
+                  <li>if <code class="inline">solve(board)</code> is True, <code class="inline">return True</code></li>
+                  <li>otherwise set <code class="inline">board[row][col] = 0</code> (the crucial undo) and keep looping</li>
+                </ul>
+              </li>
+              <li>After the loop with no success, <code class="inline">return False</code>.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="solution">
+          <summary>Reference solution — check yourself</summary>
+          <div class="details-body">
+<pre class="code"><code class="python">def find_empty(board):
+    for r in range(9):
+        for c in range(9):
+            if board[r][c] == 0:
+                return r, c
+    return None   # no empties -> board is full
+
+def solve(board):
+    spot = find_empty(board)
+    if spot is None:
+        return True                 # nothing empty = solved!
+    row, col = spot
+
+    for num in range(1, 10):
+        if is_valid(board, row, col, num):
+            board[row][col] = num    # guess
+            if solve(board):         # can the rest be solved?
+                return True
+            board[row][col] = 0      # no -> undo (backtrack)
+
+    return False                     # 1-9 all failed here</code></pre>
+            <p class="note"><strong>The one line that makes it "backtracking"</strong> is
+            <code class="inline">board[row][col] = 0</code>. Without that undo, failed guesses pile up and pollute
+            the board. With it, the search cleanly explores every possibility and abandons dead ends.</p>
+          </div>
+        </details>
+
+        <div class="ch-complete"><input type="checkbox" id="done-3"><label for="done-3">I finished this challenge</label></div>
+      </div>
+    </div>
+
+    <!-- ===================== CHALLENGE 4 ===================== -->
+    <div class="challenge" id="c4" data-id="4">
+      <div class="ch-head">
+        <div class="ch-badge">4</div>
+        <div class="ch-title">
+          <div class="concept">Randomness · reusing your solver</div>
+          <h2>Generate a full grid</h2>
+        </div>
+      </div>
+      <div class="ch-body">
+        <p class="goal">Produce a complete, valid, <em>random</em> 9×9 solution — a different one each time you run it.</p>
+
+        <div class="subhead">Think it through</div>
+        <p>
+          To make puzzles, you first need full boards to carve them out of. Here's the clever part: you
+          <strong>already wrote</strong> almost all of this in Challenge 3. Your solver fills an empty board —
+          but it always tries 1, 2, 3… in the same order, so it always produces the <em>same</em> grid.
+        </p>
+        <p>
+          What single change would make it produce a random grid instead? Think about that "try 1–9 in order"
+          loop. If the order were shuffled each time, where would that lead?
+        </p>
+
+        <div class="subhead">Acceptance criteria</div>
+        <ul class="criteria">
+          <li>A function returns a fully filled 9×9 board that obeys all Sudoku rules.</li>
+          <li>Running it twice gives two different boards.</li>
+        </ul>
+
+        <div class="subhead">Test it</div>
+        <ul class="tests">
+          <li>Generate two grids, print both. Different? Both valid (rows/cols/boxes each hold 1–9 once)?</li>
+          <li>Generate ten in a loop without a crash.</li>
+        </ul>
+
+        <p class="hint-lead">Stuck? Open these one at a time — challenge yourself to use as few as you can.</p>
+        <details class="hint">
+          <summary>Hint 1 — where to look</summary>
+          <div class="details-body">
+            <p>You already wrote almost all of this in Challenge 3. Your solver fills an empty board — but it
+            always tries 1, then 2, then 3… in the same order, so it always builds the <em>same</em> grid.
+            What one thing could you randomize so the finished grid comes out different each time?</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 2 — the approach</summary>
+          <div class="details-body">
+            <p>Start from an empty board (<code class="inline">[[0]*9 for _ in range(9)]</code>). Copy your
+            <code class="inline">solve</code> function, but instead of <code class="inline">for num in range(1, 10)</code>,
+            build <code class="inline">nums = list(range(1, 10))</code>, call
+            <code class="inline">random.shuffle(nums)</code>, and loop over <code class="inline">nums</code>.
+            Because the first choices are random, the whole solved grid comes out random.</p>
+          </div>
+        </details>
+
+        <details class="solution">
+          <summary>Reference solution — check yourself</summary>
+          <div class="details-body">
+<pre class="code"><code class="python">import random
+
+def full_solution():
+    board = [[0] * 9 for _ in range(9)]
+
+    def fill(board):
+        spot = find_empty(board)
+        if spot is None:
+            return True
+        row, col = spot
+
+        nums = list(range(1, 10))
+        random.shuffle(nums)          # &lt;- the only real change
+        for num in nums:
+            if is_valid(board, row, col, num):
+                board[row][col] = num
+                if fill(board):
+                    return True
+                board[row][col] = 0
+        return False
+
+    fill(board)
+    return board</code></pre>
+            <p class="note">Same backtracking engine as Challenge 3 — just fed its choices in random order.
+            Reusing a working function instead of writing a new one is exactly the instinct to build.</p>
+          </div>
+        </details>
+
+        <div class="ch-complete"><input type="checkbox" id="done-4"><label for="done-4">I finished this challenge</label></div>
+      </div>
+    </div>
+
+    <!-- ===================== CHALLENGE 5 ===================== -->
+    <div class="challenge" id="c5" data-id="5">
+      <div class="ch-head">
+        <div class="ch-badge">5</div>
+        <div class="ch-title">
+          <div class="concept">Algorithms · uniqueness · difficulty</div>
+          <h2>Turn it into a puzzle</h2>
+        </div>
+      </div>
+      <div class="ch-body">
+        <p class="goal">Take a full solution and remove numbers to make a playable puzzle — with difficulty levels, and (the pro move) a guarantee that it has only one answer.</p>
+
+        <div class="subhead">Think it through</div>
+        <p>
+          A puzzle is just a full solution with holes punched in it. More holes = harder. So: pick cells at
+          random and set them to 0. How many you remove becomes your difficulty setting.
+        </p>
+        <p>
+          But there's a subtle trap that separates a toy from a real Sudoku: a proper puzzle has <strong>exactly
+          one solution</strong>. If you remove too much, the remaining clues might allow two different valid
+          answers — which feels broken to a player. How could you <em>check</em> whether a board still has a
+          unique solution? You have a solver… what if you taught it to <em>count</em> solutions instead of
+          stopping at the first? Then only remove a number if the count stays at 1.
+        </p>
+
+        <div class="subhead">Acceptance criteria</div>
+        <ul class="criteria">
+          <li>A function returns a puzzle (with holes) <em>and</em> its full solution.</li>
+          <li>Easy/Medium/Hard remove different amounts, producing visibly different fill levels.</li>
+          <li><span class="pill">Stretch</span> Every generated puzzle has exactly one solution.</li>
+        </ul>
+
+        <div class="subhead">Test it</div>
+        <ul class="tests">
+          <li>Generate an Easy and a Hard puzzle; count the blanks in each. Hard has more?</li>
+          <li>Solve a generated puzzle — does it match the solution the generator handed back?</li>
+          <li>Stretch: after generating, count solutions of the puzzle. Always exactly 1?</li>
+        </ul>
+
+        <p class="hint-lead">Stuck? Open these one at a time — challenge yourself to use as few as you can.</p>
+        <details class="hint">
+          <summary>Hint 1 — where to look</summary>
+          <div class="details-body">
+            <p>A puzzle is just a full solution with holes punched in it, so the removing part is easy — pick
+            cells and set them to 0, and let "how many you remove" be your difficulty. The real thinking is the
+            uniqueness catch: how could you <em>check</em> whether the puzzle still has only one answer? You built
+            something in Challenge 3 that could be adapted to <em>count</em> answers instead of finding just one.</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 2 — the approach</summary>
+          <div class="details-body">
+            <p>Copy the full solution. Make a list of all 81 coordinates, shuffle it, and walk through it
+            removing cells until you've removed <em>N</em> (N depends on difficulty).</p>
+            <p>For the uniqueness stretch: write <code class="inline">count_solutions(board)</code> — it's your
+            backtracker, but instead of returning <code class="inline">True</code> on the first solve, it adds up
+            how many complete fills exist (stop early once you've found 2 — you only care "one vs. more than one").</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 3 — step by step</summary>
+          <div class="details-body">
+            <ol>
+              <li><code class="inline">solution = full_solution()</code>; copy it into <code class="inline">puzzle</code>.</li>
+              <li>Build <code class="inline">cells = [(r, c) for r in range(9) for c in range(9)]</code> and shuffle it.</li>
+              <li>Walk the shuffled cells, counting how many you've removed. For each cell (until you hit N):
+                <ul>
+                  <li>save the current value, then blank the cell (set to 0)</li>
+                  <li><strong>stretch:</strong> if <code class="inline">count_solutions(copy_of_puzzle)</code> isn't
+                    exactly 1, put the saved value back (removing it broke uniqueness); otherwise count it as removed</li>
+                </ul>
+              </li>
+              <li>Return both <code class="inline">puzzle</code> and <code class="inline">solution</code>.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="solution">
+          <summary>Reference solution — check yourself</summary>
+          <div class="details-body">
+<pre class="code"><code class="python">DIFFICULTY = {"Easy": 40, "Medium": 50, "Hard": 56}   # cells to remove
+
+def count_solutions(board, limit=2):
+    spot = find_empty(board)
+    if spot is None:
+        return 1
+    row, col = spot
+    total = 0
+    for num in range(1, 10):
+        if is_valid(board, row, col, num):
+            board[row][col] = num
+            total += count_solutions(board, limit)
+            board[row][col] = 0
+            if total &gt;= limit:      # 2 is enough to know it's "not unique"
+                break
+    return total
+
+def make_puzzle(difficulty="Medium"):
+    solution = full_solution()
+    puzzle = [row[:] for row in solution]          # deep-ish copy
+    holes = DIFFICULTY[difficulty]
+
+    cells = [(r, c) for r in range(9) for c in range(9)]
+    random.shuffle(cells)
+    removed = 0
+    for r, c in cells:
+        if removed &gt;= holes:
+            break
+        saved = puzzle[r][c]
+        puzzle[r][c] = 0
+        if count_solutions([row[:] for row in puzzle]) != 1:
+            puzzle[r][c] = saved   # removing it broke uniqueness -> undo
+        else:
+            removed += 1
+    return puzzle, solution</code></pre>
+            <p class="note"><strong>Notice the pattern repeating:</strong> guess → check → undo if bad. It's the
+            same backtracking instinct from Challenge 3, now used to remove clues safely. One good idea, reused three times.</p>
+          </div>
+        </details>
+
+        <div class="ch-complete"><input type="checkbox" id="done-5"><label for="done-5">I finished this challenge</label></div>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <p style="text-align:center; color:var(--muted);">
+      🧠 <strong>The brain is done.</strong> You can generate and solve real puzzles in the terminal.
+      Everything below puts a <em>face</em> on it.
+    </p>
+    <hr class="divider">
+
+    <!-- ===================== CHALLENGE 6 ===================== -->
+    <div class="challenge" id="c6" data-id="6">
+      <div class="ch-head">
+        <div class="ch-badge">6</div>
+        <div class="ch-title">
+          <div class="concept">Graphics · coordinates · drawing</div>
+          <h2>Draw the board</h2>
+        </div>
+      </div>
+      <div class="ch-body">
+        <p class="goal">Draw your 9×9 grid in the pygame window: the lines (with bold lines between boxes) and every clue number.</p>
+
+        <div class="subhead">Think it through</div>
+        <p>
+          The screen is a grid of pixels; your board is a grid of cells. Drawing is really just a
+          <strong>translation</strong> between the two. If each cell is, say, 60 pixels wide, then cell
+          <code class="inline">(row, col)</code> lives at pixel <code class="inline">x = col * 60</code>,
+          <code class="inline">y = row * 60</code>. Get that mapping straight and everything else is detail.
+        </p>
+        <ul>
+          <li>Lines: you need 10 vertical and 10 horizontal lines. Which ones should be thick? (Every third one, to separate the 3×3 boxes.)</li>
+          <li>Numbers: for each non-zero cell, render the digit as text and place it centered in that cell's square.</li>
+          <li>This drawing happens <em>inside the game loop</em>, every frame — so the screen always reflects the current board.</li>
+        </ul>
+
+        <div class="subhead">Acceptance criteria</div>
+        <ul class="criteria">
+          <li>A visible 9×9 grid, with the four box-dividing lines noticeably thicker.</li>
+          <li>The clue numbers from a generated puzzle appear in the right cells.</li>
+          <li>Empty cells are simply blank.</li>
+        </ul>
+
+        <div class="subhead">Test it</div>
+        <ul class="tests">
+          <li>Draw a puzzle you know. Do the numbers sit in the correct squares?</li>
+          <li>Count grid lines — 10 each way? Are the box separators heavier?</li>
+        </ul>
+
+        <p class="hint-lead">Stuck? Open these one at a time — challenge yourself to use as few as you can.</p>
+        <details class="hint">
+          <summary>Hint 1 — where to look</summary>
+          <div class="details-body">
+            <p>The whole job is translating <em>cell coordinates</em> into <em>pixel coordinates</em>. If each
+            cell is <code class="inline">CELL</code> pixels wide, then cell <code class="inline">(row, col)</code>
+            starts at pixel <code class="inline">x = col * CELL</code>, <code class="inline">y = row * CELL</code>.
+            For the lines, think about which ones separate the 3×3 boxes — those are the ones you want thicker.</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 2 — the approach</summary>
+          <div class="details-body">
+            <p>Draw lines with <code class="inline">pygame.draw.line(screen, color, start, end, width)</code>.
+            Loop <code class="inline">i</code> from 0 to 9; make the width 3 when <code class="inline">i % 3 == 0</code>, else 1.</p>
+            <p>For numbers: make a font once with <code class="inline">pygame.font.SysFont("Arial", 34)</code>.
+            Each frame, <code class="inline">glyph = font.render(str(n), True, color)</code> gives you an image of
+            the digit; <code class="inline">screen.blit(glyph, (x, y))</code> stamps it. To center it, offset by
+            half the leftover space: <code class="inline">x + (CELL - glyph.get_width()) // 2</code>.</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 3 — step by step</summary>
+          <div class="details-body">
+            <ol>
+              <li>Fill the background: <code class="inline">screen.fill((24, 27, 34))</code>.</li>
+              <li>Loop <code class="inline">i</code> 0→9. Draw one vertical line from <code class="inline">(i*CELL, 0)</code>
+                to <code class="inline">(i*CELL, 9*CELL)</code> and one horizontal line the same way, using width 3
+                when <code class="inline">i % 3 == 0</code> else 1.</li>
+              <li>Loop every cell <code class="inline">(r, c)</code>. If <code class="inline">board[r][c]</code> isn't 0,
+                render it to a glyph and blit it centered in that cell.</li>
+              <li>Call this function each frame inside the loop, just before <code class="inline">pygame.display.flip()</code>.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="solution">
+          <summary>Reference solution — the draw function</summary>
+          <div class="details-body">
+<pre class="code"><code class="python">CELL = 60          # pixels per cell
+font = pygame.font.SysFont("Arial", 34)
+
+def draw_board(screen, board):
+    screen.fill((24, 27, 34))
+
+    # grid lines: thick every 3rd line to mark the boxes
+    for i in range(10):
+        w = 3 if i % 3 == 0 else 1
+        color = (120, 130, 150) if i % 3 == 0 else (58, 64, 78)
+        pygame.draw.line(screen, color, (i * CELL, 0), (i * CELL, 9 * CELL), w)
+        pygame.draw.line(screen, color, (0, i * CELL), (9 * CELL, i * CELL), w)
+
+    # numbers, centered in their cells
+    for r in range(9):
+        for c in range(9):
+            n = board[r][c]
+            if n != 0:
+                glyph = font.render(str(n), True, (233, 237, 245))
+                x = c * CELL + (CELL - glyph.get_width()) // 2
+                y = r * CELL + (CELL - glyph.get_height()) // 2
+                screen.blit(glyph, (x, y))</code></pre>
+            <p class="note">Call <code class="inline">draw_board(screen, board)</code> every frame inside your loop,
+            right before <code class="inline">pygame.display.flip()</code>.</p>
+          </div>
+        </details>
+
+        <div class="ch-complete"><input type="checkbox" id="done-6"><label for="done-6">I finished this challenge</label></div>
+      </div>
+    </div>
+
+    <!-- ===================== CHALLENGE 7 ===================== -->
+    <div class="challenge" id="c7" data-id="7">
+      <div class="ch-head">
+        <div class="ch-badge">7</div>
+        <div class="ch-title">
+          <div class="concept">Events · mouse &amp; keyboard input</div>
+          <h2>Select a cell</h2>
+        </div>
+      </div>
+      <div class="ch-body">
+        <p class="goal">Let the player click a cell to select it, and draw a highlight on the selected cell.</p>
+
+        <div class="subhead">Think it through</div>
+        <p>
+          Drawing was cells → pixels. Clicking is the reverse: pixels → cells. When the player clicks at pixel
+          <code class="inline">(mx, my)</code>, which cell is that? If a cell is 60 px, then
+          <code class="inline">col = mx // 60</code> and <code class="inline">row = my // 60</code>. Store that
+          <code class="inline">(row, col)</code> as "the selected cell," and in your draw function, paint that one
+          square a different color before drawing the lines.
+        </p>
+        <p>As a nice touch, let the arrow keys move the selection too — how would you nudge the stored row/col by ±1?</p>
+
+        <div class="subhead">Acceptance criteria</div>
+        <ul class="criteria">
+          <li>Clicking a cell selects it; the selected cell is visibly highlighted.</li>
+          <li>Clicking a different cell moves the highlight.</li>
+          <li>Arrow keys move the selection (bonus).</li>
+        </ul>
+
+        <div class="subhead">Test it</div>
+        <ul class="tests">
+          <li>Click each corner. Does the highlight land on the corner cell (not one off)?</li>
+          <li>Press the arrow keys — does the selection walk around the grid?</li>
+        </ul>
+
+        <p class="hint-lead">Stuck? Open these one at a time — challenge yourself to use as few as you can.</p>
+        <details class="hint">
+          <summary>Hint 1 — where to look</summary>
+          <div class="details-body">
+            <p>Drawing went cells → pixels. A click is the exact reverse: pixels → cells. If a cell is
+            <code class="inline">CELL</code> pixels, then a click at <code class="inline">(mx, my)</code> lands in
+            column <code class="inline">mx // CELL</code> and row <code class="inline">my // CELL</code>. Integer
+            division does the "which cell" math for you.</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 2 — the approach</summary>
+          <div class="details-body">
+            <p>In the event loop, watch for <code class="inline">event.type == pygame.MOUSEBUTTONDOWN</code>.
+            The click position is <code class="inline">event.pos</code> → <code class="inline">(mx, my)</code>.
+            Convert and store: <code class="inline">selected = (my // CELL, mx // CELL)</code>.</p>
+            <p>In <code class="inline">draw_board</code>, if <code class="inline">selected</code> isn't
+            <code class="inline">None</code>, draw a filled <code class="inline">pygame.Rect</code> in that cell's
+            square <em>before</em> the grid lines so the lines stay on top. For arrow keys, nudge the stored row or
+            column by ±1 (wrap with <code class="inline">% 9</code>).</p>
+          </div>
+        </details>
+
+        <details class="solution">
+          <summary>Reference solution — selection</summary>
+          <div class="details-body">
+<pre class="code"><code class="python"># in the event loop:
+if event.type == pygame.MOUSEBUTTONDOWN:
+    mx, my = event.pos
+    selected = (my // CELL, mx // CELL)     # pixels -> (row, col)
+
+# in draw_board, before drawing the grid lines:
+if selected is not None:
+    r, c = selected
+    rect = pygame.Rect(c * CELL, r * CELL, CELL, CELL)
+    pygame.draw.rect(screen, (46, 84, 130), rect)   # highlight
+
+# arrow keys (event.type == pygame.KEYDOWN):
+if event.key == pygame.K_UP and selected:
+    selected = ((selected[0] - 1) % 9, selected[1])
+# ...down/left/right adjust the other index the same way</code></pre>
+            <p class="note">Using <code class="inline">% 9</code> makes the selection wrap around the edges — a
+            small touch that feels polished.</p>
+          </div>
+        </details>
+
+        <div class="ch-complete"><input type="checkbox" id="done-7"><label for="done-7">I finished this challenge</label></div>
+      </div>
+    </div>
+
+    <!-- ===================== CHALLENGE 8 ===================== -->
+    <div class="challenge" id="c8" data-id="8">
+      <div class="ch-head">
+        <div class="ch-badge">8</div>
+        <div class="ch-title">
+          <div class="concept">Input · protecting data</div>
+          <h2>Type in numbers</h2>
+        </div>
+      </div>
+      <div class="ch-body">
+        <p class="goal">Let the player type 1–9 into the selected cell, and clear it with 0 or Backspace — but never let them overwrite an original clue.</p>
+
+        <div class="subhead">Think it through</div>
+        <p>
+          Now the board becomes interactive. When a number key is pressed and a cell is selected, write that
+          number into the board. Two design questions worth pausing on:
+        </p>
+        <ol>
+          <li><strong>How do you know which keys are 1–9?</strong> pygame gives key constants like
+            <code class="inline">pygame.K_1</code>. Is there a pattern connecting the key to the digit it means?</li>
+          <li><strong>How do you protect the clues?</strong> The puzzle's original numbers must be permanent.
+            You need to remember which cells came from the puzzle vs. which the player filled. What data structure
+            would record "is this cell a fixed clue?" for all 81 cells?</li>
+        </ol>
+
+        <div class="subhead">Acceptance criteria</div>
+        <ul class="criteria">
+          <li>Pressing 1–9 with a cell selected writes that number into the cell.</li>
+          <li>Pressing 0 / Backspace / Delete clears the selected cell.</li>
+          <li>Original clues cannot be changed or erased.</li>
+        </ul>
+
+        <div class="subhead">Test it</div>
+        <ul class="tests">
+          <li>Select an empty cell, type 7 — does a 7 appear? Type 3 — does it replace the 7?</li>
+          <li>Select a clue cell and mash number keys. Does it stay put?</li>
+          <li>Clear a cell you filled. Gone?</li>
+        </ul>
+
+        <p class="hint-lead">Stuck? Open these one at a time — challenge yourself to use as few as you can.</p>
+        <details class="hint">
+          <summary>Hint 1 — where to look</summary>
+          <div class="details-body">
+            <p>Two questions to crack. (1) How do you know a pressed key is one of 1–9, and turn it into that
+            number? The key constants aren't random — look at how they're numbered. (2) How do you stop the player
+            editing an original clue? You'll need to <em>remember</em>, for all 81 cells, which ones came from the
+            puzzle. What structure could store a True/False for every cell?</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 2 — the approach</summary>
+          <div class="details-body">
+            <p>The key constants are consecutive: <code class="inline">pygame.K_1</code> through
+            <code class="inline">pygame.K_9</code>. So if <code class="inline">pygame.K_1 &lt;= event.key &lt;= pygame.K_9</code>,
+            the digit is <code class="inline">event.key - pygame.K_0</code>.</p>
+            <p>When you generate the puzzle, build a parallel 9×9 grid of True/False:
+            <code class="inline">given[r][c] = (puzzle[r][c] != 0)</code>. Before writing to a cell, check
+            <code class="inline">if not given[r][c]:</code>.</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 3 — step by step</summary>
+          <div class="details-body">
+            <ol>
+              <li>Only act if a cell is selected — grab <code class="inline">r, c = selected</code>.</li>
+              <li>Guard it: <code class="inline">if not given[r][c]:</code> (clues are off-limits).</li>
+              <li>If <code class="inline">pygame.K_1 &lt;= event.key &lt;= pygame.K_9</code>, set
+                <code class="inline">board[r][c] = event.key - pygame.K_0</code>.</li>
+              <li>If the key is <code class="inline">K_0</code>, <code class="inline">K_BACKSPACE</code>, or
+                <code class="inline">K_DELETE</code>, set <code class="inline">board[r][c] = 0</code>.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="solution">
+          <summary>Reference solution — placing numbers</summary>
+          <div class="details-body">
+<pre class="code"><code class="python"># built once when the puzzle is made:
+given = [[puzzle[r][c] != 0 for c in range(9)] for r in range(9)]
+
+# in the KEYDOWN handling, with `selected` = (row, col):
+if selected is not None:
+    r, c = selected
+    if not given[r][c]:                       # never edit a clue
+        if pygame.K_1 &lt;= event.key &lt;= pygame.K_9:
+            board[r][c] = event.key - pygame.K_0
+        elif event.key in (pygame.K_0, pygame.K_BACKSPACE, pygame.K_DELETE):
+            board[r][c] = 0</code></pre>
+            <p class="note"><strong>Tip for the face:</strong> in <code class="inline">draw_board</code>, color
+            clue numbers differently from player-entered numbers (e.g. white vs. blue) by checking
+            <code class="inline">given[r][c]</code>. That's exactly what the screenshots up top do.</p>
+          </div>
+        </details>
+
+        <div class="ch-complete"><input type="checkbox" id="done-8"><label for="done-8">I finished this challenge</label></div>
+      </div>
+    </div>
+
+    <!-- ===================== CHALLENGE 9 ===================== -->
+    <div class="challenge" id="c9" data-id="9">
+      <div class="ch-head">
+        <div class="ch-badge">9</div>
+        <div class="ch-title">
+          <div class="concept">Feedback · reusing is_valid</div>
+          <h2>Show mistakes</h2>
+        </div>
+      </div>
+      <div class="ch-body">
+        <p class="goal">Highlight in red any number the player entered that breaks a Sudoku rule.</p>
+
+        <div class="subhead">Think it through</div>
+        <p>
+          Good games give feedback. When a number conflicts with another, show it. You already have the tool to
+          detect this — <code class="inline">is_valid</code> from Challenge 2. There's just one wrinkle: a number
+          that's <em>already placed</em> will "see itself" and look invalid. How do you check a placed number
+          fairly? (Trick: temporarily lift it out, test, then put it back.)</p>
+        <p>
+          Build a set of all conflicting <code class="inline">(row, col)</code> positions each frame, then in your
+          draw function, render those digits in red instead of the normal color.
+        </p>
+
+        <div class="subhead">Acceptance criteria</div>
+        <ul class="criteria">
+          <li>A number that duplicates within its row, column, or box shows in red.</li>
+          <li>When you fix or clear the conflict, the red disappears.</li>
+          <li>Correct numbers never show red.</li>
+        </ul>
+
+        <div class="subhead">Test it</div>
+        <ul class="tests">
+          <li>Put two 4s in one row. Both red? Clear one — does the other go back to normal?</li>
+          <li>Make a conflict that's only in the 3×3 box (not the row/column). Caught?</li>
+        </ul>
+
+        <p class="hint-lead">Stuck? Open these one at a time — challenge yourself to use as few as you can.</p>
+        <details class="hint">
+          <summary>Hint 1 — where to look</summary>
+          <div class="details-body">
+            <p>You already have the detector — <code class="inline">is_valid</code> from Challenge 2. The only
+            wrinkle: a number that's <em>already sitting in the cell</em> will find itself and look like a
+            duplicate. How could you test a placed number fairly, as if the cell were empty?</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 2 — the approach</summary>
+          <div class="details-body">
+            <p>Loop every cell. For a non-empty cell holding <code class="inline">n</code>: set that cell to 0,
+            call <code class="inline">is_valid(board, r, c, n)</code>, then set it back to <code class="inline">n</code>.
+            If it wasn't valid, add <code class="inline">(r, c)</code> to a <code class="inline">conflicts</code> set.
+            Lifting the number out first is what stops it from clashing with itself. Then in
+            <code class="inline">draw_board</code>, color any cell in that set red.</p>
+          </div>
+        </details>
+
+        <details class="solution">
+          <summary>Reference solution — finding conflicts</summary>
+          <div class="details-body">
+<pre class="code"><code class="python">def find_conflicts(board):
+    bad = set()
+    for r in range(9):
+        for c in range(9):
+            n = board[r][c]
+            if n == 0:
+                continue
+            board[r][c] = 0                    # lift it out...
+            if not is_valid(board, r, c, n):   # ...test fairly...
+                bad.add((r, c))
+            board[r][c] = n                    # ...put it back
+    return bad</code></pre>
+            <p class="note">In <code class="inline">draw_board</code>: <code class="inline">if (r, c) in conflicts:</code>
+            use red, <code class="inline">elif given[r][c]:</code> use white, <code class="inline">else:</code> use blue.
+            Three colors, three meanings — instant, readable feedback.</p>
+          </div>
+        </details>
+
+        <div class="ch-complete"><input type="checkbox" id="done-9"><label for="done-9">I finished this challenge</label></div>
+      </div>
+    </div>
+
+    <!-- ===================== CHALLENGE 10 ===================== -->
+    <div class="challenge" id="c10" data-id="10">
+      <div class="ch-head">
+        <div class="ch-badge">10</div>
+        <div class="ch-title">
+          <div class="concept">Game state · win condition</div>
+          <h2>Detect a win</h2>
+        </div>
+      </div>
+      <div class="ch-body">
+        <p class="goal">Notice when the puzzle is completely and correctly solved, and show a victory message.</p>
+
+        <div class="subhead">Think it through</div>
+        <p>
+          When is a game won? The simplest, most reliable answer: when the player's board matches the solution
+          your generator already handed you (Challenge 5). Compare the two, cell by cell. If they're identical,
+          set a <code class="inline">won</code> flag and change what you draw (a message, a colored outline).
+        </p>
+        <p>
+          Ask yourself <em>when</em> to check — every frame? Only after a number is entered? Both work; one does
+          less pointless work.
+        </p>
+
+        <div class="subhead">Acceptance criteria</div>
+        <ul class="criteria">
+          <li>Filling in the last correct number triggers a win.</li>
+          <li>A win message (or visual change) appears.</li>
+          <li>A full-but-wrong board does <em>not</em> count as a win.</li>
+        </ul>
+
+        <div class="subhead">Test it</div>
+        <ul class="tests">
+          <li>Solve an Easy puzzle by hand (or auto-solve). Does the win trigger exactly when the last cell is right?</li>
+          <li>Fill the board completely but with one wrong number. No false win?</li>
+        </ul>
+
+        <p class="hint-lead">Stuck? Open these one at a time — challenge yourself to use as few as you can.</p>
+        <details class="hint">
+          <summary>Hint 1 — where to look</summary>
+          <div class="details-body">
+            <p>What's the simplest, most reliable definition of "won"? You're already holding the answer key —
+            the <code class="inline">solution</code> your generator returned. If the player's board matches it,
+            the game is won. No rule-checking needed; just a comparison.</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 2 — the approach</summary>
+          <div class="details-body">
+            <p>You kept <code class="inline">solution</code> from <code class="inline">make_puzzle</code>. A win is
+            simply <code class="inline">board == solution</code> — Python compares lists of lists element by
+            element for you. Check it right after a number is placed; if true, flip a <code class="inline">won = True</code> flag.</p>
+          </div>
+        </details>
+
+        <details class="solution">
+          <summary>Reference solution — the win check</summary>
+          <div class="details-body">
+<pre class="code"><code class="python">def is_win(board, solution):
+    return board == solution      # exact match, cell for cell
+
+# after placing a number:
+if is_win(board, solution):
+    won = True
+
+# in draw_board, when won:
+#   draw a green outline around the grid and show "Solved!" text</code></pre>
+            <p class="note">Because your generator guarantees a unique solution, "matches the solution" and
+            "is a valid completed Sudoku" mean the same thing here — so this simple check is airtight.</p>
+          </div>
+        </details>
+
+        <div class="ch-complete"><input type="checkbox" id="done-10"><label for="done-10">I finished this challenge</label></div>
+      </div>
+    </div>
+
+    <!-- ===================== CHALLENGE 11 ===================== -->
+    <div class="challenge" id="c11" data-id="11">
+      <div class="ch-head">
+        <div class="ch-badge">11</div>
+        <div class="ch-title">
+          <div class="concept">UI · buttons · time</div>
+          <h2>Buttons &amp; a timer</h2>
+        </div>
+      </div>
+      <div class="ch-body">
+        <p class="goal">Add clickable buttons — New Game, Solve, and Easy/Medium/Hard — plus a running timer. This ties every piece together into the finished game.</p>
+
+        <div class="subhead">Think it through</div>
+        <p>
+          pygame has no built-in buttons, which is actually a great lesson: a button is just a
+          <strong>rectangle you draw</strong> plus a check for "was the click inside that rectangle?" You already
+          know how to read clicks (Challenge 7) and how to draw rectangles and text (Challenge 6). A button is
+          those two ideas combined.
+        </p>
+        <ul>
+          <li><strong>New Game / difficulty</strong> → call <code class="inline">make_puzzle(...)</code> and reset the state.</li>
+          <li><strong>Solve</strong> → run <code class="inline">solve()</code> on a copy of the puzzle and show it (this is your solver from Challenge 3, on display at last).</li>
+          <li><strong>Timer</strong> → pygame counts milliseconds since start with <code class="inline">pygame.time.get_ticks()</code>. Subtract a saved start time to get elapsed; convert to minutes:seconds.</li>
+        </ul>
+
+        <div class="subhead">Acceptance criteria</div>
+        <ul class="criteria">
+          <li>New Game gives a fresh puzzle; the difficulty buttons change how hard it is.</li>
+          <li>Solve fills the correct answer instantly.</li>
+          <li>A timer counts up while you play and stops on a win.</li>
+        </ul>
+
+        <div class="subhead">Test it</div>
+        <ul class="tests">
+          <li>Click each difficulty — does the number of clues change appropriately?</li>
+          <li>Click Solve on a fresh puzzle — correct full board?</li>
+          <li>Watch the timer tick; solve the puzzle — does it freeze at your finish time?</li>
+        </ul>
+
+        <p class="hint-lead">Stuck? Open these one at a time — challenge yourself to use as few as you can.</p>
+        <details class="hint">
+          <summary>Hint 1 — where to look</summary>
+          <div class="details-body">
+            <p>pygame has no built-in button, and that's the whole lesson: a button is just a
+            <strong>rectangle you draw</strong> plus a check for "was the click inside that rectangle?" You already
+            know how to draw rectangles/text (Challenge 6) and read clicks (Challenge 7) — a button is those two
+            ideas combined. The timer is simpler still: pygame can tell you how many milliseconds have passed.</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 2 — the approach</summary>
+          <div class="details-body">
+            <p>Store each button as a <code class="inline">pygame.Rect</code> plus what it does. To draw it: fill
+            the rect, blit its label centered. To handle a click: on
+            <code class="inline">MOUSEBUTTONDOWN</code>, loop your buttons and check
+            <code class="inline">rect.collidepoint(event.pos)</code> — that's a built-in "is this point inside me?" test.</p>
+            <p>Timer: save <code class="inline">start = pygame.time.get_ticks()</code> when a game begins. Each
+            frame (until <code class="inline">won</code>), <code class="inline">elapsed = pygame.time.get_ticks() - start</code>.
+            Then <code class="inline">minutes, seconds = divmod(elapsed // 1000, 60)</code>.</p>
+          </div>
+        </details>
+        <details class="hint">
+          <summary>Hint 3 — step by step</summary>
+          <div class="details-body">
+            <ol>
+              <li>Build a list of buttons, each a dict with a <code class="inline">rect</code> and an
+                <code class="inline">action</code> label (e.g. "new", "solve", "Easy").</li>
+              <li>In <code class="inline">draw_board</code>, draw each button's rect and centered label.</li>
+              <li>On <code class="inline">MOUSEBUTTONDOWN</code>, loop the buttons; the first whose
+                <code class="inline">rect.collidepoint(event.pos)</code> is True decides what happens:
+                "new"/difficulty → <code class="inline">make_puzzle(...)</code> and reset; "solve" →
+                <code class="inline">solve()</code> a copy of the puzzle.</li>
+              <li>Keep a <code class="inline">start</code> time; each frame until <code class="inline">won</code>,
+                recompute <code class="inline">elapsed</code> and format it with
+                <code class="inline">divmod(elapsed // 1000, 60)</code>.</li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="solution">
+          <summary>Reference solution — buttons &amp; timer sketch</summary>
+          <div class="details-body">
+<pre class="code"><code class="python"># each button: a rectangle + an action label
+buttons = [
+    {"label": "New Game", "action": "new",   "rect": pygame.Rect(40, 620, 110, 40)},
+    {"label": "Solve",    "action": "solve", "rect": pygame.Rect(160, 620, 80, 40)},
+    # ... Easy / Medium / Hard similarly
+]
+
+# handling a click:
+if event.type == pygame.MOUSEBUTTONDOWN:
+    for b in buttons:
+        if b["rect"].collidepoint(event.pos):
+            if b["action"] == "new":
+                puzzle, solution = make_puzzle(difficulty)
+                board = [row[:] for row in puzzle]
+            elif b["action"] == "solve":
+                board = [row[:] for row in puzzle]
+                solve(board)          # your Challenge 3 solver, live!
+            break
+
+# timer, each frame until won:
+elapsed = pygame.time.get_ticks() - start
+mins, secs = divmod(elapsed // 1000, 60)
+clock_text = f"{mins:02d}:{secs:02d}"</code></pre>
+            <p class="note"><strong>You did it.</strong> Every button here just <em>calls functions you already
+            wrote</em>. That's the whole reward of separating brain from face: the "game" is a thin layer of
+            clicks and drawing on top of solid logic. Compare your result to the screenshots at the top.</p>
+          </div>
+        </details>
+
+        <div class="ch-complete"><input type="checkbox" id="done-11"><label for="done-11">I finished this challenge</label></div>
+      </div>
+    </div>
+
+    <!-- ===================== LEVEL UP ===================== -->
+    <section class="block">
+      <h2>🚀 Level up</h2>
+      <p>You've built the whole game. If you want to keep going, here are real features to design on your own — no solutions given, because now you can figure them out:</p>
+      <ul>
+        <li><strong>Pencil marks.</strong> Let the player jot small "maybe" numbers in a corner of a cell (real Sudoku players live on these). What data structure holds several guesses per cell?</li>
+        <li><strong>Hint button.</strong> Reveal one correct cell. Which cell — random empty one? You have the solution to copy from.</li>
+        <li><strong>Mistake counter.</strong> "3 strikes and it's game over." When does a keystroke count as a strike?</li>
+        <li><strong>Auto-highlight the selected number.</strong> Click a 7, and every other 7 lights up (the screenshots show this in green).</li>
+        <li><strong>Save &amp; resume.</strong> Write the board to a file on quit, read it back on launch. Look up <code class="inline">json</code>.</li>
+        <li><strong>Animate the solver.</strong> Instead of solving instantly, show the backtracking happening cell by cell. Mesmerizing — and it proves you understand your own algorithm.</li>
+      </ul>
+      <p class="note">Every one of these builds on a function you already have. That's not a coincidence — it's what good structure buys you.</p>
+    </section>
+
+    <section class="block intro">
+      <h2>One last thing worth remembering</h2>
+      <p>
+        Look back at what happened: you wrote <code class="inline">is_valid</code> <em>once</em>, and it powered
+        the solver, the generator, and the mistake-checker. You wrote a backtracker <em>once</em>, and reused its
+        shape three more times. The window at the end was a thin skin over logic you'd already proven in the terminal.
+      </p>
+      <p>
+        That's the real skill — not memorizing pygame, but <strong>breaking a scary problem into small honest
+        pieces and reusing your own work.</strong> Every big program you ever write is built exactly this way.
+        Nice job. 🎉
+      </p>
+    </section>
+
+    <footer>
+      Built for a 16-year-old learning Python · courtneycrappell.com/python-sudoku
+    </footer>
+
+  </div><!-- /.wrap -->
+
+  <script>
+    // ---- lightweight Python syntax highlighting (no external libraries) ----
+    (function () {
+      const KEYWORDS = new Set(["def","return","if","elif","else","for","while","in",
+        "not","and","or","import","from","as","True","False","None","class","pass",
+        "break","continue","with","lambda","is","global","nonlocal","try","except",
+        "finally","raise","yield","del","assert"]);
+      const KNOWN = new Set(["range","len","print","list","set","int","str","random",
+        "shuffle","seed","append","abs","enumerate","sum","min","max","sorted","tuple",
+        "dict","next","divmod","pygame"]);
+
+      function esc(s) {
+        return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      // matches: comment | string | number | word
+      const RE = /(#[^\n]*)|("""[\s\S]*?"""|'''[\s\S]*?'''|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|\b(\d+)\b|([A-Za-z_]\w*)/g;
+
+      function highlight(code) {
+        let out = "", last = 0, m;
+        RE.lastIndex = 0;
+        while ((m = RE.exec(code)) !== null) {
+          out += esc(code.slice(last, m.index));
+          if (m[1]) {
+            out += '<span class="tk-c">' + esc(m[1]) + "</span>";
+          } else if (m[2]) {
+            out += '<span class="tk-s">' + esc(m[2]) + "</span>";
+          } else if (m[3]) {
+            out += '<span class="tk-n">' + esc(m[3]) + "</span>";
+          } else if (m[4]) {
+            const w = m[4];
+            if (KEYWORDS.has(w)) out += '<span class="tk-k">' + w + "</span>";
+            else if (KNOWN.has(w)) out += '<span class="tk-b">' + w + "</span>";
+            else out += esc(w);
+          }
+          last = RE.lastIndex;
+        }
+        out += esc(code.slice(last));
+        return out;
+      }
+
+      document.querySelectorAll("pre.code > code.python").forEach(function (el) {
+        el.innerHTML = highlight(el.textContent);
+      });
+    })();
+
+    // ---- progress tracking + resume, saved in this browser (localStorage) ----
+    (function () {
+      const KEY = "sudoku-tutorial-progress";
+      const cards = Array.prototype.slice.call(document.querySelectorAll(".challenge"));
+      const total = cards.length;
+      const fill = document.getElementById("progress-fill");
+      const label = document.getElementById("progress-label");
+
+      // stored shape: { done: {"0":true,...}, savedAt: <ms> }
+      let progress = { done: {}, savedAt: 0 };
+      try {
+        const raw = JSON.parse(localStorage.getItem(KEY));
+        if (raw && typeof raw === "object") {
+          // accept the old flat map too, just in case
+          progress.done = raw.done && typeof raw.done === "object" ? raw.done : raw;
+          progress.savedAt = raw.savedAt || 0;
+        }
+      } catch (e) { progress = { done: {}, savedAt: 0 }; }
+
+      function doneCount() {
+        return cards.filter(function (c) { return progress.done[c.dataset.id]; }).length;
+      }
+
+      // first challenge (in page order) that isn't checked off yet
+      function firstUnfinished() {
+        for (let i = 0; i < cards.length; i++) {
+          if (!progress.done[cards[i].dataset.id]) return cards[i];
+        }
+        return null;
+      }
+
+      function save() {
+        try { localStorage.setItem(KEY, JSON.stringify(progress)); } catch (e) {}
+      }
+
+      function render() {
+        let done = 0;
+        cards.forEach(function (card) {
+          const id = card.dataset.id;
+          const box = document.getElementById("done-" + id);
+          const isDone = !!progress.done[id];
+          if (box) box.checked = isDone;
+          card.classList.toggle("done", isDone);
+          if (isDone) done++;
+        });
+        const pct = total ? Math.round((done / total) * 100) : 0;
+        fill.style.width = pct + "%";
+        label.textContent = done + " / " + total + " challenges";
+      }
+
+      // ---- resume banner ----
+      const banner = document.getElementById("resume-banner");
+      const rTitle = document.getElementById("resume-title");
+      const rDetail = document.getElementById("resume-detail");
+
+      function maybeShowResume() {
+        const done = doneCount();
+        if (done === 0 || done === total) return;   // nothing to resume, or all done
+        const next = firstUnfinished();
+        const nextNum = next ? next.dataset.id : "";
+        let when = "";
+        if (progress.savedAt) {
+          try {
+            const d = new Date(progress.savedAt);
+            when = " · last saved " + d.toLocaleDateString("en-US",
+              { month: "short", day: "numeric" }) + " at " +
+              d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+          } catch (e) {}
+        }
+        rTitle.textContent = "Welcome back — you've finished " + done + " of " + total + " challenges";
+        rDetail.textContent = "Pick up at Challenge " + nextNum + when;
+        banner.classList.add("show");
+
+        document.getElementById("resume-go").onclick = function () {
+          banner.classList.remove("show");
+          if (next) next.scrollIntoView({ behavior: "smooth", block: "start" });
+        };
+        document.getElementById("resume-fresh").onclick = function () {
+          if (!confirm("Start over? This clears your saved progress in this browser.")) return;
+          progress = { done: {}, savedAt: 0 };
+          save();
+          banner.classList.remove("show");
+          render();
+        };
+      }
+
+      document.querySelectorAll('.ch-complete input[type="checkbox"]').forEach(function (box) {
+        box.addEventListener("change", function () {
+          const id = box.id.replace("done-", "");
+          if (box.checked) progress.done[id] = true; else delete progress.done[id];
+          progress.savedAt = Date.now();
+          save();
+          render();
+        });
+      });
+
+      render();
+      maybeShowResume();
+    })();
+  </script>
+</body>
+</html>
