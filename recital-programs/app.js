@@ -1362,11 +1362,51 @@ function generateDoc() {
   }
   const rd = recitalDetails;
 
-  // Hidden reload data — lets this same .doc be re-opened in the tool later
-  const programDataB64 = b64EncodeUtf8(JSON.stringify(buildSnapshot()));
+  // NOTE: This .doc is a faculty PROOF only — it deliberately does NOT embed
+  // reload data. Saving/reloading uses the separate .json project file
+  // (saveDraftToFile), so faculty edits to this document can never be mistaken
+  // for the source of truth.
 
+  // Word's HTML engine ignores display:block on inline <span>s, so the program's
+  // title/composer/dates spans collapse onto one line with no spaces. Rebuild each
+  // entry as Word-safe block markup: "Title — Composer (dates)", indented movements,
+  // centered performers. (Real <div>s already break correctly in Word.)
   function entryToDocHtml(e) {
-    return e.html || '';
+    const html = e.html || '';
+    let root;
+    try {
+      root = new DOMParser().parseFromString('<div id="__d">' + html + '</div>', 'text/html')
+               .getElementById('__d');
+    } catch (err) { root = null; }
+    if (!root || root.children.length === 0) return html;
+    let out = '';
+    Array.prototype.forEach.call(root.children, function (el) {
+      const cl = el.classList;
+      if (cl.contains('entry-row')) {
+        const titleEl = el.querySelector('.entry-title');
+        const title   = titleEl ? titleEl.innerHTML.trim() : '';
+        const pieces  = Array.prototype.map.call(
+          el.querySelectorAll('.entry-composer, .entry-right, .entry-arranger'),
+          function (s) { return s.innerHTML.trim(); }
+        ).filter(Boolean);
+        const right = pieces.join(' ');
+        let line = title ? '<strong>' + title + '</strong>' : '';
+        if (right) line += (title ? ' — ' : '') + right;
+        out += '<p class="entry-line" style="margin:2pt 0">' + line + '</p>';
+      } else if (cl.contains('entry-indent-right')) {
+        const left = el.children.length ? el.children[0].innerHTML : el.innerHTML;
+        const rEl  = el.querySelector('.entry-right, .entry-lyr');
+        const r    = rEl ? rEl.innerHTML.trim() : '';
+        out += '<div style="padding-left:24pt;margin:1pt 0">' + left + (r ? '  ' + r : '') + '</div>';
+      } else if (cl.contains('entry-indent')) {
+        out += '<div style="padding-left:24pt;margin:1pt 0">' + el.innerHTML + '</div>';
+      } else if (cl.contains('entry-perf')) {
+        out += '<div style="text-align:center;margin:1pt 0">' + el.innerHTML + '</div>';
+      } else {
+        out += '<div style="margin:1pt 0">' + el.innerHTML + '</div>';
+      }
+    });
+    return out || html;
   }
 
   let programHtml = '';
@@ -1432,10 +1472,9 @@ function generateDoc() {
 </style>
 </head>
 <body>
-<!--${PROGRAM_DATA_MARKER}${programDataB64}-->
 <div class="disclaimer">
-  ⚠ CONTENT PROOF — Review the text for accuracy: names, titles, dates, repertoire, program notes, and bio.
-  The published program is the web (.html) version; this Word copy is for proofing the copy and capturing faculty approval.
+  ⚠ PROOF — FOR FACULTY REVIEW ONLY. Review the text for accuracy: names, titles, dates, repertoire, program notes, and bio.
+  Please mark corrections as comments or notes — do <strong>not</strong> retype the program here. All changes are made by the student in the online tool, which produces the published program. This Word copy captures faculty approval only.
 </div>
 <h1>${rd.recitalType ? esc(rd.recitalType) : 'Recital'}</h1>
 ${rd.performerName ? '<p class="detail"><strong>' + esc([rd.performerName, rd.instrument].filter(Boolean).join(', ')) + '</strong></p>' : ''}
@@ -1454,8 +1493,10 @@ ${notesDocHtml}
 ${bioDocHtml}
 <div class="approval">
   <p><strong>Faculty Review &amp; Approval</strong></p>
-  <p>Reviewed and approved by: ________________________________&nbsp;&nbsp;&nbsp;Date: ______________</p>
-  <p style="margin-top:8pt;font-size:9pt;color:#555">Professor signature confirms the program text has been reviewed for accuracy and approved for publishing.</p>
+  <p style="margin-top:14pt">Reviewed and approved by (professor signature):</p>
+  <p style="margin-top:44pt">_______________________________________________________________</p>
+  <p style="margin-top:28pt">Date: _______________________________</p>
+  <p style="margin-top:22pt;font-size:9pt;color:#555">Professor signature confirms the program text has been reviewed for accuracy and approved for publishing.</p>
 </div>
 </body>
 </html>`;
@@ -1464,7 +1505,7 @@ ${bioDocHtml}
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = safeFilename(rd.performerName, 'Recital') + '_Recital_Program.doc';
+  a.download = safeFilename(rd.performerName, 'Recital') + '_Recital_Faculty_Proof.doc';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -2516,7 +2557,7 @@ function saveDraftToFile() {
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = safeFilename(snapshot.recitalDetails.performerName, 'Recital') + '_Recital_Draft.json';
+  a.download = safeFilename(snapshot.recitalDetails.performerName, 'Recital') + '_Recital_ProjectFile.json';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

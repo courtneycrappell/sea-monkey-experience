@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Staff — Publish Recital Program to LiveWhale</title>
+<style>
+  body{margin:0;background:#eceef1;color:#222;font-family:"Helvetica Neue",Arial,sans-serif;line-height:1.5}
+  .wrap{max-width:840px;margin:0 auto;padding:24px 16px 80px}
+  h1{font-size:22px;margin:0 0 4px;color:#13294b}
+  .sub{color:#555;margin:0 0 22px;font-size:14px}
+  .card{background:#fff;border:1px solid #dfe2e6;border-radius:8px;padding:18px 20px;margin:0 0 20px}
+  .card h2{font-size:15px;margin:0 0 10px;color:#13294b}
+  ol.steps{margin:0;padding-left:20px;font-size:14px;color:#444}
+  ol.steps li{margin:5px 0}
+  .filerow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 0}
+  .btn{background:#13294b;color:#fff;border:0;border-radius:6px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer}
+  .btn:disabled{background:#9aa3b2;cursor:not-allowed}
+  .btn:active:not(:disabled){transform:translateY(1px)}
+  .filename{font-size:13px;color:#555}
+  .err{color:#b3261e;font-size:13px;margin:8px 0 0;display:none}
+  .ok{color:#2e7d32;font-size:13px;margin-left:10px;display:none}
+  .hidden{display:none}
+  /* .stage mimics the LiveWhale event-description column */
+  .stage{background:#fff;padding:26px 24px;border:1px solid #e3e6ea;border-radius:6px;font-family:"Helvetica Neue",Arial,sans-serif;color:#333}
+  .stage .render{max-width:660px;margin:0 auto}
+  textarea.src{width:100%;height:180px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.45;border:1px solid #cfd4da;border-radius:6px;padding:10px;background:#fff;color:#222;white-space:pre;overflow:auto;margin-top:10px}
+  .muted{color:#777;font-size:12.5px;margin:10px 0 0}
+  code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  /* Archival print copy — hidden on screen, the only thing shown when printing. */
+  #printArea{display:none}
+  @media print{
+    body{background:#fff}
+    .wrap{display:none !important}
+    #printArea{display:block !important;max-width:680px;margin:0 auto;padding:12px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Staff — Publish to LiveWhale</h1>
+  <p class="sub">Turn a student's approved <strong>project file (.json)</strong> into the ready-to-paste program HTML for the calendar event. Students never use this page.</p>
+
+  <div class="card">
+    <h2>Steps</h2>
+    <ol class="steps">
+      <li>Load the approved <strong>.json project file</strong> the student sent you.</li>
+      <li>Check the preview below matches the approved program.</li>
+      <li>Click <strong>Copy for LiveWhale</strong>.</li>
+      <li>In LiveWhale, open the event → <strong>Event description</strong> → the <code>&lt; &gt;</code> (Source Code) button → paste → <strong>Save</strong>, then save the event.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>1 · Load the project file</h2>
+    <div class="filerow">
+      <button class="btn" id="loadBtn" type="button">📂 Load project file (.json)</button>
+      <span class="filename" id="filename">No file loaded.</span>
+      <input type="file" id="fileInput" accept=".json,.doc,.docx,application/json,application/msword" style="display:none">
+    </div>
+    <p class="err" id="err"></p>
+  </div>
+
+  <div class="card hidden" id="outCard">
+    <h2>2 · Preview <span style="font-weight:400;color:#777;font-size:12.5px">(how it will look on the event page)</span></h2>
+    <div class="stage"><div class="render" id="render"></div></div>
+
+    <h2 style="margin-top:20px">3 · Copy for LiveWhale
+      <button class="btn" id="copyBtn" type="button" style="margin-left:8px">📋 Copy for LiveWhale</button>
+      <span class="ok" id="ok">Copied ✓</span>
+    </h2>
+    <textarea class="src" id="src" readonly spellcheck="false"></textarea>
+    <p class="muted">Inline-styled HTML with no <code>&lt;style&gt;</code>, <code>&lt;script&gt;</code>, or classes — built to survive the LiveWhale editor's Save. Date, time, and location are intentionally omitted (the event's left column already shows them).</p>
+
+    <h2 style="margin-top:20px">4 · Download PDF for the archive
+      <button class="btn" id="pdfBtn" type="button" style="margin-left:8px">📄 Download PDF (for archive)</button>
+    </h2>
+    <p class="muted">Saves a full copy of the program — <strong>including date, time, and location</strong> — for the storage drive. Opens your browser's print dialog; set the destination to <strong>Save as PDF</strong>.</p>
+  </div>
+</div>
+
+<!-- Archival copy: hidden on screen, printed to PDF via Step 4. Includes event details. -->
+<div id="printArea"></div>
+
+<script src="livewhale.js?v=1b20280e"></script>
+<script>
+(function () {
+  var fileInput = document.getElementById('fileInput');
+  var loadBtn   = document.getElementById('loadBtn');
+  var filename  = document.getElementById('filename');
+  var err       = document.getElementById('err');
+  var outCard   = document.getElementById('outCard');
+  var render    = document.getElementById('render');
+  var src       = document.getElementById('src');
+  var copyBtn   = document.getElementById('copyBtn');
+  var ok        = document.getElementById('ok');
+
+  var MARKER = 'UMKC-RECITAL-DATA:';
+
+  function b64DecodeUtf8(b) { return decodeURIComponent(escape(atob(b))); }
+
+  // Accept a raw .json project file, or (back-compat) an older file that still
+  // carries the UMKC-RECITAL-DATA marker.
+  function extractSnapshot(text) {
+    var m = text.match(/UMKC-RECITAL-DATA:([A-Za-z0-9+/=]+)/);
+    if (m) { return JSON.parse(b64DecodeUtf8(m[1])); }
+    return JSON.parse(text);
+  }
+
+  function showError(msg) {
+    err.textContent = msg;
+    err.style.display = 'block';
+    outCard.classList.add('hidden');
+  }
+
+  loadBtn.addEventListener('click', function () { fileInput.value = ''; fileInput.click(); });
+
+  fileInput.addEventListener('change', function () {
+    var file = fileInput.files && fileInput.files[0];
+    if (!file) return;
+    err.style.display = 'none';
+    filename.textContent = file.name;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var snapshot;
+      try {
+        snapshot = extractSnapshot(String(reader.result || ''));
+      } catch (e) {
+        showError('Could not read that file as a recital project file. Make sure it is the .json the student saved with “Save Progress.”');
+        return;
+      }
+      var fragment;
+      try {
+        fragment = buildLiveWhaleFragment(snapshot);
+      } catch (e) {
+        showError('That file loaded, but the program could not be built from it. It may be from an incompatible version.');
+        return;
+      }
+      if (!fragment) {
+        showError('That project file has no program entries yet — nothing to publish.');
+        return;
+      }
+      render.innerHTML = fragment;
+      src.value = fragment;
+      // Archival copy includes date/time/venue; drives the PDF (Step 4).
+      document.getElementById('printArea').innerHTML =
+        buildLiveWhaleFragment(snapshot, { includeEventDetails: true });
+      var rd = snapshot.recitalDetails || {};
+      var who = [rd.performerName, rd.instrument].filter(Boolean).join(', ');
+      document.title = (who ? who + ' — ' : '') + 'Recital Program';
+      outCard.classList.remove('hidden');
+      ok.style.display = 'none';
+    };
+    reader.onerror = function () { showError('Could not read the file. Please try again.'); };
+    reader.readAsText(file);
+  });
+
+  document.getElementById('pdfBtn').addEventListener('click', function () { window.print(); });
+
+  copyBtn.addEventListener('click', function () {
+    src.select();
+    var done = function () { ok.style.display = 'inline'; setTimeout(function () { ok.style.display = 'none'; }, 1800); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(src.value).then(done, function () { document.execCommand('copy'); done(); });
+    } else {
+      document.execCommand('copy'); done();
+    }
+  });
+})();
+</script>
+</body>
+</html>
