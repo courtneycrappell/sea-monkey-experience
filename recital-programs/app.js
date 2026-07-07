@@ -1626,7 +1626,7 @@ notesHtml + bioHtml +
 '<section id="support" class="support"><h2>Support the Conservatory</h2>' +
 '<p>The UMKC Conservatory relies on philanthropic support to provide the highest-quality educational experiences for our students and exceptional performances for the community.</p>' +
 '<a class="btn btn-primary" href="https://go.umkc.edu/donate-to-conservatory">Make a Gift</a>' +
-'<a class="btn btn-outline" href="https://conservatory.umkc.edu">Upcoming Events</a></section>\n' +
+'<a class="btn btn-outline" href="https://calendar.umkc.edu/conservatory/">Upcoming Events</a></section>\n' +
 '<section class="fine">' + fine + '</section>\n' +
 '</main>\n' +
 '<footer><p class="crest">UMKC Conservatory</p>' +
