@@ -38,18 +38,18 @@
     wrap:       'max-width:620px;margin:0 auto;font-family:Arial,Helvetica,sans-serif;color:#333;line-height:1.5',
     kicker:     'text-align:center;font-size:12px;font-weight:bold;letter-spacing:.1em;text-transform:uppercase;color:#1b3f8f;margin:0 0 4px',
     performers: 'text-align:center;font-size:15px;color:#555',
-    eventmeta:  'text-align:center;font-size:14px;color:#666;margin:0 0 22px',
+    eventmeta:  'text-align:center;font-size:14px;color:#595959;margin:0 0 22px',
     lecture:    'text-align:center;font-style:italic;font-size:15px;color:#555;margin:0 0 18px',
     progHead:   'font-size:16px;font-weight:bold;color:#13294b;border-bottom:1px solid #ccd2dd;padding-bottom:6px;margin:0 0 16px',
     work:       'margin:0 0 18px',
     title:      'font-weight:bold;font-size:16px;color:#13294b',
     indent:     'padding-left:20px;font-size:15px;color:#444;margin-top:2px',
-    perf:       'padding-left:20px;font-size:13px;color:#777;font-style:italic;margin-top:3px',
+    perf:       'padding-left:20px;font-size:13px;color:#6b6b6b;font-style:italic;margin-top:3px',
     interm:     'text-align:center;font-size:13px;font-weight:bold;color:#13294b;margin:20px 0;text-transform:uppercase;letter-spacing:.08em',
     secHead:    'font-size:16px;font-weight:bold;color:#13294b;margin:22px 0 10px',
     para:       'font-size:14px;color:#333;margin:8px 0',
     fineWrap:   'border-top:1px solid #ddd;margin-top:22px;padding-top:14px',
-    fine:       'font-size:13px;color:#777;margin:6px 0'
+    fine:       'font-size:13px;color:#6b6b6b;margin:6px 0'
   };
 
   // Borderless two-column row: title/label left, composer/dates right.
@@ -57,7 +57,7 @@
     var lpad = indentLeft ? 'padding:0 0 0 20px' : 'padding:0';
     return '<table style="width:100%;border-collapse:collapse"><tr>' +
       '<td style="text-align:left;vertical-align:top;' + lpad + '">' + leftHTML + '</td>' +
-      '<td style="text-align:right;vertical-align:top;padding:0 0 0 12px;color:#666;font-size:14px">' + rightHTML + '</td>' +
+      '<td style="text-align:right;vertical-align:top;padding:0 0 0 12px;color:#595959;font-size:14px">' + rightHTML + '</td>' +
       '</tr></table>';
   }
 

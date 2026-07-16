@@ -6,6 +6,8 @@
 <title>Staff — Publish Recital Program to LiveWhale</title>
 <style>
   body{margin:0;background:#eceef1;color:#222;font-family:"Helvetica Neue",Arial,sans-serif;line-height:1.5}
+  .skip-link{position:absolute;left:-9999px;top:0;z-index:10;background:#13294b;color:#fff;padding:8px 14px;border-radius:0 0 6px 0;font-size:14px}
+  .skip-link:focus{left:0}
   .wrap{max-width:840px;margin:0 auto;padding:24px 16px 80px}
   h1{font-size:22px;margin:0 0 4px;color:#13294b}
   .sub{color:#555;margin:0 0 22px;font-size:14px}
@@ -25,7 +27,10 @@
   .stage{background:#fff;padding:26px 24px;border:1px solid #e3e6ea;border-radius:6px;font-family:"Helvetica Neue",Arial,sans-serif;color:#333}
   .stage .render{max-width:660px;margin:0 auto}
   textarea.src{width:100%;height:180px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.45;border:1px solid #cfd4da;border-radius:6px;padding:10px;background:#fff;color:#222;white-space:pre;overflow:auto;margin-top:10px}
-  .muted{color:#777;font-size:12.5px;margin:10px 0 0}
+  .muted{color:#6b6b6b;font-size:12.5px;margin:10px 0 0}
+  footer.a11y{max-width:840px;margin:0 auto;padding:0 16px 24px;font-size:12.5px;color:#595959}
+  footer.a11y a{color:#13294b}
+  @media print{footer.a11y{display:none}}
   code{background:#eef1f5;padding:1px 5px;border-radius:4px;font-size:12.5px}
   /* Archival print copy — hidden on screen, the only thing shown when printing. */
   #printArea{display:none}
@@ -37,7 +42,8 @@
 </style>
 </head>
 <body>
-<div class="wrap">
+<a class="skip-link" href="#main">Skip to main content</a>
+<main id="main" class="wrap">
   <h1>Staff — Publish to LiveWhale</h1>
   <p class="sub">Turn a student's approved <strong>project file (.json)</strong> into the ready-to-paste program HTML for the calendar event. Students never use this page.</p>
 
@@ -54,11 +60,11 @@
   <div class="card">
     <h2>1 · Load the project file</h2>
     <div class="filerow">
-      <button class="btn" id="loadBtn" type="button">📂 Load project file (.json)</button>
+      <button class="btn" id="loadBtn" type="button"><span aria-hidden="true">📂</span> Load project file (.json)</button>
       <span class="filename" id="filename">No file loaded.</span>
-      <input type="file" id="fileInput" accept=".json,.doc,.docx,application/json,application/msword" style="display:none">
+      <input type="file" id="fileInput" accept=".json,.doc,.docx,application/json,application/msword" style="display:none" aria-label="Project file">
     </div>
-    <p class="err" id="err"></p>
+    <p class="err" id="err" role="alert"></p>
   </div>
 
   <div class="card hidden" id="outCard">
@@ -66,23 +72,29 @@
     <div class="stage"><div class="render" id="render"></div></div>
 
     <h2 style="margin-top:20px">3 · Copy for LiveWhale
-      <button class="btn" id="copyBtn" type="button" style="margin-left:8px">📋 Copy for LiveWhale</button>
-      <span class="ok" id="ok">Copied ✓</span>
+      <button class="btn" id="copyBtn" type="button" style="margin-left:8px"><span aria-hidden="true">📋</span> Copy for LiveWhale</button>
+      <span class="ok" id="ok" role="status">Copied ✓</span>
     </h2>
     <textarea class="src" id="src" readonly spellcheck="false"></textarea>
     <p class="muted">Inline-styled HTML with no <code>&lt;style&gt;</code>, <code>&lt;script&gt;</code>, or classes — built to survive the LiveWhale editor's Save. Date, time, and location are intentionally omitted (the event's left column already shows them).</p>
 
     <h2 style="margin-top:20px">4 · Download PDF for the archive
-      <button class="btn" id="pdfBtn" type="button" style="margin-left:8px">📄 Download PDF (for archive)</button>
+      <button class="btn" id="pdfBtn" type="button" style="margin-left:8px"><span aria-hidden="true">📄</span> Download PDF (for archive)</button>
     </h2>
     <p class="muted">Saves a full copy of the program — <strong>including date, time, and location</strong> — for the storage drive. Opens your browser's print dialog; set the destination to <strong>Save as PDF</strong>.</p>
   </div>
-</div>
+</main>
+
+<footer class="a11y">
+  This tool aims to conform to WCAG 2.1 Level AA (UM System CRR 600.090).
+  Experiencing a barrier? Email <a href="mailto:conservatory@umkc.edu">conservatory@umkc.edu</a>.
+  <!-- TODO: confirm barrier-report address before umkc.edu migration -->
+</footer>
 
 <!-- Archival copy: hidden on screen, printed to PDF via Step 4. Includes event details. -->
 <div id="printArea"></div>
 
-<script src="livewhale.js?v=1b20280e"></script>
+<script src="livewhale.js?v=53c5069a"></script>
 <script>
 (function () {
   var fileInput = document.getElementById('fileInput');
@@ -108,8 +120,9 @@
   }
 
   function showError(msg) {
-    err.textContent = msg;
+    // Un-hide first, then set the text — role="alert" fires on text injection
     err.style.display = 'block';
+    err.textContent = msg;
     outCard.classList.add('hidden');
   }
 

@@ -127,6 +127,12 @@ function goToScreen(id) {
   if (target) {
     target.classList.add('active');
     window.scrollTo(0, 0);
+    // Move focus to the step heading so keyboard/SR users land on the new
+    // screen (skip on initial load — only after an actual navigation)
+    if (current && current !== id) {
+      const h = target.querySelector('h2');
+      if (h) h.focus({ preventScroll: true });
+    }
   }
   renderProgressFor(id);
   renderPreview();
@@ -170,6 +176,8 @@ function goBack() {
   if (target) {
     target.classList.add('active');
     window.scrollTo(0, 0);
+    const h = target.querySelector('h2');
+    if (h) h.focus({ preventScroll: true });
   }
   renderProgressFor(prev);
   renderPreview();
@@ -267,6 +275,7 @@ function clearSpellArtifacts(ids) {
     if (info) info.bd.innerHTML = '';
     const status = document.getElementById('spell-status-' + id);
     if (status) status.innerHTML = '';
+    delete spellStatusCache[id];
   });
 }
 
@@ -346,21 +355,36 @@ function renderProgressFor(screenId) {
   if (!el) return;
   const steps = getStepList();
   const currentIdx = getCurrentStepIndex(screenId);
+  // The visual strip conveys state by color; the ✓ prefix and the hidden
+  // "Step N of M" text carry the same information non-visually.
+  el.setAttribute('aria-hidden', 'true');
   el.innerHTML = steps.map((s, i) => {
     const cls = i < currentIdx ? 'progress-step complete' : i === currentIdx ? 'progress-step active' : 'progress-step';
-    return `<div class="${cls}">${s}</div>`;
+    return `<div class="${cls}">${i < currentIdx ? '✓ ' : ''}${s}</div>`;
   }).join('');
+  let sr = el.parentElement.querySelector('.progress-sr');
+  if (!sr) {
+    sr = document.createElement('p');
+    sr.className = 'visually-hidden progress-sr';
+    el.parentElement.appendChild(sr);
+  }
+  sr.textContent = `Step ${currentIdx + 1} of ${steps.length}: ${steps[currentIdx] || ''}`;
 }
 
 // ════════════════════════════════════════════════════════════════
 //  Auto-advance handlers (radio screens)
 // ════════════════════════════════════════════════════════════════
-// Auto-advance radios listen for BOTH change and click: re-clicking an
-// already-selected option fires no change event (which used to leave the user
-// stuck after navigating Back), while keyboard arrows fire change but no click.
-// A short guard swallows the duplicate when a fresh selection fires both.
+// Auto-advance radios listen for click ONLY (not change): mouse click, touch,
+// and keyboard Space all fire click — including on an already-selected option
+// (which fires no change event, and used to leave the user stuck after Back).
+// Keyboard ARROW keys fire change but no click, so arrowing between options
+// reviews them without navigating (WCAG 3.2.2 On Input); those users advance
+// with Space or the visible Continue button (continueRadioScreen).
+// A short guard swallows duplicate advances.
 let lastRadioAdvance = 0;
+const radioAppliers = {};
 function bindAutoAdvance(name, apply) {
+  radioAppliers[name] = apply;
   document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
     const go = () => {
       const now = Date.now();
@@ -368,9 +392,20 @@ function bindAutoAdvance(name, apply) {
       lastRadioAdvance = now;
       apply(r.value);
     };
-    r.addEventListener('change', go);
     r.addEventListener('click', go);
   });
+}
+
+// Explicit Continue path for the radio screens (keyboard users who arrow to a
+// choice can activate this instead of Space on the radio)
+function continueRadioScreen(name) {
+  const checked = document.querySelector(`input[name="${name}"]:checked`);
+  if (!checked) { alert('Please choose an option to continue.'); return; }
+  const now = Date.now();
+  if (now - lastRadioAdvance < 350) return;
+  lastRadioAdvance = now;
+  const apply = radioAppliers[name];
+  if (apply) apply(checked.value);
 }
 
 function initRadioHandlers() {
@@ -497,11 +532,23 @@ function advanceFromWorkDetails() {
 
 function advanceFromComposer() {
   const valMsg = document.getElementById('composer-val');
+  const lastEl = document.getElementById('composer-last');
   if (!state.composerLast.trim()) {
+    // Un-hide first, then (re)set the text — role="alert" announces on text injection
     valMsg.classList.add('show');
+    valMsg.textContent = '⚠ Please enter at least the composer\'s last name.';
+    if (lastEl) {
+      lastEl.classList.add('field-error');
+      lastEl.setAttribute('aria-invalid', 'true');
+      lastEl.focus();
+    }
     return;
   }
   valMsg.classList.remove('show');
+  if (lastEl) {
+    lastEl.classList.remove('field-error');
+    lastEl.removeAttribute('aria-invalid');
+  }
   // Go to movements only if multi-movement complete work
   if (state.workType === 'complete' && state.workSize === 'multi') {
     goToScreen('movements');
@@ -575,6 +622,7 @@ function toggleCredits(section) {
   const isOpen = header.classList.contains('open');
   header.classList.toggle('open', !isOpen);
   body.classList.toggle('open', !isOpen);
+  header.setAttribute('aria-expanded', String(!isOpen));
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1004,6 +1052,16 @@ function showCopyConfirm(id) {
   if (!el) return;
   el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), 2000);
+  announce('Copied to clipboard');
+}
+
+// Screen-reader status announcements (visually hidden role="status" region).
+// Clear-then-set so repeating the same message still re-announces.
+function announce(msg) {
+  const el = document.getElementById('sr-status');
+  if (!el) return;
+  el.textContent = '';
+  setTimeout(() => { el.textContent = msg; }, 50);
 }
 
 let editMode = false;
@@ -1335,7 +1393,11 @@ function safeFilename(name, fallback) {
 function b64EncodeUtf8(str) { return btoa(unescape(encodeURIComponent(str))); }
 function b64DecodeUtf8(b64) { return decodeURIComponent(escape(atob(b64))); }
 
-// Marker wrapping the hidden snapshot inside the program file
+// Marker wrapping the hidden snapshot inside the program file.
+// LEGACY READ PATH: current .doc proofs no longer embed this marker, but old
+// downloaded files still carry it — extractSnapshotFromText (and staff.html's
+// copy of the same regex) must keep working, and no generated output may ever
+// emit text matching /UMKC-RECITAL-DATA:[A-Za-z0-9+/=]+/ by accident.
 const PROGRAM_DATA_MARKER = 'UMKC-RECITAL-DATA:';
 
 // Pull a session snapshot out of an uploaded file's text:
@@ -1435,20 +1497,22 @@ function generateDoc() {
       .join('');
   }
   const notesDocHtml = (rd.programNotes && rd.programNotes.trim())
-    ? '<div class="program-head" style="margin-top:20pt">PROGRAM NOTES</div>' + docParas(rd.programNotes)
+    ? '<h2 class="program-head" style="margin-top:20pt">PROGRAM NOTES</h2>' + docParas(rd.programNotes)
     : '';
   const bioName = [rd.performerName, rd.instrument].filter(Boolean).join(', ');
   const bioDocHtml = (rd.performerBio && rd.performerBio.trim())
-    ? '<div class="program-head" style="margin-top:20pt">ABOUT THE PERFORMER' +
-      (bioName ? ' — ' + esc(bioName) : '') + '</div>' + docParas(rd.performerBio)
+    ? '<h2 class="program-head" style="margin-top:20pt">ABOUT THE PERFORMER' +
+      (bioName ? ' — ' + esc(bioName) : '') + '</h2>' + docParas(rd.performerBio)
     : '';
 
   const html = `<!DOCTYPE html>
-<html xmlns:o="urn:schemas-microsoft-com:office:office"
+<html lang="en"
+      xmlns:o="urn:schemas-microsoft-com:office:office"
       xmlns:w="urn:schemas-microsoft-com:office:word"
       xmlns="http://www.w3.org/TR/REC-html40">
 <head>
 <meta charset="utf-8">
+<title>${esc(rd.performerName || 'Recital')} — Faculty Proof</title>
 <style>
   /* Plain content proof — left-aligned, no program-style formatting.
      This document is for proofing the TEXT; the formatted program is the web (.html) version. */
@@ -1457,7 +1521,8 @@ function generateDoc() {
                 font-size: 11pt; line-height: 1.4; }
   h1 { font-size: 14pt; margin: 0 0 8pt; }
   .detail { margin: 1pt 0; }
-  .section, .program-head { font-weight: bold; font-size: 12pt; margin: 18pt 0 6pt; }
+  /* Real h2 headings for document structure — styled to render exactly like the old bold divs */
+  h2.section, h2.program-head { font-weight: bold; font-size: 12pt; margin: 18pt 0 6pt; }
   .entry { margin: 0 0 10pt; }
   .entry-row { display: block; margin: 0; }
   .entry-title { font-weight: bold; }
@@ -1484,7 +1549,7 @@ ${rd.lectureTitle && rd.recitalType === 'Doctoral Lecture Recital' ? '<p class="
 ${rd.recitalDate ? '<p class="detail">' + esc(rd.recitalDate) + '</p>' : ''}
 ${rd.recitalTime || rd.venue ? '<p class="detail">' + esc([rd.recitalTime, rd.venue].filter(Boolean).join(' · ')) + '</p>' : ''}
 ${rd.academicYear ? '<p class="detail">' + esc(rd.academicYear) + '</p>' : ''}
-<div class="section">PROGRAM</div>
+<h2 class="section">PROGRAM</h2>
 ${programHtml}
 ${footerHtml}
 ${degreeHtml}
@@ -1510,6 +1575,7 @@ ${bioDocHtml}
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+  announce('Faculty Proof downloaded');
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1563,13 +1629,13 @@ function generateWebProgram() {
   // ── Optional collapsible sections ──
   const notesHtml = (rd.programNotes && rd.programNotes.trim())
     ? '<section id="notes"><h2>Program Notes</h2>' +
-      '<details><summary>Program Notes <span class="chev">›</span></summary>' +
+      '<details><summary>Program Notes <span class="chev" aria-hidden="true">›</span></summary>' +
       '<div class="acc-body">' + textToParas(rd.programNotes) + '</div></details></section>'
     : '';
   const bioName = [rd.performerName, rd.instrument].filter(Boolean).join(', ') || 'Performer';
   const bioHtml = (rd.performerBio && rd.performerBio.trim())
     ? '<section id="bio"><h2>About the Performer</h2>' +
-      '<details open><summary>' + esc(bioName) + ' <span class="chev">›</span></summary>' +
+      '<details open><summary>' + esc(bioName) + ' <span class="chev" aria-hidden="true">›</span></summary>' +
       '<div class="acc-body">' + textToParas(rd.performerBio) + '</div></details></section>'
     : '';
 
@@ -1601,8 +1667,10 @@ function generateWebProgram() {
 '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
 '<title>' + titleTag + '</title>\n' +
 '<style>\n' +
-':root{--bg:#fff;--surface:#f6f5f2;--ink:#1a1a1a;--muted:#6b6b6b;--line:#e3e1dc;--brand:#13294b;--accent:#a6892b;--brand-ink:#13294b;--maxw:640px}\n' +
-'html[data-theme="dark"]{--bg:#15171c;--surface:#1e2128;--ink:#e9e7e2;--muted:#a3a39d;--line:#2c2f37;--brand:#cdd6e6;--accent:#d9b85a;--brand-ink:#e9e7e2}\n' +
+// --accent-ink: gold for SMALL TEXT only — #a6892b fails 4.5:1 on white (3.4:1), #8a7223 passes (4.65:1);
+// --accent stays on .btn-primary where its DARK text passes (5.25:1). --btn-line: visible outline-button border (>=3:1).
+':root{--bg:#fff;--surface:#f6f5f2;--ink:#1a1a1a;--muted:#6b6b6b;--line:#e3e1dc;--brand:#13294b;--accent:#a6892b;--accent-ink:#8a7223;--btn-line:#767676;--brand-ink:#13294b;--maxw:640px}\n' +
+'html[data-theme="dark"]{--bg:#15171c;--surface:#1e2128;--ink:#e9e7e2;--muted:#a3a39d;--line:#2c2f37;--brand:#cdd6e6;--accent:#d9b85a;--accent-ink:#d9b85a;--btn-line:#6a707e;--brand-ink:#e9e7e2}\n' +
 '*{box-sizing:border-box}\n' +
 'body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,"Times New Roman",serif;line-height:1.55;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}\n' +
 'header{position:sticky;top:0;z-index:10;background:var(--brand);color:#fff;border-bottom:3px solid var(--accent)}\n' +
@@ -1610,7 +1678,7 @@ function generateWebProgram() {
 '.bar{max-width:var(--maxw);margin:0 auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}\n' +
 '.bar .school{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#fff}\n' +
 'html[data-theme="dark"] .bar .school{color:var(--brand)}\n' +
-'.toggle{appearance:none;border:1px solid rgba(255,255,255,.5);background:transparent;color:inherit;font-size:13px;padding:7px 12px;border-radius:999px;cursor:pointer;min-height:36px;font-family:Arial,sans-serif}\n' +
+'.toggle{appearance:none;border:1px solid rgba(255,255,255,.7);background:transparent;color:inherit;font-size:13px;padding:7px 12px;border-radius:999px;cursor:pointer;min-height:36px;font-family:Arial,sans-serif}\n' +
 'html[data-theme="dark"] .toggle{border-color:var(--line)}\n' +
 'nav{max-width:var(--maxw);margin:0 auto;padding:0 8px 8px;display:flex;gap:4px;overflow-x:auto}\n' +
 'nav a{flex:0 0 auto;color:#fff;opacity:.85;text-decoration:none;font-family:Arial,sans-serif;font-size:13px;padding:6px 12px;border-radius:6px;min-height:32px;display:flex;align-items:center}\n' +
@@ -1620,7 +1688,7 @@ function generateWebProgram() {
 'section{padding:28px 0;border-bottom:1px solid var(--line)}\n' +
 'section:last-child{border-bottom:none}\n' +
 '.hero{text-align:center;padding-top:34px}\n' +
-'.hero .kicker{font-family:Arial,sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 6px}\n' +
+'.hero .kicker{font-family:Arial,sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-ink);font-weight:700;margin:0 0 6px}\n' +
 '.hero h1{font-size:30px;line-height:1.15;margin:0 0 4px;color:var(--brand-ink)}\n' +
 '.hero .performer{font-size:20px;margin:8px 0 2px;font-style:italic}\n' +
 '.hero .lecture{font-size:18px;font-style:italic;margin:8px 0 2px;color:var(--muted)}\n' +
@@ -1637,26 +1705,27 @@ function generateWebProgram() {
 '.entry-indent-right{display:flex;justify-content:space-between;gap:14px;padding-left:18px;font-size:16px;margin-top:2px}\n' +
 '.entry-lyr{font-size:13px;color:var(--muted)}\n' +
 '.entry-perf{text-align:center;font-size:15px;margin-top:4px}\n' +
-'.interm{text-align:center;font-family:Arial,sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:26px 0;font-weight:700}\n' +
+'.interm{text-align:center;font-family:Arial,sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-ink);margin:26px 0;font-weight:700}\n' +
 'details{border:1px solid var(--line);border-radius:10px;margin:0 0 12px;background:var(--surface);overflow:hidden}\n' +
 'summary{cursor:pointer;list-style:none;padding:16px 18px;min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:700;font-size:17px;color:var(--brand-ink)}\n' +
 'summary::-webkit-details-marker{display:none}\n' +
-'summary .chev{transition:transform .2s;color:var(--accent);font-size:18px;flex:0 0 auto}\n' +
+'summary .chev{transition:transform .2s;color:var(--accent-ink);font-size:18px;flex:0 0 auto}\n' +
 'details[open] summary .chev{transform:rotate(90deg)}\n' +
 '.acc-body{padding:0 18px 18px;font-size:16px}\n' +
 '.acc-body p{margin:0 0 12px}\n' +
 '.acc-body p:last-child{margin-bottom:0}\n' +
 '.btn{display:block;text-align:center;text-decoration:none;font-family:Arial,sans-serif;font-weight:700;font-size:16px;padding:15px 16px;border-radius:10px;margin:0 0 12px;min-height:52px}\n' +
 '.btn-primary{background:var(--accent);color:#1a1a1a}\n' +
-'.btn-outline{border:1.5px solid var(--line);color:var(--brand-ink)}\n' +
+'.btn-outline{border:1.5px solid var(--btn-line);color:var(--brand-ink)}\n' +
 '.support p{font-size:15px;color:var(--muted)}\n' +
 '.fine{font-size:14px;color:var(--muted);text-align:center}\n' +
 '.fine p{margin:8px 0}\n' +
 'footer{text-align:center;padding:30px 20px 50px;color:var(--muted);font-size:13px}\n' +
 'footer .crest{font-family:Arial,sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-ink);font-size:13px}\n' +
+'@media (prefers-reduced-motion: reduce){*{transition:none!important}}\n' +
 '</style>\n</head>\n<body>\n' +
 '<header><div class="bar"><span class="school">UMKC Conservatory</span>' +
-'<button class="toggle" id="themeBtn" aria-label="Toggle dark mode">☀️ Light</button></div>' +
+'<button class="toggle" id="themeBtn" aria-pressed="true"><span id="themeIcon" aria-hidden="true">🌙</span> Dark mode</button></div>' +
 '<nav>' + nav + '</nav></header>\n' +
 '<main>\n' +
 '<div class="hero" id="top"><p class="kicker">' + esc(kicker) + '</p>' +
@@ -1673,14 +1742,17 @@ notesHtml + bioHtml +
 '<footer><p class="crest">UMKC Conservatory</p>' +
 '<p>4949 Cherry Street · Kansas City, MO · conservatory.umkc.edu</p></footer>\n' +
 '<script>\n' +
-'(function(){var root=document.documentElement;var btn=document.getElementById("themeBtn");var saved=null;' +
+'(function(){var root=document.documentElement;var btn=document.getElementById("themeBtn");var icon=document.getElementById("themeIcon");var saved=null;' +
 'try{saved=localStorage.getItem("umkc-theme");}catch(e){}' +
-'function setTheme(t){if(t==="dark"){root.setAttribute("data-theme","dark");btn.textContent="☀️ Light";}' +
-'else{root.removeAttribute("data-theme");btn.textContent="🌙 Dark";}try{localStorage.setItem("umkc-theme",t);}catch(e){}}' +
+// Toggle-button pattern: the accessible name stays "Dark mode"; only the
+// pressed state and the decorative icon change with the theme.
+'function setTheme(t){if(t==="dark"){root.setAttribute("data-theme","dark");btn.setAttribute("aria-pressed","true");icon.textContent="🌙";}' +
+'else{root.removeAttribute("data-theme");btn.setAttribute("aria-pressed","false");icon.textContent="☀️";}try{localStorage.setItem("umkc-theme",t);}catch(e){}}' +
 'setTheme(saved==="light"?"light":"dark");' +
 'btn.addEventListener("click",function(){setTheme(root.getAttribute("data-theme")==="dark"?"light":"dark");});' +
+'var noMotion=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;' +
 'document.querySelectorAll("nav a").forEach(function(a){a.addEventListener("click",function(e){' +
-'var el=document.querySelector(a.getAttribute("href"));if(el){e.preventDefault();el.scrollIntoView({behavior:"smooth"});}});});' +
+'var el=document.querySelector(a.getAttribute("href"));if(el){e.preventDefault();el.scrollIntoView({behavior:noMotion?"auto":"smooth"});}});});' +
 '})();\n' +
 '<\/script>\n</body>\n</html>';
 
@@ -1693,27 +1765,50 @@ notesHtml + bioHtml +
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+  announce('Digital Program downloaded');
 }
 
 // ════════════════════════════════════════════════════════════════
 //  Faculty Email Modal
 // ════════════════════════════════════════════════════════════════
+// Element that opened the modal — focus returns here on close
+let modalOpener = null;
+
+function setBackgroundInert(on) {
+  ['header', 'main', 'footer'].forEach(sel => {
+    const el = document.querySelector(sel);
+    if (!el) return;
+    if (on) { el.setAttribute('inert', ''); el.setAttribute('aria-hidden', 'true'); }
+    else    { el.removeAttribute('inert');  el.removeAttribute('aria-hidden'); }
+  });
+}
+
 function openFacultyEmailModal() {
   if (programEntries.filter(e => e.type === 'entry').length === 0) {
     alert('Add at least one program entry before submitting.');
     return;
   }
+  modalOpener = document.activeElement;
   const modal = document.getElementById('faculty-email-modal');
   if (modal) modal.style.display = 'flex';
+  setBackgroundInert(true);
   const input = document.getElementById('faculty-email-input');
-  if (input) { input.value = ''; input.focus(); }
+  if (input) {
+    input.value = '';
+    input.classList.remove('field-error');
+    input.removeAttribute('aria-invalid');
+    input.focus();
+  }
   const val = document.getElementById('faculty-email-val');
-  if (val) val.style.display = 'none';
+  if (val) val.classList.remove('show');
 }
 
 function closeFacultyEmailModal() {
   const modal = document.getElementById('faculty-email-modal');
   if (modal) modal.style.display = 'none';
+  setBackgroundInert(false);
+  if (modalOpener && document.contains(modalOpener)) modalOpener.focus();
+  modalOpener = null;
 }
 
 async function submitToFaculty() {
@@ -1721,11 +1816,23 @@ async function submitToFaculty() {
   const valEl   = document.getElementById('faculty-email-val');
   const email   = (emailEl?.value || '').trim();
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    if (valEl) valEl.style.display = 'block';
-    if (emailEl) emailEl.focus();
+    if (valEl) {
+      // Un-hide first, then set the text — role="alert" announces on text injection
+      valEl.classList.add('show');
+      valEl.textContent = '⚠ Please enter a valid email address.';
+    }
+    if (emailEl) {
+      emailEl.classList.add('field-error');
+      emailEl.setAttribute('aria-invalid', 'true');
+      emailEl.focus();
+    }
     return;
   }
-  if (valEl) valEl.style.display = 'none';
+  if (valEl) valEl.classList.remove('show');
+  if (emailEl) {
+    emailEl.classList.remove('field-error');
+    emailEl.removeAttribute('aria-invalid');
+  }
   closeFacultyEmailModal();
 
   // Fire mailto synchronously while still inside the user-gesture context.
@@ -1862,22 +1969,35 @@ function advanceFromRecitalDetails() {
   ];
   const missing = required.filter(f => !recitalDetails[f.key]?.trim());
   const valEl = document.getElementById('rd-validation');
-  if (missing.length) {
-    if (valEl) {
-      valEl.textContent = 'Please fill in: ' + missing.map(f => f.label).join(', ');
-      valEl.style.display = 'block';
-    }
-    // Highlight the first missing field
-    const firstEl = document.getElementById(missing[0].id);
-    if (firstEl) { firstEl.focus(); firstEl.style.borderColor = 'var(--warn-border)'; }
-    return;
-  }
-  if (valEl) valEl.style.display = 'none';
-  // Clear any red borders
+  // Clear previous error flags before re-validating
   required.forEach(f => {
     const el = document.getElementById(f.id);
-    if (el) el.style.borderColor = '';
+    if (el) {
+      el.classList.remove('field-error');
+      el.removeAttribute('aria-invalid');
+      el.removeAttribute('aria-describedby');
+    }
   });
+  if (missing.length) {
+    if (valEl) {
+      // Un-hide first, then set the text — role="alert" announces on text injection
+      valEl.classList.add('show');
+      valEl.textContent = '⚠ Please fill in: ' + missing.map(f => f.label).join(', ');
+    }
+    // Flag every missing field, focus the first
+    missing.forEach(f => {
+      const el = document.getElementById(f.id);
+      if (el) {
+        el.classList.add('field-error');
+        el.setAttribute('aria-invalid', 'true');
+        el.setAttribute('aria-describedby', 'rd-validation');
+      }
+    });
+    const firstEl = document.getElementById(missing[0].id);
+    if (firstEl) firstEl.focus();
+    return;
+  }
+  if (valEl) valEl.classList.remove('show');
   goToScreen('relationship');
 }
 
@@ -1916,7 +2036,7 @@ function renderProgramList() {
     if (e.type === 'intermission') {
       return `<div class="intermission-marker">
         <span>— INTERMISSION —</span>
-        <button class="remove-btn" onclick="removeIntermission(${i})" title="Remove intermission">✕</button>
+        <button class="remove-btn" onclick="removeIntermission(${i})" aria-label="Remove intermission">✕</button>
       </div>`;
     }
     // Find the entry index among entries only (for display)
@@ -1925,9 +2045,9 @@ function renderProgramList() {
       <div class="program-entry-card">
         <div class="program-entry-content">${e.html}</div>
         <div class="program-entry-actions">
-          <button onclick="editProgramEntry(${i})">✏ Edit</button>
-          <button class="add-intermission-btn" onclick="addIntermissionAfter(${i})" title="Add intermission after this piece">+ Intermission</button>
-          <button class="remove-btn" onclick="deleteProgramEntry(${i})">✕ Remove</button>
+          <button onclick="editProgramEntry(${i})" aria-label="Edit entry ${entryNum}"><span aria-hidden="true">✏</span> Edit</button>
+          <button class="add-intermission-btn" onclick="addIntermissionAfter(${i})" aria-label="Add intermission after entry ${entryNum}" title="Add intermission after this piece">+ Intermission</button>
+          <button class="remove-btn" onclick="deleteProgramEntry(${i})" aria-label="Remove entry ${entryNum}"><span aria-hidden="true">✕</span> Remove</button>
         </div>
       </div>
     `;
@@ -2508,6 +2628,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('faculty-email-modal');
   if (modal) modal.addEventListener('click', e => { if (e.target === modal) closeFacultyEmailModal(); });
 
+  // Modal keyboard support: Escape closes; Tab is trapped inside the dialog
+  if (modal) modal.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { e.preventDefault(); closeFacultyEmailModal(); return; }
+    if (e.key !== 'Tab') return;
+    const tabbables = Array.from(modal.querySelectorAll('input, button, select, textarea, a[href]'))
+      .filter(el => !el.disabled && el.offsetParent !== null);
+    if (!tabbables.length) return;
+    const first = tabbables[0];
+    const last  = tabbables[tabbables.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  // Typing in a field flagged by validation clears its error state
+  document.addEventListener('input', e => {
+    const t = e.target;
+    if (t && t.classList && t.classList.contains('field-error')) {
+      t.classList.remove('field-error');
+      t.removeAttribute('aria-invalid');
+    }
+  });
+
   // Track manual edits on the result screen so Add to program / Save keeps them
   const resultOut = document.getElementById('result-output');
   if (resultOut) resultOut.addEventListener('input', () => { resultEdited = true; });
@@ -2562,6 +2704,7 @@ function saveDraftToFile() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+  announce('Project file downloaded');
 }
 
 // ── Load Draft from a .json file (e.g. to continue on another device) ──
@@ -2977,6 +3120,8 @@ function injectSpellStatus(id, container) {
   const div = document.createElement('div');
   div.className = 'spell-status';
   div.id = 'spell-status-' + id;
+  // Polite live region — announced when the flagged-word list actually changes
+  div.setAttribute('role', 'status');
   container.appendChild(div);
 }
 
@@ -3022,65 +3167,93 @@ function updateBackdrop(id, tokens, contextDicts) {
   bd.scrollTop = ta.scrollTop;
 }
 
+// Last-rendered flagged-word list per field — the spell check runs every 450ms
+// while typing; without this guard the live region would chatter on every run
+const spellStatusCache = {};
+
 function updateSpellStatus(id, errors) {
   const el = document.getElementById('spell-status-' + id);
   if (!el) return;
-  if (!errors.length) { el.innerHTML = ''; return; }
   const unique = [...new Set(errors)];
+  const key = unique.join(' ');
+  if (spellStatusCache[id] === key) return;
+  spellStatusCache[id] = key;
+  if (!unique.length) { el.innerHTML = ''; return; }
   el.innerHTML = '⚠ Possible spelling: ' +
     unique.map(w =>
-      `<span class="spell-word" tabindex="0"
+      `<button type="button" class="spell-word"
         onclick="showSpellSuggestions(event,'${escSC(w)}','${id}')"
-        onkeydown="if(event.key==='Enter')showSpellSuggestions(event,'${escSC(w)}','${id}')"
-      >${escSC(w)}</span>`
+      >${escSC(w)}</button>`
     ).join(', ');
 }
 
 // ── Suggestion popup ───────────────────────────────────────────
 let activeSuggPopup = null;
+let spellPopupInvoker = null; // spell-word button that opened the popup
 
 function showSpellSuggestions(evt, word, fieldId) {
-  hideSpellSuggestions();
+  hideSpellSuggestions(false);
+  spellPopupInvoker = evt.currentTarget || evt.target;
   const suggestions = spellSuggest(word);
   const pop = document.createElement('div');
   pop.className = 'spell-suggestions';
   pop.id = 'spell-popup';
+  pop.setAttribute('role', 'menu');
+  pop.setAttribute('aria-label', 'Spelling suggestions for ' + word);
+
+  const addItem = (label, cls, action) => {
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'spell-suggestion-item' + (cls ? ' ' + cls : '');
+    item.setAttribute('role', 'menuitem');
+    item.textContent = label;
+    item.onclick = action;
+    pop.appendChild(item);
+  };
 
   if (suggestions.length) {
-    suggestions.forEach(s => {
-      const item = document.createElement('div');
-      item.className = 'spell-suggestion-item';
-      item.textContent = s;
-      item.onclick = () => { applySpellSuggestion(word, s, fieldId); hideSpellSuggestions(); };
-      pop.appendChild(item);
-    });
+    suggestions.forEach(s => addItem(s, '', () => {
+      applySpellSuggestion(word, s, fieldId);
+      hideSpellSuggestions(false);
+      // The invoking button is re-rendered away once the word is fixed —
+      // return focus to the corrected field instead
+      const f = document.getElementById(fieldId);
+      if (f) f.focus();
+    }));
   } else {
-    const noSugg = document.createElement('div');
-    noSugg.className = 'spell-suggestion-item ignore';
-    noSugg.textContent = 'No suggestions';
-    pop.appendChild(noSugg);
+    addItem('No suggestions', 'ignore', () => hideSpellSuggestions(true));
   }
-  const ign = document.createElement('div');
-  ign.className = 'spell-suggestion-item ignore';
-  ign.textContent = 'Ignore';
-  ign.onclick = hideSpellSuggestions;
-  pop.appendChild(ign);
+  addItem('Ignore', 'ignore', () => hideSpellSuggestions(true));
+
+  // Arrow keys cycle the menu; Escape closes and restores focus
+  pop.addEventListener('keydown', e => {
+    const items = Array.from(pop.querySelectorAll('.spell-suggestion-item'));
+    const idx = items.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown')      { e.preventDefault(); items[(idx + 1) % items.length].focus(); }
+    else if (e.key === 'ArrowUp')   { e.preventDefault(); items[(idx - 1 + items.length) % items.length].focus(); }
+    else if (e.key === 'Escape')    { e.preventDefault(); e.stopPropagation(); hideSpellSuggestions(true); }
+  });
 
   document.body.appendChild(pop);
   activeSuggPopup = pop;
 
   // Position near the clicked word
-  const rect = evt.target.getBoundingClientRect();
+  const rect = (evt.currentTarget || evt.target).getBoundingClientRect();
   pop.style.left = Math.min(rect.left, window.innerWidth - 160) + 'px';
   pop.style.top  = (rect.bottom + 4) + 'px';
 
-  // Close on outside click
-  setTimeout(() => document.addEventListener('click', hideSpellSuggestions, { once: true }), 10);
+  const firstItem = pop.querySelector('.spell-suggestion-item');
+  if (firstItem) firstItem.focus();
+
+  // Close on outside click (no focus restore — the user clicked elsewhere)
+  setTimeout(() => document.addEventListener('click', () => hideSpellSuggestions(false), { once: true }), 10);
   evt.stopPropagation();
 }
 
-function hideSpellSuggestions() {
+function hideSpellSuggestions(restoreFocus) {
   if (activeSuggPopup) { activeSuggPopup.remove(); activeSuggPopup = null; }
+  if (restoreFocus && spellPopupInvoker && document.contains(spellPopupInvoker)) spellPopupInvoker.focus();
+  spellPopupInvoker = null;
 }
 
 function applySpellSuggestion(original, replacement, fieldId) {

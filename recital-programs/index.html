@@ -4,9 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recital Program Generator — UMKC Conservatory</title>
-  <link rel="stylesheet" href="styles.css?v=5af79e24">
+  <link rel="stylesheet" href="styles.css?v=ff43e099">
 </head>
 <body class="on-welcome">
+
+<a class="skip-link" href="#main">Skip to main content</a>
 
 <header>
   <div class="org">UMKC Conservatory</div>
@@ -14,7 +16,7 @@
 </header>
 <div class="header-accent-bar"></div>
 
-<div class="app-body">
+<main id="main" class="app-body">
 
   <!-- ── Wizard column ───────────────────────────────────── -->
   <div id="wizard-col">
@@ -37,12 +39,12 @@
     </div>
 
     <!-- ── Welcome ──────────────────────────────────────── -->
-    <section id="screen-welcome" class="screen active" aria-label="Welcome">
+    <section id="screen-welcome" class="screen active">
       <div class="card">
-        <p class="welcome-title">UMKC Conservatory Recital Program Generator</p>
+        <h2 class="welcome-title" tabindex="-1">UMKC Conservatory Recital Program Generator</h2>
         <p class="welcome-body">Create a polished digital program for your recital — formatted to Conservatory standards, approved by your faculty, and published to the Conservatory’s online event calendar for your audience to open on their phones. No printing, no folding.</p>
         <button class="btn-primary" id="btn-start" onclick="goToScreen('recital-details')">Get Started →</button>
-        <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="triggerLoadDraft()">📂 Continue from a saved file</button>
+        <button class="btn-secondary" style="margin-top:0.5rem;width:100%" onclick="triggerLoadDraft()"><span aria-hidden="true">📂</span> Continue from a saved file</button>
         <hr class="welcome-divider">
 
         <div class="how-it-works">
@@ -78,17 +80,18 @@
     </section>
 
     <!-- ── Recital Details ───────────────────────────────── -->
-    <section id="screen-recital-details" class="screen" aria-label="Recital Details">
+    <section id="screen-recital-details" class="screen">
       <div class="card">
-        <p class="question">Recital Details
+        <h2 class="question" tabindex="-1">Recital Details
           <span class="question-sub">Fill in the event and studio information. This appears on the cover and program header.</span>
-        </p>
+          <span class="question-sub">Fields marked <span aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required.</span>
+        </h2>
 
         <div class="rd-section-label">Event Information</div>
         <div class="field-group">
           <div class="field">
-            <label for="rd-type">Type of recital</label>
-            <select id="rd-type" onchange="updateRD('recitalType', this.value)">
+            <label for="rd-type">Type of recital <span class="req" aria-hidden="true">*</span></label>
+            <select id="rd-type" required aria-required="true" onchange="updateRD('recitalType', this.value)">
               <option value="">— Select —</option>
               <optgroup label="Degree Recitals">
                 <option>Doctoral Recital</option>
@@ -129,12 +132,12 @@
             </div>
           </div>
           <div class="field">
-            <label for="rd-date">Date</label>
-            <input type="date" id="rd-date" onchange="onDatePick(this.value)">
+            <label for="rd-date">Date <span class="req" aria-hidden="true">*</span></label>
+            <input type="date" id="rd-date" required aria-required="true" onchange="onDatePick(this.value)">
           </div>
           <div class="field">
-            <label for="rd-venue">Venue</label>
-            <select id="rd-venue" onchange="onVenueSelect(this.value)">
+            <label for="rd-venue">Venue <span class="req" aria-hidden="true">*</span></label>
+            <select id="rd-venue" required aria-required="true" onchange="onVenueSelect(this.value)">
               <option value="">Select a venue…</option>
               <option>Grant Recital Hall</option>
               <option>White Recital Hall</option>
@@ -151,8 +154,8 @@
         <div class="field-group">
           <div class="field-row">
             <div class="field">
-              <label for="rd-name">Your name (as printed)</label>
-              <input type="text" spellcheck="true" id="rd-name" placeholder="e.g. Michael Brown"
+              <label for="rd-name">Your name (as printed) <span class="req" aria-hidden="true">*</span></label>
+              <input type="text" spellcheck="true" id="rd-name" placeholder="e.g. Michael Brown" required aria-required="true"
                      oninput="updateRD('performerName', this.value)">
             </div>
             <div class="field">
@@ -264,7 +267,7 @@
           </div>
         </div>
 
-        <div class="validation-msg" id="rd-validation" style="display:none"></div>
+        <div class="validation-msg" id="rd-validation" role="alert"></div>
         <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap">
           <button class="btn-back" id="btn-rd-back" style="display:none" onclick="goBack()">← Back</button>
           <button class="btn-primary" onclick="advanceFromRecitalDetails()">Continue to Program →</button>
@@ -273,12 +276,12 @@
     </section>
 
     <!-- ── Screen 2: Relationship ────────────────────────── -->
-    <section id="screen-relationship" class="screen" aria-label="Step: Work type">
-      <div class="progress" aria-label="Progress">
+    <section id="screen-relationship" class="screen">
+      <div class="progress">
         <div class="progress-steps" id="progress-relationship"></div>
       </div>
       <div class="card">
-        <p class="question">What kind of entry is this?</p>
+        <h2 class="question" tabindex="-1">What kind of entry is this?</h2>
         <div class="option-list" role="radiogroup" aria-label="Work type">
           <div class="option-item">
             <input type="radio" name="relationship" value="complete" id="rel-complete">
@@ -293,19 +296,20 @@
             </label>
           </div>
         </div>
+        <button class="btn-primary" onclick="continueRadioScreen('relationship')">Continue →</button>
       </div>
     </section>
 
     <!-- ── Screen 3A: Title type (complete work) ─────────── -->
-    <section id="screen-title-type" class="screen" aria-label="Step: Title type">
+    <section id="screen-title-type" class="screen">
       <button class="btn-back" onclick="goBack()">← Back</button>
-      <div class="progress" aria-label="Progress">
+      <div class="progress">
         <div class="progress-steps" id="progress-title-type"></div>
       </div>
       <div class="card">
-        <p class="question">How is this work identified?
+        <h2 class="question" tabindex="-1">How is this work identified?
           <span class="question-sub">This determines whether the title gets italics, quotation marks, or plain text.</span>
-        </p>
+        </h2>
         <div class="option-list" role="radiogroup" aria-label="Title type">
           <div class="option-item">
             <input type="radio" name="titleType" value="distinctive" id="tt-distinctive">
@@ -320,19 +324,20 @@
             </label>
           </div>
         </div>
+        <button class="btn-primary" onclick="continueRadioScreen('titleType')">Continue →</button>
       </div>
     </section>
 
     <!-- ── Screen 3A-2: Work size ───────────────────────── -->
-    <section id="screen-work-size" class="screen" aria-label="Step: Work size">
+    <section id="screen-work-size" class="screen">
       <button class="btn-back" onclick="goBack()">← Back</button>
-      <div class="progress" aria-label="Progress">
+      <div class="progress">
         <div class="progress-steps" id="progress-work-size"></div>
       </div>
       <div class="card">
-        <p class="question" id="ws-question">Is this a larger work, or a single short piece?
+        <h2 class="question" tabindex="-1" id="ws-question">Is this a larger work, or a single short piece?
           <span class="question-sub" id="ws-question-sub">Larger works get italics. Single short pieces get quotation marks.</span>
-        </p>
+        </h2>
         <div class="option-list" role="radiogroup" aria-label="Work size">
           <div class="option-item">
             <input type="radio" name="workSize" value="multi" id="ws-multi">
@@ -347,17 +352,18 @@
             </label>
           </div>
         </div>
+        <button class="btn-primary" onclick="continueRadioScreen('workSize')">Continue →</button>
       </div>
     </section>
 
     <!-- ── Screen 3B: Excerpt count ──────────────────────── -->
-    <section id="screen-excerpt-count" class="screen" aria-label="Step: Excerpt count">
+    <section id="screen-excerpt-count" class="screen">
       <button class="btn-back" onclick="goBack()">← Back</button>
-      <div class="progress" aria-label="Progress">
+      <div class="progress">
         <div class="progress-steps" id="progress-excerpt-count"></div>
       </div>
       <div class="card">
-        <p class="question">How many pieces are you performing from this larger work?</p>
+        <h2 class="question" tabindex="-1">How many pieces are you performing from this larger work?</h2>
         <div class="option-list" role="radiogroup" aria-label="Excerpt count">
           <div class="option-item">
             <input type="radio" name="excerptCount" value="one" id="ec-one">
@@ -372,17 +378,18 @@
             </label>
           </div>
         </div>
+        <button class="btn-primary" onclick="continueRadioScreen('excerptCount')">Continue →</button>
       </div>
     </section>
 
     <!-- ── Screen 4B: Parent work details ────────────────── -->
-    <section id="screen-parent-work" class="screen" aria-label="Step: Parent work">
+    <section id="screen-parent-work" class="screen">
       <button class="btn-back" onclick="goBack()">← Back</button>
-      <div class="progress" aria-label="Progress">
+      <div class="progress">
         <div class="progress-steps" id="progress-parent-work"></div>
       </div>
       <div class="card">
-        <p class="question">What is the larger work this comes from?</p>
+        <h2 class="question" tabindex="-1">What is the larger work this comes from?</h2>
         <div class="field-group">
           <div class="field">
             <label for="parent-title">Larger work title</label>
@@ -430,26 +437,26 @@
     </section>
 
     <!-- ── Screen 4B-2: Excerpt title(s) ─────────────────── -->
-    <section id="screen-excerpt-titles" class="screen" aria-label="Step: Excerpt titles">
+    <section id="screen-excerpt-titles" class="screen">
       <button class="btn-back" onclick="goBack()">← Back</button>
-      <div class="progress" aria-label="Progress">
+      <div class="progress">
         <div class="progress-steps" id="progress-excerpt-titles"></div>
       </div>
       <div class="card">
-        <p class="question" id="excerpt-titles-question">What piece(s) are you performing?</p>
+        <h2 class="question" tabindex="-1" id="excerpt-titles-question">What piece(s) are you performing?</h2>
         <div class="field-group" id="excerpt-titles-fields"></div>
         <button class="btn-primary" onclick="advanceFromExcerptTitles()">Continue →</button>
       </div>
     </section>
 
     <!-- ── Screen 4A: Work details (complete work) ────────── -->
-    <section id="screen-work-details" class="screen" aria-label="Step: Work details">
+    <section id="screen-work-details" class="screen">
       <button class="btn-back" onclick="goBack()">← Back</button>
-      <div class="progress" aria-label="Progress">
+      <div class="progress">
         <div class="progress-steps" id="progress-work-details"></div>
       </div>
       <div class="card">
-        <p class="question" id="work-details-question">Enter the work's title and details</p>
+        <h2 class="question" tabindex="-1" id="work-details-question">Enter the work's title and details</h2>
         <div class="field-group">
           <div class="field">
             <label for="work-title">Work title</label>
@@ -505,13 +512,13 @@
     </section>
 
     <!-- ── Screen 5: Composer ─────────────────────────────── -->
-    <section id="screen-composer" class="screen" aria-label="Step: Composer">
+    <section id="screen-composer" class="screen">
       <button class="btn-back" onclick="goBack()">← Back</button>
-      <div class="progress" aria-label="Progress">
+      <div class="progress">
         <div class="progress-steps" id="progress-composer"></div>
       </div>
       <div class="card">
-        <p class="question">Who composed this work?</p>
+        <h2 class="question" tabindex="-1">Who composed this work?</h2>
         <div class="field-group">
           <div class="field-row">
             <div class="field">
@@ -521,7 +528,7 @@
             </div>
             <div class="field">
               <label for="composer-last">Last name</label>
-              <input type="text" spellcheck="false" id="composer-last" placeholder="e.g. Debussy"
+              <input type="text" spellcheck="false" id="composer-last" placeholder="e.g. Debussy" aria-describedby="composer-val"
                      oninput="updateState('composerLast', this.value)">
             </div>
           </div>
@@ -561,21 +568,21 @@
             </div>
           </div>
         </div>
-        <div class="validation-msg" id="composer-val">Please enter at least the composer's last name.</div>
+        <div class="validation-msg" id="composer-val" role="alert">Please enter at least the composer's last name.</div>
         <button class="btn-primary" onclick="advanceFromComposer()">Continue →</button>
       </div>
     </section>
 
     <!-- ── Screen 6: Movements ────────────────────────────── -->
-    <section id="screen-movements" class="screen" aria-label="Step: Movements">
+    <section id="screen-movements" class="screen">
       <button class="btn-back" onclick="goBack()">← Back</button>
-      <div class="progress" aria-label="Progress">
+      <div class="progress">
         <div class="progress-steps" id="progress-movements"></div>
       </div>
       <div class="card">
-        <p class="question">List the movements or songs
+        <h2 class="question" tabindex="-1">List the movements or songs
           <span class="question-sub">Enter one movement per line, including the Roman numeral.</span>
-        </p>
+        </h2>
         <div class="field-group">
           <div class="field">
             <label for="movements-input">Movements / songs</label>
@@ -596,25 +603,25 @@
     </section>
 
     <!-- ── Screen 7: Credits (arrangement + performers + premiere) -->
-    <section id="screen-credits" class="screen" aria-label="Step: Additional credits">
+    <section id="screen-credits" class="screen">
       <button class="btn-back" onclick="goBack()">← Back</button>
       <div class="last-chance-banner">
         <strong>Last chance to make live changes.</strong>
         After this step, use the Edit button to correct text — but the live preview won't update.
       </div>
-      <div class="progress" aria-label="Progress">
+      <div class="progress">
         <div class="progress-steps" id="progress-credits"></div>
       </div>
       <div class="card">
-        <p class="question">Any additional credits or notes?
+        <h2 class="question" tabindex="-1">Any additional credits or notes?
           <span class="question-sub">All sections below are optional. Skip any that don't apply.</span>
-        </p>
+        </h2>
 
         <!-- Arrangement -->
         <div class="credits-section">
-          <button type="button" class="credits-header" id="arr-header" onclick="toggleCredits('arr')">
+          <button type="button" class="credits-header" id="arr-header" aria-expanded="false" aria-controls="arr-body" onclick="toggleCredits('arr')">
             Arrangement or transcription
-            <span class="credits-arrow">▶</span>
+            <span class="credits-arrow" aria-hidden="true">▶</span>
           </button>
           <div class="credits-body" id="arr-body">
             <div class="field-group" style="margin-bottom:0">
@@ -640,9 +647,9 @@
 
         <!-- Per-piece performers -->
         <div class="credits-section">
-          <button type="button" class="credits-header" id="perf-header" onclick="toggleCredits('perf')">
+          <button type="button" class="credits-header" id="perf-header" aria-expanded="false" aria-controls="perf-body" onclick="toggleCredits('perf')">
             Per-piece performers
-            <span class="credits-arrow">▶</span>
+            <span class="credits-arrow" aria-hidden="true">▶</span>
           </button>
           <div class="credits-body" id="perf-body">
             <div class="field-group" style="margin-bottom:0">
@@ -659,9 +666,9 @@
 
         <!-- Premiere note -->
         <div class="credits-section">
-          <button type="button" class="credits-header" id="prem-header" onclick="toggleCredits('prem')">
+          <button type="button" class="credits-header" id="prem-header" aria-expanded="false" aria-controls="prem-body" onclick="toggleCredits('prem')">
             World premiere or first performance
-            <span class="credits-arrow">▶</span>
+            <span class="credits-arrow" aria-hidden="true">▶</span>
           </button>
           <div class="credits-body" id="prem-body">
             <div class="field-group" style="margin-bottom:0">
@@ -681,9 +688,10 @@
     </section>
 
     <!-- ── Screen 8: Result ───────────────────────────────── -->
-    <section id="screen-result" class="screen" aria-label="Result: Formatted entry">
+    <section id="screen-result" class="screen">
       <button class="btn-back" onclick="returnToEditing()">← Edit this entry</button>
       <div class="card">
+        <h2 class="visually-hidden" tabindex="-1">Formatted entry</h2>
         <p class="result-intro" id="result-intro-text">Review the formatted entry below. Click <strong>Add to program</strong> to save it and format the next piece.</p>
         <div class="result-preview-card">
           <div class="result-preview-label">Formatted Entry</div>
@@ -700,7 +708,7 @@
           <button class="btn-primary" onclick="saveProgramEntry()">Save changes</button>
         </div>
         <div style="margin-top:0.5rem;text-align:center">
-          <button class="btn-link" onclick="startOver()">↺ Start over</button>
+          <button class="btn-link" onclick="startOver()"><span aria-hidden="true">↺</span> Start over</button>
         </div>
       </div>
     </section>
@@ -715,7 +723,10 @@
         Live Preview
         <span id="preview-status">Start answering questions →</span>
       </div>
-      <div id="preview-output" class="placeholder" aria-live="polite" aria-label="Live preview of formatted entry">
+      <!-- Deliberately NOT aria-live: it re-renders on every keystroke, which
+           would make screen readers unusable. The Result screen presents the
+           final formatted entry for review instead. -->
+      <div id="preview-output" class="placeholder" aria-label="Live preview of formatted entry">
 Your formatted entry will appear here as you fill in the wizard.
       </div>
     </div>
@@ -732,7 +743,7 @@ Your formatted entry will appear here as you fill in the wizard.
         <span class="program-panel-label">PROGRAM <span id="entry-count"></span></span>
         <button class="btn-secondary-sm" onclick="clearProgram()">Clear all</button>
       </div>
-      <button class="btn-secondary-sm" style="width:100%;margin-bottom:0.5rem" onclick="goToScreen('recital-details')">✎ Edit Recital Details</button>
+      <button class="btn-secondary-sm" style="width:100%;margin-bottom:0.5rem" onclick="goToScreen('recital-details')"><span aria-hidden="true">✎</span> Edit Recital Details</button>
       <div id="program-list"></div>
       <div class="program-footer">
         <!-- Legacy / staff-side outputs hidden from students. Functionality retained on the
@@ -744,13 +755,13 @@ Your formatted entry will appear here as you fill in the wizard.
         <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="openFacultyEmailModal()" title="Email the faculty proof to your faculty member for review">✉ Send to Faculty</button>
 
         <!-- STEP 1 — Save your work. This IS your file: reload it later, and send it to staff once approved. -->
-        <button class="btn-primary btn-download" onclick="saveDraftToFile()" title="Your save file. Reload it later, and send it to staff to publish.">💾 Save Progress (project file)</button>
+        <button class="btn-primary btn-download" onclick="saveDraftToFile()" title="Your save file. Reload it later, and send it to staff to publish."><span aria-hidden="true">💾</span> Save Progress (project file)</button>
         <p class="footer-hint">
           <strong>This is your save file.</strong> Keep it to continue later (reload via <em>Continue from a saved file</em> on the start screen), and send this same file to the Dean's Office staff once your program is approved. Your work also auto-saves in this browser.
         </p>
 
         <!-- STEP 2 — Faculty proof (review only) -->
-        <button class="btn-secondary" style="width:100%;margin-top:0.75rem" onclick="generateDoc()" title="A Word proof for your faculty member to review">📄 Download Faculty Proof (.doc)</button>
+        <button class="btn-secondary" style="width:100%;margin-top:0.75rem" onclick="generateDoc()" title="A Word proof for your faculty member to review"><span aria-hidden="true">📄</span> Download Faculty Proof (.doc)</button>
         <p class="footer-hint">
           Send this to your faculty member for review. They <strong>comment</strong> on it — you make the actual changes here in the tool, then re-save your project file. Don't reload from the proof.
         </p>
@@ -765,11 +776,17 @@ Your formatted entry will appear here as you fill in the wizard.
   <!-- Hidden file input for "Continue from a File" — program file (.doc) or .json draft -->
   <input type="file" id="load-draft-input" accept=".doc,.docx,.json,application/msword,application/json" style="display:none" onchange="loadDraftFromFile(this)">
 
-</div><!-- /app-body -->
+</main><!-- /app-body -->
+
+<!-- Screen-reader status announcements (copy confirmations, downloads) -->
+<div id="sr-status" class="visually-hidden" role="status" aria-live="polite"></div>
 
 <footer>
   UMKC Conservatory Dean's Office &nbsp;·&nbsp; Recital Program Generator
   &nbsp;·&nbsp; <button class="footer-clear-btn" onclick="startOver()" title="Clear all saved session data from this browser">Clear saved data</button>
+  <p class="footer-a11y">This tool aims to conform to WCAG 2.1 Level AA (UM System CRR 600.090).
+    Experiencing a barrier? Email <a href="mailto:conservatory@umkc.edu">conservatory@umkc.edu</a>.
+    <!-- TODO: confirm barrier-report address before umkc.edu migration --></p>
 </footer>
 
 <!-- ── Faculty Email Modal ──────────────────────────────────── -->
@@ -788,8 +805,8 @@ Your formatted entry will appear here as you fill in the wizard.
     <div class="field" style="margin-bottom:1rem">
       <label for="faculty-email-input">Faculty email address</label>
       <input type="email" id="faculty-email-input" placeholder="e.g. professor@umkc.edu"
-             spellcheck="false" autocomplete="email">
-      <div class="validation-msg" id="faculty-email-val" style="display:none;margin-top:0.5rem">Please enter a valid email address.</div>
+             spellcheck="false" autocomplete="email" aria-describedby="faculty-email-val">
+      <div class="validation-msg" id="faculty-email-val" role="alert" style="margin-top:0.5rem">Please enter a valid email address.</div>
     </div>
     <div class="btn-row" style="margin-top:0">
       <button class="btn-secondary" onclick="closeFacultyEmailModal()">Cancel</button>
@@ -799,7 +816,7 @@ Your formatted entry will appear here as you fill in the wizard.
 </div>
 
 <script src="typo.js"></script>
-<script src="app.js?v=63868a30"></script>
+<script src="app.js?v=55b8825f"></script>
 
 </body>
 </html>
