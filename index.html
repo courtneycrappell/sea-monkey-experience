@@ -148,6 +148,43 @@
               </button>
             </div>
 
+            <div id="suiteEasterEgg" class="suiteEasterEgg" aria-label="Hidden music project">
+              <section id="suitePanel" class="suitePanel" aria-hidden="true">
+                <div class="suitePanelInner">
+                  <div class="suiteLabel">A Suite in Style</div>
+                  <div class="suiteTransport" aria-label="Suite playback controls">
+                    <button id="suitePrevBtn" class="flightCtl" type="button" aria-label="Previous movement">◀</button>
+                    <button id="suitePlayBtn" class="flightCtl flightPlayBtn" type="button" aria-label="Play or pause">play</button>
+                    <button id="suiteNextBtn" class="flightCtl" type="button" aria-label="Next movement">▶</button>
+                    <button id="suiteCloseBtn" class="flightCtl flightCloseBtn" type="button" aria-label="Close panel">close</button>
+                  </div>
+                  <div class="flightMetaRow">
+                    <div id="suiteTrackIndicator" class="flightTrackIndicator" aria-live="polite">movement 01 / 04</div>
+                  </div>
+                  <input id="suiteProgress" class="flightProgress" type="range" min="0" max="1" step="0.001" value="0" aria-label="Movement progress" />
+                  <ol id="suiteTrackList" class="suiteTrackList" aria-label="Movements"></ol>
+                  <div class="suitePanelAbout">
+                    <h2 class="suiteAboutTitle">About the Work</h2>
+                    <p class="suiteAboutMeta">Courtney Crappell (b. 1977)<br>A Suite in Style: Four Arrangements of Children's Songs, c. 2014–2016<br>Four piano miniatures on children's folk tunes, composed in the styles of Bartók, Debussy, Prokofiev, and Ginastera</p>
+                    <p class="suiteAboutText">Every child knows these tunes. Twinkle, Twinkle. London Bridge. The Itsy Bitsy Spider. Pop! Goes the Weasel. In this suite I hand each one to a different twentieth-century composer and let them reshape it in their own voice.</p>
+                    <p class="suiteAboutText">But there's a second tune hiding in each piece. As the nursery melody plays on top, the composer's own music surfaces underneath. These are real quotations, fragments of the composer's best-known works woven into the harmony and the accompaniment, so two familiar things sound at once: the song every child knows, and the masterwork threaded beneath it. Bartók sets Twinkle over the drive of his folk dances. Debussy floats London Bridge through the haze of his préludes. Prokofiev marches the spider up the spout with his sharp-edged wit. Ginastera sends the weasel home on the pulse of his malambo.</p>
+                    <p class="suiteAboutText">The idea is simple. When a student already knows the melody, they can stop hunting for the tune and start listening for the style. A familiar song becomes a doorway into a composer's sound-world, one they'll meet again later in harder repertoire. It's the same thing Bartók did in For Children and the Mikrokosmos, folk songs as a way in.</p>
+                    <a class="suiteFullScore" href="./assets/style-suite/scores/SuiteInStyle_full.pdf" target="_blank" rel="noopener noreferrer">view full score (PDF)</a>
+                  </div>
+                </div>
+              </section>
+
+              <button id="suiteTrigger" class="suiteTrigger" type="button" aria-label="Open A Suite in Style">
+                <svg class="suiteSvg" viewBox="0 0 220 192" role="img" aria-hidden="true">
+                  <ellipse cx="62" cy="150" rx="24" ry="17" transform="rotate(-18 62 150)"/>
+                  <ellipse cx="156" cy="132" rx="24" ry="17" transform="rotate(-18 156 132)"/>
+                  <line x1="84" y1="146" x2="84" y2="54"/>
+                  <line x1="178" y1="128" x2="178" y2="36"/>
+                  <path d="M80 50 L182 32 L182 54 L80 72 Z"/>
+                </svg>
+              </button>
+            </div>
+
             <a id="pianoLink" class="pianoLink" href="https://courtneycrappell.com/findpianoworks/" target="_blank" rel="noopener noreferrer" aria-label="Find Piano Works">
               <svg class="pianoSvg" viewBox="0 12 220 220" role="img" aria-hidden="true">
                 <path d="M38 168 L38 52 L168 52 Q192 52 192 82 Q188 148 155 175 Q128 192 88 188 Q62 185 38 168 Z" />

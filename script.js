@@ -105,6 +105,18 @@ const heartTrigger = document.getElementById("heartTrigger");
 const heartCloseBtn = document.getElementById("heartCloseBtn");
 const heartIframe = document.getElementById("heartIframe");
 
+/* Suite easter egg DOM */
+const suiteEasterEgg = document.getElementById("suiteEasterEgg");
+const suitePanel = document.getElementById("suitePanel");
+const suiteTrigger = document.getElementById("suiteTrigger");
+const suitePrevBtn = document.getElementById("suitePrevBtn");
+const suitePlayBtn = document.getElementById("suitePlayBtn");
+const suiteNextBtn = document.getElementById("suiteNextBtn");
+const suiteCloseBtn = document.getElementById("suiteCloseBtn");
+const suiteTrackIndicator = document.getElementById("suiteTrackIndicator");
+const suiteProgress = document.getElementById("suiteProgress");
+const suiteTrackListEl = document.getElementById("suiteTrackList");
+
 /* ---------------------------
    Globals
 ----------------------------*/
@@ -155,6 +167,21 @@ let bulbModeOpen = false;
 /* Heart panel */
 const HEART_VIDEO_SRC = "https://www.youtube.com/embed/0MzL03PqHH4";
 let heartModeOpen = false;
+
+/* Suite panel ("A Suite in Style") — audio player with per-movement scores */
+const SUITE_ASSET_BASE = "./assets/style-suite/";
+const SUITE_TRACKS = [
+  { title: "Twinkling Variations", style: "in the style of Bartók", audio: "audio/1_TwinklingVariations_Bartok.mp3", score: "scores/Bartok.pdf" },
+  { title: "The Bridge Is Falling", style: "in the style of Debussy", audio: "audio/2_BridgeIsFalling_Debussy.mp3", score: "scores/Debussy.pdf" },
+  { title: "Dancing Up the Spout", style: "in the style of Prokofiev", audio: "audio/3_DancingRoundTheSpout_Prokofiev.mp3", score: "scores/Prokofiev.pdf" },
+  { title: "'Round the Cobbler's Bench", style: "in the style of Ginastera", audio: "audio/4_Round_The_Cobbers_Bench.mp3", score: "scores/Ginastera.pdf" }
+];
+let suiteAudio = null;
+let suiteModeOpen = false;
+let suiteIsPlaying = false;
+let suiteCurrentIndex = 0;
+let suiteScrubActive = false;
+const suiteTrackMemory = new Map();
 
 function pauseMainExperienceForFlight() {
   document.body.classList.add("flight-mode");
@@ -265,6 +292,7 @@ function openFlightPanel() {
   if (seaModeOpen) closeSeaPanel();
   if (bulbModeOpen) closeBulbPanel();
   if (heartModeOpen) closeHeartPanel();
+  if (suiteModeOpen) closeSuitePanel();
   flightModeOpen = true;
   pauseMainExperienceForFlight();
   flightEasterEgg?.classList.add("open");
@@ -326,6 +354,7 @@ function openSeaPanel() {
   if (flightModeOpen) closeFlightPanel();
   if (bulbModeOpen) closeBulbPanel();
   if (heartModeOpen) closeHeartPanel();
+  if (suiteModeOpen) closeSuitePanel();
   seaModeOpen = true;
   document.body.classList.add("sea-mode");
   lastFrameTime = performance.now();
@@ -369,6 +398,7 @@ function openBulbPanel() {
   if (seaModeOpen) closeSeaPanel();
   if (flightModeOpen) closeFlightPanel();
   if (heartModeOpen) closeHeartPanel();
+  if (suiteModeOpen) closeSuitePanel();
   bulbModeOpen = true;
   document.body.classList.add("bulb-mode");
   lastFrameTime = performance.now();
@@ -414,6 +444,7 @@ function openHeartPanel() {
   if (seaModeOpen) closeSeaPanel();
   if (flightModeOpen) closeFlightPanel();
   if (bulbModeOpen) closeBulbPanel();
+  if (suiteModeOpen) closeSuitePanel();
   heartModeOpen = true;
   document.body.classList.add("heart-mode");
   lastFrameTime = performance.now();
@@ -451,6 +482,204 @@ function setupHeartEasterEgg() {
     const target = e.target;
     if (heartPanel?.contains(target) || heartTrigger?.contains(target)) return;
     closeHeartPanel();
+  });
+}
+
+/* ---------------------------
+   Suite panel ("A Suite in Style") audio player
+----------------------------*/
+
+function getSuiteTrackSrc(index) {
+  const track = SUITE_TRACKS[index] || SUITE_TRACKS[0];
+  return `${SUITE_ASSET_BASE}${track.audio}`;
+}
+
+function ensureSuiteAudio() {
+  if (suiteAudio) return suiteAudio;
+
+  suiteAudio = new Audio();
+  suiteAudio.preload = "metadata";
+
+  suiteAudio.addEventListener("ended", () => {
+    suiteTrackMemory.set(suiteCurrentIndex, 0);
+    playSuiteTrack((suiteCurrentIndex + 1) % SUITE_TRACKS.length, true);
+  });
+
+  suiteAudio.addEventListener("timeupdate", syncSuiteProgressUI);
+  suiteAudio.addEventListener("loadedmetadata", syncSuiteProgressUI);
+  suiteAudio.addEventListener("play", () => {
+    suiteIsPlaying = true;
+    updateSuiteUI();
+  });
+  suiteAudio.addEventListener("pause", () => {
+    suiteIsPlaying = false;
+    storeCurrentSuiteTime();
+    updateSuiteUI();
+  });
+
+  return suiteAudio;
+}
+
+function storeCurrentSuiteTime() {
+  if (!suiteAudio) return;
+  suiteTrackMemory.set(suiteCurrentIndex, suiteAudio.currentTime || 0);
+}
+
+function syncSuiteProgressUI() {
+  if (!suiteProgress || !suiteAudio || suiteScrubActive) return;
+  const duration = Number.isFinite(suiteAudio.duration) && suiteAudio.duration > 0 ? suiteAudio.duration : 0;
+  suiteProgress.max = duration || 1;
+  suiteProgress.value = Math.min(suiteAudio.currentTime || 0, duration || 1);
+}
+
+function renderSuiteTrackList() {
+  if (!suiteTrackListEl || suiteTrackListEl.childElementCount) return;
+  SUITE_TRACKS.forEach((track, i) => {
+    const li = document.createElement("li");
+    li.className = "suiteTrackRow";
+    li.dataset.index = String(i);
+
+    const playBtn = document.createElement("button");
+    playBtn.type = "button";
+    playBtn.className = "suiteTrackPlay";
+    playBtn.innerHTML = `<span class="suiteTrackTitle">${track.title}</span><span class="suiteTrackStyle">${track.style}</span>`;
+    playBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      playSuiteTrack(i, true);
+    });
+
+    const scoreLink = document.createElement("a");
+    scoreLink.className = "suiteTrackScore";
+    scoreLink.href = `${SUITE_ASSET_BASE}${track.score}`;
+    scoreLink.target = "_blank";
+    scoreLink.rel = "noopener noreferrer";
+    scoreLink.textContent = "score";
+    scoreLink.setAttribute("aria-label", `View score for ${track.title}`);
+    scoreLink.addEventListener("click", (e) => e.stopPropagation());
+
+    li.appendChild(playBtn);
+    li.appendChild(scoreLink);
+    suiteTrackListEl.appendChild(li);
+  });
+}
+
+function updateSuiteUI() {
+  if (suiteTrackIndicator) {
+    suiteTrackIndicator.textContent = `movement ${String(suiteCurrentIndex + 1).padStart(2, "0")} / ${String(SUITE_TRACKS.length).padStart(2, "0")}`;
+  }
+  if (suitePlayBtn) {
+    suitePlayBtn.textContent = suiteIsPlaying ? "pause" : "play";
+  }
+  if (suiteTrackListEl) {
+    suiteTrackListEl.querySelectorAll(".suiteTrackRow").forEach((row) => {
+      row.classList.toggle("is-current", Number(row.dataset.index) === suiteCurrentIndex);
+    });
+  }
+  syncSuiteProgressUI();
+}
+
+function playSuiteTrack(index, autoplay = true) {
+  const a = ensureSuiteAudio();
+  storeCurrentSuiteTime();
+
+  suiteCurrentIndex = (index + SUITE_TRACKS.length) % SUITE_TRACKS.length;
+  const src = getSuiteTrackSrc(suiteCurrentIndex);
+  const resumeAt = suiteTrackMemory.get(suiteCurrentIndex) || 0;
+
+  if (!a.src || !a.src.endsWith(SUITE_TRACKS[suiteCurrentIndex].audio)) {
+    a.src = src;
+  }
+
+  a.currentTime = resumeAt;
+  updateSuiteUI();
+
+  if (autoplay) {
+    a.play().catch(() => {});
+  } else {
+    a.pause();
+  }
+}
+
+function toggleSuitePlayback() {
+  const a = ensureSuiteAudio();
+  if (!a.src) {
+    playSuiteTrack(suiteCurrentIndex, true);
+    return;
+  }
+  if (a.paused) {
+    a.play().catch(() => {});
+  } else {
+    a.pause();
+  }
+}
+
+function stepSuiteTrack(delta, autoplay = true) {
+  playSuiteTrack(suiteCurrentIndex + delta, autoplay);
+}
+
+function openSuitePanel() {
+  if (suiteModeOpen) return;
+  if (seaModeOpen) closeSeaPanel();
+  if (flightModeOpen) closeFlightPanel();
+  if (bulbModeOpen) closeBulbPanel();
+  if (heartModeOpen) closeHeartPanel();
+  suiteModeOpen = true;
+  document.body.classList.add("suite-mode");
+  lastFrameTime = performance.now();
+  suiteEasterEgg?.classList.add("open");
+  suitePanel?.setAttribute("aria-hidden", "false");
+  const inner = document.querySelector(".suitePanelInner");
+  if (inner) inner.scrollTop = 0;
+  updateSuiteUI();
+  playSuiteTrack(suiteCurrentIndex, true);
+}
+
+function closeSuitePanel() {
+  if (!suiteModeOpen) return;
+  suiteModeOpen = false;
+  storeCurrentSuiteTime();
+  if (suiteAudio) suiteAudio.pause();
+  document.body.classList.remove("suite-mode");
+  lastFrameTime = performance.now();
+  suiteEasterEgg?.classList.remove("open");
+  suitePanel?.setAttribute("aria-hidden", "true");
+}
+
+function setupSuiteEasterEgg() {
+  if (!suiteTrigger) return;
+
+  renderSuiteTrackList();
+  updateSuiteUI();
+
+  suiteTrigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (suiteModeOpen) closeSuitePanel();
+    else openSuitePanel();
+  });
+
+  suiteCloseBtn?.addEventListener("click", (e) => { e.stopPropagation(); closeSuitePanel(); });
+  suitePlayBtn?.addEventListener("click", (e) => { e.stopPropagation(); toggleSuitePlayback(); });
+  suitePrevBtn?.addEventListener("click", (e) => { e.stopPropagation(); stepSuiteTrack(-1, true); });
+  suiteNextBtn?.addEventListener("click", (e) => { e.stopPropagation(); stepSuiteTrack(1, true); });
+
+  suiteProgress?.addEventListener("pointerdown", (e) => e.stopPropagation());
+  suiteProgress?.addEventListener("input", () => {
+    suiteScrubActive = true;
+    if (!suiteAudio) return;
+    suiteAudio.currentTime = Number(suiteProgress.value || 0);
+  });
+  suiteProgress?.addEventListener("change", () => {
+    suiteScrubActive = false;
+    syncSuiteProgressUI();
+  });
+
+  suitePanel?.addEventListener("click", (e) => e.stopPropagation());
+
+  document.addEventListener("click", (e) => {
+    if (!suiteModeOpen) return;
+    const target = e.target;
+    if (suitePanel?.contains(target) || suiteTrigger?.contains(target)) return;
+    closeSuitePanel();
   });
 }
 
@@ -2236,6 +2465,7 @@ async function init() {
   setupFlightEasterEgg();
   setupBulbEasterEgg();
   setupHeartEasterEgg();
+  setupSuiteEasterEgg();
 
   if (needMoreBtn) {
     needMoreBtn.addEventListener("click", () => {
@@ -2299,6 +2529,10 @@ window.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && heartModeOpen) {
     e.preventDefault();
     closeHeartPanel();
+  }
+  if (e.key === "Escape" && suiteModeOpen) {
+    e.preventDefault();
+    closeSuitePanel();
   }
 });
 

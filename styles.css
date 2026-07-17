@@ -162,6 +162,7 @@ body{
   .planeTrigger,
   .bulbTrigger,
   .heartTrigger,
+  .suiteTrigger,
   .pianoLink{
     padding-left: 6px;
     padding-right: 6px;
@@ -488,6 +489,7 @@ body.flight-mode .flightEasterEgg {
 body.flight-mode .seaEasterEgg,
 body.flight-mode .bulbEasterEgg,
 body.flight-mode .heartEasterEgg,
+body.flight-mode .suiteEasterEgg,
 body.flight-mode .pianoLink {
   opacity: 0.04 !important;
   pointer-events: none;
@@ -707,6 +709,7 @@ body.bulb-mode .tank {
 body.bulb-mode .seaEasterEgg,
 body.bulb-mode .flightEasterEgg,
 body.bulb-mode .heartEasterEgg,
+body.bulb-mode .suiteEasterEgg,
 body.bulb-mode .pianoLink {
   opacity: 0.04 !important;
   pointer-events: none;
@@ -925,6 +928,7 @@ body.heart-mode .tank {
 body.heart-mode .seaEasterEgg,
 body.heart-mode .flightEasterEgg,
 body.heart-mode .bulbEasterEgg,
+body.heart-mode .suiteEasterEgg,
 body.heart-mode .pianoLink {
   opacity: 0.04 !important;
   pointer-events: none;
@@ -1123,6 +1127,7 @@ body.sea-mode .tank {
 body.sea-mode .flightEasterEgg,
 body.sea-mode .bulbEasterEgg,
 body.sea-mode .heartEasterEgg,
+body.sea-mode .suiteEasterEgg,
 body.sea-mode .pianoLink {
   opacity: 0.04 !important;
   pointer-events: none;
@@ -1179,4 +1184,299 @@ body.sea-mode .seaEasterEgg {
 .pianoLink:hover .pianoSvg line{
   fill: rgba(220,245,255,0.05);
   stroke: rgba(220,245,255,0.76);
+}
+
+/* ── A Suite in Style ────────────────────────────────── */
+
+.suiteEasterEgg{
+  position: relative;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.suiteTrigger{
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 4px 10px;
+  cursor: none;
+  opacity: 0.68;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.45));
+  transition: transform 500ms ease, opacity 500ms ease, filter 500ms ease;
+}
+
+.suiteTrigger:hover,
+.suiteEasterEgg.open .suiteTrigger{
+  opacity: 0.96;
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 8px rgba(205,235,245,0.12));
+}
+
+.suiteSvg{
+  width: min(9vw, 50px);
+  height: auto;
+  display: block;
+}
+
+.suiteSvg path,
+.suiteSvg line,
+.suiteSvg ellipse{
+  fill: rgba(220,245,255,0.02);
+  stroke: rgba(220,245,255,0.55);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.08)) drop-shadow(0 -1px 0 rgba(0,0,0,0.6));
+}
+
+.suiteTrigger:hover .suiteSvg path,
+.suiteTrigger:hover .suiteSvg line,
+.suiteTrigger:hover .suiteSvg ellipse,
+.suiteEasterEgg.open .suiteSvg path,
+.suiteEasterEgg.open .suiteSvg line,
+.suiteEasterEgg.open .suiteSvg ellipse{
+  fill: rgba(220,245,255,0.05);
+  stroke: rgba(220,245,255,0.76);
+}
+
+.suitePanel{
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: min(440px, calc(92vw - 40px));
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(18px) scaleY(0.96);
+  transform-origin: bottom left;
+  transition: max-height 700ms ease, opacity 500ms ease, transform 700ms ease, margin-bottom 700ms ease;
+  pointer-events: none;
+  margin-bottom: -8px;
+}
+
+.suiteEasterEgg.open .suitePanel{
+  max-height: min(620px, 68vh);
+  opacity: 1;
+  transform: translateY(0) scaleY(1);
+  pointer-events: auto;
+  margin-bottom: 4px;
+}
+
+.suitePanelInner{
+  border-radius: 18px;
+  padding: 14px 16px 14px;
+  background: linear-gradient(to bottom, rgba(10,18,24,0.86), rgba(4,9,13,0.94));
+  box-shadow: inset 0 0 0 1px rgba(200,235,245,0.08), 0 18px 60px rgba(0,0,0,0.34);
+  backdrop-filter: blur(9px);
+  max-height: min(560px, 62vh);
+  overflow-y: auto;
+}
+
+.suiteLabel{
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.48);
+  margin-bottom: 12px;
+}
+
+.suiteTransport{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.suiteTrackList{
+  list-style: none;
+  margin: 16px 0 0 0;
+  padding: 0;
+}
+
+.suiteTrackRow{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 6px;
+  border-top: 1px solid rgba(220,245,255,0.06);
+}
+
+.suiteTrackRow:last-child{
+  border-bottom: 1px solid rgba(220,245,255,0.06);
+}
+
+.suiteTrackPlay{
+  appearance: none;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: none;
+  padding: 2px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  transition: transform 300ms ease;
+}
+
+.suiteTrackPlay:hover{ transform: translateX(2px); }
+
+.suiteTrackTitle{
+  font-size: 12.5px;
+  color: rgba(220,245,255,0.72);
+  letter-spacing: 0.02em;
+}
+
+.suiteTrackStyle{
+  font-size: 10.5px;
+  font-style: italic;
+  color: rgba(220,245,255,0.40);
+}
+
+.suiteTrackRow.is-current .suiteTrackTitle{
+  color: rgba(220,245,255,0.96);
+}
+
+.suiteTrackRow.is-current{
+  background: rgba(220,245,255,0.04);
+  border-radius: 8px;
+}
+
+.suiteTrackScore{
+  flex: 0 0 auto;
+  text-decoration: none;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.34);
+  padding: 4px 8px;
+  border: 1px solid rgba(220,245,255,0.14);
+  border-radius: 999px;
+  cursor: none;
+  transition: color 300ms ease, border-color 300ms ease;
+}
+
+.suiteTrackScore:hover{
+  color: rgba(220,245,255,0.82);
+  border-color: rgba(220,245,255,0.34);
+}
+
+.suitePanelAbout{
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(220,245,255,0.08);
+}
+
+.suiteAboutTitle{
+  margin: 0 0 8px 0;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.54);
+}
+
+.suiteAboutMeta{
+  margin: 0 0 12px 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: rgba(220,245,255,0.56);
+}
+
+.suiteAboutText{
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(220,245,255,0.68);
+}
+
+.suiteAboutText em{ color: rgba(220,245,255,0.86); }
+
+.suiteFullScore{
+  display: inline-block;
+  margin-top: 4px;
+  text-decoration: none;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(220,245,255,0.42);
+  cursor: none;
+  transition: color 300ms ease;
+}
+
+.suiteFullScore:hover{ color: rgba(220,245,255,0.82); }
+
+@media (max-width: 720px){
+  .suitePanel{ width: min(360px, calc(100vw - 34px)); }
+}
+
+@media (max-width: 540px){
+  .suiteEasterEgg{
+    transform: none;
+    bottom: 40px;
+  }
+  .suitePanel{
+    margin-left: 0;
+    transition: opacity 400ms ease;
+  }
+  .suiteEasterEgg.open .suitePanel{
+    position: fixed;
+    bottom: 80px;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-height: 75dvh;
+    transform: none;
+    z-index: 95;
+  }
+  .suiteEasterEgg.open .suitePanelInner{
+    max-height: 75dvh;
+  }
+}
+
+body.suite-mode {
+  background: #000;
+}
+
+body.suite-mode .top,
+body.suite-mode .rerollRow,
+body.suite-mode .tank,
+body.suite-mode .about {
+  opacity: 0.04 !important;
+  transition: opacity 500ms ease, filter 500ms ease;
+}
+
+body.suite-mode .wordBtn,
+body.suite-mode .needMoreBtn {
+  opacity: 0.04 !important;
+  color: rgba(220,245,255,0.04) !important;
+  pointer-events: none;
+  transition: opacity 500ms ease, color 500ms ease;
+}
+
+body.suite-mode .tank {
+  filter: brightness(0.05);
+}
+
+body.suite-mode .suiteTrigger,
+body.suite-mode .suitePanel,
+body.suite-mode .suitePanelInner,
+body.suite-mode .suiteEasterEgg {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+body.suite-mode .seaEasterEgg,
+body.suite-mode .flightEasterEgg,
+body.suite-mode .bulbEasterEgg,
+body.suite-mode .heartEasterEgg,
+body.suite-mode .pianoLink {
+  opacity: 0.04 !important;
+  pointer-events: none;
 }
