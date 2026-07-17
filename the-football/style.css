@@ -1,0 +1,321 @@
+/* ===========================================================
+   THE FOOTBALL — retro CRT companion (IT Crowd flavour)
+   Green phosphor terminal. No frameworks, no dependencies.
+   =========================================================== */
+
+:root {
+  --phosphor: #33ff66;
+  --phosphor-dim: #1f9c40;
+  --phosphor-deep: #0c2e17;
+  --amber: #ffb84d;          /* accent only (LED / warnings) */
+  --screen-bg: #071007;
+  --charcoal: #0a0f0a;
+  --glow: 0 0 4px rgba(51, 255, 102, 0.65), 0 0 12px rgba(51, 255, 102, 0.35);
+  --mono: "SF Mono", "SFMono-Regular", "Cascadia Mono", "Consolas",
+          "Liberation Mono", "Menlo", "DejaVu Sans Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+/* Ensure the hidden attribute wins over the display rules below. */
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #050705;
+  color: var(--phosphor);
+  font-family: var(--mono);
+  -webkit-font-smoothing: none;
+  overscroll-behavior: none;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+  min-height: 100dvh;
+  background:
+    radial-gradient(120% 80% at 50% 0%, #12210f 0%, #060a06 60%, #030503 100%);
+}
+
+/* ── Device / bezel ──────────────────────────────────────── */
+.device {
+  width: 100%;
+  max-width: 460px;
+}
+
+.bezel {
+  position: relative;
+  border-radius: 26px;
+  padding: 14px;
+  background:
+    linear-gradient(160deg, #2a2f2a 0%, #171b17 40%, #0c0f0c 100%);
+  box-shadow:
+    0 0 0 2px #000,
+    0 2px 0 3px #34382f inset,
+    0 22px 44px rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(51, 255, 102, 0.05);
+}
+
+/* ── Top chrome: grille, brand, mute ─────────────────────── */
+.chrome {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 6px 12px;
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(4, 6px);
+  grid-auto-rows: 6px;
+  gap: 3px;
+  opacity: 0.7;
+}
+.grille span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #000;
+  box-shadow: 0 1px 0 #3a3f36;
+}
+
+.brand {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #6f7a68;
+  text-transform: uppercase;
+}
+
+.muteBtn {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--phosphor);
+  background: #0c130c;
+  border: 1px solid #29402b;
+  border-radius: 6px;
+  padding: 6px 9px;
+  cursor: pointer;
+  text-shadow: var(--glow);
+  min-width: 66px;
+}
+.muteBtn:active { transform: translateY(1px); }
+.muteBtn .muteOff { display: none; }
+.muteBtn[aria-pressed="true"] { color: var(--amber); border-color: #5a4420; text-shadow: 0 0 6px rgba(255,184,77,0.5); }
+.muteBtn[aria-pressed="true"] .muteOn { display: none; }
+.muteBtn[aria-pressed="true"] .muteOff { display: inline; }
+
+/* ── The screen ──────────────────────────────────────────── */
+.screen {
+  position: relative;
+  border-radius: 14px;
+  aspect-ratio: 3 / 4;
+  min-height: 520px;
+  overflow: hidden;
+  background:
+    radial-gradient(130% 120% at 50% 8%, #0c1c0c 0%, var(--screen-bg) 55%, #030703 100%);
+  box-shadow:
+    0 0 0 3px #000 inset,
+    0 0 34px rgba(51, 255, 102, 0.12) inset,
+    0 0 0 6px #14181300;
+  padding: 18px 16px;
+  text-shadow: var(--glow);
+}
+
+/* CRT scanlines */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.22) 3px,
+    rgba(0, 0, 0, 0.22) 4px
+  );
+  mix-blend-mode: multiply;
+}
+/* Subtle rolling flicker + vignette */
+.flicker {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 41;
+  background: radial-gradient(120% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.5) 100%);
+  animation: flick 5.5s steps(60) infinite;
+}
+@keyframes flick {
+  0%, 96%, 100% { opacity: 1; }
+  97% { opacity: 0.86; }
+  98% { opacity: 0.97; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flicker { animation: none; }
+  .cursor { animation: none; opacity: 1; }
+}
+
+/* ── Boot sequence ───────────────────────────────────────── */
+.boot {
+  position: relative;
+  z-index: 20;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+}
+.bootText {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: clamp(13px, 3.6vw, 16px);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  color: var(--phosphor);
+}
+.bootText .amber { color: var(--amber); text-shadow: 0 0 6px rgba(255,184,77,0.5); }
+
+/* ── App ─────────────────────────────────────────────────── */
+.app {
+  position: relative;
+  z-index: 20;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  opacity: 0;
+  animation: powerOn 700ms ease forwards;
+}
+@keyframes powerOn {
+  0%   { opacity: 0; filter: brightness(2.4) blur(1px); transform: scaleY(0.6); }
+  40%  { opacity: 1; }
+  100% { opacity: 1; filter: none; transform: scaleY(1); }
+}
+
+.head { text-align: center; }
+.title {
+  margin: 0;
+  font-size: clamp(30px, 10vw, 46px);
+  letter-spacing: 3px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--phosphor);
+  text-shadow: 0 0 6px rgba(51,255,102,0.8), 0 0 20px rgba(51,255,102,0.4);
+}
+.subtitle {
+  margin: 8px 0 0;
+  font-size: clamp(10px, 2.9vw, 12px);
+  letter-spacing: 0.5px;
+  color: var(--phosphor-dim);
+  min-height: 1.2em;
+}
+
+.cursor {
+  display: inline-block;
+  margin-left: 2px;
+  animation: blink 1.05s steps(1) infinite;
+}
+@keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+
+/* Readout / phrase display */
+.readout {
+  flex: 1;
+  min-height: 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 8px;
+  border: 1px solid #1c3a22;
+  border-radius: 8px;
+  background: rgba(8, 24, 10, 0.5);
+  box-shadow: 0 0 18px rgba(51,255,102,0.06) inset;
+  cursor: pointer;
+  outline: none;
+}
+.readout:focus-visible { border-color: var(--phosphor); box-shadow: 0 0 0 2px rgba(51,255,102,0.4) inset; }
+.readout.flash { animation: readoutFlash 260ms ease; }
+@keyframes readoutFlash {
+  0% { background: rgba(51,255,102,0.22); }
+  100% { background: rgba(8,24,10,0.5); }
+}
+
+.phrase {
+  margin: 0;
+  font-size: clamp(22px, 7.2vw, 34px);
+  line-height: 1.18;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--phosphor);
+  text-shadow: 0 0 6px rgba(51,255,102,0.8), 0 0 16px rgba(51,255,102,0.35);
+}
+.phrase.speaking { animation: pulse 900ms ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.72; } }
+
+.replayHint {
+  margin: 12px 0 0;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--phosphor-dim);
+}
+
+/* Team buttons — occupy most of the screen */
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  flex: 1.4;
+  min-height: 150px;
+}
+.teamBtn {
+  font-family: var(--mono);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 10px;
+  border: 2px solid var(--phosphor-dim);
+  background:
+    linear-gradient(180deg, rgba(51,255,102,0.10) 0%, rgba(51,255,102,0.03) 100%);
+  color: var(--phosphor);
+  cursor: pointer;
+  padding: 10px;
+  text-shadow: var(--glow);
+  box-shadow: 0 0 16px rgba(51,255,102,0.08) inset, 0 3px 0 #06180b;
+  transition: transform 90ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+.teamBtn .flag { font-size: clamp(38px, 13vw, 58px); line-height: 1; text-shadow: none; filter: saturate(1.1); }
+.teamBtn .teamName { font-size: clamp(15px, 4.6vw, 20px); letter-spacing: 2px; font-weight: 700; }
+.teamBtn:hover { background: linear-gradient(180deg, rgba(51,255,102,0.18) 0%, rgba(51,255,102,0.06) 100%); }
+.teamBtn:active { transform: translateY(3px); box-shadow: 0 0 22px rgba(51,255,102,0.14) inset, 0 0 0 #06180b; }
+.teamBtn:focus-visible { outline: none; border-color: var(--phosphor); box-shadow: 0 0 0 3px rgba(51,255,102,0.35), 0 0 16px rgba(51,255,102,0.14) inset; }
+.teamBtn.pressed { animation: btnFlash 260ms ease; }
+@keyframes btnFlash {
+  0% { background: rgba(51,255,102,0.4); }
+  100% { background: linear-gradient(180deg, rgba(51,255,102,0.10) 0%, rgba(51,255,102,0.03) 100%); }
+}
+
+/* Footer status bar */
+.foot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--phosphor-dim);
+  padding-top: 2px;
+}
+.foot .footItem:nth-child(2) { color: var(--amber); animation: blink 1.6s steps(1) infinite; }
+
+/* ── Narrow phones ───────────────────────────────────────── */
+@media (max-height: 680px) {
+  .screen { min-height: 460px; padding: 14px 13px; }
+  .readout { min-height: 72px; }
+  .buttons { min-height: 130px; }
+}

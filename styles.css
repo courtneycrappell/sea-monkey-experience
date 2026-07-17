@@ -163,6 +163,7 @@ body{
   .bulbTrigger,
   .heartTrigger,
   .suiteTrigger,
+  .footballLink,
   .pianoLink{
     padding-left: 6px;
     padding-right: 6px;
@@ -490,6 +491,7 @@ body.flight-mode .seaEasterEgg,
 body.flight-mode .bulbEasterEgg,
 body.flight-mode .heartEasterEgg,
 body.flight-mode .suiteEasterEgg,
+body.flight-mode .footballLink,
 body.flight-mode .pianoLink {
   opacity: 0.04 !important;
   pointer-events: none;
@@ -710,6 +712,7 @@ body.bulb-mode .seaEasterEgg,
 body.bulb-mode .flightEasterEgg,
 body.bulb-mode .heartEasterEgg,
 body.bulb-mode .suiteEasterEgg,
+body.bulb-mode .footballLink,
 body.bulb-mode .pianoLink {
   opacity: 0.04 !important;
   pointer-events: none;
@@ -929,6 +932,7 @@ body.heart-mode .seaEasterEgg,
 body.heart-mode .flightEasterEgg,
 body.heart-mode .bulbEasterEgg,
 body.heart-mode .suiteEasterEgg,
+body.heart-mode .footballLink,
 body.heart-mode .pianoLink {
   opacity: 0.04 !important;
   pointer-events: none;
@@ -1094,7 +1098,8 @@ body.heart-mode .heartEasterEgg {
     max-height: 75dvh;
     transform: none;
   }
-  .pianoLink{
+  .pianoLink,
+  .footballLink{
     position: relative;
     bottom: 40px;
   }
@@ -1128,6 +1133,7 @@ body.sea-mode .flightEasterEgg,
 body.sea-mode .bulbEasterEgg,
 body.sea-mode .heartEasterEgg,
 body.sea-mode .suiteEasterEgg,
+body.sea-mode .footballLink,
 body.sea-mode .pianoLink {
   opacity: 0.04 !important;
   pointer-events: none;
@@ -1182,6 +1188,46 @@ body.sea-mode .seaEasterEgg {
 
 .pianoLink:hover .pianoSvg path,
 .pianoLink:hover .pianoSvg line{
+  fill: rgba(220,245,255,0.05);
+  stroke: rgba(220,245,255,0.76);
+}
+
+/* ── The Football (link to /the-football/) ───────────── */
+.footballLink{
+  display: block;
+  text-decoration: none;
+  padding: 4px 10px;
+  cursor: none;
+  opacity: 0.68;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.45));
+  transition: transform 500ms ease, opacity 500ms ease, filter 500ms ease;
+}
+
+.footballLink:hover{
+  opacity: 0.96;
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 8px rgba(205,235,245,0.12));
+}
+
+.footballSvg{
+  width: min(9vw, 50px);
+  height: auto;
+  display: block;
+}
+
+.footballSvg circle,
+.footballSvg path,
+.footballSvg line{
+  fill: rgba(220,245,255,0.02);
+  stroke: rgba(220,245,255,0.55);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.footballLink:hover .footballSvg circle,
+.footballLink:hover .footballSvg path,
+.footballLink:hover .footballSvg line{
   fill: rgba(220,245,255,0.05);
   stroke: rgba(220,245,255,0.76);
 }
@@ -1481,6 +1527,7 @@ body.suite-mode .seaEasterEgg,
 body.suite-mode .flightEasterEgg,
 body.suite-mode .bulbEasterEgg,
 body.suite-mode .heartEasterEgg,
+body.suite-mode .footballLink,
 body.suite-mode .pianoLink {
   opacity: 0.04 !important;
   pointer-events: none;
