@@ -1273,8 +1273,13 @@ body.sea-mode .seaEasterEgg {
   box-shadow: inset 0 0 0 1px rgba(200,235,245,0.08), 0 18px 60px rgba(0,0,0,0.34);
   backdrop-filter: blur(9px);
   max-height: min(560px, 62vh);
+  overflow-x: hidden;
   overflow-y: auto;
+  scrollbar-width: none;        /* Firefox: hide scrollbar chrome, keep scroll */
+  -ms-overflow-style: none;     /* legacy Edge */
 }
+
+.suitePanelInner::-webkit-scrollbar{ width: 0; height: 0; }
 
 .suiteLabel{
   text-align: center;
