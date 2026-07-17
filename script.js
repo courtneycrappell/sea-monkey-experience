@@ -749,7 +749,7 @@ window.addEventListener("mouseleave", () => {
 
 const tankEl = canvas.parentElement;
 tankEl.addEventListener("pointerdown", (e) => {
-  if (seaModeOpen || flightModeOpen || bulbModeOpen || heartModeOpen) return;
+  if (seaModeOpen || flightModeOpen || bulbModeOpen || heartModeOpen || suiteModeOpen) return;
   const rect = canvas.getBoundingClientRect();
   const tx = e.clientX - rect.left;
   const ty = e.clientY - rect.top;
@@ -1633,7 +1633,7 @@ function drawBackgroundVignette(bounds) {
 let lastFrameTime = performance.now();
 
 function animate() {
-  if (seaModeOpen || flightModeOpen || bulbModeOpen || heartModeOpen) {
+  if (seaModeOpen || flightModeOpen || bulbModeOpen || heartModeOpen || suiteModeOpen) {
     lastFrameTime = performance.now();
     requestAnimationFrame(animate);
     return;
