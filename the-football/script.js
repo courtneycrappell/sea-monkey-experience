@@ -207,11 +207,49 @@
   var btnSoccer = document.getElementById("btnSoccer");
   var btnChiefs = document.getElementById("btnChiefs");
 
+  /* ---- Fit the phrase to the readout -------------------- */
+  /* The banks vary from six words to twenty, so a fixed type size either
+     wastes the screen or spills over the header and the buttons. Step the
+     size down until the text fits the box it lives in. */
+  var PHRASE_MAX = 34;
+  var PHRASE_MIN = 11;
+
+  function fitPhrase() {
+    if (!phraseEl.textContent) return;
+    // The readout centres its children, so overflow escapes top *and*
+    // bottom and its own scrollHeight under-reports. Measure the phrase
+    // against an explicit budget instead.
+    var rs = window.getComputedStyle(readoutEl);
+    var padY = parseFloat(rs.paddingTop) + parseFloat(rs.paddingBottom);
+    var hintH = 0;
+    if (!replayHint.hidden) {
+      hintH = replayHint.offsetHeight +
+        parseFloat(window.getComputedStyle(replayHint).marginTop);
+    }
+    var budget = readoutEl.clientHeight - padY - hintH - 2;
+    if (budget <= 0) return;
+
+    var size = Math.min(PHRASE_MAX, Math.round(readoutEl.clientWidth * 0.115));
+    if (size < PHRASE_MIN) size = PHRASE_MIN;
+    phraseEl.style.fontSize = size + "px";
+    while (size > PHRASE_MIN && phraseEl.scrollHeight > budget) {
+      size -= 1;
+      phraseEl.style.fontSize = size + "px";
+    }
+  }
+
+  var fitTimer = null;
+  window.addEventListener("resize", function () {
+    clearTimeout(fitTimer);
+    fitTimer = setTimeout(fitPhrase, 120);
+  });
+
   /* ---- Show a phrase ------------------------------------ */
   function showPhrase(bank, btn) {
     currentPhrase = nextPhrase(bank);
     phraseEl.textContent = currentPhrase;
     replayHint.hidden = false;
+    fitPhrase();
     readoutEl.classList.remove("flash");
     // force reflow so the animation restarts
     void readoutEl.offsetWidth;
@@ -249,6 +287,7 @@
     setHead(cfg);
 
     // Reset the readout and rebuild the button bank for this sport.
+    phraseEl.style.fontSize = "";
     phraseEl.innerHTML = "&gt;&nbsp;AWAITING&nbsp;INPUT_";
     replayHint.hidden = true;
     buttonsEl.innerHTML = "";
