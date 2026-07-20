@@ -18,8 +18,9 @@
             <span></span><span></span><span></span><span></span>
             <span></span><span></span><span></span><span></span>
           </div>
+          <button id="backBtn" class="chromeBtn backBtn" type="button" aria-label="Back to sport select" hidden>&#9664; BACK</button>
           <div class="brand" aria-hidden="true">PORTA-FOOTBALL&nbsp;&trade;</div>
-          <button id="muteBtn" class="muteBtn" type="button" aria-label="Mute voice" aria-pressed="false">
+          <button id="muteBtn" class="chromeBtn muteBtn" type="button" aria-label="Mute voice" aria-pressed="false">
             <span class="muteOn">&#128266; SND</span>
             <span class="muteOff">&#128263; MUTE</span>
           </button>
@@ -38,31 +39,63 @@
           <!-- Main interface -->
           <div id="app" class="app" hidden>
             <header class="head">
-              <h1 class="title">THE&nbsp;FOOTBALL</h1>
-              <p class="subtitle">&gt; Never be caught without something footbally to say.<span class="cursor" aria-hidden="true">&#9608;</span></p>
+              <h1 id="title" class="title">THE&nbsp;FOOTBALL</h1>
+              <p id="subtitle" class="subtitle">&gt; Never be caught without something footbally to say.<span class="cursor" aria-hidden="true">&#9608;</span></p>
             </header>
 
-            <div id="readout" class="readout" role="button" tabindex="0"
-                 aria-label="Current phrase. Activate to replay aloud." aria-live="polite">
-              <p id="phrase" class="phrase">&gt; AWAITING&nbsp;INPUT_</p>
-              <p id="replayHint" class="replayHint" hidden>[ tap to replay ]</p>
+            <!-- ── VIEW: sport select ─────────────────────── -->
+            <div id="viewMenu" class="view viewMenu">
+              <p class="menuPrompt">&gt;&nbsp;SELECT&nbsp;SPORT_</p>
+              <div class="ballGrid">
+                <button id="btnSoccer" class="ballBtn" type="button" aria-label="World Cup quotes">
+                  <svg class="ballSvg" viewBox="0 0 100 100" role="img" aria-hidden="true">
+                    <circle class="ballOutline" cx="50" cy="50" r="42" />
+                    <path class="ballPatch" d="M50 34 L65.2 45.1 L59.4 62.9 L40.6 62.9 L34.8 45.1 Z" />
+                    <line x1="50" y1="34" x2="50" y2="8" />
+                    <line x1="65.2" y1="45.1" x2="89.7" y2="37.1" />
+                    <line x1="59.4" y1="62.9" x2="74.6" y2="84" />
+                    <line x1="40.6" y1="62.9" x2="25.4" y2="84" />
+                    <line x1="34.8" y1="45.1" x2="10.3" y2="37.1" />
+                    <path class="ballSeam" d="M30 15 Q50 24 70 15" />
+                    <path class="ballSeam" d="M89 33 Q84 55 92 70" />
+                    <path class="ballSeam" d="M11 33 Q16 55 8 70" />
+                    <path class="ballSeam" d="M26 90 Q50 82 74 90" />
+                  </svg>
+                  <span class="ballName">WORLD&nbsp;CUP</span>
+                  <span class="ballSub">FINAL&nbsp;&middot;&nbsp;ESP&nbsp;1&ndash;0&nbsp;ARG</span>
+                </button>
+
+                <button id="btnChiefs" class="ballBtn" type="button" aria-label="Kansas City Chiefs quotes">
+                  <svg class="ballSvg" viewBox="0 0 100 100" role="img" aria-hidden="true">
+                    <path class="ballOutline" d="M50 22 C78 22 92 38 92 50 C92 62 78 78 50 78 C22 78 8 62 8 50 C8 38 22 22 50 22 Z" />
+                    <path class="ballSeam" d="M18 31 Q13 50 18 69" />
+                    <path class="ballSeam" d="M82 31 Q87 50 82 69" />
+                    <line x1="37" y1="50" x2="63" y2="50" />
+                    <line x1="41" y1="43" x2="41" y2="57" />
+                    <line x1="47" y1="43" x2="47" y2="57" />
+                    <line x1="53" y1="43" x2="53" y2="57" />
+                    <line x1="59" y1="43" x2="59" y2="57" />
+                  </svg>
+                  <span class="ballName">THE&nbsp;CHIEFS</span>
+                  <span class="ballSub">2026&nbsp;SEASON</span>
+                </button>
+              </div>
             </div>
 
-            <div class="buttons">
-              <button id="btnArg" class="teamBtn arg" type="button" aria-label="Argentina commentary">
-                <span class="flag">&#127462;&#127479;</span>
-                <span class="teamName">ARGENTINA</span>
-              </button>
-              <button id="btnEsp" class="teamBtn esp" type="button" aria-label="Spain commentary">
-                <span class="flag">&#127466;&#127480;</span>
-                <span class="teamName">SPAIN</span>
-              </button>
+            <!-- ── VIEW: quote generator ──────────────────── -->
+            <div id="viewQuote" class="view viewQuote" hidden>
+              <div id="readout" class="readout" role="button" tabindex="0"
+                   aria-label="Current phrase. Activate to replay aloud." aria-live="polite">
+                <p id="phrase" class="phrase">&gt; AWAITING&nbsp;INPUT_</p>
+                <p id="replayHint" class="replayHint" hidden>[ tap to replay ]</p>
+              </div>
+              <div id="buttons" class="buttons"></div>
             </div>
 
             <footer class="foot">
-              <span class="footItem">THE FOOTBALL v1.0</span>
+              <span id="footLeft" class="footItem">THE FOOTBALL v2.0</span>
               <span class="footItem">&#9679; REC</span>
-              <span class="footItem">2026 FINAL</span>
+              <span id="footRight" class="footItem">SELECT SPORT</span>
             </footer>
           </div>
         </div>

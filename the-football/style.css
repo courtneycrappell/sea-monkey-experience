@@ -91,7 +91,7 @@ body {
   text-transform: uppercase;
 }
 
-.muteBtn {
+.chromeBtn {
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 1px;
@@ -104,7 +104,12 @@ body {
   text-shadow: var(--glow);
   min-width: 66px;
 }
-.muteBtn:active { transform: translateY(1px); }
+.chromeBtn:active { transform: translateY(1px); }
+.chromeBtn:focus-visible { outline: none; border-color: var(--phosphor); box-shadow: 0 0 0 2px rgba(51,255,102,0.35); }
+
+/* The back button sits where the grille ends; reserve its slot so the
+   brand stays centred whether or not the button is showing. */
+.backBtn { white-space: nowrap; }
 .muteBtn .muteOff { display: none; }
 .muteBtn[aria-pressed="true"] { color: var(--amber); border-color: #5a4420; text-shadow: 0 0 6px rgba(255,184,77,0.5); }
 .muteBtn[aria-pressed="true"] .muteOn { display: none; }
@@ -114,6 +119,10 @@ body {
 .screen {
   position: relative;
   border-radius: 14px;
+  /* Pin the width to the bezel — without this, min-height + aspect-ratio
+     lets Chrome derive the width from the height and the screen overflows
+     narrow viewports. */
+  width: 100%;
   aspect-ratio: 3 / 4;
   min-height: 520px;
   overflow: hidden;
@@ -265,7 +274,92 @@ body {
   color: var(--phosphor-dim);
 }
 
-/* Team buttons — occupy most of the screen */
+/* ── Views ───────────────────────────────────────────────── */
+.view {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Sport select menu ───────────────────────────────────── */
+.menuPrompt {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(11px, 3.2vw, 13px);
+  letter-spacing: 2px;
+  color: var(--phosphor-dim);
+}
+
+.ballGrid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  /* minmax(0,1fr) so the two cards share the screen instead of pushing
+     past the footer when their content is taller than the space. */
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.ballBtn {
+  font-family: var(--mono);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 10px;
+  border: 2px solid var(--phosphor-dim);
+  background: linear-gradient(180deg, rgba(51,255,102,0.10) 0%, rgba(51,255,102,0.03) 100%);
+  color: var(--phosphor);
+  cursor: pointer;
+  padding: 10px;
+  min-height: 0;
+  overflow: hidden;
+  text-shadow: var(--glow);
+  box-shadow: 0 0 16px rgba(51,255,102,0.08) inset, 0 3px 0 #06180b;
+  transition: transform 90ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+.ballBtn:hover { background: linear-gradient(180deg, rgba(51,255,102,0.18) 0%, rgba(51,255,102,0.06) 100%); }
+.ballBtn:active { transform: translateY(3px); box-shadow: 0 0 22px rgba(51,255,102,0.14) inset, 0 0 0 #06180b; }
+.ballBtn:focus-visible { outline: none; border-color: var(--phosphor); box-shadow: 0 0 0 3px rgba(51,255,102,0.35), 0 0 16px rgba(51,255,102,0.14) inset; }
+
+.ballSvg {
+  width: auto;
+  height: clamp(50px, 13vh, 96px);
+  min-height: 0;
+  max-width: 100%;
+  display: block;
+  overflow: visible;
+}
+.ballSvg circle,
+.ballSvg path,
+.ballSvg line {
+  fill: none;
+  stroke: var(--phosphor);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 3px rgba(51,255,102,0.75));
+}
+.ballSvg .ballPatch { fill: rgba(51,255,102,0.28); }
+.ballSvg .ballSeam { stroke-width: 2.2; opacity: 0.6; }
+.ballBtn:hover .ballSvg .ballPatch { fill: rgba(51,255,102,0.42); }
+
+.ballName {
+  font-size: clamp(16px, 5vw, 22px);
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+.ballSub {
+  font-size: clamp(9px, 2.7vw, 11px);
+  letter-spacing: 1.5px;
+  color: var(--phosphor-dim);
+  text-shadow: none;
+}
+
+/* Phrase buttons — occupy most of the screen */
 .buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -273,6 +367,7 @@ body {
   flex: 1.4;
   min-height: 150px;
 }
+.buttons.single { grid-template-columns: 1fr; flex: 1; min-height: 120px; }
 .teamBtn {
   font-family: var(--mono);
   display: flex;
@@ -291,8 +386,12 @@ body {
   box-shadow: 0 0 16px rgba(51,255,102,0.08) inset, 0 3px 0 #06180b;
   transition: transform 90ms ease, box-shadow 120ms ease, background 120ms ease;
 }
-.teamBtn .flag { font-size: clamp(38px, 13vw, 58px); line-height: 1; text-shadow: none; filter: saturate(1.1); }
-.teamBtn .teamName { font-size: clamp(15px, 4.6vw, 20px); letter-spacing: 2px; font-weight: 700; }
+.teamBtn .btnIcon { font-size: clamp(34px, 11vw, 52px); line-height: 1; text-shadow: none; filter: saturate(1.1); }
+.teamBtn .btnLabel { font-size: clamp(14px, 4.2vw, 19px); letter-spacing: 2px; font-weight: 700; }
+/* The single wide button reads as one long label, so keep it on one line. */
+.teamBtn.wide { flex-direction: row; gap: 14px; }
+.teamBtn.wide .btnIcon { font-size: clamp(30px, 9vw, 44px); }
+.teamBtn.wide .btnLabel { font-size: clamp(13px, 4vw, 18px); }
 .teamBtn:hover { background: linear-gradient(180deg, rgba(51,255,102,0.18) 0%, rgba(51,255,102,0.06) 100%); }
 .teamBtn:active { transform: translateY(3px); box-shadow: 0 0 22px rgba(51,255,102,0.14) inset, 0 0 0 #06180b; }
 .teamBtn:focus-visible { outline: none; border-color: var(--phosphor); box-shadow: 0 0 0 3px rgba(51,255,102,0.35), 0 0 16px rgba(51,255,102,0.14) inset; }
