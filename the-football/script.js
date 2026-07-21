@@ -116,7 +116,7 @@
   /* ---- State -------------------------------------------- */
   var muted = false;
   var currentPhrase = "";
-  var lastIndex = {};
+  var bags = {};
   var preferredVoice = null;
   var booted = false;
 
@@ -175,18 +175,35 @@
     } catch (e) { /* ignore */ }
   }
 
-  /* ---- Phrase selection (no immediate repeat) ----------- */
+  /* ---- Phrase selection (shuffle bag, no repeats until cycled) ----------- */
+  /* Each bank draws from a shuffled bag of all its phrases; a phrase can't
+     come up again until every other one has been used. When the bag empties
+     it's reshuffled, and we reshuffle again if the new bag would start with
+     the phrase we just showed, so there's no repeat across the boundary. */
+  function shuffled(list) {
+    var a = list.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
   function nextPhrase(bank) {
     var list = PHRASES[bank];
     if (!list || !list.length) return "";
     if (list.length === 1) return list[0];
-    if (!(bank in lastIndex)) lastIndex[bank] = -1;
-    var i;
-    do {
-      i = Math.floor(Math.random() * list.length);
-    } while (i === lastIndex[bank]);
-    lastIndex[bank] = i;
-    return list[i];
+    var state = bags[bank];
+    if (!state || !state.queue.length) {
+      var last = state ? state.last : null;
+      var queue = shuffled(list);
+      // Avoid an immediate repeat when a fresh bag begins with the last draw.
+      if (queue[0] === last) queue.push(queue.shift());
+      state = bags[bank] = { queue: queue, last: last };
+    }
+    var phrase = state.queue.shift();
+    state.last = phrase;
+    return phrase;
   }
 
   /* ---- DOM ---------------------------------------------- */
