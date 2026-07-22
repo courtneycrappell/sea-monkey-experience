@@ -84,7 +84,7 @@
     <section id="screen-recital-details" class="screen">
       <div class="card">
         <h2 class="question" tabindex="-1">Recital Details
-          <span class="question-sub">Fill in the event and studio information. This appears on the cover and program header.</span>
+          <span class="question-sub">Fill in the event and studio information. The event details appear at the top of your program; your professor and degree appear in the fine print at the end.</span>
           <span class="question-sub">Fields marked <span aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required.</span>
         </h2>
 
@@ -155,7 +155,7 @@
         <div class="field-group">
           <div class="field-row">
             <div class="field">
-              <label for="rd-name">Your name (as printed) <span class="req" aria-hidden="true">*</span></label>
+              <label for="rd-name">Your name (as it should appear) <span class="req" aria-hidden="true">*</span></label>
               <input type="text" spellcheck="true" id="rd-name" placeholder="e.g. Michael Brown" required aria-required="true"
                      oninput="updateRD('performerName', this.value)">
             </div>
@@ -177,17 +177,18 @@
                       oninput="updateRD('additionalPerformers', this.value)"></textarea>
           </div>
 
-          <!-- ── Web Program (Beta) extras — optional, only used by the web program ── -->
+          <!-- ── Optional extras. Both appear in the Faculty Proof (.doc) and in the
+               published calendar program, after the repertoire list. ── -->
           <div class="field">
-            <label for="rd-program-notes">Program notes <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional — for the Web Program)</span></label>
+            <label for="rd-program-notes">Program notes <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
             <textarea spellcheck="false" id="rd-program-notes" rows="4"
-                      placeholder="Notes about the program or individual works. Leave blank to omit. (Used only in the downloadable Web Program — not on the PDF or Word doc.)"
+                      placeholder="Notes about the program or individual works. These appear after the repertoire, in both the Faculty Proof and your published program. Leave blank to omit."
                       oninput="updateRD('programNotes', this.value)"></textarea>
           </div>
           <div class="field">
-            <label for="rd-performer-bio">Performer bio <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional — for the Web Program)</span></label>
+            <label for="rd-performer-bio">Performer bio <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
             <textarea spellcheck="false" id="rd-performer-bio" rows="4"
-                      placeholder="A short bio of the performer. Leave blank to omit. (Used only in the downloadable Web Program — not on the PDF or Word doc.)"
+                      placeholder="A short bio of the performer. This appears after the repertoire, in both the Faculty Proof and your published program. Leave blank to omit."
                       oninput="updateRD('performerBio', this.value)"></textarea>
           </div>
 
@@ -784,7 +785,7 @@ Your formatted entry will appear here as you fill in the wizard.
 
 <script src="typo.js"></script>
 <script src="musical-terms.js"></script>
-<script src="app.js?v=c122f82a"></script>
+<script src="app.js?v=0b768ccb"></script>
 
 </body>
 </html>

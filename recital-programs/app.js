@@ -26,8 +26,8 @@ function defaultRecitalDetails() {
     profName:            '',
     degree:              '',
     lectureTitle:        '',
-    programNotes:        '',   // Web Program (Beta) — optional
-    performerBio:        '',   // Web Program (Beta) — optional
+    programNotes:        '',   // optional; renders in the .doc proof and the LiveWhale program
+    performerBio:        '',   // optional; renders in the .doc proof and the LiveWhale program
   };
 }
 
