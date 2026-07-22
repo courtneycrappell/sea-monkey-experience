@@ -981,62 +981,6 @@ function updatePreviewPlaceholder() {
   }
 }
 
-// ════════════════════════════════════════════════════════════════
-//  Copy + Edit
-// ════════════════════════════════════════════════════════════════
-function getPlainText() {
-  const entry = buildEntry();
-  return entry ? entry.text : '';
-}
-
-function copyPreview() {
-  const text = getPlainText();
-  if (!text) return;
-  writeToClipboard(text, 'preview-copy-confirm');
-}
-
-function copyResult() {
-  // Use edited content if in edit mode, otherwise the clean plain-text build
-  let text;
-  if (editMode) {
-    const el = document.getElementById('result-output');
-    text = el ? (el.innerText || '').trim() : '';
-  } else {
-    text = getPlainText();
-  }
-  if (!text) return;
-  writeToClipboard(text, 'copy-confirm');
-}
-
-function writeToClipboard(text, confirmId) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text)
-      .then(() => showCopyConfirm(confirmId))
-      .catch(() => fallbackCopy(text, confirmId));
-  } else {
-    fallbackCopy(text, confirmId);
-  }
-}
-
-function fallbackCopy(text, confirmId) {
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
-  document.body.appendChild(ta);
-  ta.focus();
-  ta.select();
-  try { document.execCommand('copy'); } catch (e) { /* silent */ }
-  document.body.removeChild(ta);
-  showCopyConfirm(confirmId);
-}
-
-function showCopyConfirm(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2000);
-  announce('Copied to clipboard');
-}
 
 // Screen-reader status announcements (visually hidden role="status" region).
 // Clear-then-set so repeating the same message still re-announces.
@@ -1117,15 +1061,6 @@ function editPreview() {
   el.focus();
   const hint = document.getElementById('preview-edit-hint');
   if (hint) hint.style.display = 'block';
-}
-
-// ════════════════════════════════════════════════════════════════
-//  Result screen render
-// ════════════════════════════════════════════════════════════════
-function renderResultScreen() {
-  const entry = buildEntry();
-  const el = document.getElementById('result-output');
-  if (el && entry) el.innerHTML = entry.html;
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1746,29 +1681,6 @@ function renderProgramList() {
   }).join('');
 }
 
-// ════════════════════════════════════════════════════════════════
-//  Recital type → interior header text
-// ════════════════════════════════════════════════════════════════
-function getHeaderText(recitalType) {
-  // Includes legacy types no longer offered in the dropdown (e.g. Senior/Junior
-  // Undergraduate, Student Chamber Music) so old saved sessions and reloaded
-  // program files still render correctly — keep them.
-  const map = {
-    "Doctoral Recital":             "DOCTORAL RECITAL",
-    "Doctoral Lecture Recital":     "DOCTORAL LECTURE RECITAL",
-    "Master's Recital":             "MASTER'S DEGREE RECITAL",
-    "Bachelor's Recital":           "BACHELOR'S DEGREE RECITAL",
-    "Senior Undergraduate Recital": "BACHELOR'S DEGREE RECITAL",
-    "Junior Undergraduate Recital": "BACHELOR'S DEGREE RECITAL",
-    "Artist's Certificate Recital": "ARTIST'S CERTIFICATE RECITAL",
-    "Performer's Certificate Recital": "PERFORMER'S CERTIFICATE RECITAL",
-    "Non-Credit Graduate Recital":  "NON-CREDIT RECITAL",
-    "Non-Credit Undergraduate Recital": "NON-CREDIT RECITAL",
-    "Student Chamber Music Recital":"STUDENT CHAMBER MUSIC RECITAL",
-  };
-  return map[recitalType] || recitalType.toUpperCase();
-}
-
 function hasDegreeFooter(recitalType) {
   const noDegree = ['Student Chamber Music Recital'];
   return !noDegree.includes(recitalType);
@@ -2202,10 +2114,6 @@ function spellCheckWithDicts(word, dicts) {
   const clean = word.replace(/[.,;:!?'"()[\]{}–—]/g, '');
   if (!clean) return true;
   return dicts.some(d => d.check(clean));
-}
-
-function spellCheck(word) {
-  return spellCheckWithDicts(word, loadedDicts);
 }
 
 function spellSuggest(word) {
