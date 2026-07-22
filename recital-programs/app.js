@@ -2093,9 +2093,10 @@ function loadJsPDF() {
   if (jspdfLoadPromise) return jspdfLoadPromise;
   jspdfLoadPromise = new Promise((resolve, reject) => {
     const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-    s.integrity = 'sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk';
-    s.crossOrigin = 'anonymous';
+    // Self-hosted (vendor/). jsPDF 2.5.1 UMD, byte-identical to the cdnjs build
+    // (sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk).
+    // Same-origin, so no integrity/crossOrigin attributes are needed.
+    s.src = 'vendor/jspdf.umd.min.js';
     s.onload = resolve;
     s.onerror = () => reject(new Error('Failed to load jsPDF'));
     document.head.appendChild(s);
@@ -2933,13 +2934,27 @@ function populateRecitalDetailsForm() {
 //  Spell Checker — Layer 2 (Typo.js multilingual)
 // ════════════════════════════════════════════════════════════════
 
+// English is the only Hunspell dictionary we load. Non-English repertoire
+// vocabulary is handled by the curated list in musical-terms.js instead.
+//
+// History (all measured 2026-07-22 against 204 real form submissions):
+//
+//   it_IT / es_ES / pt_PT — removed. None of these ever worked, including on
+//     the live CDN build. Italian spent ~21s parsing on the main thread (which
+//     froze the tab) before throwing "RangeError: Too many properties to
+//     enumerate"; Spanish and Portuguese threw TypeError in the affix parser.
+//     All three errors were swallowed by the catch in loadDictForLang, so the
+//     failures looked like general slowness rather than breakage.
+//
+//   de_DE / fr_FR — replaced by musical-terms.js. They worked, but cost ~0.7s
+//     and ~3.4s of blocking main-thread parse time (4.1s total with English)
+//     to rescue just 704 distinct words across the whole historical corpus.
+//     A 12 KB curated list covers the same vocabulary at effectively zero cost.
+//
+// Re-adding a Hunspell dictionary means fixing Typo.js first: dictionaryTable
+// must become a Map, and parsing must move off the main thread.
 const SPELL_DICT_LANGS = [
   { code: 'en_US', pkg: 'dictionary-en' },
-  { code: 'de_DE', pkg: 'dictionary-de' },
-  { code: 'fr_FR', pkg: 'dictionary-fr' },
-  { code: 'it_IT', pkg: 'dictionary-it' },
-  { code: 'es_ES', pkg: 'dictionary-es' },
-  { code: 'pt_PT', pkg: 'dictionary-pt' },
 ];
 let loadedDicts = [];
 let dictsReady = false;
@@ -2950,7 +2965,7 @@ async function loadDictForLang(code) {
   DICT_CACHE[code] = 'loading';
   const lang = SPELL_DICT_LANGS.find(l => l.code === code);
   if (!lang) return;
-  const base = 'https://cdn.jsdelivr.net/npm/';
+  const base = 'vendor/'; // self-hosted Hunspell dictionaries — no outside calls
   try {
     const [aff, dic] = await Promise.all([
       fetch(base + lang.pkg + '/index.aff').then(r => r.text()),
@@ -2978,13 +2993,8 @@ async function loadDictionaries() {
     const el = document.getElementById(id);
     if (el && el.value?.trim()) runSpellCheck(id);
   });
-  // …then load German, French, and Italian in the background. These three are
-  // always-on (not accent-triggered) so their terms never get flagged as
-  // misspellings, even without accents (e.g. "Lieder", "Sonate", "Valse").
-  // Each finishing load re-checks active fields via loadDictForLang().
-  loadDictForLang('de_DE');
-  loadDictForLang('fr_FR');
-  loadDictForLang('it_IT');
+  // Nothing else to load — non-English terms come from musical-terms.js, which
+  // is already in memory (a plain array, no parsing) by the time we get here.
 }
 
 // Fields to check
@@ -3006,32 +3016,31 @@ const SPELL_SKIP_RE = [
   /^[a-z]{1,2}\.?$/,        // short abbreviations: e., p., f.
 ];
 
+// Curated non-English repertoire vocabulary (musical-terms.js). Built lazily so
+// script order can't leave us with an empty set, and cached once it's available.
+let musicalTermSet = null;
+const EMPTY_TERM_SET = new Set();
+function getMusicalTerms() {
+  if (musicalTermSet === null && Array.isArray(window.MUSICAL_TERMS)) {
+    musicalTermSet = new Set(window.MUSICAL_TERMS.map(w => w.toLowerCase()));
+  }
+  return musicalTermSet || EMPTY_TERM_SET;
+}
+
 function spellSkip(word) {
   const w = word.replace(/[.,;:!?'"()[\]{}–—]/g, '');
   if (!w || w.length <= 2) return true;
-  if (SPELL_SKIP_WORDS.has(w.toLowerCase())) return true;
+  const lower = w.toLowerCase();
+  if (SPELL_SKIP_WORDS.has(lower)) return true;
+  if (getMusicalTerms().has(lower)) return true;
   return SPELL_SKIP_RE.some(re => re.test(w));
 }
 
 function getContextDicts(text) {
-  const hasItPt    = /[àèìòùÀÈÌÒÙãõÃÕ]/.test(text);
-  const hasSpanish = /[ñÑ]/.test(text);
-
-  // German, French, and Italian are always consulted (loaded at startup), so
-  // terms in those languages never trigger a spelling-error prompt — including
-  // ones without accents. Ensure they're loaded even if startup is still in flight.
-  if (!DICT_CACHE['de_DE']) loadDictForLang('de_DE');
-  if (!DICT_CACHE['fr_FR']) loadDictForLang('fr_FR');
-  if (!DICT_CACHE['it_IT']) loadDictForLang('it_IT');
-  // Spanish/Portuguese remain accent-triggered (loaded on demand).
-  if (hasItPt    && !DICT_CACHE['pt_PT']) loadDictForLang('pt_PT');
-  if (hasSpanish && !DICT_CACHE['es_ES']) loadDictForLang('es_ES');
-
-  const codes = ['en_US', 'de_DE', 'fr_FR', 'it_IT'];
-  if (hasItPt)    codes.push('pt_PT');
-  if (hasSpanish) codes.push('es_ES');
-
-  const active = loadedDicts.filter(d => codes.includes(d.dictionary));
+  // English is the only Hunspell dictionary in play. Non-English repertoire
+  // vocabulary is matched earlier, in spellSkip(), against musical-terms.js —
+  // see the note on SPELL_DICT_LANGS for why the other dictionaries are gone.
+  const active = loadedDicts.filter(d => d.dictionary === 'en_US');
   return active.length > 0 ? active : loadedDicts;
 }
 
