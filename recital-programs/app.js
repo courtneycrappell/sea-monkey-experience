@@ -1690,6 +1690,10 @@ function hasDegreeFooter(recitalType) {
 //  Init
 // ════════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
+  // Tell the student up front if this browser can't auto-save, rather than
+  // letting them find out by losing their work.
+  if (!storageWorks()) warnStorageUnavailable();
+
   // Check for saved session BEFORE resetting state
   const saved = loadSavedSession();
   if (saved) {
@@ -1742,11 +1746,43 @@ function buildSnapshot() {
   };
 }
 
+// ── Storage availability ──────────────────────────────────────────────
+// The tool tells students their work auto-saves in this browser. That promise
+// is false in private browsing, when storage is disabled by device policy, or
+// at quota — and the failure is invisible unless we surface it. Losing an hour
+// of work silently is the worst thing this tool can do, so warn instead.
+let storageWarned = false;
+
+function warnStorageUnavailable() {
+  if (storageWarned) return;   // once per session; the banner is persistent
+  storageWarned = true;
+  const banner = document.getElementById('storage-warning');
+  const detail = document.getElementById('storage-warning-detail');
+  if (detail) {
+    detail.textContent = 'Your progress will not be here if you close this tab or reload. ' +
+      'Use “Save Progress (project file)” below to download your work — you can reload that ' +
+      'file here anytime to keep going.';
+  }
+  // Setting text before showing makes the role="alert" announcement reliable.
+  if (banner) banner.style.display = 'block';
+}
+
+// Probe rather than assume: some browsers throw on any localStorage access.
+function storageWorks() {
+  try {
+    localStorage.setItem('umkc-storage-probe', '1');
+    localStorage.removeItem('umkc-storage-probe');
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function autoSave() {
   clearTimeout(autoSaveTimer);
   autoSaveTimer = setTimeout(() => {
     try { localStorage.setItem('umkc-recital-draft', JSON.stringify(buildSnapshot())); }
-    catch (e) { /* silent — storage full or disabled */ }
+    catch (e) { warnStorageUnavailable(); }   // quota hit, or storage went away
   }, 800);
 }
 
@@ -1830,7 +1866,10 @@ function loadSavedSession() {
 }
 
 function clearSavedSession() {
-  localStorage.removeItem('umkc-recital-draft');
+  // Unguarded removeItem throws in browsers that block storage entirely, which
+  // would break "Clear saved data" and Start Over. There's nothing to clear in
+  // that case anyway.
+  try { localStorage.removeItem('umkc-recital-draft'); } catch (e) { /* no storage to clear */ }
 }
 
 function showRestoreBanner(saved) {

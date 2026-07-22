@@ -709,6 +709,23 @@ header h1   { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
 }
 
 /* ── Restore banner ───────────────────────────────────────── */
+/* Storage warning — shown when this browser can't auto-save. Colours use the
+   warn tokens; #6b4100 on #fff8e1 is ~7.8:1, well clear of WCAG AA. */
+.storage-warning {
+  background: var(--warn-bg);
+  border: 1.5px solid var(--warn-border);
+  border-left-width: 5px;
+  border-radius: var(--radius);
+  padding: 0.85rem 1.1rem;
+  margin-bottom: 1rem;
+  color: #6b4100;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.storage-warning strong { display: block; margin-bottom: 0.2rem; }
+.storage-warning span { display: block; font-size: 0.85rem; }
+@media print { .storage-warning { display: none !important; } }
+
 .restore-banner {
   background: #e8f0ec;
   border: 1.5px solid var(--green);

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recital Program Generator — UMKC Conservatory</title>
-  <link rel="stylesheet" href="styles.css?v=5ad64d27">
+  <link rel="stylesheet" href="styles.css?v=093c20d7">
 </head>
 <body class="on-welcome">
 
@@ -24,6 +24,17 @@
     <!-- ── Entry indicator ────────────────────────────────── -->
     <div id="entry-indicator" style="display:none">
       <span id="entry-indicator-label">Program Entry 1</span>
+    </div>
+
+    <!-- ── Storage warning ─────────────────────────────────
+         Shown only when this browser cannot auto-save (private browsing,
+         storage disabled by device policy, or quota exceeded). The footer
+         promises that work auto-saves, so when that promise is false the
+         student has to be told — silently losing an hour of work is the
+         worst outcome this tool can produce. -->
+    <div id="storage-warning" style="display:none" class="storage-warning" role="alert">
+      <strong><span aria-hidden="true">⚠</span> This browser isn’t saving your work automatically.</strong>
+      <span id="storage-warning-detail"></span>
     </div>
 
     <!-- ── Restore banner (shown if saved session found) ──── -->
@@ -773,7 +784,7 @@ Your formatted entry will appear here as you fill in the wizard.
 
 <script src="typo.js"></script>
 <script src="musical-terms.js"></script>
-<script src="app.js?v=b84144b2"></script>
+<script src="app.js?v=c122f82a"></script>
 
 </body>
 </html>
