@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recital Program Generator — UMKC Conservatory</title>
-  <link rel="stylesheet" href="styles.css?v=6a25d3cc">
+  <link rel="stylesheet" href="styles.css?v=5ad64d27">
 </head>
 <body class="on-welcome">
 
@@ -736,14 +736,6 @@ Your formatted entry will appear here as you fill in the wizard.
       <button class="btn-secondary-sm" style="width:100%;margin-bottom:0.5rem" onclick="goToScreen('recital-details')"><span aria-hidden="true">✎</span> Edit Recital Details</button>
       <div id="program-list"></div>
       <div class="program-footer">
-        <!-- Legacy / staff-side outputs hidden from students. Functionality retained on the
-             back end — the LiveWhale HTML is produced by staff on staff.html from the
-             student's .json project file. Remove display:none to restore any of these. -->
-        <button class="btn-primary btn-download" style="display:none" onclick="generatePDF()">⬇ Download PDF</button>
-        <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="previewPDF()">Preview PDF →</button>
-        <button class="btn-primary btn-download" style="display:none" onclick="generateWebProgram()">⬇ Download Digital Program (.html)</button>
-        <button class="btn-secondary" style="display:none;margin-top:0.5rem;width:100%" onclick="openFacultyEmailModal()" title="Email the faculty proof to your faculty member for review">✉ Send to Faculty</button>
-
         <!-- STEP 1 — Save your work. This IS your file: reload it later, and send it to staff once approved. -->
         <button class="btn-primary btn-download" onclick="saveDraftToFile()" title="Your save file. Reload it later, and send it to staff to publish."><span aria-hidden="true">💾</span> Save Progress (project file)</button>
         <p class="footer-hint">
@@ -779,35 +771,9 @@ Your formatted entry will appear here as you fill in the wizard.
     <!-- TODO: confirm barrier-report address before umkc.edu migration --></p>
 </footer>
 
-<!-- ── Faculty Email Modal ──────────────────────────────────── -->
-<div id="faculty-email-modal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="faculty-modal-title">
-  <div class="modal-card">
-    <h2 class="modal-title" id="faculty-modal-title">Send to Faculty for Review</h2>
-    <div class="modal-note">
-      <strong>What happens when you click the button:</strong>
-      <ol style="margin:0.5rem 0 0 1.1rem;padding:0;line-height:1.7">
-        <li>A Word document (.doc) review copy downloads to your computer.</li>
-        <li>Your email client opens, pre-addressed to your faculty member.</li>
-        <li><strong>You must attach the downloaded Word document to the email before sending.</strong></li>
-      </ol>
-      <p style="margin:0.6rem 0 0;font-size:0.85rem;color:var(--muted)">The Word copy is for proofing the text — your faculty member reviews the wording and approves it. The published program is the web (.html) version.</p>
-    </div>
-    <div class="field" style="margin-bottom:1rem">
-      <label for="faculty-email-input">Faculty email address</label>
-      <input type="email" id="faculty-email-input" placeholder="e.g. professor@umkc.edu"
-             spellcheck="false" autocomplete="email" aria-describedby="faculty-email-val">
-      <div class="validation-msg" id="faculty-email-val" role="alert" style="margin-top:0.5rem">Please enter a valid email address.</div>
-    </div>
-    <div class="btn-row" style="margin-top:0">
-      <button class="btn-secondary" onclick="closeFacultyEmailModal()">Cancel</button>
-      <button class="btn-primary" style="margin-top:0;width:auto;flex:1" onclick="submitToFaculty()">Download .doc &amp; Open Email</button>
-    </div>
-  </div>
-</div>
-
 <script src="typo.js"></script>
 <script src="musical-terms.js"></script>
-<script src="app.js?v=eb05d361"></script>
+<script src="app.js?v=f8458e33"></script>
 
 </body>
 </html>

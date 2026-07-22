@@ -973,42 +973,6 @@ footer {
 .footer-a11y { margin-top: 0.4rem; }
 .footer-a11y a { color: #fff; text-decoration: underline; }
 
-/* ── Faculty email modal ──────────────────────────────────── */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-  padding: 1.5rem;
-}
-.modal-card {
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-  padding: 1.75rem;
-  width: 100%;
-  max-width: 440px;
-}
-.modal-title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--green);
-  margin-bottom: 0.75rem;
-}
-.modal-note {
-  background: var(--warn-bg);
-  border: 1px solid var(--warn-border);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  font-size: 0.85rem;
-  color: #6b4100;
-  margin-bottom: 1.25rem;
-  line-height: 1.5;
-}
-
 /* ── Print ────────────────────────────────────────────────── */
 @media print {
   header .org, .btn-back, .btn-row, .preview-actions, footer,
