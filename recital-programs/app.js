@@ -2136,9 +2136,11 @@ async function loadDictForLang(code) {
   if (!lang) return;
   const base = 'vendor/'; // self-hosted Hunspell dictionaries — no outside calls
   try {
+    // .txt suffix: servers without Hunspell MIME mappings (IIS 404s unmapped
+    // extensions) still serve these as plain text with no config needed.
     const [aff, dic] = await Promise.all([
-      fetchDictText(base + lang.pkg + '/index.aff'),
-      fetchDictText(base + lang.pkg + '/index.dic'),
+      fetchDictText(base + lang.pkg + '/index.aff.txt'),
+      fetchDictText(base + lang.pkg + '/index.dic.txt'),
     ]);
     const inst = new Typo(code, aff, dic, { platform: 'any' });
     if (!SPELL_SANITY_WORDS.every(w => inst.check(w))) {
