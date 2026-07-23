@@ -2061,7 +2061,22 @@ const SPELL_DICT_LANGS = [
 ];
 let loadedDicts = [];
 let dictsReady = false;
+let spellCheckUnavailable = false;  // dictionary missing or unusable — see loadDictForLang
 const DICT_CACHE = {}; // code → Typo instance | 'loading'
+
+// fetch() resolves happily on 404, so an error page's HTML would otherwise be
+// handed to Typo as dictionary data. Fail loudly instead.
+function fetchDictText(url) {
+  return fetch(url).then(r => {
+    if (!r.ok) throw new Error('HTTP ' + r.status + ' for ' + url);
+    return r.text();
+  });
+}
+
+// A dictionary built from the wrong bytes still constructs — it just rejects
+// every word, which would underline the student's entire program as
+// misspelled. Prove it knows ordinary English before trusting it.
+const SPELL_SANITY_WORDS = ['the', 'and', 'music', 'program'];
 
 async function loadDictForLang(code) {
   if (DICT_CACHE[code]) return; // already loaded or in flight
@@ -2071,10 +2086,13 @@ async function loadDictForLang(code) {
   const base = 'vendor/'; // self-hosted Hunspell dictionaries — no outside calls
   try {
     const [aff, dic] = await Promise.all([
-      fetch(base + lang.pkg + '/index.aff').then(r => r.text()),
-      fetch(base + lang.pkg + '/index.dic').then(r => r.text()),
+      fetchDictText(base + lang.pkg + '/index.aff'),
+      fetchDictText(base + lang.pkg + '/index.dic'),
     ]);
     const inst = new Typo(code, aff, dic, { platform: 'any' });
+    if (!SPELL_SANITY_WORDS.every(w => inst.check(w))) {
+      throw new Error('dictionary ' + code + ' loaded but failed its sanity check');
+    }
     DICT_CACHE[code] = inst;
     loadedDicts.push(inst);
     dictsReady = true;
@@ -2085,6 +2103,9 @@ async function loadDictForLang(code) {
     });
   } catch (e) {
     delete DICT_CACHE[code]; // allow retry on next input
+    // dictsReady stays false, so spellCheckWithDicts() passes every word. The
+    // tool degrades to no spell-check rather than flagging correct words.
+    spellCheckUnavailable = true;
   }
 }
 
@@ -2239,7 +2260,11 @@ function scheduleSpellCheck(id) {
 }
 
 function runSpellCheck(id) {
-  if (!dictsReady) return;
+  if (!dictsReady) {
+    // Still loading is normal and silent; permanently unavailable is not.
+    if (spellCheckUnavailable) updateSpellStatus(id, []);
+    return;
+  }
   const isTextarea = SPELL_TEXTAREA_IDS.includes(id);
   const el = document.getElementById(id);
   if (!el) return;
@@ -2282,6 +2307,16 @@ const spellStatusCache = {};
 function updateSpellStatus(id, errors) {
   const el = document.getElementById('spell-status-' + id);
   if (!el) return;
+  // Dictionary never loaded (missing file, wrong MIME type, unusable data).
+  // Say so once per field instead of looking like a working checker that
+  // never finds anything — a deploy problem should be diagnosable.
+  if (spellCheckUnavailable && !dictsReady) {
+    if (spellStatusCache[id] !== '__unavailable__') {
+      spellStatusCache[id] = '__unavailable__';
+      el.textContent = 'Spell-check unavailable — check your spelling manually.';
+    }
+    return;
+  }
   const unique = [...new Set(errors)];
   const key = unique.join(' ');
   if (spellStatusCache[id] === key) return;
