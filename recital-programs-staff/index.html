@@ -75,6 +75,7 @@
       <button class="btn" id="copyBtn" type="button" style="margin-left:8px"><span aria-hidden="true">📋</span> Copy for LiveWhale</button>
       <span class="ok" id="ok" role="status">Copied ✓</span>
     </h2>
+    <p class="err" id="copyErr" role="alert"></p>
     <textarea class="src" id="src" readonly spellcheck="false"></textarea>
     <p class="muted">Inline-styled HTML with no <code>&lt;style&gt;</code>, <code>&lt;script&gt;</code>, or classes — built to survive the LiveWhale editor's Save. Date, time, and location are intentionally omitted (the event's left column already shows them).</p>
 
@@ -106,6 +107,7 @@
   var src       = document.getElementById('src');
   var copyBtn   = document.getElementById('copyBtn');
   var ok        = document.getElementById('ok');
+  var copyErr   = document.getElementById('copyErr');
 
   var MARKER = 'UMKC-RECITAL-DATA:';
 
@@ -172,11 +174,32 @@
 
   copyBtn.addEventListener('click', function () {
     src.select();
-    var done = function () { ok.style.display = 'inline'; setTimeout(function () { ok.style.display = 'none'; }, 1800); };
+    var done = function () {
+      copyErr.style.display = 'none';   // clear any prior failure notice
+      ok.style.display = 'inline';
+      setTimeout(function () { ok.style.display = 'none'; }, 1800);
+    };
+    // Never claim success without it. If the clipboard write fails and we still
+    // showed "Copied ✓", staff would paste whatever was there before — possibly
+    // the previous student's program — into a public calendar event.
+    // Deliberately NOT showError() — that hides the output card, and the card
+    // holds the textarea we're asking them to copy from by hand.
+    var failed = function () {
+      ok.style.display = 'none';
+      copyErr.style.display = 'block';
+      copyErr.textContent = 'Could not copy automatically. The program HTML is selected in the box below — press ' +
+        (navigator.platform.indexOf('Mac') === 0 ? 'Cmd' : 'Ctrl') + '+C to copy it.';
+      src.focus(); src.select();
+    };
+    var legacyCopy = function () {
+      var ok2 = false;
+      try { ok2 = document.execCommand('copy'); } catch (e) { ok2 = false; }
+      ok2 ? done() : failed();
+    };
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(src.value).then(done, function () { document.execCommand('copy'); done(); });
+      navigator.clipboard.writeText(src.value).then(done, legacyCopy);
     } else {
-      document.execCommand('copy'); done();
+      legacyCopy();
     }
   });
 })();

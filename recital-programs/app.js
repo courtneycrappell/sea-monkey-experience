@@ -1849,6 +1849,14 @@ function loadDraftFromFile(inputEl) {
         'from this tool instead, or rebuild the program.');
     }
   };
+  // Without this, a failed read is completely silent — the student picks a file
+  // and nothing happens at all. Most likely with a cloud-synced folder
+  // (OneDrive/Drive) where the file isn't actually downloaded locally.
+  reader.onerror = function () {
+    alert('Sorry — that file could not be read.\n\n' +
+          'If it lives in OneDrive, Google Drive, or another synced folder, make sure it is ' +
+          'downloaded to this computer (not online-only), then try again.');
+  };
   reader.readAsText(file);
 }
 
