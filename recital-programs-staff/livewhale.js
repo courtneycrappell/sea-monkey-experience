@@ -61,12 +61,37 @@
       '</tr></table>';
   }
 
+  // Strip anything executable out of entry HTML. This page loads a .json chosen
+  // from disk, so by the time the markup gets here it is untrusted input — a
+  // hand-edited project file can carry an event-handler attribute, and staff
+  // opening it would run the author's code on a umkc.edu origin. The builder
+  // has an equivalent scrub (sanitizeEntryHtml in app.js).
+  function scrub(root) {
+    var kill = root.querySelectorAll('script,style,iframe,object,embed,link,meta,form,input,button');
+    Array.prototype.forEach.call(kill, function (n) { n.parentNode && n.parentNode.removeChild(n); });
+    var all = root.querySelectorAll('*');
+    Array.prototype.forEach.call(all, function (el) {
+      Array.prototype.slice.call(el.attributes).forEach(function (a) {
+        var n = a.name.toLowerCase();
+        if (n.indexOf('on') === 0 ||
+            ((n === 'href' || n === 'src' || n === 'xlink:href') && /^\s*javascript:/i.test(a.value)) ||
+            n === 'srcdoc' || n === 'formaction') {
+          el.removeAttribute(a.name);
+        }
+      });
+    });
+    return root;
+  }
+
   // Restyle one entry's stored .html (which uses buildEntry's classes) into
   // inline-styled, TinyMCE-safe markup.
   function restyleEntry(html) {
     var doc  = new DOMParser().parseFromString('<body><div id="__r">' + html + '</div></body>', 'text/html');
     var root = doc.getElementById('__r');
-    if (!root) return '<div style="' + S.indent + '">' + html + '</div>';
+    // No safe way to scrub a string we couldn't parse — escape it instead of
+    // passing raw markup through.
+    if (!root) return '<div style="' + S.indent + '">' + esc(html) + '</div>';
+    scrub(root);
 
     // Manually-edited entries may be loose text with no element structure —
     // pass them through rather than dropping them.

@@ -1936,7 +1936,11 @@ function restoreSession(saved) {
     if (e.edited) return { ...e, html: sanitizeEntryHtml(e.html || '') };
     // Merge onto full defaults so incomplete/older entryState can't crash buildEntry()
     const rebuilt = buildEntryFromState({ ...defaultWizardState(), ...(e.entryState || {}) });
-    return { ...e, html: rebuilt ? rebuilt.html : e.html, text: rebuilt ? rebuilt.text : e.text };
+    // When the rebuild fails we fall back to the stored HTML — which came from
+    // a file and is therefore untrusted. Scrub it like an edited entry.
+    return rebuilt
+      ? { ...e, html: rebuilt.html, text: rebuilt.text }
+      : { ...e, html: sanitizeEntryHtml(e.html || ''), text: e.text };
   });
   state = { ...defaultWizardState(), ...(saved.wizardState || {}) };
   navHistory = saved.navHistory || [];
