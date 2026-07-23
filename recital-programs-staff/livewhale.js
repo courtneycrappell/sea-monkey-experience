@@ -66,18 +66,38 @@
   // hand-edited project file can carry an event-handler attribute, and staff
   // opening it would run the author's code on a umkc.edu origin. The builder
   // has an equivalent scrub (sanitizeEntryHtml in app.js).
+  // Allowlist, mirroring sanitizeEntryHtml() in app.js — keep the two in step.
+  var ALLOWED_TAGS  = ['DIV','SPAN','EM','I','B','STRONG','BR','SUP','SUB','U','SMALL','P'];
+  var ALLOWED_ATTRS = ['class', 'style'];
+  var DROP_TAGS =
+    'script,style,iframe,object,embed,link,meta,form,input,button,textarea,select,' +
+    'svg,math,template,base,noscript,audio,video,img,source,track,canvas,applet,frame,frameset';
+  var BAD_STYLE = /url\s*\(|expression\s*\(|javascript:|@import|behavior\s*:/i;
+  function safeStyle(v) { return !BAD_STYLE.test(String(v || '')); }
+
   function scrub(root) {
-    var kill = root.querySelectorAll('script,style,iframe,object,embed,link,meta,form,input,button');
-    Array.prototype.forEach.call(kill, function (n) { n.parentNode && n.parentNode.removeChild(n); });
-    var all = root.querySelectorAll('*');
-    Array.prototype.forEach.call(all, function (el) {
+    // 1. Dangerous elements go entirely, subtree and all.
+    Array.prototype.slice.call(root.querySelectorAll(DROP_TAGS))
+      .forEach(function (n) { n.parentNode && n.parentNode.removeChild(n); });
+
+    // 2. Unwrap anything else off the allowlist, keeping its text.
+    var changed = true, guard = 0;
+    while (changed && guard++ < 20) {
+      changed = false;
+      Array.prototype.slice.call(root.querySelectorAll('*')).forEach(function (el) {
+        if (ALLOWED_TAGS.indexOf(el.tagName) !== -1 || !el.parentNode) return;
+        while (el.firstChild) el.parentNode.insertBefore(el.firstChild, el);
+        el.parentNode.removeChild(el);
+        changed = true;
+      });
+    }
+
+    // 3. Strip non-allowlisted attributes; vet the survivors.
+    Array.prototype.slice.call(root.querySelectorAll('*')).forEach(function (el) {
       Array.prototype.slice.call(el.attributes).forEach(function (a) {
         var n = a.name.toLowerCase();
-        if (n.indexOf('on') === 0 ||
-            ((n === 'href' || n === 'src' || n === 'xlink:href') && /^\s*javascript:/i.test(a.value)) ||
-            n === 'srcdoc' || n === 'formaction') {
-          el.removeAttribute(a.name);
-        }
+        if (ALLOWED_ATTRS.indexOf(n) === -1) el.removeAttribute(a.name);
+        else if (n === 'style' && !safeStyle(a.value)) el.removeAttribute(a.name);
       });
     });
     return root;

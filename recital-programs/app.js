@@ -1026,18 +1026,57 @@ function resetPreviewEditMode() {
 
 // Sanitize contenteditable HTML before storing it (paste can bring in markup):
 // drop active/embedding elements and event-handler or javascript: attributes.
+// ── Entry HTML sanitiser ──────────────────────────────────────────────
+// Entry markup is authored by buildEntry(), but it round-trips through a .json
+// file the user can hand-edit, so it is untrusted by the time it comes back.
+//
+// Allowlist, not denylist: buildEntry only ever emits div/span/em plus class
+// and one inline style, so enumerating what is permitted is both practical and
+// far stronger than trying to name every dangerous construct. livewhale.js
+// carries an identical scrub for the staff page — keep the two in step.
+const SANITIZE_ALLOWED_TAGS  = new Set(['DIV','SPAN','EM','I','B','STRONG','BR','SUP','SUB','U','SMALL','P']);
+const SANITIZE_ALLOWED_ATTRS = new Set(['class', 'style']);
+const SANITIZE_DROP_TAGS =
+  'script,style,iframe,object,embed,link,meta,form,input,button,textarea,select,' +
+  'svg,math,template,base,noscript,audio,video,img,source,track,canvas,applet,frame,frameset';
+// Blocks url()/@import fetches and the legacy IE expression()/behavior: vectors.
+// Kept as a named constant — inlining it invites the "|<//i" mistake, where the
+// slash closes the literal early and the rest is read as a comment.
+const SANITIZE_BAD_STYLE = /url\s*\(|expression\s*\(|javascript:|@import|behavior\s*:/i;
+function sanitizeStyleValue(v) {
+  return !SANITIZE_BAD_STYLE.test(String(v || ''));
+}
+
 function sanitizeEntryHtml(html) {
-  const tmpl = document.createElement('template');
-  tmpl.innerHTML = html;
-  tmpl.content.querySelectorAll('script,style,iframe,object,embed,link,meta,form').forEach(n => n.remove());
-  tmpl.content.querySelectorAll('*').forEach(el => {
+  const tmpl = document.createElement('template');   // inert: nothing loads or runs
+  tmpl.innerHTML = String(html || '');
+  const root = tmpl.content;
+
+  // 1. Delete dangerous elements outright, subtree and all.
+  root.querySelectorAll(SANITIZE_DROP_TAGS).forEach(n => n.remove());
+
+  // 2. Unwrap anything else off the allowlist, keeping its text. Repeat so
+  //    nested unknown elements collapse; the guard stops any pathological loop.
+  let changed = true, guard = 0;
+  while (changed && guard++ < 20) {
+    changed = false;
+    root.querySelectorAll('*').forEach(el => {
+      if (SANITIZE_ALLOWED_TAGS.has(el.tagName) || !el.parentNode) return;
+      while (el.firstChild) el.parentNode.insertBefore(el.firstChild, el);
+      el.remove();
+      changed = true;
+    });
+  }
+
+  // 3. Strip every attribute that isn't allowlisted, and vet the ones that are.
+  root.querySelectorAll('*').forEach(el => {
     Array.from(el.attributes).forEach(a => {
       const n = a.name.toLowerCase();
-      if (n.startsWith('on') || ((n === 'href' || n === 'src') && /^\s*javascript:/i.test(a.value))) {
-        el.removeAttribute(a.name);
-      }
+      if (!SANITIZE_ALLOWED_ATTRS.has(n)) el.removeAttribute(a.name);
+      else if (n === 'style' && !sanitizeStyleValue(a.value)) el.removeAttribute(a.name);
     });
   });
+
   return tmpl.innerHTML;
 }
 
