@@ -431,7 +431,7 @@ canvas{
 }
 
 .about.open{
-  max-height: 320px;
+  max-height: 360px;
   opacity: 1;
   transform: translateY(0);
 }
@@ -450,6 +450,23 @@ canvas{
   font-size: 13px;
   line-height: 1.45;
   opacity: 0.72;
+}
+
+.aboutHint{
+  margin: 14px 0 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  font-style: italic;
+  opacity: 0.6;
+}
+
+.tunerKey{
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 1px 5px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
 }
 
 @media (max-width: 680px){
@@ -1103,6 +1120,14 @@ body.heart-mode .heartEasterEgg {
   font-size: 12px;
   line-height: 1.5;
   color: rgba(220,245,255,0.68);
+}
+
+.seaAboutHint{
+  margin: 12px 0 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+  font-style: italic;
+  color: rgba(220,245,255,0.55);
 }
 
 @media (max-width: 720px){
