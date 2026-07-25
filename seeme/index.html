@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SeeMe — Support</title>
+    <style>
+      :root {
+        --bg: #08080e;
+        --card: #12121c;
+        --text: #e8e8f0;
+        --muted: #9a9aac;
+        --pink: #ff3d9e;
+        --cyan: #33d6ff;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+      .wrap { max-width: 680px; margin: 0 auto; padding: 48px 24px 80px; }
+      header { text-align: center; margin-bottom: 40px; }
+      header img {
+        width: 120px; height: 120px; border-radius: 27px;
+        box-shadow: 0 8px 40px rgba(255, 61, 158, 0.25), 0 8px 40px rgba(51, 214, 255, 0.2);
+      }
+      h1 {
+        margin-top: 20px; font-size: 2.2rem;
+        background: linear-gradient(90deg, var(--pink), #ac5cff, var(--cyan));
+        -webkit-background-clip: text; background-clip: text;
+        -webkit-text-fill-color: transparent; color: transparent;
+      }
+      .tagline { color: var(--muted); margin-top: 6px; }
+      h2 { font-size: 1.2rem; margin: 32px 0 10px; }
+      p, li { color: var(--muted); }
+      strong { color: var(--text); }
+      .card {
+        background: var(--card); border-radius: 16px;
+        padding: 20px 24px; margin-top: 12px;
+      }
+      ol { padding-left: 22px; }
+      ol li { margin: 8px 0; }
+      a { color: var(--cyan); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      footer { margin-top: 48px; text-align: center; color: var(--muted); font-size: 0.85rem; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <img src="icon.png" alt="SeeMe app icon" />
+        <h1>SeeMe</h1>
+        <p class="tagline">A private, two-device tracing aid for artists</p>
+      </header>
+
+      <h2>What it is</h2>
+      <div class="card">
+        <p>
+          SeeMe turns two iPhones or iPads into a precision tracing setup. One
+          device is mounted as a camera aimed at your canvas; the other stays in
+          your hand, showing the live view with your reference image aligned on
+          top — so you trace on the real surface, without a projector or laggy
+          video.
+        </p>
+        <p style="margin-top: 10px;">
+          <strong>SeeMe requires two iPhone and/or iPad devices on the same
+          Wi-Fi network.</strong>
+        </p>
+      </div>
+
+      <h2>Quick setup</h2>
+      <div class="card">
+        <ol>
+          <li>Install SeeMe on both devices and connect them to the same Wi-Fi.</li>
+          <li>On the mounted device, choose <strong>Camera</strong>, aim it at your canvas, and lock focus. A 4-digit pairing code appears.</li>
+          <li>On the handheld device, choose <strong>Drawing Device</strong>, pick the camera from the list, and enter the code.</li>
+          <li>Import a reference image, set its opacity, and line it up with move, scale, rotate, or the 4-corner perspective tool.</li>
+          <li>Trace on the real canvas while watching the aligned overlay.</li>
+        </ol>
+      </div>
+
+      <h2>Troubleshooting</h2>
+      <div class="card">
+        <p><strong>Camera not found?</strong> Confirm both devices are on the same Wi-Fi and that Local Network access is allowed for SeeMe in Settings on both devices.</p>
+        <p style="margin-top: 10px;"><strong>Connection dropped?</strong> SeeMe reconnects on its own for about five minutes. If the camera restarted, it will show a new pairing code — choose it again and enter the current code.</p>
+        <p style="margin-top: 10px;"><strong>Video paused?</strong> Another app took the camera, or the device paused it (Split View, heat). The message on the camera screen says what happened; video resumes automatically.</p>
+      </div>
+
+      <h2>Support</h2>
+      <div class="card">
+        <p>
+          Questions, bug reports, or ideas:
+          <a href="mailto:cjchgy@umsystem.edu">cjchgy@umsystem.edu</a>
+        </p>
+      </div>
+
+      <h2>Privacy</h2>
+      <div class="card">
+        <p>
+          SeeMe has no accounts, ads, analytics, or cloud service — your camera
+          video and reference images never leave your own Wi-Fi.
+          Read the full <a href="privacy/">Privacy Policy</a>.
+        </p>
+      </div>
+
+      <footer>SeeMe · <a href="https://courtneycrappell.com">courtneycrappell.com</a></footer>
+    </div>
+  </body>
+</html>
