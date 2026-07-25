@@ -779,6 +779,13 @@ if (titleEl && aboutEl) {
   titleEl.addEventListener("click", () => {
     aboutEl.classList.toggle("open");
   });
+
+  // Capture phase so clicks that stopPropagation (easter-egg triggers/panels) still dismiss.
+  document.addEventListener("click", (e) => {
+    if (!aboutEl.classList.contains("open")) return;
+    if (titleEl.contains(e.target)) return;
+    aboutEl.classList.remove("open");
+  }, true);
 }
 
 /* ---------------------------
