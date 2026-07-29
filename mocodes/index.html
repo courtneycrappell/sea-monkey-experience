@@ -526,7 +526,7 @@
       <p class="welcome-title">Find the right MoCode for any Conservatory transaction.</p>
       <p class="welcome-body">Answer three short questions to identify the correct MoCode and Account code. Use this tool to code transactions correctly in PeopleSoft.</p>
       <p class="welcome-body">If a result doesn't look right, use the feedback button to send us a note — that helps us improve the taxonomy.</p>
-      <button class="btn-primary" onclick="showStep1()" id="btn-start">Get Started →</button>
+      <button class="btn-primary" onclick="showStep1()" id="btn-start" disabled>Loading…</button>
       <hr class="welcome-divider">
       <div class="cross-link-box">
         <strong>Only need an account code?</strong>
@@ -760,6 +760,9 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       DB = data;
       document.getElementById('footer-date').textContent = data.lastUpdated || '';
+      const start = document.getElementById('btn-start');
+      start.disabled = false;
+      start.textContent = 'Get Started →';
       renderReference();
     })
     .catch(() => {
@@ -880,6 +883,7 @@ const SUPER_GROUPS = [
 ];
 
 function showStep2() {
+  if (!DB) return;
   state.mocode = null;
 
   if (state.division === 'Production') {
@@ -951,6 +955,7 @@ function showStep2() {
 }
 
 function showStep2Production() {
+  if (!DB) return;
   const prodGroups = [
     { icon: '🎵', label: 'Music Productions',         filter: m => m.division === 'Music'             && m.isProduction },
     { icon: '💃', label: 'Dance Productions',         filter: m => m.division === 'Dance'             && m.isProduction },
@@ -1020,24 +1025,12 @@ function showStep2Production() {
   console.log('[MoCode Finder] Step 2 Production shown');
 }
 
-function activityGroupLabel(group) {
-  const map = {
-    'Operations & Academic': 'Operations & Academic',
-    "Dean's Office Operations": "Dean's Office",
-    'Shared (Cost-Allocated)': "Dean's Office",
-    'Cross-Divisional Production': 'Shared / Cross-Divisional',
-    'Production': 'Production'
-  };
-  return map[group] || group;
-}
-
 function activityTypeSub(type) {
   const map = {
     'Faculty Travel': 'Airline tickets, hotel, meals, conference registration',
     'Faculty Searches & Hiring': 'Candidate travel, search committee expenses',
     'Instructional Support': 'Classroom materials, studio supplies, curriculum resources',
     'Student Recruitment': 'Recruiting travel, auditions, admissions events',
-    'External Relations': 'Marketing, advertising, donor events, memberships',
     'External Relations & Marketing': 'Season marketing, advertising, donor relations',
     'Visiting Artists & Residencies (Academic)': 'Masterclasses, clinicians, residencies — not for productions',
     'Visiting Artists (Nexus & Cross-Divisional)': 'Guest artists for Nexus or cross-divisional events',
@@ -1052,7 +1045,7 @@ function activityTypeSub(type) {
     'Performance Materials': 'Sheet music, scores, music rentals for ensembles',
     'Accompanist Services': 'Student accompanist pay — Account 703800',
     'Curricular Student Workers': 'Ensemble conducting and other curricular support — Account 703800',
-    'Paying a Person': 'Adjuncts, GTAs, students, staff, overhire labor',
+    'Paying a Person': 'Student accompanists, student workers, overhire production labor',
     'Music Productions': 'All production expenses — add Project code per show',
     'Dance Productions': 'All production expenses — add Project code per show',
     'Performance Operations': 'Coordination, guest directors, contracted artists',
@@ -1071,6 +1064,7 @@ function activityTypeSub(type) {
 }
 
 function confirmStep2() {
+  if (!DB) return;
   const sel = document.querySelector('input[name="act"]:checked');
   if (!sel) return;
 
@@ -1099,6 +1093,7 @@ function confirmStep2() {
 //  Compensation sub-flow
 // ════════════════════════════════════════════════════════════════
 function showCompensation() {
+  if (!DB) return;
   const rules = DB.compensationRules;
   const container = document.getElementById('comp-options');
   container.innerHTML = '';
@@ -1122,6 +1117,7 @@ function showCompensation() {
 }
 
 function confirmCompensation() {
+  if (!DB) return;
   const sel = document.querySelector('input[name="comp"]:checked');
   if (!sel) return;
   const idx = parseInt(sel.value);
@@ -1138,7 +1134,9 @@ function confirmCompensation() {
 
 function renderCompResult() {
   const rule = state.compRule;
-  const isRedirect = rule.programNote && rule.programNote.includes('HR / payroll');
+  // Explicit flag on the rule — not a match against note wording, which silently
+  // stopped firing when the notes were rewritten.
+  const isRedirect = rule.redirect === true;
 
   document.getElementById('comp-res-worker-type').textContent = 'Worker type';
   document.getElementById('comp-res-title').textContent = rule.workerType;
@@ -1180,6 +1178,7 @@ function renderCompResult() {
 //  Step 3 — Account / Expense type
 // ════════════════════════════════════════════════════════════════
 function showStep3() {
+  if (!DB) return;
   // Production path sets mocode directly; all others look it up
   if (!state.mocode) {
     const matches = DB.mocodes.filter(m =>

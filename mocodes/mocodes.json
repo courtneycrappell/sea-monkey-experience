@@ -164,8 +164,8 @@
       ],
       "why": "Instructional supplies, classroom and studio materials, curriculum support resources, and academic instructional expenses.",
       "ambiguity": {
-        "also": "M-15 Music – Performance Materials",
-        "guidance": "Use M-03 for materials used in teaching (method books, classroom supplies). Use M-15 for music purchased specifically for ensemble performance or concerts."
+        "also": "KJ540 Music – Performance Materials",
+        "guidance": "Use KJ528 for materials used in teaching (method books, classroom supplies). Use KJ540 for music purchased specifically for ensemble performance or concerts."
       },
       "notes": null,
       "mocode": "KJ528"
@@ -331,10 +331,10 @@
           ]
         }
       ],
-      "why": "Guest artists, masterclasses, lecturers, clinicians, and residencies supporting curricular activity. For production guest artists, use Music Productions (MP-01).",
+      "why": "Guest artists, masterclasses, lecturers, clinicians, and residencies supporting curricular activity. For production guest artists, use Music Productions (KJ541).",
       "ambiguity": {
-        "also": "MP-01 Music Productions – General Production",
-        "guidance": "Use M-06 when the guest artist is visiting for a masterclass, residency, or curricular purpose. Use MP-01 when the artist is performing in or directing a specific production."
+        "also": "KJ541 Music Productions – General Production",
+        "guidance": "Use KJ531 when the guest artist is visiting for a masterclass, residency, or curricular purpose. Use KJ541 when the artist is performing in or directing a specific production."
       },
       "notes": null,
       "mocode": "KJ531"
@@ -447,7 +447,7 @@
           ]
         }
       ],
-      "why": "Instrument maintenance, piano tuning, equipment repair, and related technical support services. Distinct from Technology Services (M-11).",
+      "why": "Instrument maintenance, piano tuning, equipment repair, and related technical support services. Distinct from Technology Services (KJ536).",
       "ambiguity": null,
       "notes": null,
       "mocode": "KDH82"
@@ -480,8 +480,8 @@
       ],
       "why": "Admin, front desk, technical, and non-academic student worker roles. Not accompanists (K9561), or curricular student workers (K9557).",
       "ambiguity": {
-        "also": "M-13 Accompanist Services or M-14 Curricular Student Worker Support",
-        "guidance": "Use M-09 for students in operational/administrative roles (front desk, office help, non-academic tech). Use M-13 for student accompanists. Use M-14 for students in ensemble conducting or other curricular support roles."
+        "also": "KJ538 Accompanist Services or KJ539 Curricular Student Worker Support",
+        "guidance": "Use KJ534 for students in operational/administrative roles (front desk, office help, non-academic tech). Use KJ538 for student accompanists. Use KJ539 for students in ensemble conducting or other curricular support roles."
       },
       "notes": "Compensation flow — triggered by worker type selection",
       "mocode": "KJ534"
@@ -537,8 +537,8 @@
       ],
       "why": "Equipment purchases, rentals, leases, repairs, replacements, and operational equipment support activity.",
       "ambiguity": {
-        "also": "M-08 Technical Services",
-        "guidance": "Use M-10 for purchasing or replacing equipment. Use M-08 for repairing or maintaining instruments and equipment (piano tuning, instrument repair)."
+        "also": "KDH82 Technical Services",
+        "guidance": "Use KJ535 for purchasing or replacing equipment. Use KDH82 for repairing or maintaining instruments and equipment (piano tuning, instrument repair)."
       },
       "notes": null,
       "mocode": "KJ535"
@@ -762,8 +762,8 @@
       ],
       "why": "Performance scores, ensemble music purchases, sheet music rentals, and related music library and performance materials. Program identifier (K8967) is pending final assignment from K8967–K8984 range.",
       "ambiguity": {
-        "also": "M-03 Instructional Support",
-        "guidance": "Use M-15 for music purchased for ensemble performance or concerts. Use M-03 for music or materials used primarily in classroom instruction (method books, theory texts)."
+        "also": "KJ528 Instructional Support",
+        "guidance": "Use KJ540 for music purchased for ensemble performance or concerts. Use KJ528 for music or materials used primarily in classroom instruction (method books, theory texts)."
       },
       "notes": "Program K8967 confirmed by the fiscal office 7/28/2026.",
       "mocode": "KJ540"
@@ -890,8 +890,8 @@
       ],
       "why": "All production expenses for music productions including costumes, scenic, lighting/sound, overhire labor, royalties, and guest artists. NASM HEADS VI.A reports one total — Account identifies the expense type. Individual shows add a Project code on top of this MoCode.",
       "ambiguity": {
-        "also": "M-06 Visiting Artists (Academic)",
-        "guidance": "Use MP-01 when the guest artist is performing in or directing a specific production. Use M-06 when the artist is visiting for a masterclass, residency, or curricular purpose unrelated to a specific show."
+        "also": "KJ531 Visiting Artists (Academic)",
+        "guidance": "Use KJ541 when the guest artist is performing in or directing a specific production. Use KJ531 when the artist is visiting for a masterclass, residency, or curricular purpose unrelated to a specific show."
       },
       "notes": "Individual shows add a Project code. Royalties and licensing are folded into this MoCode via Account 750000 or 750900.",
       "mocode": "KJ541"
@@ -1217,10 +1217,10 @@
           ]
         }
       ],
-      "why": "Guest artists, masterclasses, lecturers, clinicians, and residencies supporting curricular activity. Production choreographers are tracked in Dance Productions (DP-01).",
+      "why": "Guest artists, masterclasses, lecturers, clinicians, and residencies supporting curricular activity. Production choreographers are tracked in Dance Productions (KJ524).",
       "ambiguity": {
-        "also": "DP-01 Dance Productions – General Production",
-        "guidance": "Use D-06 when the guest artist is visiting for a masterclass, residency, or curricular purpose. Use DP-01 when the artist is a choreographer or performer for a specific production."
+        "also": "KJ524 Dance Productions – General Production",
+        "guidance": "Use KJ517 when the guest artist is visiting for a masterclass, residency, or curricular purpose. Use KJ524 when the artist is a choreographer or performer for a specific production."
       },
       "notes": null,
       "mocode": "KJ517"
@@ -1313,8 +1313,8 @@
       ],
       "why": "Admin, front desk, technical, and non-academic student worker roles.",
       "ambiguity": {
-        "also": "D-12 Accompanist Services",
-        "guidance": "Use D-08 for students in operational or administrative roles (front desk, office help, non-academic support) using Account 707100. Use D-12 for students serving as accompanists in Dance classes and rehearsals using Account 703800."
+        "also": "KJ523 Accompanist Services",
+        "guidance": "Use KJ519 for students in operational or administrative roles (front desk, office help, non-academic support) using Account 707100. Use KJ523 for students serving as accompanists in Dance classes and rehearsals using Account 703800."
       },
       "notes": "Compensation flow — triggered by worker type selection.",
       "mocode": "KJ519"
@@ -1509,8 +1509,8 @@
       ],
       "why": "Student academic workers serving as accompanists for Dance classes, technique instruction, and curricular rehearsals. Account 703800 identifies these as student academic workers.",
       "ambiguity": {
-        "also": "D-03 Instructional Support",
-        "guidance": "Use D-12 when the accompanist is an enrolled UMKC student paid as an academic worker (Account 703800)."
+        "also": "KJ514 Instructional Support",
+        "guidance": "Use KJ523 when the accompanist is an enrolled UMKC student paid as an academic worker (Account 703800)."
       },
       "notes": "Compensation flow — triggered by worker type selection. Account 703800 identifies the student academic worker category.",
       "mocode": "KJ523"
@@ -1627,8 +1627,8 @@
       ],
       "why": "All production expenses for dance productions. NASD HEADS VI.A.2 reports one production total — Account identifies the expense type within PeopleSoft. Individual shows add a Project code on top of this MoCode.",
       "ambiguity": {
-        "also": "D-06 Visiting Artists (Academic)",
-        "guidance": "Use DP-01 for guest choreographers or performers engaged for a specific production. Use D-06 for guest artists visiting for a masterclass, residency, or curricular purpose."
+        "also": "KJ517 Visiting Artists (Academic)",
+        "guidance": "Use KJ524 for guest choreographers or performers engaged for a specific production. Use KJ517 for guest artists visiting for a masterclass, residency, or curricular purpose."
       },
       "notes": "Individual shows add a Project code.",
       "mocode": "KJ524"
@@ -1949,8 +1949,8 @@
       ],
       "why": "Guest artists, masterclasses, lecturers, clinicians, and residencies supporting curricular activity. Production guest directors and designers are tracked in Theatre Productions (K1303133).",
       "ambiguity": {
-        "also": "TP-01 Theatre Productions – Performance Operations",
-        "guidance": "Use TO-06 when the guest artist is visiting for a masterclass, residency, or curricular purpose. Use TP-01 when the artist is a director, designer, or performer engaged for a specific production."
+        "also": "KJ554 Theatre Productions – Performance Operations",
+        "guidance": "Use KJ547 when the guest artist is visiting for a masterclass, residency, or curricular purpose. Use KJ554 when the artist is a director, designer, or performer engaged for a specific production."
       },
       "notes": null,
       "mocode": "KJ547"
@@ -2058,7 +2058,7 @@
           ]
         }
       ],
-      "why": "Maintenance and repair of technical infrastructure including lighting boards, sound systems, rigging, and related equipment. Distinct from Technology Services (TO-11).",
+      "why": "Maintenance and repair of technical infrastructure including lighting boards, sound systems, rigging, and related equipment. Distinct from Technology Services (KJ552).",
       "ambiguity": null,
       "notes": null,
       "mocode": "KJ549"
@@ -2313,8 +2313,8 @@
       ],
       "why": "Production coordination, guest directors, designers, and contracted artists for specific productions. NAST HEADS VI.A.2 reports one production total. Individual shows use a Project code on top of this MoCode.",
       "ambiguity": {
-        "also": "TO-06 Visiting Artists (Academic)",
-        "guidance": "Use TP-01 when the artist is a director, designer, or performer engaged for a specific production. Use TO-06 when the guest artist is visiting for a masterclass or curricular residency."
+        "also": "KJ547 Visiting Artists (Academic)",
+        "guidance": "Use KJ554 when the artist is a director, designer, or performer engaged for a specific production. Use KJ547 when the guest artist is visiting for a masterclass or curricular residency."
       },
       "notes": "Individual shows add a Project code. NAST requires a production count — each Project code represents one production.",
       "mocode": "KJ554"
@@ -2532,10 +2532,10 @@
           ]
         }
       ],
-      "why": "Overhire labor, stagehands, run crews, and temporary technical staffing shared across productions — not specific to one show. For labor tied to a specific show, use a Project code on TP-01.",
+      "why": "Overhire labor, stagehands, run crews, and temporary technical staffing shared across productions — not specific to one show. For labor tied to a specific show, use a Project code on KJ554.",
       "ambiguity": {
-        "also": "TP-01 Theatre Productions – Performance Operations",
-        "guidance": "Use TP-05 (Project = 00) for labor that serves multiple shows or the season generally — e.g., a stagehand hired for the whole season. Use TP-01 with a Project code for labor engaged specifically for one production."
+        "also": "KJ554 Theatre Productions – Performance Operations",
+        "guidance": "Use KJ558 (Project = 00) for labor that serves multiple shows or the season generally — e.g., a stagehand hired for the whole season. Use KJ554 with a Project code for labor engaged specifically for one production."
       },
       "notes": "NOT for use on specific theatre shows. Use Project = 00.",
       "mocode": "KJ558"
@@ -3691,7 +3691,7 @@
       "account": "703800",
       "accountDescription": "Non-Ben Elg Academic (Non-Faculty)",
       "program": "K9561",
-      "programNote": "Music: always use Program K9561 — MoCode M-13. Dance: always use Program K9561 — MoCode D-12.",
+      "programNote": "Music: always use Program K9561 — MoCode KJ538. Dance: always use Program K9561 — MoCode KJ523.",
       "why": "Student academic workers serving as accompanists are coded to K9561 in both Music and Dance. Account 703800 identifies the student academic worker category.",
       "examples": [
         "Student accompanying a voice lesson",
@@ -3704,7 +3704,7 @@
       "account": "703800",
       "accountDescription": "Non-Ben Elg Academic (Non-Faculty)",
       "program": "K9557",
-      "programNote": "Always use Program K9557 — MoCode M-14. Do NOT use K9576 (707100) for these positions.",
+      "programNote": "Always use Program K9557 — MoCode KJ539. Do NOT use K9576 (707100) for these positions.",
       "why": "Student workers in curricular support roles (including ensemble conducting) use K9557. This replaces old program K8971 (CONDUCTING ENSEMBLE). Account 703800 identifies the student academic worker category.",
       "examples": [
         "Student assigned to conduct an ensemble",
@@ -3730,7 +3730,7 @@
       "account": "705500 or 708050",
       "accountDescription": "Non-Benefit Eligible Staff (705500) or Overtime (708050)",
       "program": null,
-      "programNote": "Use the relevant production MoCode for that division — TP-01, TP-05, DP-01, MP-01, or PA-02. Add a Project code for show-specific labor.",
+      "programNote": "Use the production MoCode for that division: Theatre KJ558 (general labor) or KJ554 (show-specific performance operations); Dance KJ524; Music KJ541; cross-divisional/Nexus KJ561. Add a Project code for show-specific labor.",
       "why": "Production overhire and stagehands are coded as part-time staff (705500) or overtime (708050) under the production Program and DeptID for that division.",
       "examples": [
         "Stagehand hired for a run",
