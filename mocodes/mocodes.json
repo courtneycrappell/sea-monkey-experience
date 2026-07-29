@@ -83,7 +83,7 @@
       "accounts": [
         {
           "code": "721400",
-          "description": "Bus Travel – Job Candidate",
+          "description": "Business Travel – Job Candidate",
           "examples": [
             "Candidate airline ticket",
             "Candidate travel reimbursement"
@@ -421,7 +421,7 @@
       "accounts": [
         {
           "code": "789000",
-          "description": "Equipment – M&R Non-Capital",
+          "description": "Equipment – Maintenance & Repair (Non-Capital)",
           "examples": [
             "Instrument repair",
             "Piano tuning",
@@ -521,7 +521,7 @@
         },
         {
           "code": "789000",
-          "description": "Equipment – M&R Non-Capital",
+          "description": "Equipment – Maintenance & Repair (Non-Capital)",
           "examples": [
             "Equipment repair (non-instrument)"
           ]
@@ -873,7 +873,7 @@
         },
         {
           "code": "789000",
-          "description": "Equipment M&R Non-Capital",
+          "description": "Equipment – Maintenance & Repair (Non-Capital)",
           "examples": [
             "Instrument repair for a production",
             "Equipment maintenance tied to a specific show"
@@ -976,7 +976,7 @@
       "accounts": [
         {
           "code": "721400",
-          "description": "Bus Travel – Job Candidate",
+          "description": "Business Travel – Job Candidate",
           "examples": [
             "Candidate airline ticket",
             "Candidate travel reimbursement"
@@ -1353,7 +1353,7 @@
         },
         {
           "code": "789000",
-          "description": "Equipment – M&R Non-Capital",
+          "description": "Equipment – Maintenance & Repair (Non-Capital)",
           "examples": [
             "Equipment repair"
           ]
@@ -1714,7 +1714,7 @@
       "accounts": [
         {
           "code": "721400",
-          "description": "Bus Travel – Job Candidate",
+          "description": "Business Travel – Job Candidate",
           "examples": [
             "Candidate airline ticket",
             "Candidate travel reimbursement"
@@ -2034,7 +2034,7 @@
       "accounts": [
         {
           "code": "789000",
-          "description": "Equipment – M&R Non-Capital",
+          "description": "Equipment – Maintenance & Repair (Non-Capital)",
           "examples": [
             "Lighting board repair",
             "Sound system repair",
@@ -2125,7 +2125,7 @@
         },
         {
           "code": "789000",
-          "description": "Equipment – M&R Non-Capital",
+          "description": "Equipment – Maintenance & Repair (Non-Capital)",
           "examples": [
             "Equipment repair (non-production)"
           ]
@@ -2688,7 +2688,7 @@
         },
         {
           "code": "750910",
-          "description": "Other Prof (Internal)",
+          "description": "Other Professional Services (Internal)",
           "examples": [
             "Internal professional fee"
           ]
@@ -2832,7 +2832,7 @@
       "accounts": [
         {
           "code": "721400",
-          "description": "Bus Travel – Job Candidate",
+          "description": "Business Travel – Job Candidate",
           "examples": [
             "Candidate airline ticket",
             "Candidate travel reimbursement"
@@ -2938,7 +2938,7 @@
       "accounts": [
         {
           "code": "795000",
-          "description": "Bldgs – M&R – Non-Capital",
+          "description": "Buildings – Maintenance & Repair (Non-Capital)",
           "examples": [
             "Building repair",
             "Facility maintenance"
@@ -2991,7 +2991,7 @@
       "accounts": [
         {
           "code": "789000",
-          "description": "Equipment – M&R Non-Capital",
+          "description": "Equipment – Maintenance & Repair (Non-Capital)",
           "examples": [
             "Piano tuning",
             "Piano regulation",
@@ -3513,7 +3513,7 @@
         },
         {
           "code": "789000",
-          "description": "Equipment – M&R Non-Capital",
+          "description": "Equipment – Maintenance & Repair (Non-Capital)",
           "examples": [
             "Shared production equipment repair"
           ]
