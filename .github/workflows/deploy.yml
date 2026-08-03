@@ -41,7 +41,9 @@ jobs:
         run: |
           mkdir -p deploy/findpianoworks
           # Copy all root-level static files except the Astro source folder
+          # and archive/ (retired code kept in the repo but never published)
           rsync -a --exclude='findpianoworks' --exclude='.github' --exclude='.git' \
+            --exclude='archive' \
             ./ deploy/
           # Copy the Astro build output into the findpianoworks subfolder
           cp -r findpianoworks/dist/. deploy/findpianoworks/
