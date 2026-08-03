@@ -358,6 +358,48 @@
       margin-bottom: 1rem;
     }
 
+    .field-code-lg { font-size: 1.5rem !important; letter-spacing: 0.04em; }
+
+    /* ── Accounts on result (secondary reference) ─────────────── */
+    .accounts-details {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      background: var(--bg);
+    }
+    .accounts-details summary {
+      cursor: pointer;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--blue);
+    }
+    .accounts-details[open] summary { border-bottom: 1px solid var(--border); }
+    .accounts-list { padding: 0.5rem 1rem 0.75rem; }
+    .acct-note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      padding: 0.25rem 0 0.5rem;
+      line-height: 1.5;
+    }
+    .acct-row {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.875rem;
+    }
+    .acct-row:last-child { border-bottom: none; }
+    .acct-row .acct-code { font-family: monospace; font-weight: 700; color: var(--blue); }
+    .acct-row .acct-examples { font-size: 0.78rem; color: var(--muted); margin-top: 0.15rem; }
+    .acct-browse { font-size: 0.8rem; padding-top: 0.5rem; }
+    .acct-browse a { font-weight: 600; }
+
+    /* ── Account lookup result examples ───────────────────────── */
+    .result-examples { margin-bottom: 1rem; }
+    .result-examples h3 { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.4rem; }
+    .result-examples ul { list-style: none; display: flex; flex-direction: column; gap: 0.25rem; }
+    .result-examples li { font-size: 0.875rem; color: var(--text); padding-left: 1rem; position: relative; }
+    .result-examples li::before { content: "·"; position: absolute; left: 0; color: var(--muted); }
+
     /* ── Compensation result ──────────────────────────────────── */
     .comp-result-box {
       background: var(--card-bg);
@@ -524,24 +566,23 @@
   <section id="screen-welcome" class="screen active" aria-label="Welcome">
     <div class="card">
       <p class="welcome-title">Find the right MoCode for any Conservatory transaction.</p>
-      <p class="welcome-body">Answer three short questions to identify the correct MoCode and Account code. Use this tool to code transactions correctly in PeopleSoft.</p>
+      <p class="welcome-body">Answer two short questions to identify the correct MoCode. Use this tool to code transactions correctly in PeopleSoft.</p>
       <p class="welcome-body">If a result doesn't look right, use the feedback button to send us a note — that helps us improve the taxonomy.</p>
       <button class="btn-primary" onclick="showStep1()" id="btn-start" disabled>Loading…</button>
       <hr class="welcome-divider">
       <div class="cross-link-box">
-        <strong>Only need an account code?</strong>
-        If you're spending from a gift account or just need the right expense code without a MoCode, use the <a href="../accounts/" target="_blank">Account Finder</a>.
+        <strong>Just need an account code?</strong>
+        If you're spending from a gift, endowment, or grant account — or only need the right expense account — <a href="#" onclick="showAcctStep1(); return false;">browse account codes by expense type</a>.
       </div>
     </div>
   </section>
 
   <!-- ── Step 1: Division ────────────────────────────────── -->
-  <section id="screen-step1" class="screen" aria-label="Step 1 of 3: Division">
-    <div class="progress" aria-label="Progress: Step 1 of 3">
+  <section id="screen-step1" class="screen" aria-label="Step 1 of 2: Division">
+    <div class="progress" aria-label="Progress: Step 1 of 2">
       <div class="progress-steps">
         <div class="progress-step active" aria-current="step">1. Division</div>
         <div class="progress-step">2. Activity</div>
-        <div class="progress-step">3. Expense</div>
       </div>
     </div>
     <div class="card">
@@ -553,13 +594,12 @@
   </section>
 
   <!-- ── Step 2: Activity ────────────────────────────────── -->
-  <section id="screen-step2" class="screen" aria-label="Step 2 of 3: Activity type">
+  <section id="screen-step2" class="screen" aria-label="Step 2 of 2: Activity type">
     <button class="btn-back" onclick="showStep1()">← Back</button>
-    <div class="progress" aria-label="Progress: Step 2 of 3">
+    <div class="progress" aria-label="Progress: Step 2 of 2">
       <div class="progress-steps">
         <div class="progress-step complete">1. Division</div>
         <div class="progress-step active" aria-current="step">2. Activity</div>
-        <div class="progress-step">3. Expense</div>
       </div>
     </div>
     <div class="card">
@@ -594,24 +634,104 @@
     </div>
   </section>
 
-  <!-- ── Step 3: Expense / Account ──────────────────────── -->
-  <section id="screen-step3" class="screen" aria-label="Step 3 of 3: Expense type">
-    <button class="btn-back" onclick="showStep2()">← Back</button>
-    <div class="progress" aria-label="Progress: Step 3 of 3">
+  <!-- ── Account lookup (side door): Step 1 Category ─────── -->
+  <section id="screen-acct-step1" class="screen" aria-label="Account lookup — Step 1: Expense category">
+    <button class="btn-back" onclick="showScreen('welcome')">← Back to MoCode Finder</button>
+    <div class="progress" aria-label="Account lookup progress: Step 1">
       <div class="progress-steps">
-        <div class="progress-step complete">1. Division</div>
-        <div class="progress-step complete">2. Activity</div>
-        <div class="progress-step active" aria-current="step">3. Expense</div>
+        <div class="progress-step active" aria-current="step">1. Category</div>
+        <div class="progress-step">2. Activity</div>
+        <div class="progress-step">3. Account</div>
       </div>
     </div>
     <div class="card">
       <fieldset>
         <legend class="question">
           What type of expense is this?
-          <span class="question-sub" id="step3-sub"></span>
+          <span class="question-sub">Account lookup — works for any fund: operating, gift, endowment, or grant.</span>
         </legend>
-        <div class="option-list" id="account-options" role="radiogroup"></div>
+        <div class="option-list" id="acct-category-options" role="radiogroup"></div>
       </fieldset>
+    </div>
+  </section>
+
+  <!-- ── Account lookup: Step 2 Subcategory ──────────────── -->
+  <section id="screen-acct-step2" class="screen" aria-label="Account lookup — Step 2: Specific activity">
+    <button class="btn-back" onclick="showAcctStep1()">← Back</button>
+    <div class="progress" aria-label="Account lookup progress: Step 2">
+      <div class="progress-steps">
+        <div class="progress-step complete">1. Category</div>
+        <div class="progress-step active" aria-current="step">2. Activity</div>
+        <div class="progress-step">3. Account</div>
+      </div>
+    </div>
+    <div class="card">
+      <fieldset>
+        <legend class="question">
+          What best describes this expense?
+          <span class="question-sub" id="acct-step2-sub"></span>
+        </legend>
+        <div class="option-list" id="acct-subcategory-options" role="radiogroup"></div>
+      </fieldset>
+    </div>
+  </section>
+
+  <!-- ── Account lookup: Step 3 Account (multi-account only) ─ -->
+  <section id="screen-acct-step3" class="screen" aria-label="Account lookup — Step 3: Specific purchase">
+    <button class="btn-back" onclick="showAcctStep2()">← Back</button>
+    <div class="progress" aria-label="Account lookup progress: Step 3">
+      <div class="progress-steps">
+        <div class="progress-step complete">1. Category</div>
+        <div class="progress-step complete">2. Activity</div>
+        <div class="progress-step active" aria-current="step">3. Account</div>
+      </div>
+    </div>
+    <div class="card">
+      <fieldset>
+        <legend class="question">
+          Which best describes the specific purchase?
+          <span class="question-sub" id="acct-step3-sub"></span>
+        </legend>
+        <div class="option-list" id="acct-account-options" role="radiogroup"></div>
+      </fieldset>
+    </div>
+  </section>
+
+  <!-- ── Account lookup: Result ──────────────────────────── -->
+  <section id="screen-acct-result" class="screen" aria-label="Account lookup result">
+    <button class="btn-back" onclick="acctGoBackFromResult()">← Back</button>
+
+    <div class="print-header" aria-hidden="true">
+      UMKC Conservatory — MoCode Finder (Account lookup) &nbsp;|&nbsp; Printed <span id="print-date-acct"></span>
+    </div>
+
+    <div class="card result-card">
+      <p class="result-path" id="acct-result-path"></p>
+      <div class="result-field">
+        <div class="field-label">Account Code</div>
+        <div class="field-code field-code-lg" id="acct-result-code"></div>
+        <div class="field-name" id="acct-result-name"></div>
+      </div>
+      <div class="result-why" style="margin-top:1.25rem;">
+        <h3>Use this account when</h3>
+        <p id="acct-result-why"></p>
+      </div>
+      <div class="result-examples">
+        <h3>Common examples</h3>
+        <ul id="acct-result-examples"></ul>
+      </div>
+      <div class="prod-note">
+        Coding an operating-fund (Fund 0000) transaction? You'll also need a MoCode — <a href="#" onclick="startOver(); return false;">find it here</a>.
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="showAcctStep1()">↺ Look up another account</button>
+      <button class="btn-secondary" onclick="printResult()">🖨 Print</button>
+    </div>
+
+    <div class="feedback-section">
+      <a id="acct-feedback-link" href="#" class="feedback-link">Something wrong or unclear? Send feedback →</a>
     </div>
   </section>
 
@@ -625,20 +745,13 @@
     <div class="card result-card" id="result-content">
       <p class="result-path" id="result-path" aria-label="Transaction path"></p>
 
-      <div class="result-fields">
-        <div class="result-field">
-          <div class="field-label">MoCode</div>
-          <div class="field-code" id="res-mocode-id"></div>
-          <div class="field-name" id="res-mocode-label"></div>
-        </div>
-        <div class="result-field">
-          <div class="field-label">Account</div>
-          <div class="field-code" id="res-account-code"></div>
-          <div class="field-name" id="res-account-desc"></div>
-        </div>
+      <div class="result-field">
+        <div class="field-label">MoCode</div>
+        <div class="field-code field-code-lg" id="res-mocode-id"></div>
+        <div class="field-name" id="res-mocode-label"></div>
       </div>
 
-      <div class="result-why">
+      <div class="result-why" style="margin-top:1.25rem;">
         <h3>Why this code</h3>
         <p id="res-why"></p>
       </div>
@@ -651,6 +764,15 @@
         <strong>⚠ Could this also be something else?</strong>
         <span id="res-ambiguity-text"></span>
       </div>
+
+      <details class="accounts-details" id="res-accounts" hidden>
+        <summary>Need an account code too? Accounts used with this MoCode</summary>
+        <div class="accounts-list">
+          <p class="acct-note">For approvals, the MoCode above is all you need. Accounts itemize the expense type when the transaction is processed.</p>
+          <div id="res-accounts-list"></div>
+          <p class="acct-browse"><a href="#" onclick="showAcctStep1(); return false;">Browse all account codes →</a></p>
+        </div>
+      </details>
     </div>
 
     <div class="btn-row">
@@ -749,7 +871,10 @@ const state = {
   path:          []
 };
 
-let DB = null; // loaded from mocodes.json
+let DB = null;      // loaded from mocodes.json
+let ACCT_DB = null; // loaded from accounts.json (account lookup side door)
+
+const acctState = { category: null, subcategory: null, account: null, path: [] };
 
 // ════════════════════════════════════════════════════════════════
 //  Boot
@@ -769,6 +894,11 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('main').innerHTML =
         '<div class="card"><p style="color:red">Unable to load MoCode data. Please reload the page.</p></div>';
     });
+
+  fetch('accounts.json')
+    .then(r => r.json())
+    .then(data => { ACCT_DB = data; })
+    .catch(() => { ACCT_DB = null; });
 });
 
 // ════════════════════════════════════════════════════════════════
@@ -793,7 +923,8 @@ function showTab(tab) {
 // ════════════════════════════════════════════════════════════════
 //  Screen helpers
 // ════════════════════════════════════════════════════════════════
-const SCREENS = ['welcome','step1','step2','compensation','step3','result','comp-result','reference'];
+const SCREENS = ['welcome','step1','step2','compensation','result','comp-result','reference',
+                 'acct-step1','acct-step2','acct-step3','acct-result'];
 function hideAllScreens() {
   SCREENS.forEach(id => document.getElementById('screen-'+id).classList.remove('active'));
 }
@@ -1074,7 +1205,8 @@ function confirmStep2() {
     state.activityType = state.mocode ? state.mocode.label : sel.value;
     state.path = ['Production', state.activityType];
     console.log('[MoCode Finder] Production MoCode selected:', sel.value);
-    showStep3();
+    if (!state.mocode) { showDeadEnd(); return; }
+    showResult();
     return;
   }
 
@@ -1085,7 +1217,12 @@ function confirmStep2() {
   if (state.activityType === 'Paying a Person') {
     showCompensation();
   } else {
-    showStep3();
+    const matches = DB.mocodes.filter(m =>
+      m.division === state.division && m.activityType === state.activityType && !m.isProduction
+    );
+    if (!matches.length) { showDeadEnd(); return; }
+    state.mocode = matches[0];
+    showResult();
   }
 }
 
@@ -1175,48 +1312,9 @@ function renderCompResult() {
 }
 
 // ════════════════════════════════════════════════════════════════
-//  Step 3 — Account / Expense type
-// ════════════════════════════════════════════════════════════════
-function showStep3() {
-  if (!DB) return;
-  // Production path sets mocode directly; all others look it up
-  if (!state.mocode) {
-    const matches = DB.mocodes.filter(m =>
-      m.division === state.division && m.activityType === state.activityType
-    );
-    if (!matches.length) { showDeadEnd(); return; }
-    state.mocode = matches[0];
-  }
-  document.getElementById('step3-sub').textContent =
-    state.mocode.label + ' — select the type of expense';
-
-  const container = document.getElementById('account-options');
-  container.innerHTML = '';
-  state.mocode.accounts.forEach((acct, i) => {
-    const examples = acct.examples && acct.examples.length
-      ? 'e.g. ' + acct.examples.join(', ')
-      : '';
-    container.insertAdjacentHTML('beforeend',
-      optionHTML('acct', String(i), acct.description + ' (' + acct.code + ')', examples)
-    );
-  });
-
-  container.querySelectorAll('input').forEach(input => {
-    input.addEventListener('change', showResult);
-  });
-  showScreen('step3');
-  console.log('[MoCode Finder] Step 3 shown for MoCode:', state.mocode.id);
-}
-
-// ════════════════════════════════════════════════════════════════
 //  Result
 // ════════════════════════════════════════════════════════════════
 function showResult() {
-  const sel = document.querySelector('input[name="acct"]:checked');
-  if (!sel) return;
-  state.account = state.mocode.accounts[parseInt(sel.value)];
-  state.path = [state.division, state.activityType, state.account.description];
-
   // Path breadcrumb
   document.getElementById('result-path').textContent =
     state.path.join(' → ');
@@ -1224,8 +1322,6 @@ function showResult() {
   // MoCode fields
   document.getElementById('res-mocode-id').textContent    = state.mocode.mocode || state.mocode.id;
   document.getElementById('res-mocode-label').textContent = state.mocode.label;
-  document.getElementById('res-account-code').textContent = state.account.code;
-  document.getElementById('res-account-desc').textContent = state.account.description;
 
   // Why — strip any cost-sharing language before displaying
   const rawWhy = state.mocode.why || '';
@@ -1245,6 +1341,25 @@ function showResult() {
     ambBox.hidden = true;
   }
 
+  // Accounts — secondary reference, collapsed by default
+  const details = document.getElementById('res-accounts');
+  const list = document.getElementById('res-accounts-list');
+  list.innerHTML = '';
+  const accounts = state.mocode.accounts || [];
+  if (accounts.length) {
+    details.hidden = false;
+    details.open = false;
+    accounts.forEach(a => {
+      const ex = a.examples && a.examples.length
+        ? `<div class="acct-examples">e.g. ${a.examples.join(', ')}</div>`
+        : '';
+      list.insertAdjacentHTML('beforeend',
+        `<div class="acct-row"><span class="acct-code">${a.code}</span> — ${a.description}${ex}</div>`);
+    });
+  } else {
+    details.hidden = true;
+  }
+
   // "See all Division MoCodes" button
   document.getElementById('btn-see-division').textContent =
     'See all ' + state.division + ' MoCodes';
@@ -1254,7 +1369,7 @@ function showResult() {
 
   // Feedback link
   const subject = `MoCode Tool Feedback — ${state.division} / ${state.activityType}`;
-  const resultStr = `${state.mocode.mocode || state.mocode.id} — ${state.mocode.label} / Account ${state.account.code} — ${state.account.description}`;
+  const resultStr = `${state.mocode.mocode || state.mocode.id} — ${state.mocode.label}`;
   const body = [
     `Division: ${state.division}`,
     `Steps taken: ${state.path.join(' → ')}`,
@@ -1268,20 +1383,18 @@ function showResult() {
     `mailto:cjchgy@umsystem.edu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
   showScreen('result');
-  console.log('[MoCode Finder] Result:', state.mocode.id, state.account.code);
+  console.log('[MoCode Finder] Result:', state.mocode.id);
 }
 
 function showDeadEnd() {
   // Show a dead-end result card
   document.getElementById('res-mocode-id').textContent    = '—';
   document.getElementById('res-mocode-label').textContent = 'No matching MoCode found';
-  document.getElementById('res-account-code').textContent = '—';
-  document.getElementById('res-account-desc').textContent = '';
   document.getElementById('res-why').textContent =
     'This combination doesn\'t map to a defined MoCode yet. Please use the feedback button below to describe the transaction — this helps us close gaps in the taxonomy.';
-  document.getElementById('res-shared-box').hidden   = true;
   document.getElementById('res-prod-note').hidden    = true;
   document.getElementById('res-ambiguity').hidden    = true;
+  document.getElementById('res-accounts').hidden     = true;
   document.getElementById('result-path').textContent = state.path.join(' → ');
   document.getElementById('btn-see-division').textContent = 'See all ' + state.division + ' MoCodes';
 
@@ -1308,9 +1421,138 @@ function showDivisionRef() {
 }
 
 function printResult() {
-  document.getElementById('print-date').textContent     = new Date().toLocaleDateString();
+  document.getElementById('print-date').textContent      = new Date().toLocaleDateString();
   document.getElementById('print-date-comp').textContent = new Date().toLocaleDateString();
+  document.getElementById('print-date-acct').textContent = new Date().toLocaleDateString();
+  // Expand the accounts reference so it appears in the printout
+  const acctDetails = document.getElementById('res-accounts');
+  if (acctDetails && !acctDetails.hidden) acctDetails.open = true;
   window.print();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Account lookup (side door) — account codes for any fund
+// ════════════════════════════════════════════════════════════════
+function showAcctStep1() {
+  if (!ACCT_DB) return;
+  acctState.category = acctState.subcategory = acctState.account = null;
+  acctState.path = [];
+
+  const container = document.getElementById('acct-category-options');
+  container.innerHTML = '';
+  ACCT_DB.categories.forEach(cat => {
+    container.insertAdjacentHTML('beforeend',
+      optionHTML('acct-cat', cat.id, `<span class="option-icon">${cat.icon}</span> ${cat.label}`, ''));
+  });
+
+  container.querySelectorAll('input').forEach(input => {
+    input.addEventListener('change', () => {
+      acctState.category = input.value;
+      const cat = ACCT_DB.categories.find(c => c.id === input.value);
+      acctState.path = [cat.label];
+      showAcctStep2();
+    });
+  });
+
+  showScreen('acct-step1');
+  console.log('[MoCode Finder] Account lookup step 1 shown');
+}
+
+function showAcctStep2() {
+  if (!ACCT_DB || !acctState.category) return;
+  const cat = ACCT_DB.categories.find(c => c.id === acctState.category);
+  acctState.subcategory = acctState.account = null;
+
+  document.getElementById('acct-step2-sub').textContent = cat.label;
+
+  const container = document.getElementById('acct-subcategory-options');
+  container.innerHTML = '';
+  cat.subcategories.forEach(sub => {
+    container.insertAdjacentHTML('beforeend',
+      optionHTML('acct-sub', sub.id, sub.label, sub.description));
+  });
+
+  container.querySelectorAll('input').forEach(input => {
+    input.addEventListener('change', () => {
+      acctState.subcategory = input.value;
+      const sub = cat.subcategories.find(s => s.id === input.value);
+      acctState.path = [cat.label, sub.label];
+      if (sub.accounts.length === 1) {
+        acctState.account = sub.accounts[0];
+        showAcctResult();
+      } else {
+        showAcctStep3(sub);
+      }
+    });
+  });
+
+  showScreen('acct-step2');
+  console.log('[MoCode Finder] Account lookup step 2 shown for', cat.label);
+}
+
+function showAcctStep3(sub) {
+  document.getElementById('acct-step3-sub').textContent = sub.label;
+
+  const container = document.getElementById('acct-account-options');
+  container.innerHTML = '';
+  sub.accounts.forEach(acct => {
+    container.insertAdjacentHTML('beforeend',
+      optionHTML('acct-acct', acct.code,
+        `<span style="font-family:monospace;font-weight:700;color:var(--blue)">${acct.code}</span> — ${acct.description}`,
+        acct.examples.slice(0, 2).join(' · ')));
+  });
+
+  container.querySelectorAll('input').forEach(input => {
+    input.addEventListener('change', () => {
+      const cat = ACCT_DB.categories.find(c => c.id === acctState.category);
+      const subcat = cat.subcategories.find(s => s.id === acctState.subcategory);
+      acctState.account = subcat.accounts.find(a => a.code === input.value);
+      showAcctResult();
+    });
+  });
+
+  showScreen('acct-step3');
+  console.log('[MoCode Finder] Account lookup step 3 shown for', sub.label);
+}
+
+function showAcctResult() {
+  const acct = acctState.account;
+  document.getElementById('acct-result-path').textContent = acctState.path.join(' → ');
+  document.getElementById('acct-result-code').textContent = acct.code;
+  document.getElementById('acct-result-name').textContent = acct.description;
+  document.getElementById('acct-result-why').textContent  = acct.why || '';
+
+  const ul = document.getElementById('acct-result-examples');
+  ul.innerHTML = (acct.examples || []).map(ex => `<li>${ex}</li>`).join('');
+
+  document.getElementById('print-date-acct').textContent = new Date().toLocaleDateString();
+
+  const subject = `MoCode Tool Feedback — Account lookup: ${acctState.path.join(' / ')}`;
+  const body = [
+    `Path: ${acctState.path.join(' → ')}`,
+    `Result shown: Account ${acct.code} — ${acct.description}`,
+    `Issue type: [Ambiguous result / Dead end / Wrong answer / Other]`,
+    '',
+    'What went wrong or was unclear:',
+    ''
+  ].join('\n');
+  document.getElementById('acct-feedback-link').href =
+    `mailto:cjchgy@umsystem.edu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  showScreen('acct-result');
+  console.log('[MoCode Finder] Account lookup result:', acct.code);
+}
+
+function acctGoBackFromResult() {
+  const cat = ACCT_DB ? ACCT_DB.categories.find(c => c.id === acctState.category) : null;
+  const sub = cat ? cat.subcategories.find(s => s.id === acctState.subcategory) : null;
+  if (sub && sub.accounts.length > 1) {
+    showAcctStep3(sub);
+  } else if (sub) {
+    showAcctStep2();
+  } else {
+    showAcctStep1();
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
