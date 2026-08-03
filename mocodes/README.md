@@ -16,8 +16,6 @@ cjchgy@umsystem.edu (also the destination of the in-app feedback links).
 | `index.html` | The entire application — markup, styles, and script in one file |
 | `mocodes.json` | Data: all 67 MoCodes (DeptID, Program, Fund, HEADS mapping, accounts, guidance) plus compensation worker-type rules |
 | `accounts.json` | Data: account codes organized by expense category for the built-in account-code browser (any fund: operating, gift, endowment, grant) |
-| `seaMonkeys.png` | Footer badge image linking to courtneycrappell.com — an internal team in-joke; safe to delete (and remove the footer `<a class="easter-egg">` block) for institutional hosting |
-
 ## Deployment
 
 Static files only. No build step, no server-side code, no dependencies,
@@ -29,7 +27,7 @@ no analytics, no cookies, no user data collected or stored.
    as a `file://` URL.
 3. No special headers required. A restrictive CSP is compatible: the page
    uses inline styles/scripts (`'unsafe-inline'`) and same-origin fetch only.
-   The only external navigation is the optional footer badge link.
+   The only external links are the mailto: feedback links.
 
 ## Updating the data
 

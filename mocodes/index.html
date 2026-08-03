@@ -543,26 +543,6 @@
       padding: 0.75rem 1rem;
     }
 
-    /* ── Easter egg ───────────────────────────────────────────── */
-    .easter-egg {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      z-index: 9999;
-      display: block;
-      line-height: 0;
-      border-radius: 50%;
-      overflow: hidden;
-    }
-    .easter-egg img {
-      width: 38px;
-      height: 38px;
-      object-fit: cover;
-      border-radius: 50%;
-      display: block;
-    }
-    @media print { .easter-egg { display: none !important; } }
-
     /* ── Print styles ─────────────────────────────────────────── */
     @media print {
       header .org, .tab-nav, .btn-back, .btn-row, .feedback-section, footer, .screen:not(.active) { display: none !important; }
@@ -891,9 +871,6 @@
 
 <footer>
   Last updated: <span id="footer-date"></span> &nbsp;·&nbsp; UMKC Conservatory Dean's Office
-  <a href="https://courtneycrappell.com" target="_blank" rel="noopener noreferrer" class="easter-egg" title="monkey time?">
-    <img src="seaMonkeys.png" alt="Sea Monkeys — visit courtneycrappell.com (opens in a new tab)">
-  </a>
 </footer>
 
 <script>
