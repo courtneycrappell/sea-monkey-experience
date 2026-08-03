@@ -3697,6 +3697,10 @@
         "Student accompanying a voice lesson",
         "Student pianist for a Dance technique class",
         "Student piano accompanist for studio class"
+      ],
+      "divisions": [
+        "Music",
+        "Dance"
       ]
     },
     {
@@ -3710,6 +3714,9 @@
         "Student assigned to conduct an ensemble",
         "Student in a curricular support role",
         "Student providing academic program support"
+      ],
+      "divisions": [
+        "Music"
       ]
     },
     {
@@ -3723,6 +3730,10 @@
         "Student office assistant",
         "Student working front desk",
         "Student helping with non-academic technical tasks"
+      ],
+      "divisions": [
+        "Music",
+        "Dance"
       ]
     },
     {
@@ -3736,6 +3747,10 @@
         "Stagehand hired for a run",
         "Overhire crew for load-in",
         "Production labor for a specific show"
+      ],
+      "divisions": [
+        "Music",
+        "Dance"
       ]
     }
   ]

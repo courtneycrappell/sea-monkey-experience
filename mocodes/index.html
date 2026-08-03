@@ -36,9 +36,44 @@
       flex-direction: column;
     }
     a { color: var(--blue); }
-    a:focus, button:focus, input:focus, select:focus {
-      outline: 3px solid var(--gold);
-      outline-offset: 2px;
+    /* Two-ring focus indicator: gold inner ring reads on the navy header,
+       navy outer ring reads on white/light cards — ≥3:1 on every surface
+       (WCAG 1.4.11). Transparent outline is kept so Windows High Contrast /
+       forced-colors mode still draws its own indicator. */
+    a:focus-visible, button:focus-visible, input:focus-visible,
+    select:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
+      outline: 3px solid transparent;
+      box-shadow: 0 0 0 2px var(--gold), 0 0 0 5px var(--blue);
+      border-radius: 4px;
+    }
+    h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      z-index: 100;
+      background: var(--blue);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 0 0 6px 0;
+      font-size: 0.875rem;
+      text-decoration: none;
+    }
+    .skip-link:focus { left: 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; }
     }
 
     /* ── Header ───────────────────────────────────────────────── */
@@ -116,8 +151,7 @@
     }
 
     /* ── Questions ────────────────────────────────────────────── */
-    fieldset { padding: 1.25rem; }
-    legend { padding: 0 0.25rem; }
+    .q-block { padding: 0.25rem; }
     .question { font-size: 1.1rem; font-weight: 600; color: var(--blue); margin-bottom: 1.25rem; }
     .question-sub { font-size: 0.875rem; color: var(--muted); font-weight: 400; margin-top: 0.25rem; }
 
@@ -168,20 +202,18 @@
     }
     .sg-body.open { display: block; }
 
-    /* ── Radio options ────────────────────────────────────────── */
+    /* ── Option buttons ───────────────────────────────────────── */
+    /* Options are buttons, not auto-advancing radios: keyboard users can
+       Tab through choices freely and nothing happens until they press
+       Enter/Space (WCAG 3.2.2 — no change of context on input). */
     .option-list { display: flex; flex-direction: column; gap: 0.5rem; }
-    .option-item { position: relative; }
-    .option-item input[type="radio"] {
-      position: absolute;
-      opacity: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-      left: 0; top: 0;
-      margin: 0;
-    }
-    .option-item label {
+    .option-btn {
       display: block;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--card-bg);
       padding: 0.75rem 1rem;
       border: 2px solid var(--border);
       border-radius: 8px;
@@ -189,19 +221,16 @@
       transition: border-color 0.15s, background 0.15s;
       font-size: 0.95rem;
     }
-    .option-item label .option-sub {
+    .option-btn .option-sub {
       display: block;
       font-size: 0.78rem;
       color: var(--muted);
       margin-top: 0.2rem;
       font-weight: 400;
     }
-    .option-item input:checked + label {
-      border-color: var(--blue);
-      background: #e8f0fb;
-    }
-    .option-item input:focus + label { outline: 3px solid var(--gold); outline-offset: 1px; }
-    .option-item label:hover { border-color: var(--blue-mid); }
+    .option-btn:hover { border-color: var(--blue-mid); background: #f4f8fd; }
+    .option-btn:active { border-color: var(--blue); background: #e8f0fb; }
+    .option-btn .option-icon { margin-right: 0.4rem; }
 
     /* ── Buttons ──────────────────────────────────────────────── */
     .btn-primary {
@@ -549,6 +578,8 @@
 
 <body>
 
+<a class="skip-link" href="#main">Skip to main content</a>
+
 <header>
   <div class="org">UMKC Conservatory</div>
   <h1>MoCode Finder</h1>
@@ -565,14 +596,14 @@
   <!-- ── Welcome ─────────────────────────────────────────── -->
   <section id="screen-welcome" class="screen active" aria-label="Welcome">
     <div class="card">
-      <p class="welcome-title">Find the right MoCode for any Conservatory transaction.</p>
+      <h2 class="welcome-title" tabindex="-1">Find the right MoCode for any Conservatory transaction.</h2>
       <p class="welcome-body">Answer two short questions to identify the correct MoCode. Use this tool to code transactions correctly in PeopleSoft.</p>
       <p class="welcome-body">If a result doesn't look right, use the feedback button to send us a note — that helps us improve the taxonomy.</p>
       <button class="btn-primary" onclick="showStep1()" id="btn-start" disabled>Loading…</button>
       <hr class="welcome-divider">
       <div class="cross-link-box">
         <strong>Just need an account code?</strong>
-        If you're spending from a gift, endowment, or grant account — or only need the right expense account — <a href="#" onclick="showAcctStep1(); return false;">browse account codes by expense type</a>.
+        If you're spending from a gift, endowment, or grant account — or only need the right expense account — <button type="button" class="btn-link" onclick="showAcctStep1('welcome')">browse account codes by expense type</button>.
       </div>
     </div>
   </section>
@@ -586,16 +617,16 @@
       </div>
     </div>
     <div class="card">
-      <fieldset>
-        <legend class="question">Which division are you coding for?</legend>
-        <div class="option-list" id="division-options" role="radiogroup"></div>
-      </fieldset>
+      <div class="q-block">
+        <h2 class="question" tabindex="-1">Which division are you coding for?</h2>
+        <div class="option-list" id="division-options"></div>
+      </div>
     </div>
   </section>
 
   <!-- ── Step 2: Activity ────────────────────────────────── -->
   <section id="screen-step2" class="screen" aria-label="Step 2 of 2: Activity type">
-    <button class="btn-back" onclick="showStep1()">← Back</button>
+    <button class="btn-back" onclick="showStep1()"><span aria-hidden="true">←</span> Back</button>
     <div class="progress" aria-label="Progress: Step 2 of 2">
       <div class="progress-steps">
         <div class="progress-step complete">1. Division</div>
@@ -603,19 +634,19 @@
       </div>
     </div>
     <div class="card">
-      <fieldset>
-        <legend class="question">
+      <div class="q-block">
+        <h2 class="question" tabindex="-1">
           What type of activity is this?
           <span class="question-sub" id="step2-sub"></span>
-        </legend>
+        </h2>
         <div id="activity-options"></div>
-      </fieldset>
+      </div>
     </div>
   </section>
 
   <!-- ── Compensation sub-flow ───────────────────────────── -->
   <section id="screen-compensation" class="screen" aria-label="Compensation coding: Worker type">
-    <button class="btn-back" onclick="showStep2()">← Back</button>
+    <button class="btn-back" onclick="showStep2()"><span aria-hidden="true">←</span> Back</button>
     <div class="progress" aria-label="Progress: Step 2 of 3 — Compensation">
       <div class="progress-steps">
         <div class="progress-step complete">1. Division</div>
@@ -624,19 +655,19 @@
       </div>
     </div>
     <div class="card">
-      <fieldset>
-        <legend class="question">
+      <div class="q-block">
+        <h2 class="question" tabindex="-1">
           What type of person are you paying?
           <span class="question-sub">Select the worker type to see the correct account and program guidance.</span>
-        </legend>
-        <div class="option-list" id="comp-options" role="radiogroup"></div>
-      </fieldset>
+        </h2>
+        <div class="option-list" id="comp-options"></div>
+      </div>
     </div>
   </section>
 
   <!-- ── Account lookup (side door): Step 1 Category ─────── -->
   <section id="screen-acct-step1" class="screen" aria-label="Account lookup — Step 1: Expense category">
-    <button class="btn-back" onclick="showScreen('welcome')">← Back to MoCode Finder</button>
+    <button class="btn-back" onclick="acctExit()"><span aria-hidden="true">←</span> Back to MoCode Finder</button>
     <div class="progress" aria-label="Account lookup progress: Step 1">
       <div class="progress-steps">
         <div class="progress-step active" aria-current="step">1. Category</div>
@@ -645,19 +676,19 @@
       </div>
     </div>
     <div class="card">
-      <fieldset>
-        <legend class="question">
+      <div class="q-block">
+        <h2 class="question" tabindex="-1">
           What type of expense is this?
           <span class="question-sub">Account lookup — works for any fund: operating, gift, endowment, or grant.</span>
-        </legend>
-        <div class="option-list" id="acct-category-options" role="radiogroup"></div>
-      </fieldset>
+        </h2>
+        <div class="option-list" id="acct-category-options"></div>
+      </div>
     </div>
   </section>
 
   <!-- ── Account lookup: Step 2 Subcategory ──────────────── -->
   <section id="screen-acct-step2" class="screen" aria-label="Account lookup — Step 2: Specific activity">
-    <button class="btn-back" onclick="showAcctStep1()">← Back</button>
+    <button class="btn-back" onclick="showAcctStep1()"><span aria-hidden="true">←</span> Back</button>
     <div class="progress" aria-label="Account lookup progress: Step 2">
       <div class="progress-steps">
         <div class="progress-step complete">1. Category</div>
@@ -666,19 +697,19 @@
       </div>
     </div>
     <div class="card">
-      <fieldset>
-        <legend class="question">
+      <div class="q-block">
+        <h2 class="question" tabindex="-1">
           What best describes this expense?
           <span class="question-sub" id="acct-step2-sub"></span>
-        </legend>
-        <div class="option-list" id="acct-subcategory-options" role="radiogroup"></div>
-      </fieldset>
+        </h2>
+        <div class="option-list" id="acct-subcategory-options"></div>
+      </div>
     </div>
   </section>
 
   <!-- ── Account lookup: Step 3 Account (multi-account only) ─ -->
   <section id="screen-acct-step3" class="screen" aria-label="Account lookup — Step 3: Specific purchase">
-    <button class="btn-back" onclick="showAcctStep2()">← Back</button>
+    <button class="btn-back" onclick="showAcctStep2()"><span aria-hidden="true">←</span> Back</button>
     <div class="progress" aria-label="Account lookup progress: Step 3">
       <div class="progress-steps">
         <div class="progress-step complete">1. Category</div>
@@ -687,25 +718,26 @@
       </div>
     </div>
     <div class="card">
-      <fieldset>
-        <legend class="question">
+      <div class="q-block">
+        <h2 class="question" tabindex="-1">
           Which best describes the specific purchase?
           <span class="question-sub" id="acct-step3-sub"></span>
-        </legend>
-        <div class="option-list" id="acct-account-options" role="radiogroup"></div>
-      </fieldset>
+        </h2>
+        <div class="option-list" id="acct-account-options"></div>
+      </div>
     </div>
   </section>
 
   <!-- ── Account lookup: Result ──────────────────────────── -->
   <section id="screen-acct-result" class="screen" aria-label="Account lookup result">
-    <button class="btn-back" onclick="acctGoBackFromResult()">← Back</button>
+    <button class="btn-back" onclick="acctGoBackFromResult()"><span aria-hidden="true">←</span> Back</button>
 
     <div class="print-header" aria-hidden="true">
       UMKC Conservatory — MoCode Finder (Account lookup) &nbsp;|&nbsp; Printed <span id="print-date-acct"></span>
     </div>
 
     <div class="card result-card">
+      <h2 class="visually-hidden" tabindex="-1" id="acct-result-heading">Your account code result</h2>
       <p class="result-path" id="acct-result-path"></p>
       <div class="result-field">
         <div class="field-label">Account Code</div>
@@ -721,13 +753,13 @@
         <ul id="acct-result-examples"></ul>
       </div>
       <div class="prod-note">
-        Coding an operating-fund (Fund 0000) transaction? You'll also need a MoCode — <a href="#" onclick="startOver(); return false;">find it here</a>.
+        Coding an operating-fund (Fund 0000) transaction? You'll also need a MoCode — <button type="button" class="btn-link" onclick="startOver()">find it here</button>.
       </div>
     </div>
 
     <div class="btn-row">
-      <button class="btn-secondary" onclick="showAcctStep1()">↺ Look up another account</button>
-      <button class="btn-secondary" onclick="printResult()">🖨 Print</button>
+      <button class="btn-secondary" onclick="showAcctStep1()"><span aria-hidden="true">↺</span> Look up another account</button>
+      <button class="btn-secondary" onclick="printResult()"><span aria-hidden="true">🖨</span> Print</button>
     </div>
 
     <div class="feedback-section">
@@ -743,6 +775,7 @@
     </div>
 
     <div class="card result-card" id="result-content">
+      <h2 class="visually-hidden" tabindex="-1" id="result-heading">Your MoCode result</h2>
       <p class="result-path" id="result-path" aria-label="Transaction path"></p>
 
       <div class="result-field">
@@ -770,14 +803,14 @@
         <div class="accounts-list">
           <p class="acct-note">For approvals, the MoCode above is all you need. Accounts itemize the expense type when the transaction is processed.</p>
           <div id="res-accounts-list"></div>
-          <p class="acct-browse"><a href="#" onclick="showAcctStep1(); return false;">Browse all account codes →</a></p>
+          <p class="acct-browse"><button type="button" class="btn-link" onclick="showAcctStep1('result')">Browse all account codes <span aria-hidden="true">→</span></button></p>
         </div>
       </details>
     </div>
 
     <div class="btn-row">
-      <button class="btn-secondary" onclick="startOver()">↺ Code another</button>
-      <button class="btn-secondary" onclick="printResult()">🖨 Print</button>
+      <button class="btn-secondary" onclick="startOver()"><span aria-hidden="true">↺</span> Code another</button>
+      <button class="btn-secondary" onclick="printResult()"><span aria-hidden="true">🖨</span> Print</button>
       <button class="btn-secondary" id="btn-see-division" onclick="showDivisionRef()">See all [Division] MoCodes</button>
     </div>
 
@@ -795,6 +828,7 @@
     </div>
 
     <div class="comp-result-box" id="comp-result-content">
+      <h2 class="visually-hidden" tabindex="-1" id="comp-result-heading">Your compensation coding result</h2>
       <p class="comp-worker-type" id="comp-res-worker-type"></p>
       <p class="comp-title" id="comp-res-title"></p>
       <div class="comp-account-row">
@@ -810,8 +844,8 @@
     </div>
 
     <div class="btn-row">
-      <button class="btn-secondary" onclick="startOver()">↺ Code another</button>
-      <button class="btn-secondary" onclick="printResult()">🖨 Print</button>
+      <button class="btn-secondary" onclick="startOver()"><span aria-hidden="true">↺</span> Code another</button>
+      <button class="btn-secondary" onclick="printResult()"><span aria-hidden="true">🖨</span> Print</button>
     </div>
 
     <div class="feedback-section">
@@ -823,6 +857,7 @@
   <!-- ── Reference ───────────────────────────────────────── -->
   <section id="screen-reference" class="screen" aria-label="Full MoCode Reference">
     <div class="card" style="padding: 1.25rem 1.75rem;">
+      <h2 class="visually-hidden" tabindex="-1">Full MoCode reference</h2>
       <div class="ref-controls">
         <label for="ref-filter">Filter by division:</label>
         <select id="ref-filter" onchange="filterReference()" aria-label="Filter MoCodes by division">
@@ -835,15 +870,15 @@
         </select>
         <span class="ref-count" id="ref-count" aria-live="polite"></span>
       </div>
-      <div class="ref-table-wrap">
+      <div class="ref-table-wrap" role="region" aria-label="MoCode reference table (scrolls horizontally)" tabindex="0">
         <table id="ref-table" aria-label="Full MoCode reference table">
           <thead>
             <tr>
-              <th>MoCode</th>
-              <th>Label</th>
-              <th>DeptID</th>
-              <th>Program</th>
-              <th>HEADS</th>
+              <th scope="col">MoCode</th>
+              <th scope="col">Label</th>
+              <th scope="col">DeptID</th>
+              <th scope="col">Program</th>
+              <th scope="col">HEADS</th>
             </tr>
           </thead>
           <tbody id="ref-tbody"></tbody>
@@ -856,6 +891,9 @@
 
 <footer>
   Last updated: <span id="footer-date"></span> &nbsp;·&nbsp; UMKC Conservatory Dean's Office
+  <a href="https://courtneycrappell.com" target="_blank" rel="noopener noreferrer" class="easter-egg" title="monkey time?">
+    <img src="seaMonkeys.png" alt="Sea Monkeys — visit courtneycrappell.com (opens in a new tab)">
+  </a>
 </footer>
 
 <script>
@@ -928,10 +966,41 @@ const SCREENS = ['welcome','step1','step2','compensation','result','comp-result'
 function hideAllScreens() {
   SCREENS.forEach(id => document.getElementById('screen-'+id).classList.remove('active'));
 }
+function currentScreen() {
+  return SCREENS.find(id => document.getElementById('screen-'+id).classList.contains('active'));
+}
 function showScreen(id) {
+  const prev = currentScreen();
   hideAllScreens();
-  document.getElementById('screen-'+id).classList.add('active');
+  const target = document.getElementById('screen-'+id);
+  target.classList.add('active');
   window.scrollTo(0, 0);
+  // Move focus to the screen's heading so keyboard and screen-reader users
+  // land on the new content (skip on initial load — only after navigation)
+  if (prev && prev !== id) {
+    const h = target.querySelector('h2[tabindex="-1"]');
+    if (h) h.focus({ preventScroll: true });
+  }
+}
+
+// Screen-reader status announcements (visually hidden role="status" region).
+// Clear-then-set so repeating the same message still re-announces.
+function announce(msg) {
+  const el = document.getElementById('sr-status');
+  if (!el) return;
+  el.textContent = '';
+  setTimeout(() => { el.textContent = msg; }, 50);
+}
+
+// Build an option button. Label may contain markup (icons, code spans);
+// the value is captured in the click closure, so no attribute escaping needed.
+function makeOptionBtn(labelHTML, subText, onClick) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'option-btn';
+  btn.innerHTML = labelHTML + (subText ? `<span class="option-sub">${subText}</span>` : '');
+  btn.addEventListener('click', onClick);
+  return btn;
 }
 
 function startOver() {
@@ -953,11 +1022,12 @@ function showStep1() {
   const container = document.getElementById('division-options');
   container.innerHTML = '';
   divisions.forEach(div => {
-    const sub = divisionSubtitle(div);
-    container.insertAdjacentHTML('beforeend', optionHTML('div', div, div, sub));
-  });
-  container.querySelectorAll('input').forEach(input => {
-    input.addEventListener('change', confirmStep1);
+    container.appendChild(makeOptionBtn(div, divisionSubtitle(div), () => {
+      state.division = div;
+      state.path = [div];
+      console.log('[MoCode Finder] Division:', div);
+      showStep2();
+    }));
   });
   showScreen('step1');
   console.log('[MoCode Finder] Step 1 shown');
@@ -972,15 +1042,6 @@ function divisionSubtitle(div) {
     'Production': 'Music, Dance, Theatre Productions + K1303132 Shared/Cross-Divisional'
   };
   return map[div] || '';
-}
-
-function confirmStep1() {
-  const sel = document.querySelector('input[name="div"]:checked');
-  if (!sel) return;
-  state.division = sel.value;
-  state.path = [state.division];
-  console.log('[MoCode Finder] Division:', state.division);
-  showStep2();
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1013,6 +1074,64 @@ const SUPER_GROUPS = [
   }
 ];
 
+function toggleAccordion(wrap, header, body) {
+  const isOpen = header.classList.contains('open');
+  // Close all
+  wrap.querySelectorAll('.sg-header').forEach(h => {
+    h.classList.remove('open');
+    h.setAttribute('aria-expanded', 'false');
+    h.nextElementSibling.classList.remove('open');
+  });
+  // Open clicked (unless it was already open)
+  if (!isOpen) {
+    header.classList.add('open');
+    header.setAttribute('aria-expanded', 'true');
+    body.classList.add('open');
+  }
+}
+
+function makeAccordionGroup(wrap, idBase, icon, label, count) {
+  const header = document.createElement('button');
+  header.type = 'button';
+  header.className = 'sg-header';
+  header.setAttribute('aria-expanded', 'false');
+  header.setAttribute('aria-controls', idBase + '-body');
+  header.innerHTML = `
+    <span class="sg-icon" aria-hidden="true">${icon}</span>
+    <span class="sg-label">${label}</span>
+    <span class="sg-count">${count} option${count > 1 ? 's' : ''}</span>
+    <span class="sg-arrow" aria-hidden="true">▶</span>`;
+
+  const body = document.createElement('div');
+  body.className = 'sg-body';
+  body.id = idBase + '-body';
+  const list = document.createElement('div');
+  list.className = 'option-list';
+  body.appendChild(list);
+
+  header.addEventListener('click', () => toggleAccordion(wrap, header, body));
+  wrap.appendChild(header);
+  wrap.appendChild(body);
+  return list;
+}
+
+function selectActivity(type) {
+  state.activityType = type;
+  state.path = [state.division, type];
+  console.log('[MoCode Finder] Activity:', type);
+
+  if (type === 'Paying a Person') {
+    showCompensation();
+    return;
+  }
+  const matches = DB.mocodes.filter(m =>
+    m.division === state.division && m.activityType === type && !m.isProduction
+  );
+  if (!matches.length) { showDeadEnd(); return; }
+  state.mocode = matches[0];
+  showResult();
+}
+
 function showStep2() {
   if (!DB) return;
   state.mocode = null;
@@ -1037,47 +1156,10 @@ function showStep2() {
     const sgTypes = sg.types.filter(t => available.has(t));
     if (!sgTypes.length) return;
 
-    const header = document.createElement('button');
-    header.type = 'button';
-    header.className = 'sg-header';
-    header.setAttribute('aria-expanded', 'false');
-    header.innerHTML = `
-      <span class="sg-icon" aria-hidden="true">${sg.icon}</span>
-      <span class="sg-label">${sg.label}</span>
-      <span class="sg-count">${sgTypes.length} option${sgTypes.length > 1 ? 's' : ''}</span>
-      <span class="sg-arrow" aria-hidden="true">▶</span>`;
-
-    const body = document.createElement('div');
-    body.className = 'sg-body';
-    const list = document.createElement('div');
-    list.className = 'option-list';
+    const list = makeAccordionGroup(wrap, 'sg-' + sg.key, sg.icon, sg.label, sgTypes.length);
     sgTypes.forEach(type => {
-      list.insertAdjacentHTML('beforeend', optionHTML('act', type, type, activityTypeSub(type)));
+      list.appendChild(makeOptionBtn(type, activityTypeSub(type), () => selectActivity(type)));
     });
-    body.appendChild(list);
-
-    header.addEventListener('click', () => {
-      const isOpen = header.classList.contains('open');
-      // Close all
-      wrap.querySelectorAll('.sg-header').forEach(h => {
-        h.classList.remove('open');
-        h.setAttribute('aria-expanded', 'false');
-        h.nextElementSibling.classList.remove('open');
-      });
-      // Open clicked (unless it was already open)
-      if (!isOpen) {
-        header.classList.add('open');
-        header.setAttribute('aria-expanded', 'true');
-        body.classList.add('open');
-      }
-    });
-
-    body.querySelectorAll('input').forEach(input => {
-      input.addEventListener('change', confirmStep2);
-    });
-
-    wrap.appendChild(header);
-    wrap.appendChild(body);
   });
 
   container.appendChild(wrap);
@@ -1088,10 +1170,10 @@ function showStep2() {
 function showStep2Production() {
   if (!DB) return;
   const prodGroups = [
-    { icon: '🎵', label: 'Music Productions',         filter: m => m.division === 'Music'             && m.isProduction },
-    { icon: '💃', label: 'Dance Productions',         filter: m => m.division === 'Dance'             && m.isProduction },
-    { icon: '🎭', label: 'Theatre Productions',       filter: m => m.division === 'Theatre'           && m.isProduction },
-    { icon: '🔗', label: 'Shared / Cross-Divisional', filter: m => m.division === 'Shared Production' }
+    { key: 'music',  icon: '🎵', label: 'Music Productions',         filter: m => m.division === 'Music'             && m.isProduction },
+    { key: 'dance',  icon: '💃', label: 'Dance Productions',         filter: m => m.division === 'Dance'             && m.isProduction },
+    { key: 'theatre',icon: '🎭', label: 'Theatre Productions',       filter: m => m.division === 'Theatre'           && m.isProduction },
+    { key: 'shared', icon: '🔗', label: 'Shared / Cross-Divisional', filter: m => m.division === 'Shared Production' }
   ];
 
   document.getElementById('step2-sub').textContent = 'Production — select a category, then choose the type';
@@ -1105,50 +1187,21 @@ function showStep2Production() {
     const mocodes = DB.mocodes.filter(group.filter);
     if (!mocodes.length) return;
 
-    const header = document.createElement('button');
-    header.type = 'button';
-    header.className = 'sg-header';
-    header.setAttribute('aria-expanded', 'false');
-    header.innerHTML = `
-      <span class="sg-icon" aria-hidden="true">${group.icon}</span>
-      <span class="sg-label">${group.label}</span>
-      <span class="sg-count">${mocodes.length} option${mocodes.length > 1 ? 's' : ''}</span>
-      <span class="sg-arrow" aria-hidden="true">▶</span>`;
-
-    const body = document.createElement('div');
-    body.className = 'sg-body';
-    const list = document.createElement('div');
-    list.className = 'option-list';
+    const list = makeAccordionGroup(wrap, 'sg-prod-' + group.key, group.icon, group.label, mocodes.length);
     mocodes.forEach(m => {
       const shortLabel = m.label
         .replace(/^Music Productions – /, '')
         .replace(/^Dance Productions – /, '')
         .replace(/^Theatre Productions – /, '')
         .replace(/^Production Admin – /, '');
-      list.insertAdjacentHTML('beforeend', optionHTML('act', m.id, shortLabel, activityTypeSub(m.activityType)));
+      list.appendChild(makeOptionBtn(shortLabel, activityTypeSub(m.activityType), () => {
+        state.mocode = m;
+        state.activityType = m.label;
+        state.path = ['Production', m.label];
+        console.log('[MoCode Finder] Production MoCode selected:', m.id);
+        showResult();
+      }));
     });
-    body.appendChild(list);
-
-    header.addEventListener('click', () => {
-      const isOpen = header.classList.contains('open');
-      wrap.querySelectorAll('.sg-header').forEach(h => {
-        h.classList.remove('open');
-        h.setAttribute('aria-expanded', 'false');
-        h.nextElementSibling.classList.remove('open');
-      });
-      if (!isOpen) {
-        header.classList.add('open');
-        header.setAttribute('aria-expanded', 'true');
-        body.classList.add('open');
-      }
-    });
-
-    body.querySelectorAll('input').forEach(input => {
-      input.addEventListener('change', confirmStep2);
-    });
-
-    wrap.appendChild(header);
-    wrap.appendChild(body);
   });
 
   container.appendChild(wrap);
@@ -1194,79 +1247,31 @@ function activityTypeSub(type) {
   return map[type] || '';
 }
 
-function confirmStep2() {
-  if (!DB) return;
-  const sel = document.querySelector('input[name="act"]:checked');
-  if (!sel) return;
-
-  // Production path: value is a MoCode ID
-  if (state.division === 'Production') {
-    state.mocode = DB.mocodes.find(m => m.id === sel.value);
-    state.activityType = state.mocode ? state.mocode.label : sel.value;
-    state.path = ['Production', state.activityType];
-    console.log('[MoCode Finder] Production MoCode selected:', sel.value);
-    if (!state.mocode) { showDeadEnd(); return; }
-    showResult();
-    return;
-  }
-
-  state.activityType = sel.value;
-  state.path = [state.division, state.activityType];
-  console.log('[MoCode Finder] Activity:', state.activityType);
-
-  if (state.activityType === 'Paying a Person') {
-    showCompensation();
-  } else {
-    const matches = DB.mocodes.filter(m =>
-      m.division === state.division && m.activityType === state.activityType && !m.isProduction
-    );
-    if (!matches.length) { showDeadEnd(); return; }
-    state.mocode = matches[0];
-    showResult();
-  }
-}
-
 // ════════════════════════════════════════════════════════════════
 //  Compensation sub-flow
 // ════════════════════════════════════════════════════════════════
 function showCompensation() {
   if (!DB) return;
-  const rules = DB.compensationRules;
   const container = document.getElementById('comp-options');
   container.innerHTML = '';
 
-  // Filter music-specific options
-  const filtered = rules.filter(r => {
-    if (r.workerType.includes('Music') && state.division !== 'Music') return false;
-    return true;
-  });
+  // Each rule declares which divisions it applies to (data-driven — the old
+  // label-text match hid "Student accompanist (Music or Dance)" from Dance)
+  const filtered = DB.compensationRules.filter(r =>
+    !r.divisions || r.divisions.includes(state.division)
+  );
 
-  filtered.forEach((rule, i) => {
+  filtered.forEach(rule => {
     const sub = rule.account + (rule.program ? ` · Program ${rule.program}` : ' · see guidance');
-    container.insertAdjacentHTML('beforeend', optionHTML('comp', String(i), rule.workerType, sub));
-  });
-
-  container.querySelectorAll('input').forEach(input => {
-    input.addEventListener('change', confirmCompensation);
+    container.appendChild(makeOptionBtn(rule.workerType, sub, () => {
+      state.compRule = rule;
+      state.path = [state.division, 'Paying a Person', rule.workerType];
+      console.log('[MoCode Finder] Compensation worker type:', rule.workerType);
+      renderCompResult();
+    }));
   });
   showScreen('compensation');
   console.log('[MoCode Finder] Compensation screen shown');
-}
-
-function confirmCompensation() {
-  if (!DB) return;
-  const sel = document.querySelector('input[name="comp"]:checked');
-  if (!sel) return;
-  const idx = parseInt(sel.value);
-  // Re-filter same as showCompensation
-  const rules = DB.compensationRules.filter(r => {
-    if (r.workerType.includes('Music') && state.division !== 'Music') return false;
-    return true;
-  });
-  state.compRule = rules[idx];
-  state.path = [state.division, 'Paying a Person', state.compRule.workerType];
-  console.log('[MoCode Finder] Compensation worker type:', state.compRule.workerType);
-  renderCompResult();
 }
 
 function renderCompResult() {
@@ -1307,6 +1312,7 @@ function renderCompResult() {
   document.getElementById('comp-feedback-link').href =
     `mailto:cjchgy@umsystem.edu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
+  announce('Result: Account ' + rule.account + ', ' + (rule.accountDescription || ''));
   showScreen('comp-result');
   console.log('[MoCode Finder] Comp result shown:', rule.workerType, rule.account);
 }
@@ -1360,12 +1366,18 @@ function showResult() {
     details.hidden = true;
   }
 
-  // "See all Division MoCodes" button
+  // "See all Division MoCodes" button — the reference filter has no
+  // "Production" option (production codes are spread across divisions),
+  // so that path gets a generic label and an unfiltered table
   document.getElementById('btn-see-division').textContent =
-    'See all ' + state.division + ' MoCodes';
+    state.division === 'Production'
+      ? 'See the full MoCode reference'
+      : 'See all ' + state.division + ' MoCodes';
 
   // Print date
   document.getElementById('print-date').textContent = new Date().toLocaleDateString();
+
+  announce('Result: MoCode ' + (state.mocode.mocode || state.mocode.id) + ', ' + state.mocode.label);
 
   // Feedback link
   const subject = `MoCode Tool Feedback — ${state.division} / ${state.activityType}`;
@@ -1416,7 +1428,11 @@ function showDeadEnd() {
 }
 
 function showDivisionRef() {
-  document.getElementById('ref-filter').value = state.division || '';
+  const sel = document.getElementById('ref-filter');
+  // Only set the filter if the division actually exists as an option
+  // ("Production" isn't one — production codes span divisions)
+  const hasOption = Array.from(sel.options).some(o => o.value === state.division);
+  sel.value = hasOption ? state.division : '';
   showTab('reference');
 }
 
@@ -1433,25 +1449,37 @@ function printResult() {
 // ════════════════════════════════════════════════════════════════
 //  Account lookup (side door) — account codes for any fund
 // ════════════════════════════════════════════════════════════════
-function showAcctStep1() {
-  if (!ACCT_DB) return;
+let acctOrigin = 'welcome'; // screen that launched the account lookup
+
+function acctExit() {
+  showScreen(acctOrigin);
+}
+
+function showAcctStep1(origin) {
+  if (origin) acctOrigin = origin;
   acctState.category = acctState.subcategory = acctState.account = null;
   acctState.path = [];
 
   const container = document.getElementById('acct-category-options');
   container.innerHTML = '';
-  ACCT_DB.categories.forEach(cat => {
-    container.insertAdjacentHTML('beforeend',
-      optionHTML('acct-cat', cat.id, `<span class="option-icon">${cat.icon}</span> ${cat.label}`, ''));
-  });
 
-  container.querySelectorAll('input').forEach(input => {
-    input.addEventListener('change', () => {
-      acctState.category = input.value;
-      const cat = ACCT_DB.categories.find(c => c.id === input.value);
+  if (!ACCT_DB) {
+    // accounts.json failed to load at boot — say so instead of a dead link
+    container.innerHTML =
+      '<p role="alert" style="color:#b3261e">Unable to load the account code list. ' +
+      'Please reload the page; if the problem continues, use the feedback link to let us know.</p>';
+    showScreen('acct-step1');
+    console.log('[MoCode Finder] Account lookup unavailable — accounts.json failed to load');
+    return;
+  }
+
+  ACCT_DB.categories.forEach(cat => {
+    const label = `<span class="option-icon" aria-hidden="true">${cat.icon}</span> ${cat.label}`;
+    container.appendChild(makeOptionBtn(label, '', () => {
+      acctState.category = cat.id;
       acctState.path = [cat.label];
       showAcctStep2();
-    });
+    }));
   });
 
   showScreen('acct-step1');
@@ -1468,14 +1496,8 @@ function showAcctStep2() {
   const container = document.getElementById('acct-subcategory-options');
   container.innerHTML = '';
   cat.subcategories.forEach(sub => {
-    container.insertAdjacentHTML('beforeend',
-      optionHTML('acct-sub', sub.id, sub.label, sub.description));
-  });
-
-  container.querySelectorAll('input').forEach(input => {
-    input.addEventListener('change', () => {
-      acctState.subcategory = input.value;
-      const sub = cat.subcategories.find(s => s.id === input.value);
+    container.appendChild(makeOptionBtn(sub.label, sub.description, () => {
+      acctState.subcategory = sub.id;
       acctState.path = [cat.label, sub.label];
       if (sub.accounts.length === 1) {
         acctState.account = sub.accounts[0];
@@ -1483,7 +1505,7 @@ function showAcctStep2() {
       } else {
         showAcctStep3(sub);
       }
-    });
+    }));
   });
 
   showScreen('acct-step2');
@@ -1496,19 +1518,11 @@ function showAcctStep3(sub) {
   const container = document.getElementById('acct-account-options');
   container.innerHTML = '';
   sub.accounts.forEach(acct => {
-    container.insertAdjacentHTML('beforeend',
-      optionHTML('acct-acct', acct.code,
-        `<span style="font-family:monospace;font-weight:700;color:var(--blue)">${acct.code}</span> — ${acct.description}`,
-        acct.examples.slice(0, 2).join(' · ')));
-  });
-
-  container.querySelectorAll('input').forEach(input => {
-    input.addEventListener('change', () => {
-      const cat = ACCT_DB.categories.find(c => c.id === acctState.category);
-      const subcat = cat.subcategories.find(s => s.id === acctState.subcategory);
-      acctState.account = subcat.accounts.find(a => a.code === input.value);
+    const label = `<span style="font-family:monospace;font-weight:700;color:var(--blue)">${acct.code}</span> — ${acct.description}`;
+    container.appendChild(makeOptionBtn(label, acct.examples.slice(0, 2).join(' · '), () => {
+      acctState.account = acct;
       showAcctResult();
-    });
+    }));
   });
 
   showScreen('acct-step3');
@@ -1539,6 +1553,7 @@ function showAcctResult() {
   document.getElementById('acct-feedback-link').href =
     `mailto:cjchgy@umsystem.edu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
+  announce('Result: Account ' + acct.code + ', ' + acct.description);
   showScreen('acct-result');
   console.log('[MoCode Finder] Account lookup result:', acct.code);
 }
@@ -1590,24 +1605,10 @@ function filterReference() {
     rows.length + ' of ' + DB.mocodes.length + ' MoCodes';
 }
 
-// ════════════════════════════════════════════════════════════════
-//  Helpers
-// ════════════════════════════════════════════════════════════════
-function optionHTML(name, value, labelText, subText) {
-  const id = `opt-${name}-${value.replace(/[^a-z0-9]/gi, '-')}`;
-  const sub = subText ? `<span class="option-sub">${subText}</span>` : '';
-  return `
-    <div class="option-item">
-      <input type="radio" name="${name}" value="${value}" id="${id}">
-      <label for="${id}">${labelText}${sub}</label>
-    </div>`;
-}
 </script>
 
 
-<a href="https://courtneycrappell.com" target="_blank" rel="noopener noreferrer" class="easter-egg" title="monkey time?">
-  <img src="seaMonkeys.png" alt="monkey time?">
-</a>
+<div id="sr-status" class="visually-hidden" role="status" aria-live="polite"></div>
 
 </body>
 </html>
