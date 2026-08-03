@@ -1,111 +1,106 @@
 /* ===========================================================
    THE FOOTBALL — retro football companion
    Vanilla JS. Boot → sport select → phrase + voice.
-   Two sports: the 2026 World Cup (played) and the Chiefs (upcoming).
+   Two sports: soccer and American football. Everything here is
+   deliberately evergreen — no players, no seasons, no results —
+   so the banks never need updating.
    =========================================================== */
 (function () {
   "use strict";
 
   /* ---- Phrase banks ------------------------------------- */
+  /* Rules for anything added here: no player names, no clubs, no
+     seasons, no scores, no records. A phrase has to be true of a
+     match played in any year, or it doesn't belong in the bank. */
   var PHRASES = {
-    /* World Cup — the final is done: Spain 1–0 Argentina (a.e.t.),
-       Ferran Torres 106', MetLife Stadium, 19 July 2026. */
-    wc: [
-      "Spain one, Argentina nil — and it took a hundred and six minutes.",
-      "Ferran Torres comes off the bench and wins a World Cup.",
-      "Twenty shots to two. That wasn't a final, that was a lecture.",
-      "Second star for Spain. First since two thousand ten.",
-      "Nineteen years old and Lamine Yamal's a world champion.",
-      "Yamal walking over to Messi at the whistle — that's the photo of the tournament.",
-      "Six World Cups for Messi. No man had ever done that.",
-      "He just sat down on the turf. You didn't need words.",
-      "Nobody's saying yet whether that's the last we see Messi in that shirt.",
-      "Scaloni says he hasn't even asked him. Let the man breathe.",
-      "Argentina couldn't get out of their own half after the hour.",
-      "Nico Williams heads it down, Torres does the rest.",
-      "Pedro Porro's cross doesn't get half the credit it deserves.",
-      "Spain never lost control of it. That's the whole story.",
-      "Pedri ran a World Cup final at his own tempo.",
-      "That was the torch passing, right there in New Jersey.",
-      "A World Cup final in the Meadowlands. Still getting used to that.",
-      "The halftime show was, let's be honest, a lot.",
-      "You could see Argentina's legs go in extra time.",
-      "Spain went the whole tournament without ever looking rushed.",
-      "Two shots. Argentina had two shots in a World Cup final.",
-      "De la Fuente's got a World Cup now. Nobody wanted him three years ago.",
-      "Unai Simon barely had a save to make and still won it.",
-      "The scary part is this Spain side could win the next one too."
+    /* Soccer — touchline punditry. */
+    soccer: [
+      "It's a game of two halves, and they've only played one.",
+      "They're getting no joy at all down the left.",
+      "He's got a great engine on him.",
+      "That's a big ask this late on.",
+      "You take that result and you move on.",
+      "They'll want to keep it tight for the first twenty.",
+      "Set pieces win you games like this.",
+      "You can't fault the effort. You can fault everything else.",
+      "It's a squad game now. It always was.",
+      "Nobody wants it to go to penalties. Everybody knows it will.",
+      "He's found himself in acres of space there.",
+      "That's a foul in any league in the world.",
+      "Momentum is real, and also completely imaginary.",
+      "They've got to be more clinical in the final third.",
+      "One goal is never enough. Two is usually plenty.",
+      "The keeper will want that one back.",
+      "He'll have put those away in his sleep all week.",
+      "They've had all of the ball and none of the chances.",
+      "You can't defend a one-goal lead. Everyone tries anyway.",
+      "The legs are going. You can see it from up here.",
+      "That's why he's in the side.",
+      "Great teams find a way. So do lucky ones.",
+      "Football's a funny old game, which is what people say instead of explaining.",
+      "The drama lives in the time added on.",
+      "He's given the referee a decision to make.",
+      "They're playing for the badge now.",
+      "It's still eleven against eleven, whatever the table says.",
+      "A clean sheet away from home is worth two at home."
     ],
 
-    /* Chiefs — hot takes for the 2026 season. */
-    hot: [
-      "Six and eleven wasn't a fluke. That window's shut.",
-      "If Mahomes isn't right by September, they're picking top ten again.",
-      "Trading Trent McDuffie is going to look like a disaster by November.",
-      "Year fourteen of Andy Reid is one year too many.",
-      "Justin Fields starts more games this year than anybody wants to admit.",
-      "Kelce should have walked away after last season.",
-      "Delane at number six was a reach and everyone in that building knows it.",
-      "They rebuilt an entire secondary out of rookies and hope.",
-      "Denver's the class of the AFC West now, and it's not close.",
-      "Rashee Rice in a contract year is the only thing holding that receiver room together.",
-      "Nussmeier is the most interesting player on the roster and he's third string.",
-      "Nobody comes back from a knee like that and looks the same.",
-      "Veach has drafted one real difference-maker in three years.",
-      "That offensive line is a competition because nobody's won a job yet.",
-      "Nine wins would be a great season and nobody wants to say it out loud.",
-      "The dynasty talk ended the day they missed the playoffs.",
-      "Opening on Monday night against Denver is a trap and they know it.",
-      "They're built to win in January and they can't get out of October.",
-      "If the secondary can't cover, Spags takes a blame that isn't his.",
-      "This is the thinnest Chiefs roster of the entire Mahomes era."
-    ],
-
-    /* Chiefs — safe takes for the 2026 season. */
-    safe: [
-      "Camp opens the twenty-ninth. Everything before that is noise.",
-      "Health is the season. That's the whole take.",
-      "You never bet against Andy Reid in September.",
-      "If Mahomes plays sixteen games, they're in the race.",
-      "Six and eleven last year, so there's really only one direction left.",
-      "Reid's had a full offseason to fix it. He usually does.",
-      "The AFC West is going to be a fistfight again.",
-      "Delane's got the talent. He just needs that shoulder right.",
-      "Kelce on a snap count is still Kelce.",
-      "They'll be smart with Mahomes early. No reason not to be.",
-      "Week one on Monday night against Denver — what a way to open.",
-      "A healthy Rashee Rice changes everything about that offense.",
-      "Somebody always comes out of nowhere in St. Joe. Watch the young receivers.",
-      "Young offensive lines get better in November.",
-      "Spagnuolo will scheme something up. He always does.",
-      "One year out of the playoffs isn't a rebuild.",
-      "Fields is good insurance. You hope you never need it.",
-      "It's July. Nobody's won or lost anything yet.",
-      "Padded practices tell you more than minicamp ever did.",
-      "Missing a season humbles a team. Sometimes that's the best thing for it."
+    /* American football — booth punditry. */
+    football: [
+      "Games like this are won in the trenches.",
+      "You have to establish the run to open up the play action.",
+      "It's a copycat league.",
+      "Defense travels.",
+      "They just have to protect the football.",
+      "Third and manageable is the whole ballgame.",
+      "You don't want to be one-dimensional in December.",
+      "Nobody remembers who won in September.",
+      "It's a chess match out there, if chess had a punter.",
+      "Field position is the stat nobody watches and everybody loses to.",
+      "They need to take what the defense gives them.",
+      "Availability is the best ability, which is a nice way of saying he's hurt.",
+      "You can't teach size.",
+      "He's a coach's son. You can tell.",
+      "Special teams decides more games than anybody wants to admit.",
+      "Time of possession means everything or nothing, depending on who won.",
+      "Momentum is real right up until it isn't.",
+      "They're going to have to score points to win this football game.",
+      "Clock management is where seasons go to die.",
+      "Turnover margin tells you the whole story.",
+      "You have to finish drives.",
+      "The red zone is a different sport entirely.",
+      "Next man up, which is what you say when the first man's hurt.",
+      "It's a long season. It's always a long season.",
+      "They'll be watching this one on tape all week.",
+      "That's a veteran move right there.",
+      "The weather's a factor, and it favors whoever ends up winning.",
+      "Play callers get too much credit and exactly enough blame.",
+      "You take the points there. Every single time."
     ]
   };
 
   /* ---- Sport configuration ------------------------------ */
   var SPORTS = {
-    worldcup: {
-      title: "WORLD&nbsp;CUP",
-      subtitle: "&gt; The final is played. Have an opinion ready.",
-      footRight: "ESP 1&ndash;0 ARG (AET)",
+    soccer: {
+      title: "SOCCER",
+      subtitle: "&gt; Have an opinion ready.",
+      footRight: "NINETY MINUTES",
       buttons: [
-        { key: "wc", icon: "⚽", label: "WORLD CUP QUOTES", cls: "wide" }
+        { key: "soccer", icon: "⚽", label: "SOCCER QUOTES", cls: "wide" }
       ]
     },
-    chiefs: {
-      title: "THE&nbsp;CHIEFS",
-      subtitle: "&gt; Camp opens July 29. Choose your risk level.",
-      footRight: "2026 SEASON",
+    football: {
+      title: "FOOTBALL",
+      subtitle: "&gt; Have an opinion ready.",
+      footRight: "FOUR QUARTERS",
       buttons: [
-        { key: "hot", icon: "🔥", label: "HOT TAKE" },
-        { key: "safe", icon: "👍", label: "SAFE TAKE" }
+        { key: "football", icon: "🏈", label: "FOOTBALL QUOTES", cls: "wide" }
       ]
     }
   };
+
+  /* Old v2 hashes, kept so any saved link still lands somewhere sensible. */
+  var ALIASES = { worldcup: "soccer", chiefs: "football" };
 
   var MENU = {
     title: "THE&nbsp;FOOTBALL",
@@ -222,7 +217,7 @@
   var muteBtn = document.getElementById("muteBtn");
   var backBtn = document.getElementById("backBtn");
   var btnSoccer = document.getElementById("btnSoccer");
-  var btnChiefs = document.getElementById("btnChiefs");
+  var btnFootball = document.getElementById("btnFootball");
 
   /* ---- Fit the phrase to the readout -------------------- */
   /* The banks vary from six words to twenty, so a fixed type size either
@@ -331,6 +326,7 @@
   function route() {
     if (!booted) return;
     var name = (location.hash || "").replace(/^#\/?/, "");
+    if (ALIASES[name]) name = ALIASES[name];
     if (SPORTS[name]) showSport(name);
     else showMenu();
   }
@@ -345,7 +341,7 @@
 
   /* ---- Boot animation ----------------------------------- */
   var BOOT_LINES = [
-    { t: "THE FOOTBALL v2.0", cls: "amber", after: 260 },
+    { t: "THE FOOTBALL v3.0", cls: "amber", after: 260 },
     { t: "", after: 90 },
     { t: "Initializing football database...", after: 560 },
     { t: "Loading football knowledge...", after: 560 },
@@ -396,8 +392,8 @@
   }
 
   /* ---- Wiring ------------------------------------------- */
-  btnSoccer.addEventListener("click", function () { go("worldcup"); });
-  btnChiefs.addEventListener("click", function () { go("chiefs"); });
+  btnSoccer.addEventListener("click", function () { go("soccer"); });
+  btnFootball.addEventListener("click", function () { go("football"); });
   backBtn.addEventListener("click", function () { go(""); });
 
   // Tap the readout to replay the current phrase.
