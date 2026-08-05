@@ -16,6 +16,12 @@ cjchgy@umsystem.edu (also the destination of the in-app feedback links).
 | `index.html` | The entire application — markup, styles, and script in one file |
 | `mocodes.json` | Data: all 67 MoCodes (DeptID, Program, Fund, HEADS mapping, accounts, guidance) plus compensation worker-type rules |
 | `accounts.json` | Data: account codes organized by expense category for the built-in account-code browser (any fund: operating, gift, endowment, grant) |
+
+**`accounts.json` is shared.** The standalone Account Finder in the sibling
+`../accounts/` folder fetches this same file rather than keeping its own copy,
+so the two tools can't drift apart. Deploy the two folders as siblings, and
+edit account guidance only here. See `../accounts/README.md`.
+
 ## Deployment
 
 Static files only. No build step, no server-side code, no dependencies,

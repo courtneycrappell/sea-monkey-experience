@@ -32,7 +32,44 @@
       flex-direction: column;
     }
     a { color: var(--blue); }
-    a:focus, button:focus, input:focus { outline: 3px solid var(--gold); outline-offset: 2px; }
+    /* Two-ring focus indicator: gold inner + green outer clears 3:1 against
+       both the white cards and the green header (SC 1.4.11). The transparent
+       outline is what forced-colors mode swaps for a visible system ring. */
+    a:focus-visible, button:focus-visible, input:focus-visible,
+    select:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
+      outline: 3px solid transparent;
+      box-shadow: 0 0 0 2px var(--gold), 0 0 0 5px var(--blue);
+      border-radius: 4px;
+    }
+    h2[tabindex="-1"]:focus, h2[tabindex="-1"]:focus-visible { outline: none; box-shadow: none; }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      z-index: 100;
+      background: var(--blue);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 0 0 6px 0;
+      font-size: 0.875rem;
+      text-decoration: none;
+    }
+    .skip-link:focus { left: 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+    }
 
     /* ── Header ─────────────────────────────────────────────────── */
     header {
@@ -58,7 +95,8 @@
     .tab-btn {
       background: none;
       border: none;
-      color: rgba(255,255,255,0.7);
+      /* 0.8 alpha on the green header = 5.2:1; 0.7 measured 4.4:1 */
+      color: rgba(255,255,255,0.8);
       padding: 0.6rem 1rem;
       font-size: 0.875rem;
       cursor: pointer;
@@ -104,20 +142,18 @@
     .question { font-size: 1.1rem; font-weight: 600; color: var(--blue); margin-bottom: 1.25rem; }
     .question-sub { font-size: 0.875rem; color: var(--muted); font-weight: 400; margin-top: 0.25rem; }
 
-    /* ── Radio options ──────────────────────────────────────────── */
+    /* ── Options ────────────────────────────────────────────────── */
+    /* Buttons, not radios: these choices advance the flow the moment they're
+       picked, and a radio that navigates on arrow-key focus traps keyboard
+       users (SC 3.2.2). Matches the MoCode Finder's 8/3 pass. */
     .option-list { display: flex; flex-direction: column; gap: 0.5rem; }
-    .option-item { position: relative; }
-    .option-item input[type="radio"] {
-      position: absolute;
-      opacity: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-      left: 0; top: 0;
-      margin: 0;
-    }
-    .option-item label {
+    .option-btn {
       display: block;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--card-bg);
       padding: 0.75rem 1rem;
       border: 2px solid var(--border);
       border-radius: 8px;
@@ -125,19 +161,15 @@
       transition: border-color 0.15s, background 0.15s;
       font-size: 0.95rem;
     }
-    .option-item label .option-sub {
+    .option-btn .option-sub {
       display: block;
       font-size: 0.78rem;
       color: var(--muted);
       margin-top: 0.2rem;
       font-weight: 400;
     }
-    .option-item label .option-icon {
-      margin-right: 0.4rem;
-    }
-    .option-item input:checked + label { border-color: var(--blue); background: #dcfce7; }
-    .option-item input:focus  + label { outline: 3px solid var(--gold); outline-offset: 1px; }
-    .option-item label:hover { border-color: var(--blue-mid); }
+    .option-btn .option-icon { margin-right: 0.4rem; }
+    .option-btn:hover { border-color: var(--blue-mid); background: #dcfce7; }
 
     /* ── Buttons ────────────────────────────────────────────────── */
     .btn-primary {
@@ -274,7 +306,7 @@
     /* ── Footer ─────────────────────────────────────────────────── */
     footer {
       background: var(--blue);
-      color: rgba(255,255,255,0.6);
+      color: rgba(255,255,255,0.8);
       font-size: 0.75rem;
       text-align: center;
       padding: 0.75rem 1rem;
@@ -297,25 +329,6 @@
     td.code { font-family: monospace; font-weight: 700; color: var(--blue); white-space: nowrap; font-size: 0.95rem; }
 
     /* ── Easter egg ───────────────────────────────────────────── */
-    .easter-egg {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      z-index: 9999;
-      display: block;
-      line-height: 0;
-      border-radius: 50%;
-      overflow: hidden;
-    }
-    .easter-egg img {
-      width: 38px;
-      height: 38px;
-      object-fit: cover;
-      border-radius: 50%;
-      display: block;
-    }
-    @media print { .easter-egg { display: none !important; } }
-
     /* ── Print styles ───────────────────────────────────────────── */
     @media print {
       header .org, .tab-nav, .btn-back, .btn-row, .feedback-section, footer, .screen:not(.active), .cross-link-box, .result-cross-link { display: none !important; }
@@ -336,6 +349,8 @@
 
 <body>
 
+<a class="skip-link" href="#main">Skip to main content</a>
+
 <header>
   <div class="org">UMKC Conservatory</div>
   <h1>Account Finder</h1>
@@ -350,22 +365,22 @@
 <main id="main">
 
   <!-- ── Welcome ──────────────────────────────────────────────── -->
-  <section id="screen-welcome" class="screen active" aria-label="Welcome">
+  <section id="screen-welcome" class="screen active" aria-labelledby="welcome-heading">
     <div class="card">
-      <p class="welcome-title">Find the right account code for any Conservatory expense.</p>
+      <h2 class="welcome-title" id="welcome-heading" tabindex="-1">Find the right account code for any Conservatory expense.</h2>
       <p class="welcome-body">Answer two or three short questions to identify the correct account code. Works for any fund — operating, gift, endowment, or grant.</p>
       <p class="welcome-body">If a result doesn't look right, use the feedback button to send us a note — that helps us improve the taxonomy.</p>
       <button class="btn-primary" onclick="showStep1()" id="btn-start">Get Started →</button>
       <hr class="welcome-divider">
       <div class="cross-link-box">
         <strong>Need a MoCode too?</strong>
-        If you're coding an operating-fund transaction and need the full MoCode + account combination, use the <a href="../mocodes/" target="_blank">MoCode Finder</a>.
+        If you're coding an operating-fund transaction and need the full MoCode + account combination, use the <a href="../mocodes/">MoCode Finder</a>.
       </div>
     </div>
   </section>
 
   <!-- ── Step 1: Category ─────────────────────────────────────── -->
-  <section id="screen-step1" class="screen" aria-label="Step 1: Expense category">
+  <section id="screen-step1" class="screen" aria-labelledby="step1-heading">
     <div class="progress" aria-label="Progress: Step 1">
       <div class="progress-steps">
         <div class="progress-step active" aria-current="step">1. Category</div>
@@ -374,15 +389,13 @@
       </div>
     </div>
     <div class="card">
-      <fieldset>
-        <legend class="question">What type of expense is this?</legend>
-        <div class="option-list" id="category-options" role="radiogroup"></div>
-      </fieldset>
+      <h2 class="question" id="step1-heading" tabindex="-1">What type of expense is this?</h2>
+      <div class="option-list" id="category-options"></div>
     </div>
   </section>
 
   <!-- ── Step 2: Subcategory ──────────────────────────────────── -->
-  <section id="screen-step2" class="screen" aria-label="Step 2: Specific activity">
+  <section id="screen-step2" class="screen" aria-labelledby="step2-heading">
     <button class="btn-back" onclick="navBack(showStep1)" aria-label="Back to category">← Back</button>
     <div class="progress" aria-label="Progress: Step 2">
       <div class="progress-steps">
@@ -392,18 +405,16 @@
       </div>
     </div>
     <div class="card">
-      <fieldset>
-        <legend class="question">
-          What best describes this expense?
-          <span class="question-sub" id="step2-sub"></span>
-        </legend>
-        <div class="option-list" id="subcategory-options" role="radiogroup"></div>
-      </fieldset>
+      <h2 class="question" id="step2-heading" tabindex="-1">
+        What best describes this expense?
+        <span class="question-sub" id="step2-sub"></span>
+      </h2>
+      <div class="option-list" id="subcategory-options"></div>
     </div>
   </section>
 
   <!-- ── Step 3: Account (shown only when multiple accounts) ──── -->
-  <section id="screen-step3" class="screen" aria-label="Step 3: Expense type">
+  <section id="screen-step3" class="screen" aria-labelledby="step3-heading">
     <button class="btn-back" onclick="navBack(showStep2)" aria-label="Back to activity">← Back</button>
     <div class="progress" aria-label="Progress: Step 3">
       <div class="progress-steps">
@@ -413,20 +424,19 @@
       </div>
     </div>
     <div class="card">
-      <fieldset>
-        <legend class="question">
-          Which best describes the specific purchase?
-          <span class="question-sub" id="step3-sub"></span>
-        </legend>
-        <div class="option-list" id="account-options" role="radiogroup"></div>
-      </fieldset>
+      <h2 class="question" id="step3-heading" tabindex="-1">
+        Which best describes the specific purchase?
+        <span class="question-sub" id="step3-sub"></span>
+      </h2>
+      <div class="option-list" id="account-options"></div>
     </div>
   </section>
 
   <!-- ── Result ───────────────────────────────────────────────── -->
-  <section id="screen-result" class="screen" aria-label="Result">
+  <section id="screen-result" class="screen" aria-labelledby="result-heading">
     <button class="btn-back" onclick="navBack(goBackFromResult)" aria-label="Back">← Back</button>
     <div class="card">
+      <h2 class="visually-hidden" id="result-heading" tabindex="-1">Your account code result</h2>
       <div class="print-header" id="print-header">UMKC Conservatory — Account Finder result</div>
       <p class="result-path" id="result-path"></p>
       <div class="result-account-block">
@@ -443,7 +453,7 @@
         <ul id="result-examples"></ul>
       </div>
       <div class="result-cross-link">
-        Need a MoCode too? If this is an operating-fund transaction, the <a href="../mocodes/" target="_blank">MoCode Finder</a> will give you the full MoCode + account combination.
+        Need a MoCode too? If this is an operating-fund transaction, the <a href="../mocodes/">MoCode Finder</a> will give you the full MoCode + account combination.
       </div>
       <div class="btn-row">
         <button class="btn-secondary" onclick="startOver()">Code another</button>
@@ -456,15 +466,16 @@
   </section>
 
   <!-- ── Reference ──────────────────────────────────────────────── -->
-  <section id="screen-reference" class="screen" aria-label="Full Account Reference">
+  <section id="screen-reference" class="screen" aria-labelledby="reference-heading">
     <div class="card" style="padding: 1.25rem 1.75rem;">
-      <div class="ref-table-wrap">
+      <h2 class="visually-hidden" id="reference-heading" tabindex="-1">Full account reference</h2>
+      <div class="ref-table-wrap" role="region" aria-label="Account reference table (scrolls horizontally)" tabindex="0">
         <table id="ref-table" aria-label="Full account reference table">
           <thead>
             <tr>
-              <th>Code</th>
-              <th>Account Name</th>
-              <th>Use When</th>
+              <th scope="col">Code</th>
+              <th scope="col">Account Name</th>
+              <th scope="col">Use When</th>
             </tr>
           </thead>
           <tbody id="ref-tbody"></tbody>
@@ -474,6 +485,8 @@
   </section>
 
 </main>
+
+<div id="sr-status" class="visually-hidden" role="status" aria-live="polite"></div>
 
 <footer>
   UMKC Conservatory — Account Finder &nbsp;·&nbsp; <span id="footer-date"></span>
@@ -514,9 +527,16 @@
   function showScreen(id) {
     const prev = currentScreen();
     hideAllScreens();
-    document.getElementById(id).classList.add('active');
+    const target = document.getElementById(id);
+    target.classList.add('active');
     syncTabs(id);
     window.scrollTo(0, 0);
+    // Keyboard and screen-reader users land on the new screen's heading rather
+    // than being left at the top of the document (skip on first paint).
+    if (prev && prev !== id) {
+      const h = target.querySelector('h2[tabindex="-1"]');
+      if (h) h.focus({ preventScroll: true });
+    }
     navRecord(id, prev);
   }
 
@@ -627,12 +647,24 @@
     });
   }
 
-  function optionHTML(name, value, label, sub) {
-    const id = name + '-' + value;
-    return `<div class="option-item">
-      <input type="radio" name="${name}" id="${id}" value="${value}">
-      <label for="${id}">${label}${sub ? `<span class="option-sub">${sub}</span>` : ''}</label>
-    </div>`;
+  // Build a choice button. The label may contain markup (icons, code spans),
+  // and the value rides in the click closure, so nothing needs escaping.
+  function makeOptionBtn(labelHTML, subText, onClick) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'option-btn';
+    btn.innerHTML = labelHTML + (subText ? `<span class="option-sub">${subText}</span>` : '');
+    btn.addEventListener('click', onClick);
+    return btn;
+  }
+
+  // Screen-reader announcement for results (visually hidden role=status).
+  // Cleared first so repeating the same message still re-announces.
+  function announce(msg) {
+    const el = document.getElementById('sr-status');
+    if (!el) return;
+    el.textContent = '';
+    setTimeout(() => { el.textContent = msg; }, 50);
   }
 
   function showStep1() {
@@ -640,17 +672,14 @@
     state.category = null; state.subcategory = null; state.account = null; state.path = [];
 
     const container = document.getElementById('category-options');
-    container.innerHTML = data.categories.map(cat =>
-      optionHTML('category', cat.id,
-        `<span class="option-icon">${cat.icon}</span>${cat.label}`)
-    ).join('');
-
-    container.querySelectorAll('input[type="radio"]').forEach(input => {
-      input.addEventListener('change', () => {
-        state.category = input.value;
-        state.path = [data.categories.find(c => c.id === input.value).label];
+    container.innerHTML = '';
+    data.categories.forEach(cat => {
+      const label = `<span class="option-icon" aria-hidden="true">${cat.icon}</span>${cat.label}`;
+      container.appendChild(makeOptionBtn(label, '', () => {
+        state.category = cat.id;
+        state.path = [cat.label];
         showStep2();
-      });
+      }));
     });
 
     showScreen('screen-step1');
@@ -664,14 +693,10 @@
     document.getElementById('step2-sub').textContent = cat.label;
 
     const container = document.getElementById('subcategory-options');
-    container.innerHTML = cat.subcategories.map(sub =>
-      optionHTML('subcategory', sub.id, sub.label, sub.description)
-    ).join('');
-
-    container.querySelectorAll('input[type="radio"]').forEach(input => {
-      input.addEventListener('change', () => {
-        state.subcategory = input.value;
-        const sub = cat.subcategories.find(s => s.id === input.value);
+    container.innerHTML = '';
+    cat.subcategories.forEach(sub => {
+      container.appendChild(makeOptionBtn(sub.label, sub.description, () => {
+        state.subcategory = sub.id;
         state.path = [cat.label, sub.label];
         if (sub.accounts.length === 1) {
           state.account = sub.accounts[0];
@@ -679,7 +704,7 @@
         } else {
           showStep3(sub);
         }
-      });
+      }));
     });
 
     showScreen('screen-step2');
@@ -689,19 +714,13 @@
     document.getElementById('step3-sub').textContent = sub.label;
 
     const container = document.getElementById('account-options');
-    container.innerHTML = sub.accounts.map(acct =>
-      optionHTML('account', acct.code,
-        `<span style="font-family:monospace;font-weight:700;color:var(--blue)">${acct.code}</span> — ${acct.description}`,
-        acct.examples.slice(0, 2).join(' · '))
-    ).join('');
-
-    container.querySelectorAll('input[type="radio"]').forEach(input => {
-      input.addEventListener('change', () => {
-        const cat = data.categories.find(c => c.id === state.category);
-        const subcat = cat.subcategories.find(s => s.id === state.subcategory);
-        state.account = subcat.accounts.find(a => a.code === input.value);
+    container.innerHTML = '';
+    sub.accounts.forEach(acct => {
+      const label = `<span style="font-family:monospace;font-weight:700;color:var(--blue)">${acct.code}</span> — ${acct.description}`;
+      container.appendChild(makeOptionBtn(label, acct.examples.slice(0, 2).join(' · '), () => {
+        state.account = acct;
         showResult();
-      });
+      }));
     });
 
     showScreen('screen-step3');
@@ -729,6 +748,7 @@
     document.getElementById('print-header').textContent =
       'UMKC Conservatory — Account Finder — ' + new Date().toLocaleDateString();
 
+    announce('Result: Account ' + acct.code + ', ' + acct.description);
     showScreen('screen-result');
   }
 
@@ -748,10 +768,6 @@
   }
 </script>
 
-
-<a href="https://courtneycrappell.com" target="_blank" rel="noopener noreferrer" class="easter-egg" title="monkey time?">
-  <img src="seaMonkeys.png" alt="monkey time?">
-</a>
 
 </body>
 </html>
