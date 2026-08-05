@@ -897,7 +897,7 @@ const acctState = { category: null, subcategory: null, account: null, path: [] }
 //  Boot
 // ════════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('mocodes.json')
+  const mocodesReady = fetch('mocodes.json')
     .then(r => r.json())
     .then(data => {
       DB = data;
@@ -912,10 +912,13 @@ document.addEventListener('DOMContentLoaded', () => {
         '<div class="card"><p style="color:red">Unable to load MoCode data. Please reload the page.</p></div>';
     });
 
-  fetch('accounts.json')
+  const acctReady = fetch('accounts.json')
     .then(r => r.json())
     .then(data => { ACCT_DB = data; })
     .catch(() => { ACCT_DB = null; });
+
+  // Both data files have to be in hand before a saved screen can be redrawn.
+  Promise.all([mocodesReady, acctReady]).then(navBoot);
 });
 
 // ════════════════════════════════════════════════════════════════
@@ -1040,6 +1043,26 @@ function navRestore(snap) {
     case 'acct-result':  acctState.account ? showAcctResult() : showAcctStep1(); break;
     default:             showTab('finder');
   }
+}
+
+// Re-entering the page — a reload, or Back/Forward from another page when the
+// browser didn't keep the page alive in its cache — reruns this script from
+// scratch, so the app would paint the welcome screen while the history entry
+// still described the screen the user was actually on. Back then appeared to
+// jump into the middle of a flow, and navIdx reset to 0 left the in-page Back
+// buttons pushing new entries instead of popping. Redraw from the entry.
+function navBoot() {
+  const snap = history.state;
+  if (snap && snap.mocodeFinder && snap.screen !== 'welcome') {
+    navIdx = snap.idx || 0;
+    navRestoring = true;
+    try { navRestore(snap); } finally { navRestoring = false; }
+    console.log('[MoCode Finder] Restored screen from history:', snap.screen);
+    return;
+  }
+  // First visit: stamp the entry we're on so Back has something of ours to pop.
+  navIdx = 0;
+  history.replaceState(navSnapshot('welcome'), '');
 }
 
 window.addEventListener('popstate', e => {

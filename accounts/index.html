@@ -509,6 +509,7 @@
     .then(d => {
       data = d;
       document.getElementById('footer-date').textContent = 'Updated ' + d.lastUpdated;
+      navBoot();
     })
     .catch(() => {
       document.getElementById('main').innerHTML =
@@ -604,6 +605,23 @@
       case 'screen-reference': showTab('reference'); break;
       default:                 showTab('finder');
     }
+  }
+
+  // A reload, or Back/Forward from another page when the browser didn't keep
+  // this page alive in its cache, reruns the script and paints the welcome
+  // screen while the history entry still describes where the user was. Redraw
+  // from the entry instead, and recover navIdx so the in-page Back buttons keep
+  // popping history rather than pushing new entries.
+  function navBoot() {
+    const snap = history.state;
+    if (snap && snap.accountFinder && snap.screen !== 'screen-welcome') {
+      navIdx = snap.idx || 0;
+      navRestoring = true;
+      try { navRestore(snap); } finally { navRestoring = false; }
+      return;
+    }
+    navIdx = 0;
+    history.replaceState(navSnapshot('screen-welcome'), '');
   }
 
   window.addEventListener('popstate', e => {
