@@ -421,6 +421,7 @@
     .acct-row .acct-examples { font-size: 0.78rem; color: var(--muted); margin-top: 0.15rem; }
     .acct-browse { font-size: 0.8rem; padding-top: 0.5rem; }
     .acct-browse a { font-weight: 600; }
+    .comp-empty { color: var(--text); margin-bottom: 0.75rem; }
 
     /* ── Account lookup result examples ───────────────────────── */
     .result-examples { margin-bottom: 1rem; }
@@ -606,7 +607,7 @@
 
   <!-- ── Step 2: Activity ────────────────────────────────── -->
   <section id="screen-step2" class="screen" aria-label="Step 2 of 2: Activity type">
-    <button class="btn-back" onclick="showStep1()"><span aria-hidden="true">←</span> Back</button>
+    <button class="btn-back" onclick="navBack(showStep1)"><span aria-hidden="true">←</span> Back</button>
     <div class="progress" aria-label="Progress: Step 2 of 2">
       <div class="progress-steps">
         <div class="progress-step complete">1. Division</div>
@@ -626,7 +627,7 @@
 
   <!-- ── Compensation sub-flow ───────────────────────────── -->
   <section id="screen-compensation" class="screen" aria-label="Compensation coding: Worker type">
-    <button class="btn-back" onclick="showStep2()"><span aria-hidden="true">←</span> Back</button>
+    <button class="btn-back" onclick="navBack(showStep2)"><span aria-hidden="true">←</span> Back</button>
     <div class="progress" aria-label="Progress: Step 2 of 3 — Compensation">
       <div class="progress-steps">
         <div class="progress-step complete">1. Division</div>
@@ -647,7 +648,7 @@
 
   <!-- ── Account lookup (side door): Step 1 Category ─────── -->
   <section id="screen-acct-step1" class="screen" aria-label="Account lookup — Step 1: Expense category">
-    <button class="btn-back" onclick="acctExit()"><span aria-hidden="true">←</span> Back to MoCode Finder</button>
+    <button class="btn-back" onclick="navBack(acctExit)"><span aria-hidden="true">←</span> Back to MoCode Finder</button>
     <div class="progress" aria-label="Account lookup progress: Step 1">
       <div class="progress-steps">
         <div class="progress-step active" aria-current="step">1. Category</div>
@@ -668,7 +669,7 @@
 
   <!-- ── Account lookup: Step 2 Subcategory ──────────────── -->
   <section id="screen-acct-step2" class="screen" aria-label="Account lookup — Step 2: Specific activity">
-    <button class="btn-back" onclick="showAcctStep1()"><span aria-hidden="true">←</span> Back</button>
+    <button class="btn-back" onclick="navBack(showAcctStep1)"><span aria-hidden="true">←</span> Back</button>
     <div class="progress" aria-label="Account lookup progress: Step 2">
       <div class="progress-steps">
         <div class="progress-step complete">1. Category</div>
@@ -689,7 +690,7 @@
 
   <!-- ── Account lookup: Step 3 Account (multi-account only) ─ -->
   <section id="screen-acct-step3" class="screen" aria-label="Account lookup — Step 3: Specific purchase">
-    <button class="btn-back" onclick="showAcctStep2()"><span aria-hidden="true">←</span> Back</button>
+    <button class="btn-back" onclick="navBack(showAcctStep2)"><span aria-hidden="true">←</span> Back</button>
     <div class="progress" aria-label="Account lookup progress: Step 3">
       <div class="progress-steps">
         <div class="progress-step complete">1. Category</div>
@@ -710,7 +711,7 @@
 
   <!-- ── Account lookup: Result ──────────────────────────── -->
   <section id="screen-acct-result" class="screen" aria-label="Account lookup result">
-    <button class="btn-back" onclick="acctGoBackFromResult()"><span aria-hidden="true">←</span> Back</button>
+    <button class="btn-back" onclick="navBack(acctGoBackFromResult)"><span aria-hidden="true">←</span> Back</button>
 
     <div class="print-header" aria-hidden="true">
       UMKC Conservatory — MoCode Finder (Account lookup) &nbsp;|&nbsp; Printed <span id="print-date-acct"></span>
@@ -770,7 +771,7 @@
       </div>
 
       <div id="res-prod-note" class="prod-note" hidden>
-        <strong>Production note:</strong> Individual shows add a Project code on top of this MoCode.
+        <strong>Production note:</strong> This MoCode covers all production expenses for the division — the Account identifies the expense type.
       </div>
 
       <div id="res-ambiguity" class="ambiguity-box" hidden>
@@ -783,7 +784,8 @@
         <div class="accounts-list">
           <p class="acct-note">For approvals, the MoCode above is all you need. Accounts itemize the expense type when the transaction is processed.</p>
           <div id="res-accounts-list"></div>
-          <p class="acct-browse"><button type="button" class="btn-link" onclick="showAcctStep1('result')">Browse all account codes <span aria-hidden="true">→</span></button></p>
+          <p class="acct-browse">Need a different account? <button type="button" class="btn-link" onclick="showAcctStep1('result')">Browse all account codes <span aria-hidden="true">→</span></button>
+            or look it up in the <a href="../accounts/">Account Finder</a>.</p>
         </div>
       </details>
     </div>
@@ -920,19 +922,25 @@ document.addEventListener('DOMContentLoaded', () => {
 //  Tab navigation
 // ════════════════════════════════════════════════════════════════
 function showTab(tab) {
-  ['finder','reference'].forEach(t => {
-    document.getElementById('tab-'+t).classList.toggle('active', t === tab);
-    document.getElementById('tab-'+t).setAttribute('aria-pressed', t === tab);
-  });
   if (tab === 'reference') {
-    hideAllScreens();
-    document.getElementById('screen-reference').classList.add('active');
     filterReference();
+    showScreen('reference');
   } else {
-    hideAllScreens();
-    document.getElementById('screen-welcome').classList.add('active');
+    showScreen('welcome');
   }
   console.log('[MoCode Finder] Tab:', tab);
+}
+
+// The tab indicator is derived from the screen, not set by the click handler —
+// otherwise Back out of the reference table left "Full Reference" highlighted
+// while a result was on screen, and the only way to clear it was to start over.
+function syncTabs(screenId) {
+  const isRef = screenId === 'reference';
+  [['finder', !isRef], ['reference', isRef]].forEach(([t, on]) => {
+    const btn = document.getElementById('tab-'+t);
+    btn.classList.toggle('active', on);
+    btn.setAttribute('aria-pressed', String(on));
+  });
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -951,6 +959,7 @@ function showScreen(id) {
   hideAllScreens();
   const target = document.getElementById('screen-'+id);
   target.classList.add('active');
+  syncTabs(id);
   window.scrollTo(0, 0);
   // Move focus to the screen's heading so keyboard and screen-reader users
   // land on the new content (skip on initial load — only after navigation)
@@ -958,7 +967,97 @@ function showScreen(id) {
     const h = target.querySelector('h2[tabindex="-1"]');
     if (h) h.focus({ preventScroll: true });
   }
+  navRecord(id, prev);
 }
+
+// ════════════════════════════════════════════════════════════════
+//  Browser history
+// ════════════════════════════════════════════════════════════════
+// This is one HTML page, so without history entries the browser Back button
+// left the site entirely — from a result you landed back on your search
+// results instead of the previous question. Each screen change records a
+// snapshot of the lookup state; Back pops it and re-renders that screen as it
+// was. In-page "← Back" buttons go through history too, so the two agree.
+
+let navRestoring = false;   // true while replaying a snapshot — don't re-record
+let navIdx = 0;             // depth in our own history; 0 = nothing to go back to
+
+function navSnapshot(id) {
+  const filterEl = document.getElementById('ref-filter');
+  return {
+    mocodeFinder: true,           // ignore entries from anywhere else
+    screen: id,
+    idx: navIdx,
+    state: JSON.parse(JSON.stringify(state)),
+    acct: JSON.parse(JSON.stringify(acctState)),
+    acctOrigin: acctOrigin,
+    refFilter: filterEl ? filterEl.value : '',
+    deadEnd: id === 'result' && !state.mocode
+  };
+}
+
+function navRecord(id, prev) {
+  if (navRestoring) return;
+  if (!prev || prev === id) {
+    // First paint, or a re-render of the screen we're already on — update the
+    // current entry rather than stacking a duplicate.
+    history.replaceState(navSnapshot(id), '');
+    return;
+  }
+  navIdx++;
+  history.pushState(navSnapshot(id), '');
+}
+
+// Go back one screen. Falls back to the given renderer when there's no entry
+// of ours to pop (e.g. someone opened this page directly onto a screen).
+function navBack(fallback) {
+  if (navIdx > 0) history.back();
+  else fallback();
+}
+
+function navRestore(snap) {
+  Object.assign(state, snap.state);
+  Object.assign(acctState, snap.acct);
+  acctOrigin = snap.acctOrigin || 'welcome';
+  const filterEl = document.getElementById('ref-filter');
+  if (filterEl) filterEl.value = snap.refFilter || '';
+
+  switch (snap.screen) {
+    case 'step1':        showStep1(); break;
+    case 'step2':        showStep2(); break;   // routes to Production internally
+    case 'compensation': showCompensation(); break;
+    case 'result':       snap.deadEnd ? showDeadEnd() : showResult(); break;
+    case 'comp-result':  state.compRule ? renderCompResult() : showCompensation(); break;
+    case 'reference':    showTab('reference'); break;
+    case 'acct-step1':   showAcctStep1(); break;
+    case 'acct-step2':   showAcctStep2(); break;
+    case 'acct-step3': {
+      const cat = ACCT_DB && ACCT_DB.categories.find(c => c.id === acctState.category);
+      const sub = cat && cat.subcategories.find(s => s.id === acctState.subcategory);
+      sub ? showAcctStep3(sub) : showAcctStep1();
+      break;
+    }
+    case 'acct-result':  acctState.account ? showAcctResult() : showAcctStep1(); break;
+    default:             showTab('finder');
+  }
+}
+
+window.addEventListener('popstate', e => {
+  const snap = e.state;
+  navRestoring = true;
+  try {
+    if (snap && snap.mocodeFinder) {
+      navIdx = snap.idx || 0;
+      navRestore(snap);
+    } else {
+      // The entry from before we started recording — the welcome screen.
+      navIdx = 0;
+      startOver();
+    }
+  } finally {
+    navRestoring = false;
+  }
+});
 
 // Screen-reader status announcements (visually hidden role="status" region).
 // Clear-then-set so repeating the same message still re-announces.
@@ -983,8 +1082,6 @@ function makeOptionBtn(labelHTML, subText, onClick) {
 function startOver() {
   state.division = state.activityType = state.mocode = state.account = state.compRule = null;
   state.path = [];
-  document.getElementById('tab-finder').classList.add('active');
-  document.getElementById('tab-reference').classList.remove('active');
   showScreen('welcome');
   console.log('[MoCode Finder] Start over');
 }
@@ -993,8 +1090,6 @@ function startOver() {
 //  Step 1 — Division
 // ════════════════════════════════════════════════════════════════
 function showStep1() {
-  document.getElementById('tab-finder').classList.add('active');
-  document.getElementById('tab-reference').classList.remove('active');
   const divisions = ['Music','Dance','Theatre',"Dean's Office","Production"];
   const container = document.getElementById('division-options');
   container.innerHTML = '';
@@ -1207,8 +1302,8 @@ function activityTypeSub(type) {
     'Accompanist Services': 'Student accompanist pay — Account 703800',
     'Curricular Student Workers': 'Ensemble conducting and other curricular support — Account 703800',
     'Paying a Person': 'Student accompanists, student workers, overhire production labor',
-    'Music Productions': 'All production expenses — add Project code per show',
-    'Dance Productions': 'All production expenses — add Project code per show',
+    'Music Productions': 'All production expenses — Account identifies the expense type',
+    'Dance Productions': 'All production expenses — Account identifies the expense type',
     'Performance Operations': 'Coordination, guest directors, contracted artists',
     'Costumes & Wardrobe': 'Costumes, rentals, alterations, wardrobe supplies',
     'Scenic & Production Materials': 'Scenery, props, lumber, paint, fabrication',
@@ -1237,6 +1332,27 @@ function showCompensation() {
   const filtered = DB.compensationRules.filter(r =>
     !r.divisions || r.divisions.includes(state.division)
   );
+
+  // A division with no matching rules must never show an empty question.
+  // Theatre did exactly that until 8/5/2026 — every rule was tagged Music+Dance
+  // even where its own guidance named Theatre codes.
+  if (!filtered.length) {
+    container.innerHTML =
+      '<p role="alert" class="comp-empty">We don\'t have worker-type guidance for ' +
+      state.division + ' yet. Use the feedback link below to tell us who you\'re paying ' +
+      'and we\'ll add it.</p>';
+    const fb = document.createElement('p');
+    fb.innerHTML = '<a id="comp-empty-feedback" href="#">✉ Tell us what you were trying to code</a>';
+    container.appendChild(fb);
+    const subject = `MoCode Tool Feedback — No worker types for ${state.division}`;
+    const body = `Division: ${state.division}\nSteps taken: ${state.division} → Paying a Person\n` +
+      `Issue type: Dead end (no worker types offered)\n\nWho were you trying to pay:\n`;
+    fb.querySelector('a').href =
+      `mailto:cjchgy@umsystem.edu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    showScreen('compensation');
+    console.warn('[MoCode Finder] No compensation rules for division:', state.division);
+    return;
+  }
 
   filtered.forEach(rule => {
     const sub = rule.account + (rule.program ? ` · Program ${rule.program}` : ' · see guidance');

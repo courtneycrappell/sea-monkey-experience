@@ -383,7 +383,7 @@
 
   <!-- ── Step 2: Subcategory ──────────────────────────────────── -->
   <section id="screen-step2" class="screen" aria-label="Step 2: Specific activity">
-    <button class="btn-back" onclick="showStep1()" aria-label="Back to category">← Back</button>
+    <button class="btn-back" onclick="navBack(showStep1)" aria-label="Back to category">← Back</button>
     <div class="progress" aria-label="Progress: Step 2">
       <div class="progress-steps">
         <div class="progress-step complete">1. Category</div>
@@ -404,7 +404,7 @@
 
   <!-- ── Step 3: Account (shown only when multiple accounts) ──── -->
   <section id="screen-step3" class="screen" aria-label="Step 3: Expense type">
-    <button class="btn-back" onclick="showStep2()" aria-label="Back to activity">← Back</button>
+    <button class="btn-back" onclick="navBack(showStep2)" aria-label="Back to activity">← Back</button>
     <div class="progress" aria-label="Progress: Step 3">
       <div class="progress-steps">
         <div class="progress-step complete">1. Category</div>
@@ -425,7 +425,7 @@
 
   <!-- ── Result ───────────────────────────────────────────────── -->
   <section id="screen-result" class="screen" aria-label="Result">
-    <button class="btn-back" onclick="goBackFromResult()" aria-label="Back">← Back</button>
+    <button class="btn-back" onclick="navBack(goBackFromResult)" aria-label="Back">← Back</button>
     <div class="card">
       <div class="print-header" id="print-header">UMKC Conservatory — Account Finder result</div>
       <p class="result-path" id="result-path"></p>
@@ -506,27 +506,96 @@
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   }
 
+  function currentScreen() {
+    const el = document.querySelector('.screen.active');
+    return el ? el.id : null;
+  }
+
   function showScreen(id) {
+    const prev = currentScreen();
     hideAllScreens();
     document.getElementById(id).classList.add('active');
+    syncTabs(id);
     window.scrollTo(0, 0);
+    navRecord(id, prev);
   }
 
   function showTab(tab) {
-    ['finder','reference'].forEach(t => {
-      document.getElementById('tab-'+t).classList.toggle('active', t === tab);
-      document.getElementById('tab-'+t).setAttribute('aria-pressed', t === tab);
-    });
     if (tab === 'reference') {
-      hideAllScreens();
-      document.getElementById('screen-reference').classList.add('active');
       renderReference();
+      showScreen('screen-reference');
     } else {
-      hideAllScreens();
-      document.getElementById('screen-welcome').classList.add('active');
+      showScreen('screen-welcome');
     }
-    window.scrollTo(0, 0);
   }
+
+  // Tab indicator is derived from the visible screen, so Back out of the
+  // reference table can't leave the wrong tab highlighted.
+  function syncTabs(screenId) {
+    const isRef = screenId === 'screen-reference';
+    [['finder', !isRef], ['reference', isRef]].forEach(([t, on]) => {
+      const btn = document.getElementById('tab-'+t);
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', String(on));
+    });
+  }
+
+  // ── Browser history ────────────────────────────────────────────
+  // One HTML page, so without this the browser Back button leaves the site
+  // instead of stepping back through the questions. Same approach as the
+  // MoCode Finder: each screen change records a state snapshot; Back replays
+  // it. In-page "← Back" buttons go through history too, so they agree.
+  let navRestoring = false;
+  let navIdx = 0;
+
+  function navSnapshot(id) {
+    return {
+      accountFinder: true,
+      screen: id,
+      idx: navIdx,
+      state: JSON.parse(JSON.stringify(state))
+    };
+  }
+
+  function navRecord(id, prev) {
+    if (navRestoring) return;
+    if (!prev || prev === id) { history.replaceState(navSnapshot(id), ''); return; }
+    navIdx++;
+    history.pushState(navSnapshot(id), '');
+  }
+
+  function navBack(fallback) {
+    if (navIdx > 0) history.back();
+    else fallback();
+  }
+
+  function navRestore(snap) {
+    Object.assign(state, snap.state);
+    switch (snap.screen) {
+      case 'screen-step1':     showStep1(); break;
+      case 'screen-step2':     showStep2(); break;
+      case 'screen-step3': {
+        const cat = data && data.categories.find(c => c.id === state.category);
+        const sub = cat && cat.subcategories.find(s => s.id === state.subcategory);
+        sub ? showStep3(sub) : showStep1();
+        break;
+      }
+      case 'screen-result':    state.account ? showResult() : showStep1(); break;
+      case 'screen-reference': showTab('reference'); break;
+      default:                 showTab('finder');
+    }
+  }
+
+  window.addEventListener('popstate', e => {
+    const snap = e.state;
+    navRestoring = true;
+    try {
+      if (snap && snap.accountFinder) { navIdx = snap.idx || 0; navRestore(snap); }
+      else { navIdx = 0; startOver(); }
+    } finally {
+      navRestoring = false;
+    }
+  });
 
   function renderReference() {
     if (!data) return;
@@ -675,10 +744,6 @@
 
   function startOver() {
     state.category = null; state.subcategory = null; state.account = null; state.path = [];
-    document.getElementById('tab-finder').classList.add('active');
-    document.getElementById('tab-reference').classList.remove('active');
-    document.getElementById('tab-finder').setAttribute('aria-pressed', 'true');
-    document.getElementById('tab-reference').setAttribute('aria-pressed', 'false');
     showScreen('screen-welcome');
   }
 </script>

@@ -888,12 +888,12 @@
           ]
         }
       ],
-      "why": "All production expenses for music productions including costumes, scenic, lighting/sound, overhire labor, royalties, and guest artists. NASM HEADS VI.A reports one total — Account identifies the expense type. Individual shows add a Project code on top of this MoCode.",
+      "why": "All production expenses for music productions including costumes, scenic, lighting/sound, overhire labor, royalties, and guest artists. NASM HEADS VI.A reports one total — Account identifies the expense type.",
       "ambiguity": {
         "also": "KJ531 Visiting Artists (Academic)",
         "guidance": "Use KJ541 when the guest artist is performing in or directing a specific production. Use KJ531 when the artist is visiting for a masterclass, residency, or curricular purpose unrelated to a specific show."
       },
-      "notes": "Individual shows add a Project code. Royalties and licensing are folded into this MoCode via Account 750000 or 750900.",
+      "notes": "Royalties and licensing are folded into this MoCode via Account 750000 or 750900.",
       "mocode": "KJ541"
     },
     {
@@ -1625,12 +1625,12 @@
           ]
         }
       ],
-      "why": "All production expenses for dance productions. NASD HEADS VI.A.2 reports one production total — Account identifies the expense type within PeopleSoft. Individual shows add a Project code on top of this MoCode.",
+      "why": "All production expenses for dance productions. NASD HEADS VI.A.2 reports one production total — Account identifies the expense type within PeopleSoft.",
       "ambiguity": {
         "also": "KJ517 Visiting Artists (Academic)",
         "guidance": "Use KJ524 for guest choreographers or performers engaged for a specific production. Use KJ517 for guest artists visiting for a masterclass, residency, or curricular purpose."
       },
-      "notes": "Individual shows add a Project code.",
+      "notes": "",
       "mocode": "KJ524"
     },
     {
@@ -2311,12 +2311,12 @@
           ]
         }
       ],
-      "why": "Production coordination, guest directors, designers, and contracted artists for specific productions. NAST HEADS VI.A.2 reports one production total. Individual shows use a Project code on top of this MoCode.",
+      "why": "Production coordination, guest directors, designers, and contracted artists for specific productions. NAST HEADS VI.A.2 reports one production total.",
       "ambiguity": {
         "also": "KJ547 Visiting Artists (Academic)",
         "guidance": "Use KJ554 when the artist is a director, designer, or performer engaged for a specific production. Use KJ547 when the guest artist is visiting for a masterclass or curricular residency."
       },
-      "notes": "Individual shows add a Project code. NAST requires a production count — each Project code represents one production.",
+      "notes": "NAST requires a production count — one count per production.",
       "mocode": "KJ554"
     },
     {
@@ -2371,7 +2371,7 @@
       ],
       "why": "Costume purchases, rentals, alterations, wardrobe supplies, hair and makeup support, and related production costume activity.",
       "ambiguity": null,
-      "notes": "Individual shows add a Project code.",
+      "notes": "",
       "mocode": "KJ555"
     },
     {
@@ -2434,7 +2434,7 @@
       ],
       "why": "Scenery, props, staging materials, lumber, paint, fabrication supplies, rehearsal materials, and related production support materials.",
       "ambiguity": null,
-      "notes": "Individual shows add a Project code.",
+      "notes": "",
       "mocode": "KJ556"
     },
     {
@@ -2490,7 +2490,7 @@
       ],
       "why": "Lighting systems, audio support, stage operations, projections, and backstage support for specific productions.",
       "ambiguity": null,
-      "notes": "Individual shows add a Project code.",
+      "notes": "",
       "mocode": "KJ557"
     },
     {
@@ -2532,12 +2532,12 @@
           ]
         }
       ],
-      "why": "Overhire labor, stagehands, run crews, and temporary technical staffing shared across productions — not specific to one show. For labor tied to a specific show, use a Project code on KJ554.",
+      "why": "Overhire labor, stagehands, run crews, and temporary technical staffing shared across productions — not specific to one show. For labor engaged for one specific show, use KJ554.",
       "ambiguity": {
         "also": "KJ554 Theatre Productions – Performance Operations",
-        "guidance": "Use KJ558 (Project = 00) for labor that serves multiple shows or the season generally — e.g., a stagehand hired for the whole season. Use KJ554 with a Project code for labor engaged specifically for one production."
+        "guidance": "Use KJ558 for labor that serves multiple shows or the season generally — e.g., a stagehand hired for the whole season. Use KJ554 for labor engaged specifically for one production."
       },
-      "notes": "NOT for use on specific theatre shows. Use Project = 00.",
+      "notes": "NOT for use on specific theatre shows.",
       "mocode": "KJ558"
     },
     {
@@ -2575,7 +2575,7 @@
       ],
       "why": "Performance rights, script licensing, choreography licensing, music licensing, and other production-related royalty and intellectual property expenses.",
       "ambiguity": null,
-      "notes": "Individual shows add a Project code.",
+      "notes": "",
       "mocode": "KJ559"
     },
     {
@@ -3733,7 +3733,8 @@
       ],
       "divisions": [
         "Music",
-        "Dance"
+        "Dance",
+        "Theatre"
       ]
     },
     {
@@ -3741,7 +3742,7 @@
       "account": "705500 or 708050",
       "accountDescription": "Non-Benefit Eligible Staff (705500) or Overtime (708050)",
       "program": null,
-      "programNote": "Use the production MoCode for that division: Theatre KJ558 (general labor) or KJ554 (show-specific performance operations); Dance KJ524; Music KJ541; cross-divisional/Nexus KJ561. Add a Project code for show-specific labor.",
+      "programNote": "Use the production MoCode for that division: Theatre KJ558 (general labor) or KJ554 (show-specific performance operations); Dance KJ524; Music KJ541; cross-divisional/Nexus KJ561.",
       "why": "Production overhire and stagehands are coded as part-time staff (705500) or overtime (708050) under the production Program and DeptID for that division.",
       "examples": [
         "Stagehand hired for a run",
@@ -3750,7 +3751,8 @@
       ],
       "divisions": [
         "Music",
-        "Dance"
+        "Dance",
+        "Theatre"
       ]
     }
   ]
