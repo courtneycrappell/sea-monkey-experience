@@ -56,6 +56,18 @@ The authoritative sources of truth for the taxonomy are the Dean's Office
 spreadsheets `Taxonomy_SOURCE_OF_TRUTH_7-28-2026.xlsx` and
 `MoCodes_SOURCE_OF_TRUTH_7-29-2026.xlsx`.
 
+## Theme
+
+Purple (`--blue: #6b21a8`, purple-800) as of 8/5/2026, so staff can tell at a
+glance which tool they're in: the MoCode Finder is navy, this is purple, and
+the recital generator is different again. The gold accent bar is shared across
+Conservatory tools and stays. The CSS variable names still say `--blue` —
+they're inherited from the MoCode Finder and hold the same roles, so the two
+files stay easy to diff.
+
+Any palette change has to be re-run through axe: the whole contrast record
+below depends on these specific values.
+
 ## Accessibility conformance
 
 Target: **WCAG 2.1 Level AA**, per the DOJ ADA Title II web accessibility rule
@@ -76,14 +88,15 @@ Measures implemented (verified 2026-08-05):
 - **Status messages (4.1.3):** results announced via a visually hidden
   `role="status"` live region.
 - **Focus visible (2.4.7) / non-text contrast (1.4.11):** two-ring
-  (gold + green) focus indicator, ≥3:1 against both the white cards and the
-  green header; transparent outline preserved for Windows High Contrast mode.
+  (gold + purple) focus indicator, ≥3:1 against both the white cards and the
+  purple header; transparent outline preserved for Windows High Contrast mode.
 - **Structure (1.3.1):** landmark regions, heading hierarchy, `scope="col"`
   table headers, decorative emoji hidden with `aria-hidden`.
-- **Text contrast (1.4.3):** verified by axe on every screen. Note the header
-  green (`#166534`) is darker than the MoCode Finder's navy, so muted text on
-  it needs a higher alpha — tab labels and footer text are at 0.8 (≈5.2:1);
-  0.7 measured 4.4:1 and failed.
+- **Text contrast (1.4.3):** verified by axe on every screen after the 8/5
+  purple repalette. Muted text on the header needs a higher alpha than the
+  MoCode Finder uses — tab labels and footer text are at 0.8; 0.7 measured
+  4.4:1 and failed. Key ratios: white on header purple 8.7:1, purple headings
+  on white 8.7:1, gold focus ring against the header 5.3:1.
 - **Motion:** `prefers-reduced-motion` disables transitions.
 - **Reflow/zoom:** responsive single-column layout; no viewport zoom
   restrictions.

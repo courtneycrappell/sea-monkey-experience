@@ -7,16 +7,19 @@
   <style>
     /* ── Variables ──────────────────────────────────────────────── */
     :root {
-      --blue:      #166534;
-      --blue-mid:  #14532d;
+      /* Purple theme (8/5/2026) so this tool is visually distinct at a glance
+         from the MoCode Finder's navy and the recital generator. The --blue
+         variable names are inherited from the MoCode Finder — same roles. */
+      --blue:      #6b21a8;
+      --blue-mid:  #581c87;
       --gold:      #F0C522;
       --gold-dark: #c9a200;
-      --bg:        #f0fdf4;
+      --bg:        #faf5ff;
       --card-bg:   #ffffff;
       --text:      #1a1a1a;
       --muted:     #555555;
-      --border:    #bbf7d0;
-      --success:   #1a6b2e;
+      --border:    #e9d5ff;
+      --success:   #9333ea;
       --radius:    10px;
       --shadow:    0 2px 12px rgba(0,0,0,0.08);
     }
@@ -32,8 +35,8 @@
       flex-direction: column;
     }
     a { color: var(--blue); }
-    /* Two-ring focus indicator: gold inner + green outer clears 3:1 against
-       both the white cards and the green header (SC 1.4.11). The transparent
+    /* Two-ring focus indicator: gold inner + purple outer clears 3:1 against
+       both the white cards and the purple header (SC 1.4.11). The transparent
        outline is what forced-colors mode swaps for a visible system ring. */
     a:focus-visible, button:focus-visible, input:focus-visible,
     select:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
@@ -95,7 +98,7 @@
     .tab-btn {
       background: none;
       border: none;
-      /* 0.8 alpha on the green header = 5.2:1; 0.7 measured 4.4:1 */
+      /* 0.8 alpha on the header = 5.4:1 here; 0.7 measured 4.4:1 and failed */
       color: rgba(255,255,255,0.8);
       padding: 0.6rem 1rem;
       font-size: 0.875rem;
@@ -169,7 +172,7 @@
       font-weight: 400;
     }
     .option-btn .option-icon { margin-right: 0.4rem; }
-    .option-btn:hover { border-color: var(--blue-mid); background: #dcfce7; }
+    .option-btn:hover { border-color: var(--blue-mid); background: #f3e8ff; }
 
     /* ── Buttons ────────────────────────────────────────────────── */
     .btn-primary {
@@ -197,7 +200,7 @@
       cursor: pointer;
       transition: background 0.15s;
     }
-    .btn-secondary:hover { background: #dcfce7; }
+    .btn-secondary:hover { background: #f3e8ff; }
     .btn-back {
       background: none;
       border: none;
@@ -275,8 +278,8 @@
     }
     .result-examples li::before { content: "·"; position: absolute; left: 0; color: var(--muted); }
     .result-cross-link {
-      background: #dcfce7;
-      border: 1px solid #bbf7d0;
+      background: #f3e8ff;
+      border: 1px solid #e9d5ff;
       border-radius: 8px;
       padding: 0.875rem 1rem;
       font-size: 0.875rem;
@@ -325,7 +328,7 @@
       letter-spacing: 0.05em;
     }
     td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: top; }
-    tr:hover td { background: #dcfce7; }
+    tr:hover td { background: #f3e8ff; }
     td.code { font-family: monospace; font-weight: 700; color: var(--blue); white-space: nowrap; font-size: 0.95rem; }
 
     /* ── Easter egg ───────────────────────────────────────────── */
