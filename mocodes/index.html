@@ -484,6 +484,10 @@
       display: inline-flex;
       align-items: center;
       gap: 0.3rem;
+      /* Standalone target, so give it a ≥24px box for phone taps (WCAG 2.2
+         SC 2.5.8 — beyond our 2.1 AA target, but it measured 15px tall) */
+      min-height: 24px;
+      padding: 0.25rem 0;
     }
     .feedback-link:hover { color: var(--blue); }
 
@@ -1032,15 +1036,18 @@ function navRestore(snap) {
     case 'result':       snap.deadEnd ? showDeadEnd() : showResult(); break;
     case 'comp-result':  state.compRule ? renderCompResult() : showCompensation(); break;
     case 'reference':    showTab('reference'); break;
+    // The account screens need accounts.json. If that fetch failed, send them
+    // to acct-step1, which reports the failure — showAcctStep2/3 would return
+    // silently and leave the screen disagreeing with the history entry.
     case 'acct-step1':   showAcctStep1(); break;
-    case 'acct-step2':   showAcctStep2(); break;
+    case 'acct-step2':   ACCT_DB ? showAcctStep2() : showAcctStep1(); break;
     case 'acct-step3': {
       const cat = ACCT_DB && ACCT_DB.categories.find(c => c.id === acctState.category);
       const sub = cat && cat.subcategories.find(s => s.id === acctState.subcategory);
       sub ? showAcctStep3(sub) : showAcctStep1();
       break;
     }
-    case 'acct-result':  acctState.account ? showAcctResult() : showAcctStep1(); break;
+    case 'acct-result':  (ACCT_DB && acctState.account) ? showAcctResult() : showAcctStep1(); break;
     default:             showTab('finder');
   }
 }
@@ -1052,6 +1059,9 @@ function navRestore(snap) {
 // jump into the middle of a flow, and navIdx reset to 0 left the in-page Back
 // buttons pushing new entries instead of popping. Redraw from the entry.
 function navBoot() {
+  // If the data failed to load, the error handler has already replaced the
+  // whole of #main — the screen elements a restore would draw into are gone.
+  if (!DB) return;
   const snap = history.state;
   if (snap && snap.mocodeFinder && snap.screen !== 'welcome') {
     navIdx = snap.idx || 0;
