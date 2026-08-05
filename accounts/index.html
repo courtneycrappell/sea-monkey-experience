@@ -489,7 +489,9 @@
     path: []
   };
 
-  fetch('accounts.json')
+  // Canonical account data lives with the MoCode Finder; this page reads that
+  // same file so the two tools can never drift apart.
+  fetch('../mocodes/accounts.json')
     .then(r => r.json())
     .then(d => {
       data = d;
