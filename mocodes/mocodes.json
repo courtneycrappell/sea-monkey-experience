@@ -391,7 +391,8 @@
           "description": "Business Meeting Expense – Food",
           "examples": [
             "Department meeting refreshments",
-            "Faculty reception food"
+            "Faculty reception food",
+            "Meals hosted for a visiting accreditation team"
           ]
         },
         {
@@ -400,10 +401,42 @@
           "examples": [
             "General supplies not elsewhere classified"
           ]
+        },
+        {
+          "code": "738000",
+          "description": "Dues/Memberships",
+          "examples": [
+            "Accreditation fees and annual dues",
+            "Association membership for the division"
+          ]
+        },
+        {
+          "code": "721000",
+          "description": "Business Travel",
+          "examples": [
+            "Airfare for a visiting accreditation team"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Hotel for visiting evaluators"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Per diem or meals for evaluators while traveling"
+          ]
         }
       ],
-      "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Music division.",
-      "ambiguity": null,
+      "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Music division. Also the home for the division's accreditation costs: NASM fees and dues, and the expense of hosting a visiting accreditation or site-evaluation team.",
+      "ambiguity": {
+        "also": "KJ525 Music – Faculty Travel",
+        "guidance": "Use this code for the Music division's own accreditation costs — NASM fees and dues, and hosting a visiting evaluation team. Use KJ525 when one of our own faculty travels to serve as an evaluator for another institution; that is faculty professional activity, not a cost of keeping our program accredited."
+      },
       "notes": null,
       "mocode": "KDH80"
     },
@@ -1276,7 +1309,8 @@
           "code": "728000",
           "description": "Business Meeting Expense – Food",
           "examples": [
-            "Department meeting refreshments"
+            "Department meeting refreshments",
+            "Meals hosted for a visiting accreditation team"
           ]
         },
         {
@@ -1285,10 +1319,42 @@
           "examples": [
             "General supplies not elsewhere classified"
           ]
+        },
+        {
+          "code": "738000",
+          "description": "Dues/Memberships",
+          "examples": [
+            "Accreditation fees and annual dues",
+            "Association membership for the division"
+          ]
+        },
+        {
+          "code": "721000",
+          "description": "Business Travel",
+          "examples": [
+            "Airfare for a visiting accreditation team"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Hotel for visiting evaluators"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Per diem or meals for evaluators while traveling"
+          ]
         }
       ],
-      "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Dance division.",
-      "ambiguity": null,
+      "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Dance division. Also the home for the division's accreditation costs: NASD fees and dues, and the expense of hosting a visiting accreditation or site-evaluation team.",
+      "ambiguity": {
+        "also": "KJ512 Dance – Faculty Travel",
+        "guidance": "Use this code for the Dance division's own accreditation costs — NASD fees and dues, and hosting a visiting evaluation team. Use KJ512 when one of our own faculty travels to serve as an evaluator for another institution; that is faculty professional activity, not a cost of keeping our program accredited."
+      },
       "notes": null,
       "mocode": "KJ518"
     },
@@ -2010,7 +2076,8 @@
           "code": "728000",
           "description": "Business Meeting Expense – Food",
           "examples": [
-            "Department meeting refreshments"
+            "Department meeting refreshments",
+            "Meals hosted for a visiting accreditation team"
           ]
         },
         {
@@ -2019,10 +2086,43 @@
           "examples": [
             "General supplies"
           ]
+        },
+        {
+          "code": "738000",
+          "description": "Dues/Memberships",
+          "examples": [
+            "Accreditation fees and annual dues",
+            "URTA membership dues",
+            "Association membership for the division"
+          ]
+        },
+        {
+          "code": "721000",
+          "description": "Business Travel",
+          "examples": [
+            "Airfare for a visiting accreditation team"
+          ]
+        },
+        {
+          "code": "721480",
+          "description": "Lodging Expenses",
+          "examples": [
+            "Hotel for visiting evaluators"
+          ]
+        },
+        {
+          "code": "721490",
+          "description": "Travel Meals Expenses",
+          "examples": [
+            "Per diem or meals for evaluators while traveling"
+          ]
         }
       ],
-      "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Theatre division.",
-      "ambiguity": null,
+      "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Theatre division. Also the home for the division's accreditation costs: NAST and URTA fees and dues, and the expense of hosting a visiting accreditation or site-evaluation team.",
+      "ambiguity": {
+        "also": "KJ542 Theatre – Faculty Travel",
+        "guidance": "Use this code for the Theatre division's own accreditation costs — NAST and URTA fees and dues, and hosting a visiting evaluation team. Use KJ542 when one of our own faculty travels to serve as an evaluator for another institution; that is faculty professional activity, not a cost of keeping our program accredited."
+      },
       "notes": null,
       "mocode": "KJ548"
     },
