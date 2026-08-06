@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-29",
+  "lastUpdated": "2026-08-06",
   "mocodes": [
     {
       "id": "M-01",
@@ -61,8 +61,11 @@
           ]
         }
       ],
-      "why": "Faculty conference travel, professional meetings, accreditation activity, research travel, and related professional development expenses.",
-      "ambiguity": null,
+      "why": "Faculty conference travel, professional meetings, research travel, audition travel, travel to serve as an accreditation evaluator, and related professional development expenses.",
+      "ambiguity": {
+        "also": "KDH80 Music – Office Operations",
+        "guidance": "Use this code when one of our faculty travels — including travel to serve as a NAST, NASM, NASD, or URTA evaluator. When the Conservatory is hosting a visiting accreditation team and paying their travel, lodging, or meals, that is an administrative cost of the school rather than faculty travel — use KDH80 (Music – Office Operations, Program K8948)."
+      },
       "notes": null,
       "mocode": "KJ525"
     },
@@ -954,8 +957,11 @@
           ]
         }
       ],
-      "why": "Faculty conference travel, professional meetings, accreditation activity, research travel, and related professional development expenses.",
-      "ambiguity": null,
+      "why": "Faculty conference travel, professional meetings, research travel, audition travel, travel to serve as an accreditation evaluator, and related professional development expenses.",
+      "ambiguity": {
+        "also": "KJ518 Dance – Office Operations",
+        "guidance": "Use this code when one of our faculty travels — including travel to serve as a NAST, NASM, NASD, or URTA evaluator. When the Conservatory is hosting a visiting accreditation team and paying their travel, lodging, or meals, that is an administrative cost of the school rather than faculty travel — use KJ518 (Dance – Office Operations, Program K8931)."
+      },
       "notes": null,
       "mocode": "KJ512"
     },
@@ -1692,8 +1698,11 @@
           ]
         }
       ],
-      "why": "Faculty conference travel, professional meetings, accreditation activity, research travel, and related professional development expenses.",
-      "ambiguity": null,
+      "why": "Faculty conference travel, professional meetings, research travel, audition travel, travel to serve as an accreditation evaluator, and related professional development expenses.",
+      "ambiguity": {
+        "also": "KJ548 Theatre – Office Operations",
+        "guidance": "Use this code when one of our faculty travels — including travel to serve as a NAST, NASM, NASD, or URTA evaluator. When the Conservatory is hosting a visiting accreditation team and paying their travel, lodging, or meals, that is an administrative cost of the school rather than faculty travel — use KJ548 (Theatre – Office Operations, Program K8931)."
+      },
       "notes": null,
       "mocode": "KJ542"
     },
