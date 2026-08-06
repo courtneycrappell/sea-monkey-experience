@@ -31,9 +31,16 @@ no analytics, no cookies, no user data collected or stored.
 2. Serve `index.html`. The app fetches `mocodes.json` and `accounts.json`
    from its own directory, so it must be served over HTTP(S), not opened
    as a `file://` URL.
-3. No special headers required. A restrictive CSP is compatible: the page
-   uses inline styles/scripts (`'unsafe-inline'`) and same-origin fetch only.
-   The only external links are the mailto: feedback links.
+3. **Content Security Policy — read this before deploying.** The app is a
+   single file: one inline `<script>`, one inline `<style>`, and ~20 inline
+   `onclick` handlers. It makes no external requests (same-origin fetch of its
+   own JSON only; the sole outbound links are `mailto:`). But a policy that
+   omits `'unsafe-inline'` for scripts and styles — and `'unsafe-hashes'` for
+   the inline handlers — **stops the tool working entirely**, silently. If
+   UMKC enforces a strict CSP, tell the owner: the fix is moving the script
+   and styles to separate files and replacing the inline handlers with
+   `addEventListener`, roughly an hour's work, not a redesign. Verify by
+   loading the page and clicking "Get Started" — if nothing happens, it's CSP.
 
 ## Updating the data
 
@@ -90,3 +97,42 @@ Measures implemented (verified 2026-08-03):
   (production royalties → KJ559), production manager (shared overhire →
   KJ561), Dean's Office staff (office supplies → KDH63), gift-fund purchase
   via the account browser (event catering → 728000).
+
+## Limits of this testing — please read before claiming conformance
+
+The checks above are automated and structural. **They are not a conformance
+audit, and this document is not a VPAT/ACR.** Automated tooling catches roughly
+a third of WCAG issues; the rest need a human. Specifically, the following have
+NOT been done:
+
+- **No screen reader testing.** Nobody has run this through VoiceOver, NVDA, or
+  JAWS. Semantics were verified structurally (roles, names, live regions,
+  heading order), which is not the same as confirming it *announces sensibly*.
+- **No manual keyboard walkthrough.** Focus behaviour was verified
+  programmatically — focus lands on each screen's heading, no positive
+  tabindex, nothing focusable inside hidden screens, options activate on
+  Enter/Space rather than on arrow-key focus. A person has not tabbed through
+  it end to end.
+- **Chrome only.** No Safari, Firefox, or Edge testing. Safari matters most
+  here: the browser-history handling and `focus({preventScroll})` differ
+  subtly, and many staff are on Macs and iPhones.
+- **No real devices.** Mobile layout was checked with emulated 375px and 320px
+  viewports, not on hardware, and not with touch.
+- **Browser zoom untested.** Narrow-viewport reflow passes, which is the same
+  computation, but actual 200%/400% zoom was not exercised.
+- **No accessibility statement page**, which UMKC policy may require, and no
+  review by UMKC's accessibility office.
+
+Recommended before or shortly after launch: a manual audit by UMKC's
+accessibility office or an equivalent reviewer, covering screen reader,
+keyboard-only, and zoom. Budget an hour; the app is six to twelve screens.
+
+## What this tool cannot tell you
+
+The tests confirm every path *reaches a complete answer*. They cannot confirm
+the answer is *correct* — that KJ525 is genuinely the right code for a given
+purchase. That comes from the chair validation sessions described in the PRD.
+Coding guidance also depends on taxonomy questions that are still open with the
+fiscal office (per-show tracking after the retirement of Project codes, whether
+Ticketing K9010 needs a MoCode, and FY27 allocations that have not yet been
+distributed across the new codes).
