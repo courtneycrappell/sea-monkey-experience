@@ -269,13 +269,15 @@
           "description": "Dues/Memberships",
           "examples": [
             "Professional organization membership",
-            "NASM dues",
             "ACDA dues"
           ]
         }
       ],
       "why": "Marketing, communications, donor relations, fundraising support, public-facing events, and external relations operations for the Music division.",
-      "ambiguity": null,
+      "ambiguity": {
+        "also": "KDH80 Music – Office Operations",
+        "guidance": "Use this code for the division's professional and organizational memberships. NASM accreditation fees and dues are not coded here — those go to KDH80 with the rest of the division's accreditation costs."
+      },
       "notes": null,
       "mocode": "KJ530"
     },
@@ -406,8 +408,7 @@
           "code": "738000",
           "description": "Dues/Memberships",
           "examples": [
-            "Accreditation fees and annual dues",
-            "Association membership for the division"
+            "Accreditation fees and annual dues"
           ]
         },
         {
@@ -1190,14 +1191,16 @@
           "code": "738000",
           "description": "Dues/Memberships",
           "examples": [
-            "NASD dues",
             "NEDO membership",
             "Professional organization membership"
           ]
         }
       ],
       "why": "Marketing, communications, donor relations, fundraising support, public-facing events, and external relations operations for the Dance division.",
-      "ambiguity": null,
+      "ambiguity": {
+        "also": "KJ518 Dance – Office Operations",
+        "guidance": "Use this code for the division's professional and organizational memberships. NASD accreditation fees and dues are not coded here — those go to KJ518 with the rest of the division's accreditation costs."
+      },
       "notes": null,
       "mocode": "KJ516"
     },
@@ -1324,8 +1327,7 @@
           "code": "738000",
           "description": "Dues/Memberships",
           "examples": [
-            "Accreditation fees and annual dues",
-            "Association membership for the division"
+            "Accreditation fees and annual dues"
           ]
         },
         {
@@ -1957,14 +1959,16 @@
           "code": "738000",
           "description": "Dues/Memberships",
           "examples": [
-            "NAST dues",
             "USITT membership",
             "ATHE membership"
           ]
         }
       ],
       "why": "Marketing, communications, donor relations, fundraising support, public-facing events, and external relations operations for the Theatre division.",
-      "ambiguity": null,
+      "ambiguity": {
+        "also": "KJ548 Theatre – Office Operations",
+        "guidance": "Use this code for the division's professional and organizational memberships. NAST and URTA accreditation fees and dues are not coded here — those go to KJ548 with the rest of the division's accreditation costs."
+      },
       "notes": null,
       "mocode": "KJ546"
     },
@@ -2092,8 +2096,7 @@
           "description": "Dues/Memberships",
           "examples": [
             "Accreditation fees and annual dues",
-            "URTA membership dues",
-            "Association membership for the division"
+            "URTA membership dues"
           ]
         },
         {
