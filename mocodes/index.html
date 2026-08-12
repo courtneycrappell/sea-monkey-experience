@@ -499,7 +499,10 @@
       flex-wrap: wrap;
       align-items: center;
     }
-    .ref-controls label { font-size: 0.875rem; font-weight: 600; color: var(--blue); }
+    /* Each control keeps its own label so a wrap never orphans one from its
+       field — the whole pair moves to the next line together. */
+    .ref-control { display: flex; gap: 0.5rem; align-items: center; }
+    .ref-controls label { font-size: 0.875rem; font-weight: 600; color: var(--blue); white-space: nowrap; }
     .ref-controls select {
       border: 2px solid var(--border);
       border-radius: 6px;
@@ -509,7 +512,41 @@
       background: white;
     }
     .ref-count { font-size: 0.8rem; color: var(--muted); }
+
+    /* Search box. The clear button sits inside the field, so the wrapper is the
+       positioning context and the input carries right padding to clear it. */
+    .ref-search-wrap { position: relative; display: inline-flex; align-items: center; }
+    .ref-controls input[type="search"] {
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 2rem 0.4rem 0.75rem;
+      font-size: 0.875rem;
+      font-family: inherit;
+      color: var(--text);
+      background: white;
+      width: 15rem;
+      max-width: 100%;
+    }
+    .ref-controls input[type="search"]:focus-visible { outline: 3px solid var(--blue); outline-offset: 1px; }
+    /* Suppress WebKit's native clear widget — we ship our own, which is bigger
+       and reachable by keyboard. */
+    .ref-controls input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+    .ref-search-clear {
+      position: absolute;
+      right: 0.25rem;
+      border: none;
+      background: none;
+      color: var(--muted);
+      font-size: 1.25rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+    }
+    .ref-search-clear:hover { color: var(--blue); }
     .ref-table-wrap { overflow-x: auto; }
+    mark { background: #ffe9a8; color: inherit; font-weight: 700; padding: 0 1px; border-radius: 2px; }
+    .ref-empty { padding: 1.25rem 0.75rem; color: var(--muted); font-size: 0.875rem; }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -845,15 +882,30 @@
     <div class="card" style="padding: 1.25rem 1.75rem;">
       <h2 class="visually-hidden" tabindex="-1">Full MoCode reference</h2>
       <div class="ref-controls">
-        <label for="ref-filter">Filter by division:</label>
-        <select id="ref-filter" onchange="filterReference()" aria-label="Filter MoCodes by division">
-          <option value="">All divisions</option>
-          <option value="Music">Music</option>
-          <option value="Dance">Dance</option>
-          <option value="Theatre">Theatre</option>
-          <option value="Dean's Office">Dean's Office</option>
-          <option value="Shared Production">Shared Production</option>
-        </select>
+        <div class="ref-control">
+          <label for="ref-search">Jump to MoCode:</label>
+          <div class="ref-search-wrap">
+            <input type="search" id="ref-search" oninput="searchReference()"
+                   placeholder="e.g. KJ518" autocomplete="off"
+                   aria-describedby="ref-search-hint">
+            <button type="button" class="ref-search-clear" id="ref-search-clear"
+                    onclick="clearRefSearch()" hidden aria-label="Clear MoCode">&times;</button>
+          </div>
+          <span id="ref-search-hint" class="visually-hidden">
+            Type all or part of a MoCode to narrow the table to it. Typing clears the division filter.
+          </span>
+        </div>
+        <div class="ref-control">
+          <label for="ref-filter">Filter by division:</label>
+          <select id="ref-filter" onchange="filterReference()" aria-label="Filter MoCodes by division">
+            <option value="">All divisions</option>
+            <option value="Music">Music</option>
+            <option value="Dance">Dance</option>
+            <option value="Theatre">Theatre</option>
+            <option value="Dean's Office">Dean's Office</option>
+            <option value="Shared Production">Shared Production</option>
+          </select>
+        </div>
         <span class="ref-count" id="ref-count" aria-live="polite"></span>
       </div>
       <div class="ref-table-wrap" role="region" aria-label="MoCode reference table (scrolls horizontally)" tabindex="0">
@@ -991,7 +1043,9 @@ let navIdx = 0;             // depth in our own history; 0 = nothing to go back 
 
 function navSnapshot(id) {
   const filterEl = document.getElementById('ref-filter');
+  const searchEl = document.getElementById('ref-search');
   return {
+    refSearch: searchEl ? searchEl.value : '',
     mocodeFinder: true,           // ignore entries from anywhere else
     screen: id,
     idx: navIdx,
@@ -1028,6 +1082,11 @@ function navRestore(snap) {
   acctOrigin = snap.acctOrigin || 'welcome';
   const filterEl = document.getElementById('ref-filter');
   if (filterEl) filterEl.value = snap.refFilter || '';
+  const searchEl = document.getElementById('ref-search');
+  if (searchEl) {
+    searchEl.value = snap.refSearch || '';
+    document.getElementById('ref-search-clear').hidden = !searchEl.value;
+  }
 
   switch (snap.screen) {
     case 'step1':        showStep1(); break;
@@ -1559,6 +1618,10 @@ function showDivisionRef() {
   // ("Production" isn't one — production codes span divisions)
   const hasOption = Array.from(sel.options).some(o => o.value === state.division);
   sel.value = hasOption ? state.division : '';
+  // A search left over from an earlier visit would override the division we
+  // just set (see searchReference), so arriving by this button clears it.
+  const box = document.getElementById('ref-search');
+  if (box) { box.value = ''; document.getElementById('ref-search-clear').hidden = true; }
   showTab('reference');
 }
 
@@ -1704,12 +1767,69 @@ function renderReference() {
   filterReference();
 }
 
+// Search overrides the division dropdown rather than stacking with it. A code
+// hidden behind a filter someone forgot was set reads as "the tool doesn't have
+// it" — the exact dead end this box exists to remove.
+function searchReference() {
+  const q = document.getElementById('ref-search').value.trim();
+  if (q) document.getElementById('ref-filter').value = '';
+  document.getElementById('ref-search-clear').hidden = !q;
+  filterReference();
+}
+
+function clearRefSearch() {
+  const box = document.getElementById('ref-search');
+  box.value = '';
+  box.focus();
+  searchReference();
+}
+
+// MoCode only — deliberately not the label, DeptID, or Program. This box is a
+// "jump to the code I already know", not a keyword search; matching other
+// columns would return rows the typed code doesn't actually name.
+function refHaystack(m) {
+  return String(m.mocode || m.id).toLowerCase();
+}
+
+function escHtml(s) {
+  return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+
+// Escape first, then wrap the matched runs — never the reverse, or a label
+// containing "&" would break the markup we just inserted.
+function hl(text, q) {
+  const raw = String(text == null ? '' : text);
+  if (!q) return escHtml(raw);
+  const hay = raw.toLowerCase(), needle = q.toLowerCase();
+  let out = '', i = 0, at;
+  while ((at = hay.indexOf(needle, i)) !== -1) {
+    out += escHtml(raw.slice(i, at)) + '<mark>' + escHtml(raw.substr(at, needle.length)) + '</mark>';
+    i = at + needle.length;
+  }
+  return out + escHtml(raw.slice(i));
+}
+
 function filterReference() {
   if (!DB) return;
   const filter = document.getElementById('ref-filter').value;
-  const rows   = DB.mocodes.filter(m => !filter || m.division === filter);
-  const tbody  = document.getElementById('ref-tbody');
+  const searchEl = document.getElementById('ref-search');
+  const q = searchEl ? searchEl.value.trim() : '';
+  const needle = q.toLowerCase();
+
+  const rows = DB.mocodes.filter(m =>
+    (!filter || m.division === filter) &&
+    (!needle || refHaystack(m).includes(needle))
+  );
+
+  const tbody = document.getElementById('ref-tbody');
   tbody.innerHTML = '';
+
+  if (!rows.length) {
+    tbody.insertAdjacentHTML('beforeend',
+      `<tr><td colspan="5" class="ref-empty">No MoCode starts with or contains ` +
+      `&ldquo;${escHtml(q)}&rdquo;. Check the code, or use the guided lookup on the Find a Code tab.</td></tr>`);
+  }
+
   rows.forEach(m => {
     const tags = [
       m.isProduction ? '<span class="tag tag-prod">Production</span>' : '',
@@ -1718,15 +1838,17 @@ function filterReference() {
 
     const heads = m.heads.length > 50 ? m.heads.substring(0,47) + '...' : m.heads;
 
+    // Only the MoCode is highlighted — it's the only column search looks at.
     tbody.insertAdjacentHTML('beforeend', `
       <tr>
-        <td class="code">${m.mocode || m.id}</td>
-        <td>${m.label}${tags ? '<br>' + tags : ''}</td>
-        <td class="code">${m.deptId}<br><span style="font-weight:400;font-size:0.75rem">${m.deptName}</span></td>
-        <td class="code">${m.program}<br><span style="font-weight:400;font-size:0.75rem">${m.programName}</span></td>
-        <td style="font-size:0.78rem">${heads}</td>
+        <td class="code">${hl(m.mocode || m.id, q)}</td>
+        <td>${escHtml(m.label)}${tags ? '<br>' + tags : ''}</td>
+        <td class="code">${escHtml(m.deptId)}<br><span style="font-weight:400;font-size:0.75rem">${escHtml(m.deptName)}</span></td>
+        <td class="code">${escHtml(m.program)}<br><span style="font-weight:400;font-size:0.75rem">${escHtml(m.programName)}</span></td>
+        <td style="font-size:0.78rem">${escHtml(heads)}</td>
       </tr>`);
   });
+
   document.getElementById('ref-count').textContent =
     rows.length + ' of ' + DB.mocodes.length + ' MoCodes';
 }
