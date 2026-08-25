@@ -1422,7 +1422,8 @@
           "description": "Classroom Equipment – Non-Capital",
           "examples": [
             "Studio equipment",
-            "Barre purchase"
+            "Barre purchase",
+            "Classroom costumes (non-production)"
           ]
         },
         {
@@ -1440,8 +1441,11 @@
           ]
         }
       ],
-      "why": "Equipment purchases, rentals, leases, repairs, replacements, and operational equipment support activity.",
-      "ambiguity": null,
+      "why": "Equipment purchases, rentals, leases, repairs, replacements, and operational equipment support activity. Also covers costumes used in the classroom for coursework (non-production) — code those to Account 740400 Classroom Equipment.",
+      "ambiguity": {
+        "also": "KJ524 Dance Productions – General Production",
+        "guidance": "Use KJ520 for costumes and dancewear used in class or coursework. Costumes for a staged Dance production belong to KJ524 (Dance Productions – General Production)."
+      },
       "notes": null,
       "mocode": "KJ520"
     },

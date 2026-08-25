@@ -1375,6 +1375,10 @@ function showStep2Production() {
 }
 
 function activityTypeSub(type) {
+  // Division-specific wording (falls through to the shared map otherwise)
+  if (type === 'Equipment' && state.division === 'Dance') {
+    return 'Purchases, rentals, repairs, classroom costumes (non-instrument, non-production)';
+  }
   const map = {
     'Faculty Travel': 'Airline tickets, hotel, meals, conference registration, serving as an accreditation evaluator',
     'Faculty Searches & Hiring': 'Candidate travel, search committee expenses',
