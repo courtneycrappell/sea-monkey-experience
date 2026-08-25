@@ -50,6 +50,10 @@ no analytics, no cookies, no user data collected or stored.
 - Account guidance changes: edit `accounts.json` (also has `lastUpdated`).
 - Compensation worker types (`compensationRules` in `mocodes.json`) carry a
   `divisions` array controlling which divisions see each option.
+  Each rule also carries `mocodesByDivision` — a map of division → MoCode ID(s)
+  (e.g. `"Theatre": ["KJ558", "KJ554"]`). The result screen resolves those IDs
+  against `mocodes[]` to show the code and label, so the MoCode must exist there
+  and the map's keys must match the `divisions` array.
 - One duplication to know about: `index.html` hardcodes DeptIDs in the
   `divisionSubtitle()` map — update it if DeptIDs ever change.
 

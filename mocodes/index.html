@@ -854,6 +854,7 @@
       <h2 class="visually-hidden" tabindex="-1" id="comp-result-heading">Your compensation coding result</h2>
       <p class="comp-worker-type" id="comp-res-worker-type"></p>
       <p class="comp-title" id="comp-res-title"></p>
+      <div class="result-field" id="comp-res-mocodes" style="margin-bottom:0.75rem;"></div>
       <div class="comp-account-row">
         <span class="comp-account-code" id="comp-res-account"></span>
         <span id="comp-res-account-desc"></span>
@@ -1447,7 +1448,9 @@ function showCompensation() {
   }
 
   filtered.forEach(rule => {
-    const sub = rule.account + (rule.program ? ` · Program ${rule.program}` : ' · see guidance');
+    const codes = compMocodesFor(rule, state.division);
+    const sub = rule.account + (rule.program ? ` · Program ${rule.program}` : '') +
+      (codes.length ? ` · MoCode ${codes.map(m => m.mocode || m.id).join(' or ')}` : ' · see guidance');
     container.appendChild(makeOptionBtn(rule.workerType, sub, () => {
       state.compRule = rule;
       state.path = [state.division, 'Paying a Person', rule.workerType];
@@ -1459,14 +1462,48 @@ function showCompensation() {
   console.log('[MoCode Finder] Compensation screen shown');
 }
 
+// Resolve a compensation rule's MoCode(s) for the chosen division to the real
+// MoCode records, so the result shows the same code + label the main flow does.
+// The rule carries only IDs (mocodesByDivision) — never a second copy of the label.
+function compMocodesFor(rule, division) {
+  const ids = (rule.mocodesByDivision && rule.mocodesByDivision[division]) || [];
+  return ids.map(id => DB.mocodes.find(m => (m.mocode || m.id) === id)).filter(Boolean);
+}
+
 function renderCompResult() {
   const rule = state.compRule;
+  const codes = compMocodesFor(rule, state.division);
   // Explicit flag on the rule — not a match against note wording, which silently
   // stopped firing when the notes were rewritten.
   const isRedirect = rule.redirect === true;
 
   document.getElementById('comp-res-worker-type').textContent = 'Worker type';
   document.getElementById('comp-res-title').textContent = rule.workerType;
+
+  // MoCode is the primary answer — it was missing entirely until 8/25/2026, so
+  // "Student operational worker" showed account + program but no code to approve on.
+  const mcBox = document.getElementById('comp-res-mocodes');
+  mcBox.innerHTML = '';
+  mcBox.hidden = !codes.length;
+  if (codes.length) {
+    const lbl = document.createElement('div');
+    lbl.className = 'field-label';
+    lbl.textContent = codes.length > 1 ? 'MoCode (choose one)' : 'MoCode';
+    mcBox.appendChild(lbl);
+    codes.forEach(m => {
+      const code = document.createElement('div');
+      code.className = 'field-code field-code-lg';
+      code.textContent = m.mocode || m.id;
+      const name = document.createElement('div');
+      name.className = 'field-name';
+      name.textContent = m.label;
+      mcBox.appendChild(code);
+      mcBox.appendChild(name);
+    });
+  } else {
+    console.warn('[MoCode Finder] No MoCode mapped for', rule.workerType, 'in', state.division);
+  }
+
   document.getElementById('comp-res-account').textContent = rule.account;
   document.getElementById('comp-res-account-desc').textContent = ' — ' + (rule.accountDescription || '');
   document.getElementById('comp-res-program-note').textContent = rule.programNote || '';
@@ -1488,7 +1525,7 @@ function renderCompResult() {
   const body = [
     `Division: ${state.division}`,
     `Steps taken: ${state.path.join(' → ')}`,
-    `Result shown: Account ${rule.account} — ${rule.accountDescription}`,
+    `Result shown: MoCode ${codes.map(m => m.mocode || m.id).join(' or ') || '(none)'}; Account ${rule.account} — ${rule.accountDescription}`,
     `Issue type: [Ambiguous result / Dead end / Wrong answer / Other]`,
     '',
     'What went wrong or was unclear:',
@@ -1497,9 +1534,10 @@ function renderCompResult() {
   document.getElementById('comp-feedback-link').href =
     `mailto:cjchgy@umsystem.edu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-  announce('Result: Account ' + rule.account + ', ' + (rule.accountDescription || ''));
+  announce('Result: ' + (codes.length ? 'MoCode ' + codes.map(m => m.mocode || m.id).join(' or ') + ', ' : '') +
+    'Account ' + rule.account + ', ' + (rule.accountDescription || ''));
   showScreen('comp-result');
-  console.log('[MoCode Finder] Comp result shown:', rule.workerType, rule.account);
+  console.log('[MoCode Finder] Comp result shown:', rule.workerType, codes.map(m => m.mocode || m.id), rule.account);
 }
 
 // ════════════════════════════════════════════════════════════════

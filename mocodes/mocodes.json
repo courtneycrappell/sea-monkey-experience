@@ -3803,7 +3803,15 @@
       "account": "703800",
       "accountDescription": "Non-Ben Elg Academic (Non-Faculty)",
       "program": "K9561",
-      "programNote": "Music: always use Program K9561 — MoCode KJ538. Dance: always use Program K9561 — MoCode KJ523.",
+      "mocodesByDivision": {
+        "Music": [
+          "KJ538"
+        ],
+        "Dance": [
+          "KJ523"
+        ]
+      },
+      "programNote": "Always use Program K9561 with the divisional DeptID (Music K1306001, Dance K1305002).",
       "why": "Student academic workers serving as accompanists are coded to K9561 in both Music and Dance. Account 703800 identifies the student academic worker category.",
       "examples": [
         "Student accompanying a voice lesson",
@@ -3820,7 +3828,12 @@
       "account": "703800",
       "accountDescription": "Non-Ben Elg Academic (Non-Faculty)",
       "program": "K9557",
-      "programNote": "Always use Program K9557 — MoCode KJ539. Do NOT use K9576 (707100) for these positions.",
+      "mocodesByDivision": {
+        "Music": [
+          "KJ539"
+        ]
+      },
+      "programNote": "Always use Program K9557. Do NOT use K9576 (707100) for these positions.",
       "why": "Student workers in curricular support roles (including ensemble conducting) use K9557. This replaces old program K8971 (CONDUCTING ENSEMBLE). Account 703800 identifies the student academic worker category.",
       "examples": [
         "Student assigned to conduct an ensemble",
@@ -3836,7 +3849,18 @@
       "account": "707100",
       "accountDescription": "Non-Academic Student Employees",
       "program": "K9576",
-      "programNote": "Always use Program K9576. Use the divisional DeptID (K1306001, K1305002, K0923001) matching where the student works.",
+      "mocodesByDivision": {
+        "Music": [
+          "KJ534"
+        ],
+        "Dance": [
+          "KJ519"
+        ],
+        "Theatre": [
+          "KJ550"
+        ]
+      },
+      "programNote": "Always use Program K9576. Use the divisional DeptID (Music K1306001, Dance K1305002, Theatre K0923001) matching where the student works.",
       "why": "Non-academic student workers in admin, front desk, technical, and operational roles use Account 707100 and Program K9576. Distinct from academic student workers (703800).",
       "examples": [
         "Student office assistant",
@@ -3854,7 +3878,19 @@
       "account": "705500 or 708050",
       "accountDescription": "Non-Benefit Eligible Staff (705500) or Overtime (708050)",
       "program": null,
-      "programNote": "Use the production MoCode for that division: Theatre KJ558 (general labor) or KJ554 (show-specific performance operations); Dance KJ524; Music KJ541; cross-divisional/Nexus KJ561.",
+      "mocodesByDivision": {
+        "Music": [
+          "KJ541"
+        ],
+        "Dance": [
+          "KJ524"
+        ],
+        "Theatre": [
+          "KJ558",
+          "KJ554"
+        ]
+      },
+      "programNote": "Use the production MoCode for that division. Theatre has two: KJ558 for general production labor, KJ554 for show-specific performance operations. Cross-divisional/Nexus crew uses KJ561.",
       "why": "Production overhire and stagehands are coded as part-time staff (705500) or overtime (708050) under the production Program and DeptID for that division.",
       "examples": [
         "Stagehand hired for a run",
