@@ -7,19 +7,20 @@
   <style>
     /* ── Variables ──────────────────────────────────────────────── */
     :root {
-      /* Purple theme (8/5/2026) so this tool is visually distinct at a glance
-         from the MoCode Finder's navy and the recital generator. The --blue
+      /* Roo blue theme (8/31/2026, replaced the original purple) so this tool
+         is visually distinct at a glance from the MoCode Finder's navy and the
+         recital generator, while staying in the UMKC blue family. The --blue
          variable names are inherited from the MoCode Finder — same roles. */
-      --blue:      #6b21a8;
-      --blue-mid:  #581c87;
+      --blue:      #005a9c;
+      --blue-mid:  #00477c;
       --gold:      #F0C522;
       --gold-dark: #c9a200;
-      --bg:        #faf5ff;
+      --bg:        #f0f6fb;
       --card-bg:   #ffffff;
       --text:      #1a1a1a;
       --muted:     #555555;
-      --border:    #e9d5ff;
-      --success:   #9333ea;
+      --border:    #c9dcec;
+      --success:   #1a6b2e;
       --radius:    10px;
       --shadow:    0 2px 12px rgba(0,0,0,0.08);
     }
@@ -35,8 +36,8 @@
       flex-direction: column;
     }
     a { color: var(--blue); }
-    /* Two-ring focus indicator: gold inner + purple outer clears 3:1 against
-       both the white cards and the purple header (SC 1.4.11). The transparent
+    /* Two-ring focus indicator: gold inner + blue outer clears 3:1 against
+       both the white cards and the blue header (SC 1.4.11). The transparent
        outline is what forced-colors mode swaps for a visible system ring. */
     a:focus-visible, button:focus-visible, input:focus-visible,
     select:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
@@ -172,7 +173,7 @@
       font-weight: 400;
     }
     .option-btn .option-icon { margin-right: 0.4rem; }
-    .option-btn:hover { border-color: var(--blue-mid); background: #f3e8ff; }
+    .option-btn:hover { border-color: var(--blue-mid); background: #e7f1f9; }
 
     /* ── Buttons ────────────────────────────────────────────────── */
     .btn-primary {
@@ -200,7 +201,7 @@
       cursor: pointer;
       transition: background 0.15s;
     }
-    .btn-secondary:hover { background: #f3e8ff; }
+    .btn-secondary:hover { background: #e7f1f9; }
     .btn-back {
       background: none;
       border: none;
@@ -278,8 +279,8 @@
     }
     .result-examples li::before { content: "·"; position: absolute; left: 0; color: var(--muted); }
     .result-cross-link {
-      background: #f3e8ff;
-      border: 1px solid #e9d5ff;
+      background: #e7f1f9;
+      border: 1px solid #c9dcec;
       border-radius: 8px;
       padding: 0.875rem 1rem;
       font-size: 0.875rem;
@@ -332,7 +333,7 @@
       letter-spacing: 0.05em;
     }
     td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: top; }
-    tr:hover td { background: #f3e8ff; }
+    tr:hover td { background: #e7f1f9; }
     td.code { font-family: monospace; font-weight: 700; color: var(--blue); white-space: nowrap; font-size: 0.95rem; }
 
     /* ── Easter egg ───────────────────────────────────────────── */
