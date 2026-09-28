@@ -206,5 +206,57 @@
   "zones": ["full"],
   "orbit": false,
   "centerBias": "none"
+},
+{
+  "label": "Curious",
+  "maxSpeed": 4,
+  "wiggle": 2.15,
+  "wiggleSpeed": 2.2,
+  "shake": 0,
+  "shakeSpeed": 40,
+  "organismCount": 1,
+  "sepDistance": 14,
+  "zones": ["full"],
+  "orbit": false,
+  "centerBias": "none"
+},
+{
+  "label": "Inconsistent",
+  "maxSpeed": 1.38,
+  "wiggle": 0.75,
+  "wiggleSpeed": 0.85,
+  "shake": 1.15,
+  "shakeSpeed": 40,
+  "organismCount": 14,
+  "sepDistance": 14,
+  "zones": ["full"],
+  "orbit": false,
+  "centerBias": "avoid"
+},
+{
+  "label": "Delighted",
+  "maxSpeed": 4,
+  "wiggle": 0.75,
+  "wiggleSpeed": 0.85,
+  "shake": 0.8,
+  "shakeSpeed": 82,
+  "organismCount": 40,
+  "sepDistance": 14,
+  "zones": ["full"],
+  "orbit": false,
+  "centerBias": "seek"
+},
+{
+  "label": "Ensconced",
+  "maxSpeed": 0.09,
+  "wiggle": 0.75,
+  "wiggleSpeed": 0.85,
+  "shake": 0,
+  "shakeSpeed": 40,
+  "organismCount": 1,
+  "sepDistance": 14,
+  "zones": ["bottomRight"],
+  "orbit": false,
+  "centerBias": "none"
 }
 ]
