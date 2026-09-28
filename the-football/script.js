@@ -1,119 +1,73 @@
 /* ===========================================================
-   THE FOOTBALL — retro football companion
-   Vanilla JS. Boot → sport select → phrase + voice.
-   Two sports: soccer and American football. Everything here is
-   deliberately evergreen — no players, no seasons, no results —
-   so the banks never need updating.
+   THE FOOTBALL — retro Chiefs companion
+   Vanilla JS. Boot → phrase + voice.
+   v4.0: American football only. The bank is TOPICAL for the
+   2026 Chiefs season, by request — it will need a refresh before
+   next season. Keep phrases to season-long storylines (comebacks,
+   signings, coaching, the redemption arc), not weekly results, so
+   nothing goes stale between September and February.
    =========================================================== */
 (function () {
   "use strict";
 
-  /* ---- Phrase banks ------------------------------------- */
-  /* Rules for anything added here: no player names, no clubs, no
-     seasons, no scores, no records. A phrase has to be true of a
-     match played in any year, or it doesn't belong in the bank. */
-  var PHRASES = {
-    /* Soccer — touchline punditry. */
-    soccer: [
-      "It's a game of two halves, and they've only played one.",
-      "They're getting no joy at all down the left.",
-      "He's got a great engine on him.",
-      "That's a big ask this late on.",
-      "You take that result and you move on.",
-      "They'll want to keep it tight for the first twenty.",
-      "Set pieces win you games like this.",
-      "You can't fault the effort. You can fault everything else.",
-      "It's a squad game now. It always was.",
-      "Nobody wants it to go to penalties. Everybody knows it will.",
-      "He's found himself in acres of space there.",
-      "That's a foul in any league in the world.",
-      "Momentum is real, and also completely imaginary.",
-      "They've got to be more clinical in the final third.",
-      "One goal is never enough. Two is usually plenty.",
-      "The keeper will want that one back.",
-      "He'll have put those away in his sleep all week.",
-      "They've had all of the ball and none of the chances.",
-      "You can't defend a one-goal lead. Everyone tries anyway.",
-      "The legs are going. You can see it from up here.",
-      "That's why he's in the side.",
-      "Great teams find a way. So do lucky ones.",
-      "Football's a funny old game, which is what people say instead of explaining.",
-      "The drama lives in the time added on.",
-      "He's given the referee a decision to make.",
-      "They're playing for the badge now.",
-      "It's still eleven against eleven, whatever the table says.",
-      "A clean sheet away from home is worth two at home."
-    ],
+  /* ---- Phrase bank ------------------------------------- */
+  /* 2026 Chiefs, season-long storylines only: no scores, no records,
+     no week numbers, no standings. Names are fine. If it could be
+     false by next Sunday, it doesn't belong here. */
+  var PHRASES = [
+    /* Mahomes, back from the ACL */
+    "Mahomes is back, the knee is fine, and the rest of the league is going to have to deal with that.",
+    "The ACL is healed. The chip on the shoulder is not.",
+    "Mahomes on a rebuilt knee is still better than most quarterbacks on two good ones.",
+    "Mahomes came back. The playoffs will too.",
+    "He tied Brady's win pace through 150 starts, in case anybody asks. Somebody will.",
+    "A year of watching from the sideline did not make him patient. Good.",
 
-    /* American football — booth punditry. */
-    football: [
-      "Games like this are won in the trenches.",
-      "You have to establish the run to open up the play action.",
-      "It's a copycat league.",
-      "Defense travels.",
-      "They just have to protect the football.",
-      "Third and manageable is the whole ballgame.",
-      "You don't want to be one-dimensional in December.",
-      "Nobody remembers who won in September.",
-      "It's a chess match out there, if chess had a punter.",
-      "Field position is the stat nobody watches and everybody loses to.",
-      "They need to take what the defense gives them.",
-      "Availability is the best ability, which is a nice way of saying he's hurt.",
-      "You can't teach size.",
-      "He's a coach's son. You can tell.",
-      "Special teams decides more games than anybody wants to admit.",
-      "Time of possession means everything or nothing, depending on who won.",
-      "Momentum is real right up until it isn't.",
-      "They're going to have to score points to win this football game.",
-      "Clock management is where seasons go to die.",
-      "Turnover margin tells you the whole story.",
-      "You have to finish drives.",
-      "The red zone is a different sport entirely.",
-      "Next man up, which is what you say when the first man's hurt.",
-      "It's a long season. It's always a long season.",
-      "They'll be watching this one on tape all week.",
-      "That's a veteran move right there.",
-      "The weather's a factor, and it favors whoever ends up winning.",
-      "Play callers get too much credit and exactly enough blame.",
-      "You take the points there. Every single time."
-    ]
-  };
+    /* Kelce, un-retired */
+    "Kelce said he was thinking about retiring. Then he thought about it some more.",
+    "The Kelce retirement watch is now a Kelce touchdown watch.",
+    "Every Kelce catch this year is a bonus track.",
+    "Kelce has more yards after contact than a man his age has any right to.",
+    "Kelce un-retired for a reason. That reason is a fourth ring.",
+    "Kelce's last dance keeps getting extended, and nobody in this building is complaining.",
 
-  /* ---- Sport configuration ------------------------------ */
-  var SPORTS = {
-    soccer: {
-      title: "SOCCER",
-      subtitle: "&gt; Have an opinion ready.",
-      footRight: "NINETY MINUTES",
-      buttons: [
-        { key: "soccer", icon: "⚽", label: "SOCCER QUOTES", cls: "wide" }
-      ]
-    },
-    football: {
-      title: "FOOTBALL",
-      subtitle: "&gt; Have an opinion ready.",
-      footRight: "FOUR QUARTERS",
-      buttons: [
-        { key: "football", icon: "🏈", label: "FOOTBALL QUOTES", cls: "wide" }
-      ]
-    }
-  };
+    /* Kenneth Walker III */
+    "Kenneth Walker was a Super Bowl MVP for somebody else. We'll allow it.",
+    "Walker doesn't go down on first contact. Or second. Somebody should tell the defense.",
+    "Walker in the backfield means play action actually works again.",
+    "Walker was the best player in the Super Bowl last year. Now he wears red. Somebody in the front office earned a raise.",
+    "Mahomes has never had a running back like this. You can tell by the smile.",
 
-  /* Old v2 hashes, kept so any saved link still lands somewhere sensible. */
-  var ALIASES = { worldcup: "soccer", chiefs: "football" };
+    /* Bieniemy back at OC */
+    "Bieniemy is back calling plays. Turns out the playbook missed him too.",
+    "Bieniemy went to Chicago, saw what it was like, and came home.",
+    "Bieniemy's back, the screen game's back, everything's back.",
+    "Spending a year in Chicago made Bieniemy appreciate having a quarterback.",
 
-  var MENU = {
-    title: "THE&nbsp;FOOTBALL",
-    subtitle: "&gt; Never be caught without something footbally to say.",
-    footRight: "SELECT SPORT"
-  };
+    /* The 6-11 redemption arc */
+    "6-11 was a typo. That's the official position of this household.",
+    "Last year was a gap year. Everybody's allowed one.",
+    "We don't talk about last season. We reference it obliquely.",
+    "They called it a down year. It was a plot twist.",
+    "The Kingdom does not do rebuilding years. We do reloading years with worse records.",
+    "Last year taught us something. Mostly that we'd rather not learn anything.",
+    "The AFC West goes through Arrowhead again. It just took a year off.",
+    "A losing season buys you a high draft pick and a lot of humility. We kept the pick.",
+
+    /* Reid, elder statesman */
+    "Andy Reid has outlasted every other coach in the league, and he's not done ordering cheeseburgers.",
+    "Reid's the longest-tenured coach in the league now. The walrus abides.",
+    "Reid has been here longer than some of these rookies have been alive. Roughly.",
+    "Reid still looks like he's about to say something profound, and it's usually about dinner.",
+    "Same quarterback, same coach, same tight end, same expectations.",
+    "Andy Reid has forgotten more trick plays than most coordinators have drawn up."
+  ];
 
   /* ---- State -------------------------------------------- */
   var muted = false;
   var currentPhrase = "";
-  var bags = {};
+  var bag = null;
   var preferredVoice = null;
-  var booted = false;
 
   /* ---- Speech synthesis --------------------------------- */
   var synth = window.speechSynthesis || null;
@@ -171,10 +125,10 @@
   }
 
   /* ---- Phrase selection (shuffle bag, no repeats until cycled) ----------- */
-  /* Each bank draws from a shuffled bag of all its phrases; a phrase can't
-     come up again until every other one has been used. When the bag empties
-     it's reshuffled, and we reshuffle again if the new bag would start with
-     the phrase we just showed, so there's no repeat across the boundary. */
+  /* Draw from a shuffled bag of all phrases; a phrase can't come up again
+     until every other one has been used. When the bag empties it's
+     reshuffled, and rotated if the new bag would start with the phrase we
+     just showed, so there's no repeat across the boundary. */
   function shuffled(list) {
     var a = list.slice();
     for (var i = a.length - 1; i > 0; i--) {
@@ -184,20 +138,18 @@
     return a;
   }
 
-  function nextPhrase(bank) {
-    var list = PHRASES[bank];
-    if (!list || !list.length) return "";
-    if (list.length === 1) return list[0];
-    var state = bags[bank];
-    if (!state || !state.queue.length) {
-      var last = state ? state.last : null;
-      var queue = shuffled(list);
+  function nextPhrase() {
+    if (!PHRASES.length) return "";
+    if (PHRASES.length === 1) return PHRASES[0];
+    if (!bag || !bag.queue.length) {
+      var last = bag ? bag.last : null;
+      var queue = shuffled(PHRASES);
       // Avoid an immediate repeat when a fresh bag begins with the last draw.
       if (queue[0] === last) queue.push(queue.shift());
-      state = bags[bank] = { queue: queue, last: last };
+      bag = { queue: queue, last: last };
     }
-    var phrase = state.queue.shift();
-    state.last = phrase;
+    var phrase = bag.queue.shift();
+    bag.last = phrase;
     return phrase;
   }
 
@@ -205,22 +157,14 @@
   var bootEl = document.getElementById("boot");
   var bootText = document.getElementById("bootText");
   var appEl = document.getElementById("app");
-  var titleEl = document.getElementById("title");
-  var subtitleEl = document.getElementById("subtitle");
-  var viewMenu = document.getElementById("viewMenu");
-  var viewQuote = document.getElementById("viewQuote");
   var readoutEl = document.getElementById("readout");
   var phraseEl = document.getElementById("phrase");
   var replayHint = document.getElementById("replayHint");
-  var buttonsEl = document.getElementById("buttons");
-  var footRight = document.getElementById("footRight");
+  var quoteBtn = document.getElementById("quoteBtn");
   var muteBtn = document.getElementById("muteBtn");
-  var backBtn = document.getElementById("backBtn");
-  var btnSoccer = document.getElementById("btnSoccer");
-  var btnFootball = document.getElementById("btnFootball");
 
   /* ---- Fit the phrase to the readout -------------------- */
-  /* The banks vary from six words to twenty, so a fixed type size either
+  /* The bank varies from six words to twenty, so a fixed type size either
      wastes the screen or spills over the header and the buttons. Step the
      size down until the text fits the box it lives in. */
   var PHRASE_MAX = 34;
@@ -257,8 +201,8 @@
   });
 
   /* ---- Show a phrase ------------------------------------ */
-  function showPhrase(bank, btn) {
-    currentPhrase = nextPhrase(bank);
+  function showPhrase() {
+    currentPhrase = nextPhrase();
     phraseEl.textContent = currentPhrase;
     replayHint.hidden = false;
     fitPhrase();
@@ -266,86 +210,19 @@
     // force reflow so the animation restarts
     void readoutEl.offsetWidth;
     readoutEl.classList.add("flash");
-    if (btn) {
-      btn.classList.remove("pressed");
-      void btn.offsetWidth;
-      btn.classList.add("pressed");
-    }
+    quoteBtn.classList.remove("pressed");
+    void quoteBtn.offsetWidth;
+    quoteBtn.classList.add("pressed");
     speak(currentPhrase);
   }
 
-  /* ---- Views -------------------------------------------- */
-  function setHead(cfg) {
-    titleEl.innerHTML = cfg.title;
-    subtitleEl.innerHTML = cfg.subtitle +
-      '<span class="cursor" aria-hidden="true">█</span>';
-    footRight.innerHTML = cfg.footRight;
-  }
-
-  function showMenu() {
-    stopSpeaking();
-    currentPhrase = "";
-    setHead(MENU);
-    viewQuote.hidden = true;
-    viewMenu.hidden = false;
-    backBtn.hidden = true;
-  }
-
-  function showSport(name) {
-    var cfg = SPORTS[name];
-    if (!cfg) { showMenu(); return; }
-    stopSpeaking();
-    currentPhrase = "";
-    setHead(cfg);
-
-    // Reset the readout and rebuild the button bank for this sport.
-    phraseEl.style.fontSize = "";
-    phraseEl.innerHTML = "&gt;&nbsp;AWAITING&nbsp;INPUT_";
-    replayHint.hidden = true;
-    buttonsEl.innerHTML = "";
-    buttonsEl.className = "buttons" + (cfg.buttons.length === 1 ? " single" : "");
-
-    cfg.buttons.forEach(function (b) {
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "teamBtn" + (b.cls ? " " + b.cls : "");
-      btn.setAttribute("aria-label", b.label);
-      btn.innerHTML =
-        '<span class="btnIcon" aria-hidden="true">' + b.icon + "</span>" +
-        '<span class="btnLabel">' + b.label + "</span>";
-      btn.addEventListener("click", function () { showPhrase(b.key, btn); });
-      buttonsEl.appendChild(btn);
-    });
-
-    viewMenu.hidden = true;
-    viewQuote.hidden = false;
-    backBtn.hidden = false;
-  }
-
-  /* ---- Hash routing ------------------------------------- */
-  function route() {
-    if (!booted) return;
-    var name = (location.hash || "").replace(/^#\/?/, "");
-    if (ALIASES[name]) name = ALIASES[name];
-    if (SPORTS[name]) showSport(name);
-    else showMenu();
-  }
-
-  function go(name) {
-    // Setting the hash fires hashchange, which routes for us.
-    if (location.hash.replace(/^#\/?/, "") === name) route();
-    else location.hash = name ? "#" + name : "";
-  }
-
-  window.addEventListener("hashchange", route);
-
   /* ---- Boot animation ----------------------------------- */
   var BOOT_LINES = [
-    { t: "THE FOOTBALL v3.0", cls: "amber", after: 260 },
+    { t: "THE FOOTBALL v4.0", cls: "amber", after: 260 },
     { t: "", after: 90 },
     { t: "Initializing football database...", after: 560 },
-    { t: "Loading football knowledge...", after: 560 },
-    { t: "Loading other football knowledge...", after: 560 },
+    { t: "Loading Chiefs knowledge...", after: 560 },
+    { t: "Unloading last season...", after: 560 },
     { t: "Calibrating punditry module....", after: 520 },
     { t: "", after: 120 },
     { t: "Ready.", cls: "amber", after: 440 }
@@ -380,8 +257,6 @@
   function startApp() {
     bootEl.hidden = true;
     appEl.hidden = false;
-    booted = true;
-    route();
   }
 
   if (prefersReduced) {
@@ -391,10 +266,11 @@
     runBoot(startApp);
   }
 
+  /* Old links (#chiefs, #football, #worldcup, #soccer) all land here now;
+     there's only one view, so the hash is simply ignored. */
+
   /* ---- Wiring ------------------------------------------- */
-  btnSoccer.addEventListener("click", function () { go("soccer"); });
-  btnFootball.addEventListener("click", function () { go("football"); });
-  backBtn.addEventListener("click", function () { go(""); });
+  quoteBtn.addEventListener("click", showPhrase);
 
   // Tap the readout to replay the current phrase.
   function replay() {

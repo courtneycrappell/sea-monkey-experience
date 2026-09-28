@@ -107,9 +107,6 @@ body {
 .chromeBtn:active { transform: translateY(1px); }
 .chromeBtn:focus-visible { outline: none; border-color: var(--phosphor); box-shadow: 0 0 0 2px rgba(51,255,102,0.35); }
 
-/* The back button sits where the grille ends; reserve its slot so the
-   brand stays centred whether or not the button is showing. */
-.backBtn { white-space: nowrap; }
 .muteBtn .muteOff { display: none; }
 .muteBtn[aria-pressed="true"] { color: var(--amber); border-color: #5a4420; text-shadow: 0 0 6px rgba(255,184,77,0.5); }
 .muteBtn[aria-pressed="true"] .muteOn { display: none; }
@@ -288,82 +285,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-/* ── Sport select menu ───────────────────────────────────── */
-.menuPrompt {
-  margin: 0;
-  text-align: center;
-  font-size: clamp(11px, 3.2vw, 13px);
-  letter-spacing: 2px;
-  color: var(--phosphor-dim);
-}
-
-.ballGrid {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  /* minmax(0,1fr) so the two cards share the screen instead of pushing
-     past the footer when their content is taller than the space. */
-  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 12px;
-}
-
-.ballBtn {
-  font-family: var(--mono);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  border-radius: 10px;
-  border: 2px solid var(--phosphor-dim);
-  background: linear-gradient(180deg, rgba(51,255,102,0.10) 0%, rgba(51,255,102,0.03) 100%);
-  color: var(--phosphor);
-  cursor: pointer;
-  padding: 10px;
-  min-height: 0;
-  overflow: hidden;
-  text-shadow: var(--glow);
-  box-shadow: 0 0 16px rgba(51,255,102,0.08) inset, 0 3px 0 #06180b;
-  transition: transform 90ms ease, box-shadow 120ms ease, background 120ms ease;
-}
-.ballBtn:hover { background: linear-gradient(180deg, rgba(51,255,102,0.18) 0%, rgba(51,255,102,0.06) 100%); }
-.ballBtn:active { transform: translateY(3px); box-shadow: 0 0 22px rgba(51,255,102,0.14) inset, 0 0 0 #06180b; }
-.ballBtn:focus-visible { outline: none; border-color: var(--phosphor); box-shadow: 0 0 0 3px rgba(51,255,102,0.35), 0 0 16px rgba(51,255,102,0.14) inset; }
-
-.ballSvg {
-  width: auto;
-  height: clamp(50px, 13vh, 96px);
-  min-height: 0;
-  max-width: 100%;
-  display: block;
-  overflow: visible;
-}
-.ballSvg circle,
-.ballSvg path,
-.ballSvg line {
-  fill: none;
-  stroke: var(--phosphor);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 0 3px rgba(51,255,102,0.75));
-}
-.ballSvg .ballPatch { fill: rgba(51,255,102,0.28); }
-.ballSvg .ballSeam { stroke-width: 2.2; opacity: 0.6; }
-.ballBtn:hover .ballSvg .ballPatch { fill: rgba(51,255,102,0.42); }
-
-.ballName {
-  font-size: clamp(16px, 5vw, 22px);
-  letter-spacing: 2px;
-  font-weight: 700;
-}
-.ballSub {
-  font-size: clamp(9px, 2.7vw, 11px);
-  letter-spacing: 1.5px;
-  color: var(--phosphor-dim);
-  text-shadow: none;
 }
 
 /* Phrase buttons — occupy most of the screen */
