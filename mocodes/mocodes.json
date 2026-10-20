@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-06",
+  "lastUpdated": "2026-10-20",
   "mocodes": [
     {
       "id": "M-01",
@@ -276,7 +276,7 @@
       "why": "Marketing, communications, donor relations, fundraising support, public-facing events, and external relations operations for the Music division.",
       "ambiguity": {
         "also": "KDH80 Music – Office Operations",
-        "guidance": "Use this code for the division's professional and organizational memberships. NASM accreditation fees and dues are not coded here — those go to KDH80 with the rest of the division's accreditation costs."
+        "guidance": "Use this code for the division's professional and organizational memberships. NASM accreditation fees and dues are not coded here — those go to KDH80 with the rest of the division's accreditation costs. Food is coded by who it was for: a show's cast and crew go to KJ541 Music Productions; faculty meetings and current-student events (pizza night, end-of-semester gathering) go to KDH80 Music – Office Operations. Use this code only for donor, community, and public-facing events."
       },
       "notes": null,
       "mocode": "KJ530"
@@ -394,7 +394,9 @@
           "examples": [
             "Department meeting refreshments",
             "Faculty reception food",
-            "Meals hosted for a visiting accreditation team"
+            "Meals hosted for a visiting accreditation team",
+            "Faculty meeting lunch",
+            "Student event or pizza night (not tied to a show)"
           ]
         },
         {
@@ -433,7 +435,7 @@
           ]
         }
       ],
-      "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Music division. Also the home for the division's accreditation costs: NASM fees and dues, and the expense of hosting a visiting accreditation or site-evaluation team.",
+      "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Music division. Also the home for the division's accreditation costs: NASM fees and dues, and the expense of hosting a visiting accreditation or site-evaluation team. Also covers meals for faculty and staff meetings and food for current-student events that are not tied to a production.",
       "ambiguity": {
         "also": "KJ525 Music – Faculty Travel",
         "guidance": "Use this code for the Music division's own accreditation costs — NASM fees and dues, and hosting a visiting evaluation team. Use KJ525 when one of our own faculty travels to serve as an evaluator for another institution; that is faculty professional activity, not a cost of keeping our program accredited."
@@ -921,11 +923,13 @@
           "description": "Business Meeting Expense – Food",
           "examples": [
             "Production reception",
-            "Opening night hospitality"
+            "Opening night hospitality",
+            "Cast and crew meals",
+            "Strike or closing-night pizza"
           ]
         }
       ],
-      "why": "All production expenses for music productions including costumes, scenic, lighting/sound, overhire labor, royalties, and guest artists. NASM HEADS VI.A reports one total — Account identifies the expense type.",
+      "why": "All production expenses for music productions including costumes, scenic, lighting/sound, overhire labor, royalties, and guest artists. NASM HEADS VI.A reports one total — Account identifies the expense type. Food for a show's cast and crew (opening night, strike, closing-night pizza) is a production cost and belongs here.",
       "ambiguity": {
         "also": "KJ531 Visiting Artists (Academic)",
         "guidance": "Use KJ541 when the guest artist is performing in or directing a specific production. Use KJ531 when the artist is visiting for a masterclass, residency, or curricular purpose unrelated to a specific show."
@@ -1199,7 +1203,7 @@
       "why": "Marketing, communications, donor relations, fundraising support, public-facing events, and external relations operations for the Dance division.",
       "ambiguity": {
         "also": "KJ518 Dance – Office Operations",
-        "guidance": "Use this code for the division's professional and organizational memberships. NASD accreditation fees and dues are not coded here — those go to KJ518 with the rest of the division's accreditation costs."
+        "guidance": "Use this code for the division's professional and organizational memberships. NASD accreditation fees and dues are not coded here — those go to KJ518 with the rest of the division's accreditation costs. Food is coded by who it was for: a show's cast and crew go to KJ524 Dance Productions; faculty meetings and current-student events (pizza night, end-of-semester gathering) go to KJ518 Dance – Office Operations. Use this code only for donor, community, and public-facing events."
       },
       "notes": null,
       "mocode": "KJ516"
@@ -1313,7 +1317,9 @@
           "description": "Business Meeting Expense – Food",
           "examples": [
             "Department meeting refreshments",
-            "Meals hosted for a visiting accreditation team"
+            "Meals hosted for a visiting accreditation team",
+            "Faculty meeting lunch",
+            "Student event or pizza night (not tied to a show)"
           ]
         },
         {
@@ -1352,7 +1358,7 @@
           ]
         }
       ],
-      "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Dance division. Also the home for the division's accreditation costs: NASD fees and dues, and the expense of hosting a visiting accreditation or site-evaluation team.",
+      "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Dance division. Also the home for the division's accreditation costs: NASD fees and dues, and the expense of hosting a visiting accreditation or site-evaluation team. Also covers meals for faculty and staff meetings and food for current-student events that are not tied to a production.",
       "ambiguity": {
         "also": "KJ512 Dance – Faculty Travel",
         "guidance": "Use this code for the Dance division's own accreditation costs — NASD fees and dues, and hosting a visiting evaluation team. Use KJ512 when one of our own faculty travels to serve as an evaluator for another institution; that is faculty professional activity, not a cost of keeping our program accredited."
@@ -1699,11 +1705,13 @@
           "description": "Business Meeting Expense – Food",
           "examples": [
             "Production reception",
-            "Opening night hospitality"
+            "Opening night hospitality",
+            "Cast and crew meals",
+            "Strike or closing-night pizza"
           ]
         }
       ],
-      "why": "All production expenses for dance productions. NASD HEADS VI.A.2 reports one production total — Account identifies the expense type within PeopleSoft.",
+      "why": "All production expenses for dance productions. NASD HEADS VI.A.2 reports one production total — Account identifies the expense type within PeopleSoft. Food for a show's cast and crew (opening night, strike, closing-night pizza) is a production cost and belongs here.",
       "ambiguity": {
         "also": "KJ517 Visiting Artists (Academic)",
         "guidance": "Use KJ524 for guest choreographers or performers engaged for a specific production. Use KJ517 for guest artists visiting for a masterclass, residency, or curricular purpose."
@@ -1971,7 +1979,7 @@
       "why": "Marketing, communications, donor relations, fundraising support, public-facing events, and external relations operations for the Theatre division.",
       "ambiguity": {
         "also": "KJ548 Theatre – Office Operations",
-        "guidance": "Use this code for the division's professional and organizational memberships. NAST and URTA accreditation fees and dues are not coded here — those go to KJ548 with the rest of the division's accreditation costs."
+        "guidance": "Use this code for the division's professional and organizational memberships. NAST and URTA accreditation fees and dues are not coded here — those go to KJ548 with the rest of the division's accreditation costs. Food is coded by who it was for: a show's cast and crew go to KJ554 Theatre Productions – Performance Operations; faculty meetings and current-student events (pizza night, end-of-semester gathering) go to KJ548 Theatre – Office Operations. Use this code only for donor, community, and public-facing events."
       },
       "notes": null,
       "mocode": "KJ546"
@@ -2085,7 +2093,9 @@
           "description": "Business Meeting Expense – Food",
           "examples": [
             "Department meeting refreshments",
-            "Meals hosted for a visiting accreditation team"
+            "Meals hosted for a visiting accreditation team",
+            "Faculty meeting lunch",
+            "Student event or pizza night (not tied to a show)"
           ]
         },
         {
@@ -2125,7 +2135,7 @@
           ]
         }
       ],
-      "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Theatre division. Also the home for the division's accreditation costs: NAST and URTA fees and dues, and the expense of hosting a visiting accreditation or site-evaluation team.",
+      "why": "Office supplies, postage, printing, duplication, and day-to-day administrative operations of the Theatre division. Also the home for the division's accreditation costs: NAST and URTA fees and dues, and the expense of hosting a visiting accreditation or site-evaluation team. Also covers meals for faculty and staff meetings and food for current-student events that are not tied to a production.",
       "ambiguity": {
         "also": "KJ542 Theatre – Faculty Travel",
         "guidance": "Use this code for the Theatre division's own accreditation costs — NAST and URTA fees and dues, and hosting a visiting evaluation team. Use KJ542 when one of our own faculty travels to serve as an evaluator for another institution; that is faculty professional activity, not a cost of keeping our program accredited."
@@ -2408,7 +2418,9 @@
           "description": "Business Meeting Expense – Food",
           "examples": [
             "Production reception",
-            "Opening night hospitality"
+            "Opening night hospitality",
+            "Cast and crew meals",
+            "Strike or closing-night pizza"
           ]
         },
         {
@@ -2427,7 +2439,7 @@
           ]
         }
       ],
-      "why": "Production coordination, guest directors, designers, and contracted artists for specific productions. NAST HEADS VI.A.2 reports one production total.",
+      "why": "Production coordination, guest directors, designers, and contracted artists for specific productions. NAST HEADS VI.A.2 reports one production total. Food for a show's cast and crew (opening night, strike, closing-night pizza) is a production cost and belongs here.",
       "ambiguity": {
         "also": "KJ547 Visiting Artists (Academic)",
         "guidance": "Use KJ554 when the artist is a director, designer, or performer engaged for a specific production. Use KJ547 when the guest artist is visiting for a masterclass or curricular residency."
@@ -2747,7 +2759,9 @@
           "description": "Business Meeting Expense – Food",
           "examples": [
             "Dean's meeting refreshments",
-            "Reception food"
+            "Reception food",
+            "Faculty or staff meeting lunch",
+            "Student event food (not tied to a show)"
           ]
         },
         {
@@ -2810,7 +2824,7 @@
           ]
         }
       ],
-      "why": "Day-to-day Dean's Office administrative operations. Not allocated to divisions for HEADS purposes.",
+      "why": "Day-to-day Dean's Office administrative operations. Not allocated to divisions for HEADS purposes. Also covers meals for Dean's Office and all-Conservatory faculty or staff meetings, and food for student events that are not tied to a production.",
       "ambiguity": null,
       "notes": null,
       "mocode": "KDH63"
@@ -3032,7 +3046,10 @@
         }
       ],
       "why": "Season-wide marketing, advertising, and Conservatory external relations managed centrally. Costs allocated by formula: Music 75%, Dance 10%, Theatre 15%.",
-      "ambiguity": null,
+      "ambiguity": {
+        "also": "KDH63 Conservatory Admin – Office Operations",
+        "guidance": "Food is coded by who it was for: Dean's Office, faculty, and staff meeting meals go to KDH63 Conservatory Admin – Office Operations; a show's cast and crew go to that division's Productions code. Use this code only for donor, community, and public-facing events."
+      },
       "notes": null,
       "mocode": "KJ505"
     },
@@ -3270,7 +3287,8 @@
           "description": "Business Meeting Expense – Food",
           "examples": [
             "Cross-divisional production reception",
-            "Nexus event hospitality"
+            "Nexus event hospitality",
+            "Cast and crew meals for a Nexus or cross-divisional production"
           ]
         },
         {
@@ -3796,7 +3814,10 @@
         }
       ],
       "why": "Season-wide marketing, cross-divisional communications, and shared external relations activity. Costs allocated: Music 75%, Dance 10%, Theatre 15%.",
-      "ambiguity": null,
+      "ambiguity": {
+        "also": "KJ560 Production Admin – Performance Operations",
+        "guidance": "Food for the cast and crew of a Nexus or cross-divisional production goes to KJ560 Production Admin – Performance Operations. Use this code only for donor, community, and public-facing events."
+      },
       "notes": null,
       "mocode": "KJ570"
     }
